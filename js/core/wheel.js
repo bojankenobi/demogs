@@ -107,6 +107,12 @@ class IGTWheelBonus {
       });
     }
 
+    window.addEventListener('resize', () => {
+      if (this.modal && this.modal.classList.contains('active')) {
+        this.drawWheel(this.currentRotation);
+      }
+    });
+
     this.initBulbs();
   }
 
@@ -114,16 +120,18 @@ class IGTWheelBonus {
     if (!this.bulbsTrack) return;
     this.bulbsTrack.innerHTML = '';
     const bulbCount = 24;
-    const r = 191; // Radius from 200, 200 center
+    // Exactly 46.5% radius from center (50%, 50%), placing bulbs dead-center in the golden bezel raceway
+    const rPct = 46.5;
     for (let i = 0; i < bulbCount; i++) {
-      const angle = (i / bulbCount) * 2 * Math.PI;
-      const x = 200 + r * Math.cos(angle);
-      const y = 200 + r * Math.sin(angle);
+      // Offset by half an interval so the 12 o'clock pointer is cleanly framed between two bulbs
+      const angle = (i / bulbCount) * 2 * Math.PI - Math.PI / 2 + (Math.PI / bulbCount);
+      const xPct = 50 + rPct * Math.cos(angle);
+      const yPct = 50 + rPct * Math.sin(angle);
       const bulb = document.createElement('div');
       bulb.className = `wheel-bulb ${i % 2 === 0 ? 'bulb-gold' : 'bulb-purple'}`;
-      bulb.style.left = `${x}px`;
-      bulb.style.top = `${y}px`;
-      bulb.style.animationDelay = `${(i * 0.08).toFixed(2)}s`;
+      bulb.style.left = `${xPct.toFixed(3)}%`;
+      bulb.style.top = `${yPct.toFixed(3)}%`;
+      bulb.style.animationDelay = `${(i * 0.05).toFixed(2)}s`;
       this.bulbsTrack.appendChild(bulb);
     }
   }
@@ -170,6 +178,7 @@ class IGTWheelBonus {
     }
 
     this.modal.classList.add('active');
+    this.modal.classList.remove('is-spinning', 'has-won');
 
     if (this.winAnnouncement) this.winAnnouncement.style.display = 'none';
     if (this.claimBtn) this.claimBtn.style.display = 'none';
@@ -177,7 +186,7 @@ class IGTWheelBonus {
     if (this.spinBtn) {
       this.spinBtn.disabled = false;
       this.spinBtn.style.display = 'block';
-      this.spinBtn.innerHTML = '🎰 ZAVRTI TOČAK SREĆE 🎰';
+      this.spinBtn.innerHTML = window.i18n ? window.i18n.t('wheelSpinBtn') : '🎰 ZAVRTI TOČAK SREĆE 🎰';
     }
 
     if (this.closeBtn) {
@@ -214,18 +223,33 @@ class IGTWheelBonus {
     }
 
     if (this.modal) {
-      this.modal.classList.remove('active');
+      this.modal.classList.remove('active', 'is-spinning', 'has-won');
     }
   }
 
   drawWheel(angleRad) {
     if (!this.ctx || !this.canvas) return;
     const ctx = this.ctx;
+    
+    // Auto high-DPI resolution scaling
+    const rect = this.canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 2, 2.5);
+    const displaySize = Math.max(280, Math.round(rect.width || 340));
+    const renderSize = Math.round(displaySize * dpr);
+
+    if (this.canvas.width !== renderSize || this.canvas.height !== renderSize) {
+      this.canvas.width = renderSize;
+      this.canvas.height = renderSize;
+    }
+
     const w = this.canvas.width;
     const h = this.canvas.height;
     const cx = w / 2;
     const cy = h / 2;
-    const outerR = cx - 5;
+
+    const outerR = cx - 2;
+    const rimWidth = Math.round(renderSize * 0.046);
+    const sliceOuterR = outerR - rimWidth;
     const numSegs = this.segments.length;
     const segAngle = (2 * Math.PI) / numSegs;
 
@@ -233,6 +257,8 @@ class IGTWheelBonus {
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(angleRad);
+
+    const hubR = Math.round(renderSize * 0.135);
 
     // 1. Draw 12 Slices
     for (let i = 0; i < numSegs; i++) {
@@ -242,119 +268,172 @@ class IGTWheelBonus {
 
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.arc(0, 0, outerR, startA, endA);
+      ctx.arc(0, 0, sliceOuterR, startA, endA);
       ctx.closePath();
 
-      // Radial slice gradient with metallic depth
-      const grad = ctx.createRadialGradient(0, 0, 35, 0, 0, outerR);
+      // Deep metallic jewel slice gradient
+      const grad = ctx.createRadialGradient(0, 0, renderSize * 0.1, 0, 0, sliceOuterR);
       grad.addColorStop(0, seg.bg1);
-      grad.addColorStop(0.7, seg.bg2);
+      grad.addColorStop(0.65, seg.bg2);
       grad.addColorStop(1, seg.isMega ? '#7c1ebb' : seg.bg1);
       ctx.fillStyle = grad;
       ctx.fill();
 
-      // Golden dividing rib
+      // Heavy 3D golden dividing rib
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.lineTo(outerR * Math.cos(startA), outerR * Math.sin(startA));
+      ctx.lineTo(sliceOuterR * Math.cos(startA), sliceOuterR * Math.sin(startA));
       ctx.strokeStyle = '#d4af37';
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = Math.max(2.5, Math.round(renderSize * 0.007));
       ctx.stroke();
 
-      // Thin inner highlight line on divider
+      // Specular highlight pinstripe on rib
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.lineTo((outerR - 2) * Math.cos(startA), (outerR - 2) * Math.sin(startA));
-      ctx.strokeStyle = 'rgba(255, 245, 192, 0.45)';
+      ctx.lineTo((sliceOuterR - 2) * Math.cos(startA), (sliceOuterR - 2) * Math.sin(startA));
+      ctx.strokeStyle = 'rgba(255, 248, 200, 0.55)';
       ctx.lineWidth = 1;
       ctx.stroke();
+    }
 
-      // Radial text rendering (oriented cleanly along the wedge centerline)
+    // 2. High-legibility Tangential IGT Vegas Arc Text in each Slice
+    // Centered along the wedge curve with top of letters pointing toward the outer rim.
+    // Under the pointer at 12 o'clock, text lands perfectly horizontal and upright!
+    const sliceSpan = sliceOuterR - hubR;
+    const textR = hubR + sliceSpan * 0.55;
+    const maxW = Math.round(2 * textR * Math.sin(segAngle / 2) * 0.88);
+
+    for (let i = 0; i < numSegs; i++) {
+      const seg = this.segments[i];
+      const startA = i * segAngle;
+      const midA = startA + segAngle / 2;
+
       ctx.save();
-      ctx.rotate(startA + segAngle / 2);
-      ctx.textAlign = 'right';
+      const tx = Math.cos(midA) * textR;
+      const ty = Math.sin(midA) * textR;
+      ctx.translate(tx, ty);
+      ctx.rotate(midA + Math.PI / 2);
+
+      ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Contrast drop shadow
+      // Deep contrast drop shadow
       ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
-      ctx.shadowBlur = 5;
+      ctx.shadowBlur = Math.round(renderSize * 0.012);
       ctx.shadowOffsetX = 1.5;
       ctx.shadowOffsetY = 1.5;
 
       // Primary Label (Number / Jackpot Name)
       ctx.fillStyle = seg.textColor;
-      ctx.font = seg.isMega 
-        ? '900 15px Montserrat, Arial Black, sans-serif'
-        : (seg.type === 'jackpot' ? '900 14px Cinzel, Montserrat, sans-serif' : '900 15px Montserrat, Arial Black, sans-serif');
-      ctx.fillText(seg.label, outerR - 24, -4);
+      const mainFontSize = Math.round(renderSize * (seg.isMega ? 0.040 : (seg.type === 'jackpot' ? 0.036 : 0.042)));
+      ctx.font = `900 ${mainFontSize}px Montserrat, Arial Black, sans-serif`;
+      ctx.fillText(seg.label, 0, -Math.round(renderSize * 0.018), maxW);
 
       // Secondary Sub-label (MULT, JACKPOT, 2x START, MEGA WIN)
-      ctx.fillStyle = seg.isMega 
-        ? '#fde047' 
-        : (seg.textColor === '#ffffff' ? '#e9d5ff' : '#fcd34d');
-      ctx.font = '700 8.5px Montserrat, sans-serif';
-      ctx.fillText(seg.sub, outerR - 24, 9);
+      ctx.fillStyle = seg.isBust
+        ? '#fca5a5'
+        : (seg.isMega ? '#fde047' : (seg.textColor === '#ffffff' ? '#e9d5ff' : '#fcd34d'));
+      const subFontSize = Math.round(renderSize * 0.020);
+      ctx.font = `800 ${subFontSize}px Montserrat, sans-serif`;
+      ctx.fillText(seg.sub, 0, Math.round(renderSize * 0.016), maxW);
 
       ctx.restore();
     }
 
-    // 2. Outer Rim Metallic Studs (Brass Pegs)
+    // 3. Heavy Metallic Bezel Rim on Rotor Disc
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR, 0, 2 * Math.PI);
+    ctx.arc(0, 0, sliceOuterR, 0, 2 * Math.PI, true);
+    ctx.closePath();
+    const rimGrad = ctx.createRadialGradient(0, 0, sliceOuterR, 0, 0, outerR);
+    rimGrad.addColorStop(0, '#5a3406');
+    rimGrad.addColorStop(0.35, '#d4af37');
+    rimGrad.addColorStop(0.65, '#fff2b2');
+    rimGrad.addColorStop(0.85, '#aa771c');
+    rimGrad.addColorStop(1, '#2c1401');
+    ctx.fillStyle = rimGrad;
+    ctx.fill();
+
+    // Pinstripe borders on rotor rim
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(0, 0, sliceOuterR, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 4. Brass Ratchet Pegs (Machined Pins) at each slice divider
+    const pegR = (sliceOuterR + outerR) / 2;
     for (let i = 0; i < numSegs; i++) {
       const pegAngle = i * segAngle;
-      const px = Math.cos(pegAngle) * (outerR - 4);
-      const py = Math.sin(pegAngle) * (outerR - 4);
+      const px = Math.cos(pegAngle) * pegR;
+      const py = Math.sin(pegAngle) * pegR;
+      const pinRadius = Math.max(3.5, Math.round(renderSize * 0.010));
 
       // Peg Shadow base
       ctx.beginPath();
-      ctx.arc(px, py, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = '#1c0a02';
+      ctx.arc(px, py, pinRadius * 1.35, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(10, 4, 1, 0.85)';
       ctx.fill();
 
-      // Brass Peg with highlight
+      // Brass Peg dome with specular highlight
       ctx.beginPath();
-      ctx.arc(px, py, 3.5, 0, 2 * Math.PI);
-      const pegGrad = ctx.createRadialGradient(px - 1, py - 1, 0.5, px, py, 3.5);
+      ctx.arc(px, py, pinRadius, 0, 2 * Math.PI);
+      const pegGrad = ctx.createRadialGradient(px - pinRadius * 0.35, py - pinRadius * 0.35, pinRadius * 0.1, px, py, pinRadius);
       pegGrad.addColorStop(0, '#ffffff');
-      pegGrad.addColorStop(0.35, '#ffd700');
-      pegGrad.addColorStop(1, '#854d0e');
+      pegGrad.addColorStop(0.35, '#ffe57f');
+      pegGrad.addColorStop(0.75, '#b8860b');
+      pegGrad.addColorStop(1, '#523402');
       ctx.fillStyle = pegGrad;
       ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(px, py, pinRadius, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'rgba(255, 235, 140, 0.9)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
 
-    // 3. Center Metallic 3D Vegas Hub (Concentric Gold & Velvet Medallion)
+    // 5. Center 3D Vegas Hub (Multi-tier Gold & Velvet Medallion)
     ctx.beginPath();
-    ctx.arc(0, 0, 46, 0, 2 * Math.PI);
-    const hubOuterGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 46);
+    ctx.arc(0, 0, hubR, 0, 2 * Math.PI);
+    const hubOuterGrad = ctx.createRadialGradient(0, 0, hubR * 0.2, 0, 0, hubR);
     hubOuterGrad.addColorStop(0, '#fff5c0');
     hubOuterGrad.addColorStop(0.35, '#d4af37');
-    hubOuterGrad.addColorStop(0.85, '#6a3f03');
-    hubOuterGrad.addColorStop(1, '#231302');
+    hubOuterGrad.addColorStop(0.75, '#6a3f03');
+    hubOuterGrad.addColorStop(1, '#1f0d01');
     ctx.fillStyle = hubOuterGrad;
     ctx.fill();
     ctx.strokeStyle = '#ffd700';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = Math.max(2, Math.round(renderSize * 0.007));
     ctx.stroke();
 
     // Inner Velvet Medallion
+    const innerHubR = Math.round(hubR * 0.76);
     ctx.beginPath();
-    ctx.arc(0, 0, 34, 0, 2 * Math.PI);
-    const hubInnerGrad = ctx.createRadialGradient(0, 0, 5, 0, 0, 34);
+    ctx.arc(0, 0, innerHubR, 0, 2 * Math.PI);
+    const hubInnerGrad = ctx.createRadialGradient(0, 0, 5, 0, 0, innerHubR);
     hubInnerGrad.addColorStop(0, '#2d0852');
     hubInnerGrad.addColorStop(0.65, '#140324');
     hubInnerGrad.addColorStop(1, '#080010');
     ctx.fillStyle = hubInnerGrad;
     ctx.fill();
     ctx.strokeStyle = '#dfb743';
-    ctx.lineWidth = 1.8;
+    ctx.lineWidth = Math.max(1.5, Math.round(renderSize * 0.005));
     ctx.stroke();
 
     // Embossed IGT Brand Emblem
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = '900 15px Cinzel, serif';
+    ctx.font = `900 ${Math.round(renderSize * 0.046)}px Cinzel, serif`;
     ctx.fillStyle = '#ffd700';
     ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = Math.round(renderSize * 0.015);
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
     ctx.fillText('IGT', 0, 1);
@@ -367,9 +446,14 @@ class IGTWheelBonus {
     if (this.autoSpinTimer) clearTimeout(this.autoSpinTimer);
     this.isSpinning = true;
 
+    if (this.modal) {
+      this.modal.classList.add('is-spinning');
+      this.modal.classList.remove('has-won');
+    }
+
     if (this.spinBtn) {
       this.spinBtn.disabled = true;
-      this.spinBtn.innerHTML = '⏳ TOČAK SE VRTI...';
+      this.spinBtn.innerHTML = window.i18n ? window.i18n.t('wheelSpinning') : '⏳ TOČAK SE VRTI...';
     }
     if (this.closeBtn) {
       this.closeBtn.disabled = true;
@@ -447,6 +531,13 @@ class IGTWheelBonus {
     this.lastWinningSeg = winningSeg;
     const bet = (this.wallet && this.wallet.bet) ? this.wallet.bet : 20;
 
+    if (this.modal) {
+      this.modal.classList.remove('is-spinning');
+      if (winningSeg.type !== 'bust') {
+        this.modal.classList.add('has-won');
+      }
+    }
+
     // Reset progress meter to 0%
     this.progress = 0;
     this.renderMeter();
@@ -511,7 +602,13 @@ class IGTWheelBonus {
     }
     if (this.claimBtn) {
       this.claimBtn.style.display = 'inline-block';
-      this.claimBtn.textContent = (winningSeg.type === 'bust') ? 'ZATVORI' : (window.i18n ? window.i18n.t('wheelClaimBtn') : 'PREUZMI NAGRADU');
+      if (winningSeg.type === 'bust') {
+        this.claimBtn.className = 'btn-wheel-claim btn-wheel-bust';
+        this.claimBtn.textContent = window.i18n ? window.i18n.t('wheelCloseBtn') : '✕ ZATVORI';
+      } else {
+        this.claimBtn.className = 'btn-wheel-claim';
+        this.claimBtn.textContent = window.i18n ? window.i18n.t('wheelClaimBtn') : '💰 PREUZMI DOBITAK & NASTAVI 💰';
+      }
     }
     if (this.closeBtn) {
       this.closeBtn.disabled = false;

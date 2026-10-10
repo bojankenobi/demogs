@@ -192,9 +192,14 @@
       profileLogoutBtn: 'ODJAVI SE',
       profileCloseBtn: 'ZATVORI',
       denominationLabel: 'DENOM',
-      profileDepositDesc: 'Dodajte fiktivna sredstva na svoj račun u dinarima radi testiranja igre:',
-      profileDepositBtn: 'DOPUNI RSD',
-      profileDenomDesc: 'Izaberite koliko dinara vredi 1 kredit:'
+      profileDenomDesc: 'Izaberite koliko dinara vredi 1 kredit:',
+      wheelTitle: '✦ WHEEL OF FORTUNE ✦',
+      wheelSub: 'OSVOJITE DO 200x ULOGA, JACKPOT ILI BESPLATNE SPINOVE!',
+      wheelSpinBtn: '🎰 ZAVRTI TOČAK SREĆE 🎰',
+      wheelSpinning: '⏳ TOČAK SE VRTI...',
+      wheelClaimBtn: '💰 PREUZMI DOBITAK & NASTAVI 💰',
+      wheelCloseBtn: '✕ ZATVORI',
+      wheelWonLabel: 'OSVOJENI DOBITAK:'
     },
     en: {
       brandSub: 'IGT CASINO',
@@ -385,8 +390,14 @@
       profileCloseBtn: 'CLOSE',
       denominationLabel: 'DENOM',
       profileDepositDesc: 'Add fictional demo funds in RSD to test slot gameplay:',
-      profileDepositBtn: 'DEPOSIT RSD',
-      profileDenomDesc: 'Select RSD coin value per 1 credit:'
+      profileDenomDesc: 'Select RSD coin value per 1 credit:',
+      wheelTitle: '✦ WHEEL OF FORTUNE ✦',
+      wheelSub: 'WIN UP TO 200x BET, JACKPOT OR FREE SPINS!',
+      wheelSpinBtn: '🎰 SPIN THE WHEEL 🎰',
+      wheelSpinning: '⏳ WHEEL IS SPINNING...',
+      wheelClaimBtn: '💰 COLLECT PRIZE & CONTINUE 💰',
+      wheelCloseBtn: '✕ CLOSE',
+      wheelWonLabel: 'PRIZE WON:'
     }
   };
 
