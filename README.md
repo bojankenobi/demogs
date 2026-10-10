@@ -1,232 +1,291 @@
-# MaxBet Multi-Game Casino Terminal & Slot Engine
+# IGT Multi-Game Casino Terminal & Slot Engine
 
-[![Platform](https://img.shields.io/badge/Platform-HTML5%20%7C%20PWA-06402d.svg)](#)
-[![Performance](https://img.shields.io/badge/Performance-60--120%20FPS%20GPU-c7b783.svg)](#)
-[![Audio](https://img.shields.io/badge/Audio-Web%20Audio%20API%20Synthesized-ed1c24.svg)](#)
-[![License](https://img.shields.io/badge/License-Proprietary-darkgreen.svg)](#)
+[![Platform](https://img.shields.io/badge/Platform-HTML5%20%7C%20PWA-120324.svg)](#)
+[![Performance](https://img.shields.io/badge/Performance-60--120%20FPS%20GPU-b85afd.svg)](#)
+[![Audio](https://img.shields.io/badge/Audio-Web%20Audio%20API%20Synthesized-b640fc.svg)](#)
+[![License](https://img.shields.io/badge/License-Proprietary-purple.svg)](#)
 
-> **Language / Jezik:** [English](#english-documentation) | [Srpski](#srpska-dokumentacija)
+> **Language / Jezik:** [English Documentation](#english-documentation) | [Srpska Dokumentacija](#srpska-dokumentacija)
 
 ---
 
 <a name="english-documentation"></a>
 ## 🇬🇧 English Documentation
 
-A high-performance web and progressive web application (PWA) casino gaming platform inspired by modern land-based cabinets (EGT / Novomatic / Aristocrat). The application features an authentic mechanical 3D slot cabinet, advanced mathematical probability models (RNG), dynamic progressive jackpots, and next-generation mini-games in a unified zero-dependency client architecture.
-
-### 🎰 Key Features
-
-- **MaxBet Visual Identity:**
-  - Official brand palette: deep emerald green (`#06402d`), champagne gold (`#c7b783`), crimson red (`#ed1c24`), and mint teal (`#3ba8aa`).
-  - Vector-rendered crown and laurel wreath emblem as the top-tier jackpot symbol, embossed SPIN button face, and 3D bullion coins.
-- **Multigame Terminal Architecture:**
-  - **Classic 1-Line Slot:** Mechanical single-line slot with physical arm/cylinder rotation, sound synthesis, and Hold & Win bonus triggered on 3 coins.
-  - **Royal 3x3 Multi-Line:** 5 fixed paylines, expanded paytable, dynamic glowing win-line renderers.
-  - **MaxBet Mines X:** Next-gen crash/mines game with configurable grid size (3x3 to 9x9), adjustable mine count (1 to 24), real-time multiplier curve, and instant cashout.
-  - **Mini-Mines Slot Bonus:** In-game bonus round activated by collecting 3+ coin symbols across slot reels, rewarding cumulative safe-gem picks while avoiding hidden mines.
-  - **Xtension Link:** Extended slot variant featuring Link Spheres and multi-tier credit accumulation.
-- **Multi-Tier Mystery Jackpots:**
-  - Three progressive tiers: **Silver**, **Gold**, and **Diamond**.
-  - Dynamic mathematical increment per spin with threshold-based trigger probabilities correlated to active stake size.
-- **Double-Up Gamble Feature:**
-  - Red / Black card prediction mechanic featuring animated card shuffles, history ledger, and multi-step doubling ceilings.
-- **Zero-Asset Web Audio FX Synthesis:**
-  - The complete soundscape is synthesized purely via the client-side Web Audio API (custom oscillators, biquad filters, ADSR envelopes, and frequency modulation). No heavy MP3/WAV files to load—all mechanical clicks, reel whooshes, win chimes, coin cascades, and explosion rumbles are synthesized in real-time.
-- **Progressive Web Application (PWA):**
-  - Installable across iOS, Android, and Desktop platforms.
-  - Resilient offline caching via Service Worker (`CacheFirst` asset strategy).
-  - Native display support: Edge-to-edge layout, Fullscreen API, and Safe Area notch handling.
+A high-performance web and Progressive Web Application (PWA) casino gaming platform inspired by modern land-based slot cabinets (IGT / EGT / Novomatic). The application features an authentic mechanical 3D slot cylinder, customizable mathematical volatility models (RNG), dynamic mystery progressive jackpots, multi-tiered interactive bonus games, ante bet options, direct bonus buys, and high-speed competitive tournaments within a zero-dependency ES6 architecture.
 
 ---
 
-### ⚙️ Architecture & Directory Structure
+### 🎰 1. Multigame Terminal Portfolio
 
-The project is structured according to clean, modular ES6 architecture without third-party frameworks, maintaining 60–120 FPS render loops across mobile and desktop browsers:
+The cabinet includes a VIP Casino multigame selection lobby accessible on startup or at any time via the bottom navigation bar:
+
+1. **1-Line Classic Retro Stepper:**
+   - Single center payline homage to vintage mechanical Las Vegas slot machines.
+   - 3D stepped endcaps, gold drum casing, physical pull lever with spring-damped physics.
+   - Near-miss tension deceleration on Reel 3 when two high-value symbols align on Reels 1 and 2.
+2. **Royal 3x3 Multi-Line Slot:**
+   - 3-reel, 3-row layout with 5 fixed paylines (3 horizontal, 2 diagonal).
+   - Dynamic SVG payline renderers with electric golden neon pulse on winning combinations.
+   - Multi-line hit evaluation supporting simultaneous multi-line line wins.
+3. **Full Focus 3x3 Mode:**
+   - High-immersion, edge-to-edge reel drum view removing the side lever for maximized mobile viewport scale.
+4. **IGT Mines X (Standalone Arcade Crash Game):**
+   - Arcade crash title with customizable grid sizes (**3x3, 5x5, 7x7, 8x8**).
+   - Configurable mine density (1 to 24 mines) with mathematically calculated exponential multiplier ladders.
+   - Safe tile picks, real-time potential win calculation, and one-click instant cashout.
+
+---
+
+### ⚡ 2. Core Game Mechanics & Advanced Features
+
+#### 👑 Golden Bet / Ante Bet (+25% Stake)
+- **Cabinet Switch:** A dedicated Golden Bet switch located beside the bet controls.
+- **Cost:** Adds **+25% to the current spin bet** (e.g., 20 credits base bet becomes 25 credits spin cost).
+- **Player Advantage:**
+  - **2x Accelerated Bonus Meter Charging:** Turnover contribution towards unlocking Točak Sreće, Mini-Mines, and Card Gamble accumulates at double speed.
+  - **1.6x Boosted Scatter/Bonus Symbol Weights:** Higher probability of landing bonus symbols (`coin`, `diamond`, `wheel`).
+
+#### ⚡ Buy Bonus Feature ("Kupi Bonus")
+- Direct bonus purchases without waiting for meter fills or random reel drops:
+  - **🎡 Točak Sreće (Wheel of Fortune):** Purchased for **45x Bet**. Instantly launches the Wheel of Fortune bonus modal with cash prizes, Super Free Spins, and jackpot eligibility.
+  - **💣 IGT Mini-Mines Bonus:** Purchased for **35x Bet**. Launches the interactive minefield bonus where players uncover gems with escalating multipliers before cashing out.
+  - **⚡ Super Free Spins:** Purchased for **50x Bet**. Awards **10 Free Spins with a persistent 2x Win Multiplier** on all paylines.
+- Real-time cost updates dynamically based on current bet size and active currency denomination.
+
+#### 🏆 120-Second Tournament Mode (Turnirski Režim)
+- **High-Speed Competitive Challenge:** 2-minute timed sprint where players compete for the top of the leaderboard.
+- **Isolated Bankroll:** Players are provisioned with **5,000 tournament credits**.
+- **Real Balance Protection:** The player's actual fiat/credit balance is preserved and restored 100% intact upon tournament conclusion.
+- **Live On-Screen HUD:** Floating banner displaying remaining time (`MM:SS`), live score, and projected rank.
+- **Persistent Local Leaderboard:** Stores high scores across sessions in `localStorage`.
+
+#### 🃏 Interactive Card Gamble (Double-Up / Duplanje)
+- Classic Red vs. Black 50/50 double-or-nothing game.
+- **Strict Casino Loss Penalty:** If the player guesses incorrectly, **all accumulated winnings from the spin and preceding gamble rounds are forfeited (0 RSD)**.
+- Card history tracker showing recent card outcomes.
+
+#### 💣 Interactive Mini-Mines Bonus Round
+- Triggered by turnover accumulation or direct buy.
+- **Explosion Penalty:** If a player detonates a hidden mine during picks, the round abruptly ends and **all uncovered bonus profits are lost**. Players must decide when to cash out.
+
+#### 🎡 Wheel of Fortune (Točak Sreće)
+- Luxury golden bezel wheel with authentic tick-peg pointer animation.
+- Segments include direct credit multipliers (5x to 100x), Super Free Spins, and Grand Jackpots.
+
+---
+
+### 📊 3. Mathematical Model & Volatility Engine
+
+The platform incorporates four switchable math presets configurable live via the Volatility modal:
+
+| Volatility Profile | Estimated RTP | Hit Frequency | Payout Characteristics & Rules |
+| :--- | :---: | :---: | :--- |
+| **Casino Standard** | ~96.0% | ~25.0% (1 in 4) | Balanced industry slot model. 2-symbol payouts allowed only for coins; all other symbols require full 3-symbol lines. |
+| **Low Volatility** | ~97.0% | ~40.0% (1 in 2.5) | Frequent small hits for extended session longevity. 2-symbol payouts active for coins, bells, and sevens. Faster bonus unlocks (350–700 RSD turnover). |
+| **High Volatility** | ~94.5% | ~16.5% (1 in 6) | High adrenal risk. Strict requirement of 3 matching symbols on active paylines (no 2-symbol pays). Winning 3-matches award **+50% boosted payouts (1.5x Multiplier)**. |
+| **Demo Presentation** | 100% | 100.0% (Every spin) | Designed for sales demonstrations and client showcases. Guaranteed win on every spin, rapid meter charging, instant bonus access. |
+
+#### 💰 Mystery Progressive Jackpots (Must-Drop-By Pragovi)
+- **Silver Tier:** Seeds at 50.00 RSD | Activates at 80.00 RSD | **Must Drop by 100.00 RSD**
+- **Gold Tier:** Seeds at 200.00 RSD | Activates at 250.00 RSD | **Must Drop by 400.00 RSD**
+- **Diamond Tier:** Seeds at 500.00 RSD | Activates at 600.00 RSD | **Must Drop by 900.00 RSD**
+- Progressive pots accumulate on every spin (`incrementOnSpin`). When a pot reaches its hidden threshold, a mystery drop is awarded.
+
+#### 🎚️ Dynamic Denomination Engine
+- Flexible denomination selector: **0.2 RSD, 0.5 RSD, 1 RSD, 2 RSD, 4 RSD** per credit.
+- Dual HUD display presenting both game Credits and real currency (RSD) equivalents.
+
+---
+
+### 🔊 4. Web Audio API Procedural Sound Engine
+
+All sound effects are generated purely in real-time through the browser's Web Audio API with zero external audio asset downloads:
+- **Mechanical Reel Stops:** Dual-layer acoustic synthesis simulating physical solenoid punch (low-frequency triangle drop, 130Hz -> 32Hz) combined with metallic ratchet pawl latch (sawtooth, 1450Hz -> 260Hz) and damped rebound oscillation.
+- **Las Vegas Casino Floor Ambience:** Procedural pink noise filtered through bandpass room resonance (420Hz, Q 1.2) layered with periodic distant bell chimes simulating a lively casino floor.
+- **Win Chimes & Cascades:** Harmonically tuned arpeggios, coin drops, and victory fanfares.
+
+---
+
+### 📁 5. Directory Structure
 
 ```
-maxbet/
-│
+igt/
 ├── assets/
-│   ├── icons/            # PWA manifest icons, maskables, and favicons
-│   ├── symbols/          # Scalable vector assets (coin, crown, bell, seven, bar, diamond, bomb)
-│   ├── logo.svg          # Official horizontal MaxBet vector logo
-│   └── logo-badge.svg    # Official stacked badge vector logo
-│
+│   ├── icons/            # PWA icons (192x192, 512x512, maskable, favicon)
+│   ├── symbols/          # SVG symbols (IGT Flower, Bell, Bar, Seven, Crown, Coin, Diamond, Bomb)
+│   ├── logo.svg          # Official IGT horizontal logo
+│   └── logo-badge.svg    # IGT VIP Casino badge logo
 ├── css/
-│   └── style.css         # EGT cabinet framing, 3D cylinder transforms, responsive viewports
-│
+│   └── style.css         # 3D cylinder replica styles, responsive scaler, HUDs, modals
 ├── js/
 │   ├── core/
-│   │   ├── wallet.js        # Credit management, bet sizing, ledger persistence
-│   │   ├── math-manager.js  # Mathematical RNG engines, symbol weights, and RTP profiles
-│   │   ├── jackpots.js      # Silver / Gold / Diamond progressive jackpot pool controller
-│   │   ├── gamble.js        # Red/Black risk engine with history tracking
-│   │   ├── meters.js        # Real-time win ticker and credit counter animations
-│   │   ├── admin.js         # Diagnostic engineering console for payout testing
-│   │   └── lobby.js         # Cabinet state router and multi-game lifecycle manager
-│   │
+│   │   ├── admin.js           # Operator panel for jackpot/RTP adjustments
+│   │   ├── bonus-features.js  # Free Spins manager, celebration FX, Buy Bonus engine
+│   │   ├── gamble.js          # Red/Black card gamble game engine
+│   │   ├── jackpots.js        # Progressive & mystery jackpot logic
+│   │   ├── lobby.js           # Multi-game terminal switcher & carousel
+│   │   ├── math-manager.js    # Volatility presets & payout configuration
+│   │   ├── meters.js          # Dual turnover-based bonus meters
+│   │   ├── player-tracker.js  # 18+ player session & statistics persistence
+│   │   ├── tournament.js      # 120s tournament engine, leaderboard & HUD
+│   │   ├── wallet.js          # RSD / Credit wallet, Golden Bet toggle, denomination
+│   │   └── wheel.js           # Wheel of Fortune bonus engine
 │   ├── games/
-│   │   ├── classic/         # 1-Line classic slot controller and symbol definitions
-│   │   ├── royal3x3/        # 3x3 multi-line slot controller (5 lines)
-│   │   ├── mines/           # Standalone Mines X engine and Mini-Mines bonus controller
-│   │   ├── hold-win/        # Respin lock & hold engine with sticky coins
-│   │   └── xtension/        # Xtension Link feature engine
-│   │
-│   ├── app.js               # Terminal runtime orchestrator and bootloader
-│   ├── audio.js             # Real-time Web Audio API sound synthesizer
-│   ├── i18n.js              # Internationalization subsystem (English / Serbian)
-│   └── particles.js         # Canvas 2D/3D physics engine for floating ambient coins and win bursts
-│
-├── index.html               # Main casino terminal DOM view
-├── manifest.webmanifest     # PWA deployment manifest
-└── sw.js                    # Service Worker offline cache controller
+│   │   ├── classic/           # 1-Line Classic retro stepper game
+│   │   ├── royal3x3/          # Royal 3x3 multi-line game & SVG paylines
+│   │   └── mines/             # Standalone Mines X & in-slot Mini-Mines bonus
+│   ├── app.js                 # Central orchestrator & lifecycle controller
+│   ├── audio.js               # Web Audio API synthesizer & Vegas ambient engine
+│   ├── i18n.js                # Bilingual localization (English / Serbian)
+│   └── particles.js           # Canvas particle celebration burst FX
+├── index.html                 # Main single-page application entrypoint
+├── manifest.webmanifest       # PWA configuration manifest
+├── sw.js                      # Service Worker for offline play & asset caching
+└── README.md                  # Comprehensive platform documentation
 ```
 
 ---
 
-### 🧮 Mathematical Engine & Probability Specification
+### 🚀 6. Installation & How to Run
 
-Implemented in [`js/core/math-manager.js`](js/core/math-manager.js), the platform leverages rigorous probability distributions:
-
-1. **Reel Strip Weighting (Weighted Random Sampling):**
-   - Each reel uses independent weighted random index selection.
-   - Low-tier symbols (Cherries, Lemons) carry higher weight values, while top-tier symbols (MaxBet Crown, Diamonds) carry constrained weights that maintain game volatility according to certified casino standards.
-2. **Configurable RTP Profiles:**
-   - **Standard Profile:** ~96.20% Return-to-Player (Default production configuration).
-   - **Promo / Loose Profile:** ~98.00% Return-to-Player (Promotional and VIP terminals).
-   - **Tight Profile:** ~94.00% Return-to-Player (Conservative land-based emulation).
-3. **Mines Crash Curve Formulation:**
-   - The cumulative probability of uncovering $k$ consecutive safe gems without hitting a mine is modeled by the hypergeometric distribution without replacement:
-     $$P(\text{success up to step } k) = \prod_{i=0}^{k-1} \frac{N_{\text{safe}} - i}{N_{\text{total}} - i}$$
-   - Multipliers at step $k$ are derived by factoring in a 3.5% house edge ($RTP = 96.5\%$):
-     $$\text{Multiplier}_k = \frac{1 - \text{HouseEdge}}{P(\text{success up to step } k)}$$
-
----
-
-### 🚀 Getting Started
-
-The platform runs purely on client-side standards (HTML5 / ES6 / Web Audio / Canvas) and does not require complex build tools or Node.js runtime servers for production deployment.
-
-#### Local Development:
-
-Run any static HTTP server from the root directory:
-
-```bash
-# Option 1: Python 3
-python -m http.server 8080
-
-# Option 2: Node.js npx serve
-npx serve .
-
-# Option 3: VS Code Live Server extension
-# Click "Go Live" on index.html
-```
-
-Access the game via browser: `http://localhost:8080`.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/bojankenobi/igtdemo.git
+   cd igtdemo
+   ```
+2. **Start a local HTTP server:**
+   Using Python:
+   ```bash
+   python -m http.server 8000
+   ```
+   Or using Node.js:
+   ```bash
+   npx serve .
+   ```
+3. **Launch in your browser:**
+   Open `http://localhost:8000` in Google Chrome, Microsoft Edge, Safari, or mobile browser.
+4. **PWA Installation:**
+   Click the **"INSTALIRAJ APP"** button in the footer or browser address bar to install as a standalone native app on iOS, Android, or Windows.
 
 ---
-
-<br />
-
 ---
 
 <a name="srpska-dokumentacija"></a>
 ## 🇷🇸 Srpska Dokumentacija
 
-Veb i PWA kazino terminal inspirisan modernim aparatima (EGT / Novomatic / Aristocrat). Aplikacija kombinuje 3D slot kabinet, matematičke modele verovatnoće (RNG), progresivne džekpotove i interaktivne mini-igre u jedinstvenom klijentskom rešenju visokih performansi.
-
-### 🎰 Karakteristike
-
-- **MaxBet Vizuelni Identitet:**
-  - Zvanične klupske boje: smaragdno-zelena (`#06402d`), šampanj-zlatna (`#c7b783`), crvena (`#ed1c24`) i mint tirkizna (`#3ba8aa`).
-  - Vektorski krunski amblem sa lovorovim vencem kao najvredniji džekpot simbol, reljef na SPIN dugmetu i 3D lebdeći novčići.
-- **Multigame Terminal:**
-  - **Classic 1-Line Slot:** Tradicionalni slot sa jednom linijom, mehaničkim polugama i Hold & Win bonusom na 3 novčića.
-  - **Royal 3x3:** 5 fiksnih isplatnih linija, proširena paytable tabela i dinamičke linije dobitaka.
-  - **MaxBet Mines X:** Crash/Mines igra sa podesivom rešetkom (3x3 do 9x9), brojem mina (1 do 24), krivom množioca i opcijom za trenutnu isplatu (Cashout).
-  - **Mini-Mines Slot Bonus:** Bonus runda unutar slota (aktivira se na 3+ zlatnika) u kojoj igrač otkriva sigurna polja i izbegava mine.
-  - **Xtension Link:** Prošireni slot mod sa specijalnim "Link Sfera" mehanizmom.
-- **Progresivni Džekpotovi:**
-  - Tri nivoa: **Silver**, **Gold** i **Diamond** sa matematičkom akumulacijom pri svakom spinu.
-- **Gamble (Duplanje):**
-  - Pogađanje crveno/crno sa animiranim mešanjem, istorijom karata i limitom koraka.
-- **Web Audio FX Sinteza Zvuka:**
-  - Kompletan zvuk generiše se u realnom vremenu preko Web Audio API-ja (oscilatori, filteri). Nema eksternih audio fajlova.
-- **PWA i Optimizacija:**
-  - Podrška za instalaciju na telefone i desktop, rad u punom ekranu i offline keširanje preko Service Worker-a.
+Visokoperformantna web i PWA (Progressive Web Application) slot platforma inspirisana modernim kazino aparatima vodećih svetskih proizvođača (IGT / EGT / Novomatic). Aplikacija kombinuje verni mehanički 3D cilindar automata, prilagodljivu matematičku volatilnost, progresivne Mystery džekpote, interaktivne bonus igre, opciju povećanog uloga (Golden Bet), direktnu kupovinu bonusa (Buy Bonus) i brzi turnirski režim unutar modularne ES6 klijentske arhitekture bez eksternih biblioteka.
 
 ---
 
-### ⚙️ Struktura Projekta
+### 🎰 1. Multigame Portfolio Igara
 
-Modularni JavaScript sistem bez teških biblioteka obezbeđuje 60–120 FPS:
+Aparat poseduje VIP Casino lobi za izbor igara, dostupan pri startu ili u bilo kom trenutku preko donjeg menija:
 
-```
-maxbet/
-│
-├── assets/
-│   ├── icons/            # PWA ikone i favicon
-│   ├── symbols/          # Vektorski SVG simboli (novčić, kruna, zvono, sedmica, bar, dijamant, mina)
-│   ├── logo.svg          # Zvanični MaxBet horizontalni logo
-│   └── logo-badge.svg    # Zvanični MaxBet vertikalni logo
-│
-├── css/
-│   └── style.css         # EGT kabinet, 3D cilindri, responzivni lejaut
-│
-├── js/
-│   ├── core/
-│   │   ├── wallet.js        # Balans, ulog i evidencija kredita
-│   │   ├── math-manager.js  # Matematički modeli, težine simbola i RTP
-│   │   ├── jackpots.js      # Kontroler Silver / Gold / Diamond džekpotova
-│   │   ├── gamble.js        # Mehanika crveno/crno duplanja
-│   │   ├── meters.js        # Ticker animacija dobitaka
-│   │   ├── admin.js         # Servisni dijagnostički meni
-│   │   └── lobby.js         # Tranzicija između igara u kabinetu
-│   │
-│   ├── games/
-│   │   ├── classic/         # Logika 1-Line Classic slota
-│   │   ├── royal3x3/        # Logika Royal 3x3 slota
-│   │   ├── mines/           # Mines X igra i Mini-Mines bonus
-│   │   ├── hold-win/        # Hold & Win respin mehanizam
-│   │   └── xtension/        # Xtension Link mod
-│   │
-│   ├── app.js               # Glavna orkestracija terminala
-│   ├── audio.js             # Web Audio API sintisajzer
-│   ├── i18n.js              # Lokalizacija (Srpski / Engleski)
-│   └── particles.js         # Canvas partikli i 3D novčići sa MaxBet reljefom
-│
-├── index.html               # Glavni interfejs terminala
-├── manifest.webmanifest     # PWA manifest
-└── sw.js                    # Service Worker keširanje
-```
+1. **1-Line Classic (Retro Mehanički Slot):**
+   - Jedna centralna dobitna linija inspirisana klasičnim Las Vegas mehaničkim aparatima.
+   - Stepenaste zlatne kape cilindra, masivni bubanj i funkcionalna ručica sa opružnom fizikom povlačenja.
+   - Efekat napetosti (Near-Miss) sa dramatičnim usporavanjem 3. rila kada prva dva rila prikažu jake simbole.
+2. **Royal 3x3 Multi-Line Slot:**
+   - 3 rila x 3 reda sa 5 fiksnih dobitnih linija (3 horizontalne i 2 dijagonalne).
+   - Dinamički SVG iscrtavači dobitnih linija sa neonsko-zlatnim pulsiranjem preko dobitnih simbola.
+   - Mogućnost ostvarivanja dobitaka na više linija istovremeno u jednom spinu.
+3. **Full Focus 3x3 Režim:**
+   - Maksimalno uvećan prikaz rila od ivice do ivice ekrana (bez ručice) za optimalno iskustvo na mobilnim uređajima.
+4. **IGT Mines X (Zasebna Crash Arkada):**
+   - Samostalna arkadna igra sa prilagodljivom mrežom (**3x3, 5x5, 7x7, 8x8**).
+   - Podesiv broj mina (od 1 do 24) sa matematički izračunatom krivom multiplikatora.
+   - Otkrivanje sigurnih polja, praćenje potencijalnog dobitka i instant isplata (Cashout).
 
 ---
 
-### 🧮 Matematika i Verovatnoća
+### ⚡ 2. Glavne Mehanike i Napredne Funkcije
 
-Definisano u [`js/core/math-manager.js`](js/core/math-manager.js):
-- **Težine simbola:** Svaki točak koristi ponderisani nasumični izbor (Weighted Random) gde simboli niže vrednosti imaju veću frekvenciju, dok kruna i dijamant balansiraju volatilnost.
-- **RTP profili:** Standardni (96.2%), Promotivni (98.0%) i Konzervativni (94.0%).
-- **Mines kriva:** Verovatnoća otkrivanja $k$ dijamanata računa se hipergeometrijskom raspodelom, uz podešen House Edge od 3.5%.
+#### 👑 Golden Bet / Ante Bet (+25% Ulog)
+- **Prekidač na automatu:** Dugme smešteno u komandnom bloku pored izbora uloga.
+- **Cena:** Dodaje **+25% na trenutni ulog po spinu** (npr. ulog od 20 kredita košta 25 kredita).
+- **Prednosti za igrača:**
+  - **2x Brže Punjenje Metara za Bonus:** Sav obrt (turnover) za otključavanje Točka Sreće, Mina i Karata računa se duplo brže.
+  - **1.6x Veća Šansa za Bonus Simbole:** Povećana verovatnoća padanja scatter simbola (`coin`, `diamond`, `wheel`) na rilovima.
+
+#### ⚡ Kupi Bonus ("Buy Bonus")
+- Direktan ulazak u željeni bonus bez čekanja na punjenje metara ili slučajan pad:
+  - **🎡 Točak Sreće:** Kupovina za **45x Ulog**. Odmah otvara Točak Sreće sa novčanim dobicima, Super Free Spinovima i šansom za Diamond Džekpot.
+  - **💣 IGT Mini-Mines:** Kupovina za **35x Ulog**. Pokreće interaktivno minsko polje sa sakupljanjem dragulja i rastućim multiplikatorima pre naplate.
+  - **⚡ Super Besplatni Spinovi:** Kupovina za **50x Ulog**. Dodeljuje **10 Besplatnih Spinova sa stalnim 2x Multiplikatorom** na sve dobitne linije.
+- Cene se automatski računaju u realnom vremenu na osnovu uloga i izabrane denominacije.
+
+#### 🏆 Turnirski Režim (120 Sekundi Izazov)
+- **Brzinsko takmičenje:** Vremenski izazov od 2 minuta u kome igrač sakuplja poene za plasman na tabelu šampiona.
+- **Turnirski krediti:** Igrač dobija poseban bankroll od **5.000 turnirskih kredita**.
+- **Potpuna zaštita stvarnog salda:** Stvarni novac/krediti igrača se bezbedno čuvaju i vraćaju u celosti (100%) po završetku turnira.
+- **HUD Traka na Ekranu:** Prikazuje preostalo vreme (`MM:SS`), trenutne poene i projektovani rang.
+- **Lokalna Rang Lista:** Pamti najbolje rezultate u `localStorage` memoriji.
+
+#### 🃏 Kockanje Kartama (Duplanje / Gamble)
+- Izbor Crvena ili Crna karta sa verovatnoćom 50/50.
+- **Stroga Kazna za Promašaj:** Ukoliko igrač promaši boju, **gubi sav dobitak iz tog spina i svih prethodnih duplanja (0 RSD)**.
+- Istorijat prethodno izvučenih karata.
+
+#### 💣 Mini-Mines Bonus u Slotu
+- Aktivira se obrtom u igri ili direktnom kupovinom.
+- **Kazna za Eksploziju:** Ako igrač nagazi na skrivenu minu, runda se prekida i **sav sakupljeni bonus dobitak se gubi**. Igrač sam odlučuje kada je trenutak za isplatu (Cashout).
+
+#### 🎡 Točak Sreće (Wheel of Fortune)
+- Luksuzni točak sa animiranim klinovima i pokazivačem.
+- Sadrži polja sa multiplikatorima uloga (od 5x do 100x), Super Besplatne Spinove i Grand Jackpote.
 
 ---
 
-### 🚀 Pokretanje
+### 📊 3. Matematički Model i Volatilnost
 
-Nije potreban proces bildovanja. Pokrenite bilo koji lokalni HTTP server:
+Aparat poseduje 4 profila volatilnosti koja se mogu menjati u realnom vremenu putem menija:
 
-```bash
-# Python 3
-python -m http.server 8080
+| Profil Volatilnosti | Procenjeni RTP | Učestalost Dobitaka | Pravila Isplate i Karakteristike |
+| :--- | :---: | :---: | :--- |
+| **Casino Standard** | ~96.0% | ~25.0% (1 od 4) | Standardna kazino industrijska matematika. Isplata za 2 simbola važi isključivo za zlatnike; ostali simboli traže punu liniju od 3 simbola. |
+| **Niska Volatilnost** | ~97.0% | ~40.0% (1 od 2.5) | Češći manji dobici za opuštenu sesiju. 2 simbola plaćaju za zlatnike, zvona i sedmice. Brže otključavanje bonusa (350–700 RSD obrt). |
+| **Visoka Volatilnost** | ~94.5% | ~16.5% (1 od 6) | Visok rizik i veći dobici. Nema isplate za 2 simbola (isključivo puna linija od 3 simbola). Svaki dobitak od 3 simbola isplaćuje **+50% veći iznos (1.5x Multiplier)**! |
+| **Demo Prezentacija** | 100% | 100.0% (Svaki spin) | Promo režim za demonstraciju automata klijentima. Garantovan dobitak na svakom spinu, munjevito punjenje bonusa. |
 
-# ili Node npx serve
-npx serve .
-```
+#### 💰 Mystery Progressive Jackpoti (Skriveni Pragovi)
+- **Silver:** Početna vrednost 50.00 RSD | Aktivan od 80.00 RSD | **Mora pasti do 100.00 RSD**
+- **Gold:** Početna vrednost 200.00 RSD | Aktivan od 250.00 RSD | **Mora pasti do 400.00 RSD**
+- **Diamond:** Početna vrednost 500.00 RSD | Aktivan od 600.00 RSD | **Mora pasti do 900.00 RSD**
+- Fondovi rastu pri svakom spinu. Kada fond pređe skriveni prag, džekpot automatski pada i isplaćuje se igraču.
 
-Otvorite u pretraživaču: `http://localhost:8080`.
+#### 🎚️ Denominacija Kredita
+- Brzi izbor vrednosti jednog kredita: **0.2 RSD, 0.5 RSD, 1 RSD, 2 RSD, 4 RSD**.
+- Dvostruki prikaz na ekranu: Broj kredita i stvarna dinarska protivvrednost.
 
 ---
 
-## 🛡️ License
+### 🔊 4. Web Audio API Zvučni Sistem
 
-All rights reserved. Proprietary software for MaxBet gaming platforms.
+Celokupan zvuk se generiše sintetički u realnom vremenu bez eksternih audio fajlova:
+- **Mehanički Zvuk Zaustavljanja Rilova:** Kombinacija niskofrekventnog udarca solenoida (130Hz -> 32Hz), metalnog škljocaja zubaca (1450Hz -> 260Hz) i opružnog odskoka.
+- **Las Vegas Kazino Ambijent:** Sintetizovani žamor kazino sale sa propusnim filterom na 420Hz u kombinaciji sa povremenim dalekim zvoncima slot aparata.
+- **Dobitni Fanfari:** Melodični arpeđa, zveckanje kovanica i muzika za velike dobitke.
+
+---
+
+### 🚀 5. Pokretanje Aplikacije
+
+1. **Klonirajte repozitorijum:**
+   ```bash
+   git clone https://github.com/bojankenobi/igtdemo.git
+   cd igtdemo
+   ```
+2. **Pokrenite lokalni server:**
+   Putem Python-a:
+   ```bash
+   python -m http.server 8000
+   ```
+   Ili putem Node.js:
+   ```bash
+   npx serve .
+   ```
+3. **Otvorite u pretraživaču:**
+   Posetite `http://localhost:8000`.
+4. **Instalacija PWA:**
+   Kliknite na dugme **"INSTALIRAJ APP"** u dnu ekrana kako biste instalirali igru kao desktop ili mobilnu aplikaciju.

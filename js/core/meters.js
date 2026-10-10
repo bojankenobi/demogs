@@ -46,23 +46,29 @@ class BonusMeters {
    * Bet 100: ~4 spins to fill (25% per spin)
    */
   chargeOnSpin(bet) {
-    const betVal = Math.max(5, bet || 20);
+    const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
+    const anteMultiplier = (this.wallet && this.wallet.isGoldenBet) ? 2.0 : 1.0;
+    const betRsd = Math.max(1, (bet || 20) * denom * anteMultiplier);
+
+    const mathMgr = window.slotApp?.mathManager || window.slotMathManager;
+    const profile = mathMgr ? mathMgr.getActiveProfile() : null;
+    const req = profile?.meterTurnoverRequired || { cards: 450, mines: 600, wheel: 850 };
 
     // Charge cards meter if not currently active
     if (!this.cardsActive) {
-      const cardsIncrement = Math.max(2.5, +(betVal * 0.25).toFixed(1));
+      const cardsIncrement = Math.max(0.5, +((betRsd / req.cards) * 100).toFixed(1));
       this.cardsProgress = Math.min(100, +(this.cardsProgress + cardsIncrement).toFixed(1));
       if (this.cardsProgress >= 100) {
-        this.activateCardsBonus(betVal);
+        this.activateCardsBonus(bet);
       }
     }
 
     // Charge mines meter if not currently active
     if (!this.minesActive) {
-      const minesIncrement = Math.max(2.2, +(betVal * 0.22).toFixed(1));
+      const minesIncrement = Math.max(0.5, +((betRsd / req.mines) * 100).toFixed(1));
       this.minesProgress = Math.min(100, +(this.minesProgress + minesIncrement).toFixed(1));
       if (this.minesProgress >= 100) {
-        this.activateMinesBonus(betVal);
+        this.activateMinesBonus(bet);
       }
     }
 
@@ -122,7 +128,7 @@ class BonusMeters {
     }
     if (window.slotApp) {
       window.slotApp.showMessage(
-        window.i18n ? window.i18n.t('minesBonusActivated', { sec: this.minesTimeLeft }) : `❇️ MAXBET MINES OTKLJUČAN! (${this.minesTimeLeft}s)`,
+        window.i18n ? window.i18n.t('minesBonusActivated', { sec: this.minesTimeLeft }) : `❇️ IGT MINES OTKLJUČAN! (${this.minesTimeLeft}s)`,
         'jackpot'
       );
     }
@@ -221,7 +227,7 @@ class BonusMeters {
       }
     }
 
-    // 5. Update Lobby MaxBet Mines card visual indicator
+    // 5. Update Lobby IGT Mines card visual indicator
     const lobbyMinesCard = document.getElementById('egt-opt-mines');
     if (lobbyMinesCard) {
       lobbyMinesCard.classList.remove('mines-locked');

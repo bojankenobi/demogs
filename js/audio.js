@@ -115,42 +115,58 @@ class SlotAudio {
     }
   }
 
-  // Reel Stop thud
+  // Authentic Mechanical Solenoid & Ratchet Pawl Reel Stop
   playReelStop(index = 0) {
     if (this.isMuted) return;
     this.ensureAudio();
     if (!this.ctx) return;
 
     const now = this.ctx.currentTime;
+    this.playMechanicalReelStop(index);
     
-    // Low frequency punch
+    // 1. Heavy rubber bumper & drum mass impact (low-frequency punch)
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(120 + index * 30, now);
-    osc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(130 + index * 25, now);
+    osc.frequency.exponentialRampToValueAtTime(32, now + 0.14);
 
-    gain.gain.setValueAtTime(0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+    gain.gain.setValueAtTime(0.48, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
     osc.start(now);
-    osc.stop(now + 0.12);
+    osc.stop(now + 0.14);
 
-    // High metal snap
+    // 2. Crisp mechanical ratchet pawl snap (metal gear notch lock)
     const click = this.ctx.createOscillator();
     const clickGain = this.ctx.createGain();
-    click.type = 'triangle';
-    click.frequency.setValueAtTime(1200, now);
-    click.frequency.exponentialRampToValueAtTime(200, now + 0.03);
-    clickGain.gain.setValueAtTime(0.15, now);
-    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+    click.type = 'sawtooth';
+    click.frequency.setValueAtTime(1450 + index * 100, now);
+    click.frequency.exponentialRampToValueAtTime(260, now + 0.035);
+    clickGain.gain.setValueAtTime(0.18, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
 
     click.connect(clickGain);
     clickGain.connect(this.ctx.destination);
     click.start(now);
-    click.stop(now + 0.03);
+    click.stop(now + 0.035);
+
+    // 3. Subtle secondary rebound click (~50ms later when spring arm settles)
+    const reboundTime = now + 0.052;
+    const microClick = this.ctx.createOscillator();
+    const microGain = this.ctx.createGain();
+    microClick.type = 'triangle';
+    microClick.frequency.setValueAtTime(820 + index * 40, reboundTime);
+    microClick.frequency.exponentialRampToValueAtTime(290, reboundTime + 0.025);
+    microGain.gain.setValueAtTime(0.08, reboundTime);
+    microGain.gain.exponentialRampToValueAtTime(0.001, reboundTime + 0.025);
+
+    microClick.connect(microGain);
+    microGain.connect(this.ctx.destination);
+    microClick.start(reboundTime);
+    microClick.stop(reboundTime + 0.025);
   }
 
   // Win chime
@@ -521,6 +537,317 @@ class SlotAudio {
         osc.stop(t + 0.3);
       }, idx * 60);
     });
+  }
+
+  // --- IGT WHEEL OF FORTUNE & BIG WIN AUDIO SYNTHESIS ---
+
+  // Wheel Pointer / Peg Tick
+  playWheelTick(pitch = 1.0) {
+    if (this.isMuted) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(1750 * pitch, now);
+    osc.frequency.exponentialRampToValueAtTime(420 * pitch, now + 0.022);
+
+    gain.gain.setValueAtTime(0.22, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.022);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.022);
+  }
+
+  // Wheel Win Grand Fanfare
+  playWheelWin() {
+    if (this.isMuted) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51, 1760];
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        if (!this.ctx || this.isMuted) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.55);
+      }, idx * 75);
+    });
+  }
+
+  // Bonus Notification Chime
+  playBonusNotification() {
+    if (this.isMuted) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    const chords = [587.33, 739.99, 880, 1174.66];
+    chords.forEach((freq, idx) => {
+      setTimeout(() => {
+        if (!this.ctx || this.isMuted) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, t);
+        gain.gain.setValueAtTime(0.28, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.45);
+      }, idx * 70);
+    });
+  }
+
+  // Rapid Coin Roll-up Counter Sound (Loop)
+  startRollupSound() {
+    if (this.isMuted || this.rollupInterval) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    let counter = 0;
+    this.rollupInterval = setInterval(() => {
+      if (this.isMuted || !this.ctx) return;
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800 + (counter % 8) * 60, t);
+      gain.gain.setValueAtTime(0.12, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.03);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.03);
+      counter++;
+    }, 45);
+  }
+
+  stopRollupSound() {
+    if (this.rollupInterval) {
+      clearInterval(this.rollupInterval);
+      this.rollupInterval = null;
+    }
+  }
+
+  // Big Win / Mega Win / Epic Win Fanfare
+  playBigWinCheer(tier = 'big') {
+    if (this.isMuted) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    const baseChords = tier === 'epic' 
+      ? [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98, 2093] 
+      : (tier === 'mega' ? [440, 554.37, 659.25, 880, 1108.73, 1318.5] : [392, 493.88, 587.33, 783.99, 987.77]);
+
+    baseChords.forEach((f, i) => {
+      setTimeout(() => {
+        if (!this.ctx || this.isMuted) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(f, t);
+        gain.gain.setValueAtTime(0.35, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.6);
+      }, i * 65);
+    });
+  }
+
+  // Free Spins Mode Trigger
+  playFreeSpinsTrigger() {
+    if (this.isMuted) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    // Ascending electronic glissando
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(260, now);
+    osc.frequency.exponentialRampToValueAtTime(1400, now + 0.7);
+
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.7);
+
+    // Followed by celebratory chords
+    setTimeout(() => this.playWheelWin(), 600);
+  }
+
+  // Free Spins Multiplier Level-Up
+  playMultiplierUp(mult = 2) {
+    if (this.isMuted) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const baseFreq = 500 + Math.min(12, mult) * 80;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(baseFreq, now);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.25);
+
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.25);
+  }
+
+  // Heavy mechanical reel stop (solenoid thud + ratchet latch)
+  playMechanicalReelStop(reelIndex = 0) {
+    if (this.isMuted) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const pitchOffset = reelIndex * 15;
+
+    // 1. Solenoid low thud
+    const oscLow = this.ctx.createOscillator();
+    const gainLow = this.ctx.createGain();
+    oscLow.type = 'triangle';
+    oscLow.frequency.setValueAtTime(95 + pitchOffset, now);
+    oscLow.frequency.exponentialRampToValueAtTime(35, now + 0.08);
+
+    gainLow.gain.setValueAtTime(0.35, now);
+    gainLow.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+    oscLow.connect(gainLow);
+    gainLow.connect(this.ctx.destination);
+    oscLow.start(now);
+    oscLow.stop(now + 0.08);
+
+    // 2. High metallic click/latch
+    const oscHigh = this.ctx.createOscillator();
+    const gainHigh = this.ctx.createGain();
+    oscHigh.type = 'sine';
+    oscHigh.frequency.setValueAtTime(1400 - pitchOffset * 40, now);
+    oscHigh.frequency.exponentialRampToValueAtTime(600, now + 0.04);
+
+    gainHigh.gain.setValueAtTime(0.2, now);
+    gainHigh.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+    oscHigh.connect(gainHigh);
+    gainHigh.connect(this.ctx.destination);
+    oscHigh.start(now);
+    oscHigh.stop(now + 0.04);
+  }
+
+  // Las Vegas Casino Floor Ambient Sound Generator
+  startCasinoAmbient() {
+    if (this.isAmbientActive) return;
+    this.ensureAudio();
+    if (!this.ctx) return;
+
+    this.isAmbientActive = true;
+    try {
+      // 1. White-to-Pink noise buffer for gentle room murmur
+      const bufferSize = this.ctx.sampleRate * 2;
+      const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        output[i] = (b0 + b1 + b2) * 0.12;
+      }
+
+      this.ambientNoiseSource = this.ctx.createBufferSource();
+      this.ambientNoiseSource.buffer = noiseBuffer;
+      this.ambientNoiseSource.loop = true;
+
+      // Bandpass filter to simulate muffled casino hall acoustics
+      this.ambientFilter = this.ctx.createBiquadFilter();
+      this.ambientFilter.type = 'bandpass';
+      this.ambientFilter.frequency.value = 420;
+      this.ambientFilter.Q.value = 1.2;
+
+      this.ambientGain = this.ctx.createGain();
+      this.ambientGain.gain.setValueAtTime(0.045, this.ctx.currentTime); // subtle background level
+
+      this.ambientNoiseSource.connect(this.ambientFilter);
+      this.ambientFilter.connect(this.ambientGain);
+      this.ambientGain.connect(this.ctx.destination);
+
+      this.ambientNoiseSource.start(0);
+
+      // 2. Periodic faint casino bells / distant chimes
+      this.ambientChimeInterval = setInterval(() => {
+        if (!this.isAmbientActive || this.isMuted || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const chimeOsc = this.ctx.createOscillator();
+        const chimeGain = this.ctx.createGain();
+        chimeOsc.type = 'sine';
+        const freqs = [1046, 1174, 1318, 1567, 1760];
+        const f = freqs[Math.floor(Math.random() * freqs.length)];
+        chimeOsc.frequency.setValueAtTime(f, now);
+
+        chimeGain.gain.setValueAtTime(0.015, now);
+        chimeGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+
+        chimeOsc.connect(chimeGain);
+        chimeGain.connect(this.ctx.destination);
+        chimeOsc.start(now);
+        chimeOsc.stop(now + 0.8);
+      }, 3500);
+    } catch (e) {
+      console.warn('Could not start ambient casino sound:', e);
+    }
+  }
+
+  stopCasinoAmbient() {
+    this.isAmbientActive = false;
+    if (this.ambientChimeInterval) {
+      clearInterval(this.ambientChimeInterval);
+      this.ambientChimeInterval = null;
+    }
+    if (this.ambientNoiseSource) {
+      try {
+        this.ambientNoiseSource.stop();
+        this.ambientNoiseSource.disconnect();
+      } catch (e) {}
+      this.ambientNoiseSource = null;
+    }
+  }
+
+  toggleCasinoAmbient() {
+    if (this.isAmbientActive) {
+      this.stopCasinoAmbient();
+      return false;
+    } else {
+      this.startCasinoAmbient();
+      return true;
+    }
   }
 }
 

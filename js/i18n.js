@@ -1,17 +1,17 @@
 /**
- * MaxBet - Internationalization (i18n) Engine
+ * IGT - Internationalization (i18n) Engine
  * Primary language: Serbian (sr) | Secondary: English (en)
  */
 (function() {
   const TRANSLATIONS = {
     sr: {
-      brandSub: 'MAXBET KAZINO',
+      brandSub: 'IGT KAZINO',
       leverTitle: 'Povuci ručicu za spin!',
       gameClassic: '1-LINIJA CLASSIC',
       gameRoyal3x3: 'ROYAL 3x3 (5 LINIJA)',
       gameFullFocus: 'ROYAL 3x3 FULL FOCUS',
-      gameMines: 'MAXBET MINES X',
-      gameXtension: 'MAXBET XTENSION LINK',
+      gameMines: 'IGT MINES X',
+      gameXtension: 'IGT XTENSION LINK',
       gameModeChanged: 'IGRA: {game}',
       linesWin: '{lines} DOBITNIH LINIJA!',
       linesRuleText: 'U <strong>Royal 3x3</strong> igri aktivno je <strong>5 linija</strong> (3 horizontalne + 2 dijagonalne). Dobici na više linija se sabiraju!',
@@ -20,17 +20,17 @@
       tryAgain: 'POKUŠAJTE PONOVO!',
       winPrefix: 'DOBITAK: +',
       egtLobbyTitle: 'IZBOR IGARA',
-      egtLobbySub: 'MAXBET CASINO MULTIGAME',
+      egtLobbySub: 'IGT CASINO MULTIGAME',
       egtReturnToGame: 'NAZAD NA IGRU',
       egtActiveTag: 'AKTIVNA IGRA',
       egtSelectTag: 'IGRAJ SADA',
       egtClassicDesc: '1 Centralna Linija • Retro Zlatni Cilindar • Autentična Ručica',
-      egtRoyalDesc: '5 Isplatnih Linija • MaxBet Mines Bonus • Scatter Dijamanti',
+      egtRoyalDesc: '5 Isplatnih Linija • IGT Mines Bonus • Scatter Dijamanti',
       egtFocusDesc: 'Maksimalan Prikaz • 5 Isplatnih Linija • Specijalno za Mobilni Ekran',
       egtMinesDesc: 'Podesiva Mreža & Broj Mina • Multiplier Traka • Instant Isplata',
-      egtXtensionDesc: 'Hold & Spin • Širenje Tabele do 8 Redova • 40 Polja MaxBet Jackpot',
+      egtXtensionDesc: 'Hold & Spin • Širenje Tabele do 8 Redova • 40 Polja IGT Jackpot',
       miniMinesBonusTag: 'BONUS RUNDA',
-      miniMinesBonusTitle: '💎 MAXBET MINES BONUS 💣',
+      miniMinesBonusTitle: '💎 IGT MINES BONUS 💣',
       miniMinesBonusSub: 'OTKRIJTE ZLATNIKE I IZBEGNITE MINE!',
       miniMinesFinished: '💣 MINES BONUS ZAVRŠEN! OSVOJENO: +{amount}',
       miniMinesStart: 'POČETNI BONUS: +{starter} RSD! OTVARAJTE POLJA ILI UZMITE DOBITAK!',
@@ -38,12 +38,12 @@
       meterCardsLabel: 'KARTE',
       meterMinesLabel: 'MINE',
       meterCardsLocked: '💎 PUNITE KARTE SPINOVIMA DA OTKLJUČATE!',
-      meterMinesLocked: '❇️ MINE SU ZAKLJUČANE! PUNITE SMARAGDNU TRAKU SPINOVIMA!',
+      meterMinesLocked: '❇️ MINE SU ZAKLJUČANE! PUNITE TRAKU SPINOVIMA!',
       cardsBonusActivated: '💎 KARTE OTKLJUČANE! ({sec}s)',
-      minesBonusActivated: '❇️ MAXBET MINES OTKLJUČAN! ({sec}s)',
-      combo_flower_jackpot: '3x MAXBET SIMBOL (JACKPOT!)',
-      combo_flower_3x: '3x MAXBET SIMBOL (JACKPOT!)',
-      combo_flower_2x: '2x MAXBET SIMBOL!',
+      minesBonusActivated: '❇️ IGT MINES OTKLJUČAN! ({sec}s)',
+      combo_flower_jackpot: '3x IGT SIMBOL (JACKPOT!)',
+      combo_flower_3x: '3x IGT SIMBOL (JACKPOT!)',
+      combo_flower_2x: '2x IGT SIMBOL!',
       combo_crown_3x: '3x ZLATNA KRUNA!',
       combo_crown_2x: '2x ZLATNA KRUNA!',
       combo_bar_3x: '3x BAR!',
@@ -58,7 +58,7 @@
       combo_coin_2x: '2x ZLATNIK!',
       combo_diamond_3x: '3x DIJAMANT!',
       combo_diamond_2x: '2x DIJAMANT!',
-      combo_flower_bar: 'MAXBET & BAR KOMBO!',
+      combo_flower_bar: 'IGT & BAR KOMBO!',
       freeSpinsWon: '💎 5 BESPLATNIH SPINOVA OSVOJENO! 💎',
       freeSpinsPlusWin: '💎 5 BESPLATNIH SPINOVA + {amount}! 💎',
       freeSpinRemaining: 'BESPLATAN SPIN! Preostalo: ',
@@ -86,7 +86,7 @@
       sound: 'Zvuk',
 
       paytableTitle: '🏆 TABELA DOBITAKA',
-      symFlower: 'MaxBet Simbol (Jackpot)',
+      symFlower: 'IGT Simbol (Jackpot)',
       symCrown: 'Zlatna Kruna',
       symBar: 'BAR Simbol',
       symHorseshoe: 'Srećna Potkovica',
@@ -98,7 +98,7 @@
       freeSpinsRuleText: 'Pogodak 3 Dijamanta donosi <strong>5 BESPLATNIH SPINOVA</strong>!',
       instructionsRuleText: 'Možete povući i 3D ručicu sa desne strane za pokretanje valjaka ili pritisnuti taster Space na tastaturi.',
       openAdminPanel: '⚙️ OTVORI ADMIN / OPERATOR PANEL',
-      ruleHoldWinTitle: '🔥 HOLD & WIN (MAXBET RESPINS):',
+      ruleHoldWinTitle: '🔥 HOLD & WIN (IGT RESPINS):',
       ruleHoldWinDesc: 'Kad 3 ili više Zlatnika padnu na bubnjeve, pokreće se bonus sa 3 Respina. Svi novčići ostaju zaključani na tabli. Svaki novi novčić koji padne se takođe zaključava i resetuje broj respina ponovo na 3! Kada popunite svih 9 polja, osvajate maksimalni 💎 DIAMOND JACKPOT!',
       ruleMysteryJpTitle: '🎰 MYSTERY JACKPOT:',
       ruleMysteryJpDesc: 'Svaki spin može nasumično osvojiti progresivni Silver, Gold ili Diamond Jackpot prikazan na vrhu ekrana!',
@@ -138,18 +138,18 @@
       takeWin: '💰 UZMI DOBITAK (TAKE WIN)',
       gambleWon: '🎉 POGODAK! OSVOJENO: {amount}',
       gambleLost: '❌ VIŠE SREĆE DRUGI PUT!',
-      holdWinHeading: '🔥 MAXBET RESPINS (HOLD & WIN) 🔥',
+      holdWinHeading: '🔥 IGT RESPINS (HOLD & WIN) 🔥',
       respinsLeft: 'PREOSTALO RESPINA:',
       hwTotalWin: 'UKUPAN DOBITAK:',
       respinNow: '⚡ POKRENI RESPIN ⚡',
       hwGrandWon: '💥 GRAND JACKPOT! POPUNJENA SVA POLJA! 💥',
       hwFinished: '🏆 HOLD & WIN BONUS ZAVRŠEN! OSVOJENO: +{amount}',
       jackpotWonSilver: '🥈 ČESTITAMO! OSVOJILI STE SILVER JACKPOT: +{amount}! 🥈',
-      jackpotWonGold: '🏆 MAXBET POGODAK! OSVOJILI STE GOLD JACKPOT: +{amount}! 🏆',
+      jackpotWonGold: '🏆 IGT POGODAK! OSVOJILI STE GOLD JACKPOT: +{amount}! 🏆',
       jackpotWonDiamond: '💎 MEGA BANGER! OSVOJILI STE DIAMOND JACKPOT: +{amount}! 💎',
 
       // PWA Install Keys
-      pwaBannerTitle: 'Instalirajte MaxBet Casino',
+      pwaBannerTitle: 'Instalirajte IGT Casino',
       pwaBannerSub: 'Igrajte na punom ekranu bez browser traka, brže i glatko!',
       pwaBannerInstallBtn: 'INSTALIRAJ ODMAH',
       pwaBannerDismissBtn: 'Kasnije',
@@ -161,7 +161,7 @@
       pwaInstalledSuccess: 'Aplikacija je uspešno instalirana!',
 
       // 18+ Gate & Login Keys
-      loginTitle: 'MAXBET DEMO PRIJAVA',
+      loginTitle: 'IGT DEMO PRIJAVA',
       loginSub: 'Pristup 3D kazino platformi i igračkom profilu',
       loginNotice18: '🔞 Strogo zabranjeno licima mlađim od 18 godina. Igrajte odgovorno.',
       loginUserPlaceholder: 'Vaše korisničko ime / Nickname',
@@ -197,13 +197,13 @@
       profileDenomDesc: 'Izaberite koliko dinara vredi 1 kredit:'
     },
     en: {
-      brandSub: 'MAXBET CASINO',
+      brandSub: 'IGT CASINO',
       leverTitle: 'Pull lever to spin!',
       gameClassic: '1-LINE CLASSIC',
       gameRoyal3x3: 'ROYAL 3x3 (5 LINES)',
       gameFullFocus: 'ROYAL 3x3 FULL FOCUS',
-      gameMines: 'MAXBET MINES X',
-      gameXtension: 'MAXBET XTENSION LINK',
+      gameMines: 'IGT MINES X',
+      gameXtension: 'IGT XTENSION LINK',
       gameModeChanged: 'GAME: {game}',
       linesWin: '{lines} WINNING LINES!',
       linesRuleText: 'In <strong>Royal 3x3</strong> game, <strong>5 paylines</strong> are active (3 horizontal + 2 diagonal). Multi-line wins are added together!',
@@ -212,17 +212,17 @@
       tryAgain: 'TRY AGAIN!',
       winPrefix: 'WIN: +',
       egtLobbyTitle: 'GAMES LOBBY',
-      egtLobbySub: 'MAXBET CASINO MULTIGAME',
+      egtLobbySub: 'IGT CASINO MULTIGAME',
       egtReturnToGame: 'BACK TO GAME',
       egtActiveTag: 'ACTIVE GAME',
       egtSelectTag: 'PLAY NOW',
       egtClassicDesc: '1 Center Payline • Retro Golden Cylinder • Mechanical Lever Action',
-      egtRoyalDesc: '5 Active Paylines • MaxBet Mines Bonus • Scatter Diamonds',
+      egtRoyalDesc: '5 Active Paylines • IGT Mines Bonus • Scatter Diamonds',
       egtFocusDesc: 'Maximized Immersion • 5 Paylines • Optimized for Fullscreen Action',
       egtMinesDesc: 'Customizable Grid & Mines • Multiplier Ladder • Instant Cashout',
-      egtXtensionDesc: 'Hold & Spin • Dynamic Expansion to 8 Rows • 40-Spot MaxBet Jackpot',
+      egtXtensionDesc: 'Hold & Spin • Dynamic Expansion to 8 Rows • 40-Spot IGT Jackpot',
       miniMinesBonusTag: 'BONUS ROUND',
-      miniMinesBonusTitle: '💎 MAXBET MINES BONUS 💣',
+      miniMinesBonusTitle: '💎 IGT MINES BONUS 💣',
       miniMinesBonusSub: 'UNCOVER GOLD COINS & AVOID THE MINES!',
       miniMinesFinished: '💣 MINES BONUS FINISHED! WON: +{amount}',
       miniMinesStart: 'STARTING PRIZE: +{starter} RSD! PICK TILES OR TAKE WIN!',
@@ -230,12 +230,12 @@
       meterCardsLabel: 'CARDS',
       meterMinesLabel: 'MINES',
       meterCardsLocked: '💎 CHARGE CARDS VIA SPINS TO UNLOCK!',
-      meterMinesLocked: '❇️ MINES ARE LOCKED! CHARGE EMERALD METER VIA SPINS!',
+      meterMinesLocked: '❇️ MINES ARE LOCKED! CHARGE METER VIA SPINS!',
       cardsBonusActivated: '💎 CARDS UNLOCKED! ({sec}s)',
-      minesBonusActivated: '❇️ MAXBET MINES UNLOCKED! ({sec}s)',
-      combo_flower_jackpot: '3x MAXBET SYMBOL (JACKPOT!)',
-      combo_flower_3x: '3x MAXBET SYMBOL (JACKPOT!)',
-      combo_flower_2x: '2x MAXBET SYMBOL!',
+      minesBonusActivated: '❇️ IGT MINES UNLOCKED! ({sec}s)',
+      combo_flower_jackpot: '3x IGT SYMBOL (JACKPOT!)',
+      combo_flower_3x: '3x IGT SYMBOL (JACKPOT!)',
+      combo_flower_2x: '2x IGT SYMBOL!',
       combo_crown_3x: '3x GOLDEN CROWN!',
       combo_crown_2x: '2x GOLDEN CROWN!',
       combo_bar_3x: '3x BAR!',
@@ -250,7 +250,7 @@
       combo_coin_2x: '2x GOLD COIN!',
       combo_diamond_3x: '3x DIAMOND!',
       combo_diamond_2x: '2x DIAMOND!',
-      combo_flower_bar: 'MAXBET & BAR COMBO!',
+      combo_flower_bar: 'IGT & BAR COMBO!',
       freeSpinsWon: '💎 5 FREE SPINS WON! 💎',
       freeSpinsPlusWin: '💎 5 FREE SPINS + {amount}! 💎',
       freeSpinRemaining: 'FREE SPIN! Remaining: ',
@@ -278,7 +278,7 @@
       sound: 'Sound',
 
       paytableTitle: '🏆 PAYTABLE & RULES',
-      symFlower: 'MaxBet Symbol (Jackpot)',
+      symFlower: 'IGT Symbol (Jackpot)',
       symCrown: 'Golden Crown',
       symBar: 'BAR Symbol',
       symHorseshoe: 'Lucky Horseshoe',
@@ -290,7 +290,7 @@
       freeSpinsRuleText: 'Hit 3 Diamonds to win <strong>5 FREE SPINS</strong>!',
       instructionsRuleText: 'You can also pull the 3D lever on the right side to spin the reels or press the Spacebar.',
       openAdminPanel: '⚙️ OPEN ADMIN / OPERATOR PANEL',
-      ruleHoldWinTitle: '🔥 HOLD & WIN (MAXBET RESPINS):',
+      ruleHoldWinTitle: '🔥 HOLD & WIN (IGT RESPINS):',
       ruleHoldWinDesc: 'When 3 or more Gold Coins land on the reels, a bonus with 3 Respins is triggered. All coins lock in place. Any newly landed coin also locks and resets respins back to 3! Fill all 9 spots to win the maximum 💎 DIAMOND JACKPOT!',
       ruleMysteryJpTitle: '🎰 MYSTERY JACKPOT:',
       ruleMysteryJpDesc: 'Every spin has a random chance to trigger the progressive Silver, Gold, or Diamond Jackpot shown at the top of the screen!',
@@ -330,18 +330,18 @@
       takeWin: '💰 TAKE WIN',
       gambleWon: '🎉 WIN! DOUBLED TO: {amount}',
       gambleLost: '❌ BETTER LUCK NEXT TIME!',
-      holdWinHeading: '🔥 MAXBET RESPINS (HOLD & WIN) 🔥',
+      holdWinHeading: '🔥 IGT RESPINS (HOLD & WIN) 🔥',
       respinsLeft: 'RESPINS LEFT:',
       hwTotalWin: 'TOTAL WIN:',
       respinNow: '⚡ RESPIN NOW ⚡',
       hwGrandWon: '💥 GRAND JACKPOT! ALL TILES FILLED! 💥',
       hwFinished: '🏆 HOLD & WIN BONUS FINISHED! WON: +{amount}',
       jackpotWonSilver: '🥈 CONGRATULATIONS! YOU WON THE SILVER JACKPOT: +{amount}! 🥈',
-      jackpotWonGold: '🏆 MAXBET HIT! YOU WON THE GOLD JACKPOT: +{amount}! 🏆',
+      jackpotWonGold: '🏆 IGT HIT! YOU WON THE GOLD JACKPOT: +{amount}! 🏆',
       jackpotWonDiamond: '💎 MEGA BANGER! YOU WON THE DIAMOND JACKPOT: +{amount}! 💎',
 
       // PWA Install Keys
-      pwaBannerTitle: 'Install MaxBet Casino',
+      pwaBannerTitle: 'Install IGT Casino',
       pwaBannerSub: 'Play in fullscreen without browser bars, faster and smoother!',
       pwaBannerInstallBtn: 'INSTALL NOW',
       pwaBannerDismissBtn: 'Later',
@@ -353,7 +353,7 @@
       pwaInstalledSuccess: 'App successfully installed!',
 
       // 18+ Gate & Login Keys
-      loginTitle: 'MAXBET DEMO LOGIN',
+      loginTitle: 'IGT DEMO LOGIN',
       loginSub: 'Access to 3D casino platform and player profile',
       loginNotice18: '🔞 Strictly prohibited for individuals under 18. Play responsibly.',
       loginUserPlaceholder: 'Your nickname / Player ID',
@@ -393,7 +393,7 @@
   class I18nEngine {
     constructor() {
       // Default: Serbian (sr), check localStorage
-      const savedLang = localStorage.getItem('maxbet_lang') || localStorage.getItem('grand_slot_lang');
+      const savedLang = localStorage.getItem('igt_lang') || localStorage.getItem('maxbet_lang') || localStorage.getItem('grand_slot_lang');
       this.currentLang = (savedLang === 'en' || savedLang === 'sr') ? savedLang : 'sr';
     }
 
@@ -409,7 +409,9 @@
     setLanguage(lang) {
       if (lang !== 'sr' && lang !== 'en') return;
       this.currentLang = lang;
+      localStorage.setItem('igt_lang', lang);
       localStorage.setItem('maxbet_lang', lang);
+      localStorage.setItem('grand_slot_lang', lang);
       localStorage.setItem('grand_slot_lang', lang);
       this.applyTranslations();
       if (window.slotGame && typeof window.slotGame.onLanguageChanged === 'function') {

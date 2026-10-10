@@ -1,6 +1,6 @@
 {
-  "name": "MaxBet Casino",
-  "short_name": "MaxBet",
+  "name": "IGT Casino",
+  "short_name": "IGT",
   "description": "Luksuzna 3D Slot PWA igra sa pravim kazino iskustvom",
   "start_url": "./index.html",
   "scope": "./",
@@ -11,8 +11,8 @@
     "minimal-ui",
     "window-controls-overlay"
   ],
-  "background_color": "#06402d",
-  "theme_color": "#06402d",
+  "background_color": "#120324",
+  "theme_color": "#120324",
   "orientation": "portrait",
   "categories": ["games", "casino", "entertainment"],
   "lang": "sr",

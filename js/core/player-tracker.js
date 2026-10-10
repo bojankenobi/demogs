@@ -1,10 +1,10 @@
 /**
- * MaxBet - Player Tracker & Analytics Engine
+ * IGT - Player Tracker & Analytics Engine
  * Manages player profile, 18+ verification state, sessions, and comprehensive statistics.
  */
 class PlayerTracker {
   constructor() {
-    this.storageKey = 'maxbet_player_profile';
+    this.storageKey = 'igt_player_profile';
     this.sessionStartTime = Date.now();
     this.profile = this.loadProfile();
   }
@@ -44,7 +44,7 @@ class PlayerTracker {
     };
 
     try {
-      const saved = localStorage.getItem(this.storageKey);
+      const saved = localStorage.getItem(this.storageKey) || localStorage.getItem('maxbet_player_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
         return {

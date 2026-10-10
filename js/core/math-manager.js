@@ -1,66 +1,111 @@
 /**
- * MaxBet - Math & Configuration Manager
- * Manages RTP Presets, Symbol Weights, Multipliers and provides a High-Speed Monte Carlo Simulator.
+ * IGT - Math & Volatility Manager
+ * Configures 4 distinct mathematical profiles:
+ * 1. Casino Standard (~96.0% RTP, ~25% Hit Rate) - Authentic Vegas casino balance
+ * 2. Low Volatility (~97.0% RTP, ~40% Hit Rate) - Frequent smaller wins, lower risk
+ * 3. High Volatility (~94.5% RTP, ~16% Hit Rate) - High tension, only 3-of-a-kind pays with massive 1.5x boosted multipliers
+ * 4. Demo / Promo Mode (~100% Hit Rate) - Guaranteed frequent wins and fast bonus charging for client presentations
  */
 class SlotMathManager {
   constructor() {
-    this.STORAGE_KEY = 'maxbet_math_config_v1';
-    
-    // Preset definitions
+    this.STORAGE_KEY = 'igt_math_volatility_config_v2';
+
     this.PRESETS = {
-      promo: {
-        id: 'promo',
-        name: 'Promo / Prezentacija (Visok RTP ~98.5%)',
-        desc: 'Idealno za promocije, sajmove i reklame. Česti dobici, brz adrenalin i aktivne bonus runde.',
-        targetRtp: 98.5,
-        weights: {
-          flower: 6,
-          crown: 8,
-          bar: 10,
-          horseshoe: 12,
-          seven: 14,
-          bell: 16,
-          coin: 20,
-          diamond: 14
-        },
-        minesHouseEdge: 0.02, // 98% RTP za mine
-        happyHourRate: 1.5,   // 50% brže punjenje metera
-      },
       standard: {
         id: 'standard',
-        name: 'Casino Standard (~96.2%)',
-        desc: 'Originalna industrijska matematika za kazino i online slotove. Balansiran odnos rizika i dobitaka.',
-        targetRtp: 96.2,
+        name: 'Casino Standard',
+        shortName: 'CASINO STD',
+        desc: 'Autentična kazino matematika. Realan hit rate (~25%), uravnoteženi dobici i zasluženi bonusi.',
+        targetRtp: 96.0,
+        hitRateTarget: 0.25,
+        allowTwoSymbolPay: ['coin'], // Only coin gives small consolation on 2
+        payout3Multiplier: 1.0,
+        meterTurnoverRequired: { cards: 450, mines: 600, wheel: 850 }, // in RSD
+        minesHouseEdge: 0.04,
+        forceWin: false,
         weights: {
-          flower: 4,
-          crown: 5,
+          flower: 3,
+          crown: 4,
           bar: 6,
           horseshoe: 8,
           seven: 9,
           bell: 12,
-          coin: 15,
-          diamond: 10
-        },
-        minesHouseEdge: 0.035, // 96.5% RTP za mine
-        happyHourRate: 1.0,
+          coin: 16,
+          diamond: 10,
+          wheel: 3
+        }
       },
-      tight: {
-        id: 'tight',
-        name: 'High Volatility (~93.8%)',
-        desc: 'Čvršći model za izazov. Ređi manji dobici, veći pikovi i visoka tenzija.',
-        targetRtp: 93.8,
+      low: {
+        id: 'low',
+        name: 'Niska Volatilnost (Low)',
+        shortName: 'LOW VOLATILITY',
+        desc: 'Česti manji dobici (~40% hit rate), umeren rizik i duže trajanje kredita. Opuštena sesija.',
+        targetRtp: 97.0,
+        hitRateTarget: 0.40,
+        allowTwoSymbolPay: ['coin', 'bell', 'seven'], // Frequent 2-symbol returns
+        payout3Multiplier: 0.85,
+        meterTurnoverRequired: { cards: 350, mines: 500, wheel: 700 },
+        minesHouseEdge: 0.025,
+        forceWin: false,
+        weights: {
+          flower: 5,
+          crown: 7,
+          bar: 8,
+          horseshoe: 11,
+          seven: 14,
+          bell: 18,
+          coin: 22,
+          diamond: 14,
+          wheel: 4
+        }
+      },
+      high: {
+        id: 'high',
+        name: 'Visoka Volatilnost (High)',
+        shortName: 'HIGH VOLATILITY',
+        desc: 'Visok rizik i tenzija. Ređi dobici (~16% hit rate), isključivo 3 ista simbola plaćaju uz +50% jače isplate!',
+        targetRtp: 94.5,
+        hitRateTarget: 0.16,
+        allowTwoSymbolPay: [], // No 2-symbol payouts! Only 3 of a kind!
+        payout3Multiplier: 1.5, // 50% larger payouts on 3-of-a-kind!
+        meterTurnoverRequired: { cards: 650, mines: 850, wheel: 1200 },
+        minesHouseEdge: 0.06,
+        forceWin: false,
         weights: {
           flower: 2,
           crown: 3,
           bar: 5,
           horseshoe: 7,
-          seven: 9,
-          bell: 14,
-          coin: 22,
-          diamond: 7
-        },
-        minesHouseEdge: 0.05, // 95% RTP za mine
-        happyHourRate: 0.75,
+          seven: 8,
+          bell: 12,
+          coin: 24,
+          diamond: 6,
+          wheel: 2
+        }
+      },
+      demo: {
+        id: 'demo',
+        name: 'Demo Prezentacija (100% Hit)',
+        shortName: 'DEMO 100% HIT',
+        desc: 'Specijalni prezentacioni režim za prezentacije klijentima. Svaki spin donosi dobitke i munjevito puni bonuse!',
+        targetRtp: 160.0,
+        hitRateTarget: 0.98,
+        allowTwoSymbolPay: ['coin', 'bell', 'seven', 'bar', 'horseshoe', 'crown', 'flower', 'wheel', 'diamond'],
+        payout3Multiplier: 1.25,
+        meterTurnoverRequired: { cards: 70, mines: 90, wheel: 130 }, // Ultra-fast charging for presentations!
+        minesHouseEdge: 0.01,
+        forceWin: true,
+        weights: {
+          flower: 8,
+          crown: 10,
+          bar: 12,
+          horseshoe: 14,
+          seven: 16,
+          bell: 18,
+          coin: 20,
+          diamond: 16,
+          wheel: 8
+        }
       }
     };
 
@@ -71,26 +116,22 @@ class SlotMathManager {
 
   loadConfig() {
     try {
-      const saved = localStorage.getItem(this.STORAGE_KEY) || localStorage.getItem('grandslot_math_config_v1');
+      const saved = localStorage.getItem(this.STORAGE_KEY) || localStorage.getItem('igt_math_config_v1');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed.activePreset && this.PRESETS[parsed.activePreset]) {
           this.activePreset = parsed.activePreset;
         }
-        if (parsed.customWeights) {
-          this.customWeights = parsed.customWeights;
-        }
       }
     } catch (e) {
-      console.warn('Could not load math config, using defaults:', e);
+      console.warn('Could not load math config, defaulting to standard:', e);
     }
   }
 
   saveConfig() {
     try {
       const data = {
-        activePreset: this.activePreset,
-        customWeights: this.customWeights || null
+        activePreset: this.activePreset
       };
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
@@ -98,32 +139,27 @@ class SlotMathManager {
     }
   }
 
+  getActiveProfile() {
+    return this.PRESETS[this.activePreset] || this.PRESETS.standard;
+  }
+
   setPreset(presetId) {
     if (!this.PRESETS[presetId]) return;
     this.activePreset = presetId;
-    this.customWeights = null;
     this.saveConfig();
     this.applyToGames();
-  }
+    this.updateHUD();
 
-  getActiveWeights() {
-    if (this.customWeights) return this.customWeights;
-    return this.PRESETS[this.activePreset].weights;
-  }
-
-  setCustomWeight(symbolId, weightVal) {
-    if (!this.customWeights) {
-      this.customWeights = Object.assign({}, this.getActiveWeights());
+    if (window.slotApp && window.slotApp.showMessage) {
+      const p = this.getActiveProfile();
+      window.slotApp.showMessage(`⚡ MATEMATIČKI REŽIM: ${p.name.toUpperCase()}`, 'jackpot');
     }
-    this.customWeights[symbolId] = Math.max(1, parseInt(weightVal, 10) || 1);
-    this.activePreset = 'custom';
-    this.saveConfig();
-    this.applyToGames();
   }
 
   applyToGames() {
-    const weights = this.getActiveWeights();
-    
+    const profile = this.getActiveProfile();
+    const weights = profile.weights;
+
     // 1. Update CLASSIC_SYMBOLS
     if (window.CLASSIC_SYMBOLS) {
       window.CLASSIC_SYMBOLS.forEach(sym => {
@@ -142,26 +178,43 @@ class SlotMathManager {
       });
     }
 
-    // 3. Update Mines RTP if preset is set
-    const preset = this.PRESETS[this.activePreset];
-    if (preset && window.slotApp && window.slotApp.minesGame) {
-      window.slotApp.minesGame.houseEdge = preset.minesHouseEdge;
+    // 3. Update Mines House Edge
+    if (window.slotApp && window.slotApp.minesGame) {
+      window.slotApp.minesGame.houseEdge = profile.minesHouseEdge;
     }
+
+    this.updateHUD();
+  }
+
+  updateHUD() {
+    const profile = this.getActiveProfile();
+    const activeId = this.activePreset;
+
+    const lbl = document.getElementById('hud-volatility-name');
+    if (lbl) {
+      lbl.textContent = profile.shortName;
+    }
+
+    const subLbl = document.getElementById('hud-volatility-sub');
+    if (subLbl) {
+      subLbl.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : '100%')));
+    }
+
+    // Highlight active card in volatility modal if open
+    document.querySelectorAll('.volatility-option-card').forEach(card => {
+      const pid = card.getAttribute('data-preset');
+      card.classList.toggle('active', pid === this.activePreset);
+    });
   }
 
   /**
    * High-Speed Monte Carlo Simulation
-   * Runs N spins without DOM/audio overhead to calculate exact statistical RTP, hit frequency, and max win.
-   * @param {string} gameType - 'classic' or 'royal3x3'
-   * @param {number} totalSpins - e.g. 10000, 100000, 1000000
-   * @param {Function} progressCallback - callback(percent)
-   * @returns {Object} { spins, totalBet, totalWon, rtp, hitRate, maxWinMultiplier, symbolBreakdown }
    */
-  runSimulation(gameType = 'royal3x3', totalSpins = 50000, progressCallback = null) {
+  runSimulation(gameType = 'royal3x3', totalSpins = 50000) {
     const symbols = (gameType === 'classic') ? window.CLASSIC_SYMBOLS : window.ROYAL_SYMBOLS;
-    const weights = this.getActiveWeights();
+    const profile = this.getActiveProfile();
+    const weights = profile.weights;
 
-    // Prepare weighted array for ultra-fast sampling
     const symList = symbols.map(s => ({
       id: s.id,
       name: s.name,
@@ -188,7 +241,7 @@ class SlotMathManager {
     const symbolHits = {};
     symList.forEach(s => { symbolHits[s.id] = { count: 0, won: 0 }; });
 
-    const bet = 100; // standard bet unit for simulation
+    const bet = 100;
 
     for (let spin = 0; spin < totalSpins; spin++) {
       totalBet += bet;
@@ -203,15 +256,9 @@ class SlotMathManager {
         let winSymId = null;
 
         if (s1.id === s2.id && s2.id === s3.id) {
-          winMult = s1.payout3;
+          winMult = Math.round(s1.payout3 * profile.payout3Multiplier);
           winSymId = s1.id;
-        } else if (s1.id === s2.id) {
-          winMult = s1.payout2;
-          winSymId = s1.id;
-        } else if (s2.id === s3.id) {
-          winMult = s2.payout2;
-          winSymId = s2.id;
-        } else if (s1.id === s3.id) {
+        } else if (s1.id === s2.id && profile.allowTwoSymbolPay.includes(s1.id)) {
           winMult = s1.payout2;
           winSymId = s1.id;
         }
@@ -222,16 +269,13 @@ class SlotMathManager {
           symbolHits[winSymId].won += spinWin;
         }
       } else {
-        // Royal 3x3 (5 fixed lines, lineBet = bet / 5)
         const lineBet = bet / 5;
-        // Generate 3x3 matrix
         const m = [
           [getRandomSym(), getRandomSym(), getRandomSym()],
           [getRandomSym(), getRandomSym(), getRandomSym()],
           [getRandomSym(), getRandomSym(), getRandomSym()]
         ];
 
-        // 5 paylines: top, center, bottom, diag1, diag2
         const lines = [
           [m[0][0], m[1][0], m[2][0]],
           [m[0][1], m[1][1], m[2][1]],
@@ -246,9 +290,9 @@ class SlotMathManager {
           let lMult = 0;
           let wSym = null;
           if (s0.id === s1.id && s1.id === s2.id) {
-            lMult = s0.payout3;
+            lMult = Math.round(s0.payout3 * profile.payout3Multiplier);
             wSym = s0.id;
-          } else if (s0.id === s1.id) {
+          } else if (s0.id === s1.id && profile.allowTwoSymbolPay.includes(s0.id)) {
             lMult = s0.payout2;
             wSym = s0.id;
           }

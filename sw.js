@@ -1,7 +1,7 @@
 /**
- * MaxBet 3D Casino Slot - PWA Service Worker
+ * IGT 3D Casino Slot - PWA Service Worker
  */
-const CACHE_NAME = 'maxbet-slot-v70';
+const CACHE_NAME = 'igt-slot-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

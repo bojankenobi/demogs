@@ -1,8 +1,8 @@
 /**
- * MaxBet - Application Controller & Platform Orchestrator
+ * IGT - Application Controller & Platform Orchestrator
  * Integrates Core Services (Wallet, Jackpots, Audio, Lobby) with Game Engines.
  */
-class MaxBetApp {
+class IGTApp {
   constructor() {
     this.messageBanner = document.getElementById('status-banner');
     this.spinBtn = document.getElementById('spin-btn');
@@ -10,6 +10,8 @@ class MaxBetApp {
     this.isAutoSpin = false;
 
     // 1. Core Services & Player Tracking
+    this.mathManager = new window.SlotMathManager();
+    window.slotMathManager = this.mathManager;
     this.playerTracker = new window.PlayerTracker();
     this.wallet = new window.CasinoWallet(1000, 20);
     this.jackpots = new window.CasinoJackpots(this.wallet);
@@ -27,11 +29,39 @@ class MaxBetApp {
       if (this.playerTracker) {
         this.playerTracker.recordBonus('miniMines');
       }
-      this.showMessage(window.i18n ? window.i18n.t('miniMinesFinished', { amount: totalWin }) : `💣 ZAVRŠEN MINES BONUS: +${totalWin}!`, 'jackpot');
-      this.gamble.showTrigger(totalWin);
+      if (totalWin > 0) {
+        this.showMessage(window.i18n ? window.i18n.t('miniMinesFinished', { amount: totalWin }) : `💣 ZAVRŠEN MINES BONUS: +${totalWin}!`, 'jackpot');
+        this.gamble.showTrigger(totalWin);
+      } else {
+        this.showMessage('💥 MINA EKSPLODIRALA! IZGUBLJEN SAV BONUS DOBITAK (0 RSD)!', 'normal');
+        this.gamble.hideTrigger();
+      }
       this.wallet.updateUI();
       this.updateSpinButtonState();
     });
+
+    this.freeSpinsManager = new window.FreeSpinsManager(this.wallet, (totalWon) => {
+      this.showMessage(`🎉 ZAVRŠEN SUPER BONUS: OSVOJENO +${totalWon.toLocaleString()}!`, 'jackpot');
+      this.wallet.updateUI();
+      this.updateSpinButtonState();
+    });
+
+    this.bigWinCelebrator = new window.BigWinCelebrator(this.wallet);
+
+    this.wheelBonus = new window.IGTWheelBonus(
+      this.wallet,
+      this.jackpots,
+      (spins, startMult) => {
+        this.freeSpinsManager.start(spins, startMult);
+      },
+      (creditsWon) => {
+        this.wallet.updateUI();
+        this.updateSpinButtonState();
+      }
+    );
+
+    this.buyBonus = new window.BuyBonusManager(this.wallet);
+    this.tournament = new window.CasinoTournament(this.wallet);
 
     // 3. Game Engines
     this.classicGame = new window.ClassicSlotGame(
@@ -152,7 +182,16 @@ class MaxBetApp {
 
   spin() {
     if (!this.lobby || !this.lobby.activeGame) return;
-    if (this.lobby.activeGame.isSpinning || (this.miniMines && this.miniMines.isActive)) return;
+    if (this.miniMines && this.miniMines.isActive) return;
+
+    // Slam Stop: If slot reels are spinning, instant stop!
+    if (this.lobby.activeGame.isSpinning) {
+      if (this.lobby.activeGame.slamStop) {
+        this.lobby.activeGame.slamStop();
+        this.showMessage('SLAM STOP!', 'normal');
+      }
+      return;
+    }
 
     if (!this.wallet.canAffordSpin()) {
       this.showMessage(window.i18n ? window.i18n.t('notEnoughCredits') : 'NEMATE DOVOLJNO KREDITA!', 'warning');
@@ -169,8 +208,19 @@ class MaxBetApp {
       if (this.meters) {
         this.meters.chargeOnSpin(this.wallet.bet);
       }
+      if (this.wheelBonus) {
+        this.wheelBonus.chargeOnSpin(this.wallet.bet);
+      }
     }
     this.updateSpinButtonState();
+  }
+
+  showBigWin(amount, onComplete) {
+    if (this.bigWinCelebrator) {
+      this.bigWinCelebrator.trigger(amount, onComplete);
+    } else if (onComplete) {
+      onComplete();
+    }
   }
 
   animateSpinButton() {
@@ -213,6 +263,10 @@ class MaxBetApp {
     if (this.playerTracker) {
       const activeGameId = (this.lobby && this.lobby.activeGameId) || 'classic';
       this.playerTracker.recordSpin(activeGameId, this.wallet.bet, winAmount);
+    }
+
+    if (this.tournament && this.tournament.isActive && winAmount > 0) {
+      this.tournament.onSpinWin(winAmount);
     }
 
     if (winAmount > 0) {
@@ -312,6 +366,110 @@ class MaxBetApp {
         this.showMessage(msg, 'info');
       });
     }
+
+    const goldenBetBtn = document.getElementById('btn-golden-bet');
+    if (goldenBetBtn) {
+      goldenBetBtn.addEventListener('click', () => {
+        const isActive = this.wallet.toggleGoldenBet();
+        const msg = isActive 
+          ? '✨ GOLDEN BET UKLJUČEN (+25% ULOG, 2x BRŽI BONUSA)!' 
+          : 'GOLDEN BET ISKLJUČEN';
+        this.showMessage(msg, isActive ? 'jackpot' : 'info');
+      });
+    }
+
+    const ambientBtn = document.getElementById('ambient-btn');
+    if (ambientBtn) {
+      ambientBtn.addEventListener('click', () => {
+        if (window.slotAudio) {
+          const isPlaying = window.slotAudio.toggleCasinoAmbient();
+          ambientBtn.classList.toggle('active', isPlaying);
+          const msg = isPlaying ? '🔊 VEGAS CASINO AMBIJENT UKLJUČEN' : 'CASINO AMBIJENT UTIŠAN';
+          this.showMessage(msg, 'info');
+        }
+      });
+    }
+
+    const tournamentBtn = document.getElementById('tournament-btn');
+    if (tournamentBtn && this.tournament) {
+      tournamentBtn.addEventListener('click', () => {
+        this.tournament.openModal();
+      });
+    }
+
+    this.initVolatilityModal();
+  }
+
+  openVolatilityModal() {
+    const modal = document.getElementById('volatility-modal');
+    if (modal) modal.classList.add('active');
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+    this.updateVolatilityUI();
+  }
+
+  closeVolatilityModal() {
+    const modal = document.getElementById('volatility-modal');
+    if (modal) modal.classList.remove('active');
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+  }
+
+  initVolatilityModal() {
+    const modal = document.getElementById('volatility-modal');
+    const headerBtn = document.getElementById('btn-volatility-toggle');
+    const footerBtn = document.getElementById('volatility-footer-btn');
+    const closeBtn = document.getElementById('volatility-close-btn');
+
+    if (headerBtn) headerBtn.addEventListener('click', () => this.openVolatilityModal());
+    if (footerBtn) footerBtn.addEventListener('click', () => this.openVolatilityModal());
+    if (closeBtn) closeBtn.addEventListener('click', () => this.closeVolatilityModal());
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) this.closeVolatilityModal();
+      });
+    }
+
+    // Bind cards and selection buttons
+    const cards = document.querySelectorAll('.volatility-option-card');
+    cards.forEach(card => {
+      const presetId = card.getAttribute('data-preset');
+      const selectBtn = card.querySelector('.btn-select-preset');
+
+      const selectPreset = (e) => {
+        e.stopPropagation();
+        if (this.mathManager && presetId) {
+          this.mathManager.setPreset(presetId);
+          this.updateVolatilityUI();
+          if (window.slotAudio && window.slotAudio.playCoinDrop) window.slotAudio.playCoinDrop();
+          setTimeout(() => closeModal(), 280);
+        }
+      };
+
+      card.addEventListener('click', selectPreset);
+      if (selectBtn) selectBtn.addEventListener('click', selectPreset);
+    });
+
+    this.updateVolatilityUI();
+  }
+
+  updateVolatilityUI() {
+    if (!this.mathManager) return;
+    const profile = this.mathManager.getActiveProfile();
+    const activeId = this.mathManager.activePreset;
+
+    const lbl = document.getElementById('hud-volatility-name');
+    if (lbl) {
+      lbl.textContent = profile.shortName;
+    }
+
+    const subLbl = document.getElementById('hud-volatility-sub');
+    if (subLbl) {
+      subLbl.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : '100%')));
+    }
+
+    document.querySelectorAll('.volatility-option-card').forEach(card => {
+      const pid = card.getAttribute('data-preset');
+      card.classList.toggle('active', pid === activeId);
+    });
   }
 }
 
@@ -319,9 +477,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const particles = new window.ParticleEngine('fx-canvas');
   window.particleEngine = particles;
 
-  const app = new MaxBetApp();
-  window.MaxBetApp = MaxBetApp;
-  window.GrandSlotApp = MaxBetApp; // Backwards compatibility
+  const app = new IGTApp();
+  window.IGTApp = IGTApp;
+  window.MaxBetApp = IGTApp; // Backwards compatibility
+  window.GrandSlotApp = IGTApp; // Backwards compatibility
   window.slotApp = app;
   window.slotGame = app; // Backwards compatibility for inspect/dev
 
@@ -500,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showInstallBanner() {
     if (isStandalone) return;
-    const dismissedTime = localStorage.getItem('maxbet_pwa_dismissed');
+    const dismissedTime = localStorage.getItem('igt_pwa_dismissed') || localStorage.getItem('maxbet_pwa_dismissed');
     // If dismissed recently (within 24h), do not annoy the user
     if (dismissedTime && (Date.now() - parseInt(dismissedTime, 10)) < 86400000) {
       return;
@@ -517,7 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
       installBanner.classList.remove('is-visible');
     }
     if (permanently) {
-      localStorage.setItem('maxbet_pwa_dismissed', Date.now().toString());
+      localStorage.setItem('igt_pwa_dismissed', Date.now().toString());
     }
   }
 
@@ -560,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Fallback for Desktop/Unsupported browsers: show gentle prompt
     if (app && typeof app.showMessage === 'function') {
-      const msg = window.i18n ? window.i18n.t('pwaBannerTitle') : 'Instalirajte MaxBet Casino';
+      const msg = window.i18n ? window.i18n.t('pwaBannerTitle') : 'Instalirajte IGT Casino';
       app.showMessage(msg, 'gold');
     }
   }

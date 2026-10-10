@@ -10,7 +10,7 @@ class CasinoWallet {
 
     // Try loading saved denomination
     try {
-      const savedDenom = parseFloat(localStorage.getItem('maxbet_denomination'));
+      const savedDenom = parseFloat(localStorage.getItem('igt_denomination') || localStorage.getItem('maxbet_denomination'));
       if (savedDenom && this.denominations.includes(savedDenom)) {
         this.activeDenom = savedDenom;
       }
@@ -19,7 +19,7 @@ class CasinoWallet {
     // Load saved RSD balance if exists, else initial 1000 RSD
     this.rsdBalance = initialRsdBalance;
     try {
-      const savedBal = parseFloat(localStorage.getItem('maxbet_rsd_balance'));
+      const savedBal = parseFloat(localStorage.getItem('igt_rsd_balance') || localStorage.getItem('maxbet_rsd_balance'));
       if (!isNaN(savedBal) && savedBal >= 0) {
         this.rsdBalance = savedBal;
       }
@@ -32,9 +32,21 @@ class CasinoWallet {
     this.lastWinRsd = 0;
     this.freeSpins = 0;
     this.happyHourMultiplier = 1;
+    this.isGoldenBet = false;
 
     this.initDOM();
     this.updateUI();
+  }
+
+  get currentSpinCostCredits() {
+    return this.isGoldenBet ? Math.round(this.bet * 1.25) : this.bet;
+  }
+
+  toggleGoldenBet() {
+    this.isGoldenBet = !this.isGoldenBet;
+    if (window.slotAudio) window.slotAudio.playClick();
+    this.updateUI();
+    return this.isGoldenBet;
   }
 
   initDOM() {
@@ -68,8 +80,8 @@ class CasinoWallet {
 
   saveState() {
     try {
-      localStorage.setItem('maxbet_rsd_balance', this.rsdBalance.toString());
-      localStorage.setItem('maxbet_denomination', this.activeDenom.toString());
+      localStorage.setItem('igt_rsd_balance', this.rsdBalance.toString());
+      localStorage.setItem('igt_denomination', this.activeDenom.toString());
     } catch (e) {}
   }
 
@@ -94,22 +106,23 @@ class CasinoWallet {
   }
 
   canAffordSpin() {
-    return this.freeSpins > 0 || this.balance >= this.bet;
+    return this.freeSpins > 0 || this.balance >= this.currentSpinCostCredits;
   }
 
   deductSpinBet() {
     if (this.freeSpins > 0) {
       this.freeSpins--;
-      return { isFree: true, remainingFree: this.freeSpins, betAmount: this.bet };
+      return { isFree: true, remainingFree: this.freeSpins, betAmount: this.bet, isGoldenBet: this.isGoldenBet };
     }
-    const betInRsd = +(this.bet * this.activeDenom).toFixed(2);
+    const costCredits = this.currentSpinCostCredits;
+    const betInRsd = +(costCredits * this.activeDenom).toFixed(2);
     if (this.rsdBalance >= betInRsd) {
       this.rsdBalance = +(this.rsdBalance - betInRsd).toFixed(2);
       this.lastWinCredits = 0;
       this.lastWinRsd = 0;
       this.saveState();
       this.updateUI();
-      return { isFree: false, remainingFree: 0, betAmount: this.bet };
+      return { isFree: false, remainingFree: 0, betAmount: this.bet, costCredits, isGoldenBet: this.isGoldenBet };
     }
     return null;
   }
@@ -120,6 +133,21 @@ class CasinoWallet {
       this.rsdBalance = +(this.rsdBalance + winInRsd).toFixed(2);
       this.lastWinCredits = creditsAmount;
       this.lastWinRsd = winInRsd;
+      this.saveState();
+      this.updateUI();
+    }
+  }
+
+  creditWin(creditsAmount) {
+    this.addWin(creditsAmount);
+  }
+
+  deductLoss(creditsAmount) {
+    if (creditsAmount > 0) {
+      const lossInRsd = +(creditsAmount * this.activeDenom).toFixed(2);
+      this.rsdBalance = Math.max(0, +(this.rsdBalance - lossInRsd).toFixed(2));
+      this.lastWinCredits = 0;
+      this.lastWinRsd = 0;
       this.saveState();
       this.updateUI();
     }
@@ -179,14 +207,19 @@ class CasinoWallet {
     const winCredits = this.lastWinCredits;
 
     if (this.balanceEl) this.balanceEl.textContent = currentCredits.toLocaleString();
-    if (this.betEl) this.betEl.textContent = this.bet.toLocaleString();
+    if (this.betEl) {
+      this.betEl.textContent = this.isGoldenBet 
+        ? `${this.currentSpinCostCredits} (${this.bet})` 
+        : this.bet.toLocaleString();
+    }
     if (this.winEl) this.winEl.textContent = winCredits.toLocaleString();
 
+    const actualBetRsd = +(this.currentSpinCostCredits * this.activeDenom).toFixed(2);
     if (this.balanceRsdEl) {
       this.balanceRsdEl.textContent = `≈ ${this.rsdBalance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} RSD`;
     }
     if (this.betRsdEl) {
-      this.betRsdEl.textContent = `≈ ${betRsd.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} RSD`;
+      this.betRsdEl.textContent = `≈ ${actualBetRsd.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} RSD`;
     }
 
     if (this.denomValEl) {
@@ -194,6 +227,14 @@ class CasinoWallet {
     }
     if (this.denomSubEl) {
       this.denomSubEl.textContent = `1 KR = ${this.activeDenom} RSD`;
+    }
+
+    // Golden Bet button sync
+    const goldenBtn = document.getElementById('btn-golden-bet');
+    if (goldenBtn) {
+      goldenBtn.classList.toggle('active', this.isGoldenBet);
+      const st = goldenBtn.querySelector('.gb-status');
+      if (st) st.textContent = this.isGoldenBet ? 'ON' : 'OFF';
     }
 
     // Update active state on any denomination quick buttons

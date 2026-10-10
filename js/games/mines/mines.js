@@ -1,5 +1,5 @@
 /**
- * MaxBet - EGT-Style Mines X Game Engine (Standalone Mode)
+ * IGT - Mines X Game Engine (Standalone Mode)
  * Based on authentic EGT Digital / Spribe Mines mechanics:
  * Configurable grid (3x3 default, 5x5 option), selectable mine count,
  * progressive multiplier bar, interactive tile picking, Cashout feature.

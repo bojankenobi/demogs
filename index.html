@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>MaxBet Casino</title>
+  <title>IGT Casino</title>
   
   <!-- Native PWA & Mobile Meta Tags (Android & iOS) -->
-  <meta name="theme-color" content="#06402d">
-  <meta name="msapplication-navbutton-color" content="#06402d">
+  <meta name="theme-color" content="#120324">
+  <meta name="msapplication-navbutton-color" content="#120324">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="MaxBet">
-  <meta name="application-name" content="MaxBet">
+  <meta name="apple-mobile-web-app-title" content="IGT">
+  <meta name="application-name" content="IGT">
   <meta name="format-detection" content="telephone=no">
   
   <!-- Manifest & Icons -->
@@ -33,10 +33,14 @@
   <canvas id="fx-canvas"></canvas>
 
   <main class="game-container">
-    <!-- Header Section: MaxBet Logo (100% Clean Header) & Player Profile Button -->
+    <!-- Header Section: IGT Logo (100% Clean Header) & Player Profile Button -->
     <header class="header-section">
       <div class="brand-logo-wrap">
-        <img src="assets/logo.svg" alt="MaxBet" class="main-brand-logo">
+        <img src="assets/logo.svg" alt="IGT" class="main-brand-logo">
+        <button class="btn-volatility-pill" id="btn-volatility-toggle" title="Podešavanje volatilnosti i stalnih dobitaka" aria-label="Volatilnost">
+          <span class="volatility-pulse-dot"></span>
+          <span class="volatility-mode-label" id="hud-volatility-name">CASINO STD</span>
+        </button>
       </div>
       <!-- Live Casino Jackpots Bar: SILVER, GOLD & DIAMOND (Thin Metallic Frames) -->
       <div class="jackpots-ticker-bar" id="jackpots-ticker-bar">
@@ -96,7 +100,7 @@
         </div>
 
         <!-- Mines Progress Meter -->
-        <div class="meter-pod meter-mines" id="meter-pod-mines" title="MaxBet Mines Bonus">
+        <div class="meter-pod meter-mines" id="meter-pod-mines" title="IGT Mines Bonus">
           <div class="meter-badge">
             <span class="meter-icon">💣</span>
             <span class="meter-name" data-i18n="meterMinesLabel">MINE</span>
@@ -107,11 +111,58 @@
             <div class="meter-shimmer"></div>
           </div>
         </div>
+
+        <!-- IGT Wheel of Fortune Progress Meter -->
+        <div class="meter-pod meter-wheel" id="wheel-topbox-crown" title="IGT Točak Sreće - Kliknite ili napunite za igru!">
+          <div class="meter-badge">
+            <span class="meter-icon" id="wheel-mini-disc">🎡</span>
+            <span class="meter-name">TOČAK</span>
+            <span class="meter-val" id="wheel-energy-val">0%</span>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill fill-wheel" id="wheel-energy-fill" style="width: 0%;"></div>
+            <div class="meter-shimmer"></div>
+          </div>
+        </div>
       </div>
     </header>
 
     <!-- Stage Area: 3D Horizontal Gold Cylinder Slot Machine -->
     <section class="stage-area">
+      <!-- Free Spins Multiplier HUD Banner (Active only during Super Bonus) -->
+      <div class="free-spins-hud-banner" id="free-spins-hud-banner" style="display: none;">
+        <div class="fs-badge-left">
+          <span class="fs-icon">⚡</span>
+          <span class="fs-label">SPINOVI:</span>
+          <span class="fs-spins-count" id="fs-spins-left">10</span>
+        </div>
+        <div class="fs-badge-center">
+          <span class="fs-title">SUPER BONUS REŽIM</span>
+        </div>
+        <div class="fs-badge-right">
+          <span class="fs-mult-label">MNOŽILAC:</span>
+          <span class="fs-multiplier-pill" id="fs-multiplier-val">2x</span>
+        </div>
+      </div>
+
+      <!-- Tournament HUD Banner (Active only during Tournament Mode) -->
+      <div class="tournament-hud-banner" id="tournament-hud-banner" style="display: none;">
+        <div class="tour-hud-col tour-hud-time">
+          <span class="tour-icon">⏱️</span>
+          <span class="tour-label">VREME:</span>
+          <span class="tour-timer-val" id="tournament-hud-time">02:00</span>
+        </div>
+        <div class="tour-hud-col tour-hud-title-col">
+          <span class="tour-badge-flag">🏆 IGT TURNIR</span>
+          <span class="tour-rank-pill" id="tournament-hud-rank">#1</span>
+        </div>
+        <div class="tour-hud-col tour-hud-score">
+          <span class="tour-score-label">POENI:</span>
+          <span class="tour-score-val" id="tournament-hud-score">0 RSD</span>
+        </div>
+        <button class="tour-exit-btn" id="tour-exit-btn" title="Napusti turnir">✕</button>
+      </div>
+
       <!-- Universal Responsive Scaler: Guarantees full visibility of cylinder & lever on all devices -->
       <div class="slot-stage-scaler">
         <div class="slot-assembly-wrap">
@@ -183,7 +234,7 @@
     </div>
   </div>
 
-      <!-- Standalone MaxBet Mines Game View (Mounted when Mines X is selected in Lobby) -->
+      <!-- Standalone IGT Mines Game View (Mounted when Mines X is selected in Lobby) -->
       <div class="mines-stage-view" id="mines-game-view" style="display: none;">
         <div class="mines-cabinet-panel">
           <!-- Top Multipliers Progress Bar -->
@@ -273,7 +324,7 @@
       </div>
     </section>
 
-    <!-- Controls Panel: Left side Bet controls, Right side Big Round MaxBet Spin -->
+    <!-- Controls Panel: Left side Bet controls, Right side Big Round IGT Spin -->
     <section class="controls-panel">
       <div class="main-action-cluster">
         <div class="bet-side-controls">
@@ -295,9 +346,21 @@
               <img src="assets/symbols/crystal-spade-clean.png" alt="Pik" class="crystal-spade-img" />
             </button>
           </div>
+
+          <!-- Feature Quick Row: Golden Bet (+25%) & Buy Bonus -->
+          <div class="bet-features-row">
+            <button class="btn-golden-bet" id="btn-golden-bet" type="button" title="Golden Bet: +25% ulog za 2x brži Točak i Mine!">
+              <span class="gb-badge">GOLDEN BET</span>
+              <span class="gb-status">OFF</span>
+            </button>
+            <button class="btn-buy-bonus" id="btn-buy-bonus" type="button" title="Kupi Bonus: Direktan ulaz u Točak, Mine ili Free Spinove!">
+              <span class="bb-icon">⚡</span>
+              <span class="bb-text">KUPI BONUS</span>
+            </button>
+          </div>
         </div>
 
-        <!-- Right Side: Luxury Circular MaxBet SPIN Button for player's thumb -->
+        <!-- Right Side: Luxury Circular IGT SPIN Button for player's thumb -->
         <div class="spin-side-wrap">
           <button class="btn-spin-round" id="spin-btn" aria-label="Spin" title="Spin" data-i18n-title="spin">
             <div class="spin-light-burst"></div>
@@ -310,9 +373,9 @@
       </div>
     </section>
 
-    <!-- Minimalist Footer Controls (MaxBet Game Selector & System Icons) -->
+    <!-- Minimalist Footer Controls (IGT Game Selector & System Icons) -->
     <footer class="aux-row">
-      <!-- MaxBet Game Selector Button -->
+      <!-- IGT Game Selector Button -->
       <button class="btn-grand-game-select" id="egt-game-select-btn" title="Izaberi Igru / Select Game" aria-label="Izaberi Igru">
         <span class="grand-btn-glow"></span>
         <span class="grand-select-icon">💎</span>
@@ -341,6 +404,16 @@
         </svg>
       </button>
 
+      <!-- Vegas Casino Ambient Sound Toggle -->
+      <button class="btn-icon-mini btn-ambient" id="ambient-btn" title="Vegas Casino Ambijent (Šum & Zvona)" aria-label="Ambijent">
+        <span class="ambient-icon">🎶</span>
+      </button>
+
+      <!-- 120s Casino Tournament Challenge -->
+      <button class="btn-icon-mini btn-tournament" id="tournament-btn" title="Turnirski Režim (120s Izazov)" aria-label="Turnir">
+        <span class="tour-icon">🏆</span>
+      </button>
+
       <button class="btn-icon-mini btn-player-profile" id="player-profile-btn" title="Profil igrača & statistika" data-i18n-title="profileModalTitle" aria-label="Profil igrača">
         <svg class="gold-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
@@ -353,16 +426,21 @@
           <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/>
         </svg>
       </button>
+
+      <button class="btn-icon-mini btn-volatility-footer" id="volatility-footer-btn" title="Podešavanje Volatilnosti & Prezentacija" aria-label="Volatilnost">
+        <span class="volatility-icon-symbol">⚙️</span>
+        <span class="volatility-badge-pill" id="hud-volatility-sub">STD</span>
+      </button>
     </footer>
   </main>
 
-  <!-- MaxBet Game Selection Modal (Luxury Casino Multigame Terminal) -->
+  <!-- IGT Game Selection Modal (Luxury Casino Multigame Terminal) -->
   <div class="modal-overlay egt-lobby-overlay active" id="egt-games-modal">
     <div class="egt-cabinet-frame">
-      <!-- MaxBet Cabinet Top Bezel / Live Jackpot Strip -->
+      <!-- IGT Cabinet Top Bezel / Live Jackpot Strip -->
       <div class="egt-cabinet-top">
         <div class="egt-cabinet-brand">
-          <img src="assets/logo.svg" alt="MaxBet" class="egt-brand-main-logo" />
+          <img src="assets/logo.svg" alt="IGT" class="egt-brand-main-logo" />
           <span class="egt-brand-badge">VIP CASINO</span>
         </div>
         <div class="grand-lobby-jackpot-strip">
@@ -390,7 +468,7 @@
         </div>
       </div>
 
-      <!-- MaxBet Subheader / Prompt banner -->
+      <!-- IGT Subheader / Prompt banner -->
       <div class="egt-cabinet-subheader">
         <div class="egt-sub-title" data-i18n="egtLobbyTitle">IZBOR IGARA</div>
         <div class="egt-sub-desc" data-i18n="egtLobbySub">DODIRNITE IGRU ZA POKRETANJE</div>
@@ -406,7 +484,7 @@
           
           <div class="grand-card-poster poster-classic">
             <div class="poster-symbols-cluster">
-              <img src="assets/symbols/logo-flower.svg" alt="MaxBet Symbol" class="poster-hero-sym" />
+              <img src="assets/symbols/logo-flower.svg" alt="IGT Symbol" class="poster-hero-sym" />
               <img src="assets/symbols/bar.svg" alt="Bar" class="poster-sub-sym sym-left" />
               <img src="assets/symbols/bell.svg" alt="Bell" class="poster-sub-sym sym-right" />
             </div>
@@ -439,7 +517,7 @@
 
           <div class="egt-card-details">
             <h3 class="egt-card-title" data-i18n="gameRoyal3x3">ROYAL 3x3 (5 LINES)</h3>
-            <p class="egt-card-sub" data-i18n="egtRoyalDesc">5 Isplatnih Linija • MaxBet Mines Bonus • Scatter Dijamanti</p>
+            <p class="egt-card-sub" data-i18n="egtRoyalDesc">5 Isplatnih Linija • IGT Mines Bonus • Scatter Dijamanti</p>
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status" data-i18n="egtSelectTag">IGRAJ SADA</span>
@@ -470,7 +548,7 @@
           </div>
         </div>
 
-        <!-- Game 4: MaxBet Mines X -->
+        <!-- Game 4: IGT Mines X -->
         <div class="egt-game-card" id="egt-opt-mines" data-game="mines">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
@@ -486,7 +564,7 @@
           </div>
 
           <div class="egt-card-details">
-            <h3 class="egt-card-title" data-i18n="gameMines">MAXBET MINES X</h3>
+            <h3 class="egt-card-title" data-i18n="gameMines">IGT MINES X</h3>
             <p class="egt-card-sub" data-i18n="egtMinesDesc">Podesiva Mreža & Broj Mina • Multiplier Traka • Instant Isplata</p>
           </div>
           <div class="egt-card-action">
@@ -581,7 +659,7 @@
 
       <div class="bonus-info-box">
         <div class="bonus-title" data-i18n="freeSpinsRuleHeading">✨ PRAVILA IGRE & BONUSI</div>
-        <p style="margin-top: 6px;"><strong data-i18n="ruleHoldWinTitle">🔥 HOLD & WIN (MAXBET RESPINS):</strong> <span data-i18n="ruleHoldWinDesc">Kad 3 ili više Zlatnika padnu na bubnjeve, pokreće se bonus sa 3 Respina. Svi novčići ostaju zaključani na tabli. Svaki novi novčić koji padne se takođe zaključava i resetuje broj respina ponovo na 3! Kada popunite svih 9 polja, osvajate maksimalni 💎 DIAMOND JACKPOT!</span></p>
+        <p style="margin-top: 6px;"><strong data-i18n="ruleHoldWinTitle">🔥 HOLD & WIN (IGT RESPINS):</strong> <span data-i18n="ruleHoldWinDesc">Kad 3 ili više Zlatnika padnu na bubnjeve, pokreće se bonus sa 3 Respina. Svi novčići ostaju zaključani na tabli. Svaki novi novčić koji padne se takođe zaključava i resetuje broj respina ponovo na 3! Kada popunite svih 9 polja, osvajate maksimalni 💎 DIAMOND JACKPOT!</span></p>
         <p style="margin-top: 6px;"><strong data-i18n="ruleMysteryJpTitle">🎰 MYSTERY JACKPOT:</strong> <span data-i18n="ruleMysteryJpDesc">Svaki spin može nasumično osvojiti progresivni Silver, Gold ili Diamond Jackpot prikazan na vrhu ekrana!</span></p>
         <p style="margin-top: 6px;"><strong data-i18n="ruleCardsTitle">♠️ KRISTALNI PIK (KARTE):</strong> <span data-i18n="ruleCardsDesc">Kada se gornja traka za karte napuni spinovima, Kristalni Pik počinje da svetli i pulsira! Dok svetli, možete ući u igru pogađanja crvene ili crne karte i uvećati dobitak.</span></p>
         <p style="margin-top: 6px;" data-i18n-html="linesRuleText">U <strong>Royal 3x3</strong> igri aktivno je <strong>5 linija</strong> (3 horizontalne + 2 dijagonalne). Dobici na više linija se sabiraju!</p>
@@ -627,7 +705,7 @@
           <div class="flip-card-inner" id="flip-card-inner">
             <div class="card-face card-back" id="card-back-side">
               <div class="card-back-pattern">
-                <span class="card-gold-logo">MB</span>
+                <span class="card-gold-logo">IGT</span>
               </div>
             </div>
             <div class="card-face card-front" id="card-front-side">
@@ -670,7 +748,7 @@
       <!-- Top Decorative Bar & Title -->
       <div class="mini-mines-header">
         <div class="mini-mines-tag" data-i18n="miniMinesBonusTag">BONUS RUNDA</div>
-        <div class="mini-mines-title" data-i18n="miniMinesBonusTitle">💎 MAXBET MINES BONUS 💣</div>
+        <div class="mini-mines-title" data-i18n="miniMinesBonusTitle">💎 IGT MINES BONUS 💣</div>
         <div class="mini-mines-subtitle" data-i18n="miniMinesBonusSub">OTKRIJTE ZLATNIKE I IZBEGNITE MINE!</div>
 
         <!-- Hazard Info Strip -->
@@ -712,16 +790,88 @@
     </div>
   </div>
 
+  <!-- IGT 3D Wheel of Fortune (Kolo Sreće) Modal Arena -->
+  <div class="modal-overlay wheel-modal-overlay" id="wheel-modal">
+    <div class="modal-card wheel-modal-card">
+      <!-- Close button in top-right corner of cabinet -->
+      <button class="wheel-close-btn" id="btn-wheel-close" title="Zatvori točak (ESC)" aria-label="Zatvori">✕</button>
+
+      <!-- Vegas Top-Box Arch Header -->
+      <div class="wheel-marquee-header">
+        <div class="wheel-igt-badge">
+          <span class="badge-text">IGT</span>
+        </div>
+        <div class="wheel-header-title">
+          <span class="marquee-star">✦</span> WHEEL OF FORTUNE <span class="marquee-star">✦</span>
+        </div>
+        <div class="wheel-header-subtitle">OSVOJITE DO 200x ULOGA, JACKPOT ILI BESPLATNE SPINOVE!</div>
+      </div>
+      
+      <!-- Circular Chassis & Mechanical Wheel Stage -->
+      <div class="wheel-stage-container">
+        <div class="wheel-chassis-outer">
+          <!-- Flashing casino bulbs perimeter ring -->
+          <div class="wheel-bulbs-track" id="wheel-bulbs-track"></div>
+          
+          <!-- 3D Mechanical Pointer Clicker at top -->
+          <div class="wheel-pointer-assembly" id="wheel-pointer-assembly">
+            <div class="wheel-pointer-pivot"></div>
+            <div class="wheel-pointer-needle"></div>
+          </div>
+          
+          <!-- High-DPI Canvas Fortune Wheel Rotor -->
+          <div class="wheel-rotor-disc">
+            <canvas id="wheel-canvas" width="370" height="370"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spin Action & Win Display -->
+      <div class="wheel-action-bar">
+        <button class="btn-spin-wheel" id="btn-spin-wheel">🎰 ZAVRTI TOČAK SREĆE 🎰</button>
+        
+        <div class="wheel-win-announcement" id="wheel-win-announcement" style="display: none;">
+          <div class="wheel-win-banner">
+            <span class="wheel-win-label">OSVOJENI DOBITAK:</span>
+            <span class="wheel-win-val" id="wheel-win-val">0 RSD</span>
+          </div>
+          <button class="btn-wheel-claim" id="btn-wheel-claim">💰 PREUZMI DOBITAK & NASTAVI 💰</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Free Spins Completed Summary Modal -->
+  <div class="modal-overlay fs-summary-overlay" id="fs-summary-modal">
+    <div class="modal-card fs-summary-card">
+      <div class="fs-summary-icon">🎉</div>
+      <h2 class="fs-summary-title">ČESTITAMO!</h2>
+      <div class="fs-summary-subtitle">ZAVRŠENI BESPLATNI SPINOVI</div>
+      <div class="fs-summary-amount" id="fs-total-won-val">0 RSD</div>
+      <button class="btn-fs-claim" id="btn-fs-claim">PREUZMI DOBITAK</button>
+    </div>
+  </div>
+
+  <!-- Las Vegas Big Win / Mega Win / Epic Win Overlay -->
+  <div class="modal-overlay big-win-overlay" id="big-win-overlay">
+    <div class="big-win-container">
+      <div class="big-win-burst"></div>
+      <div class="big-win-banner" id="big-win-tier-text">✨ BIG WIN! ✨</div>
+      <div class="big-win-counter" id="big-win-counter-val">0</div>
+      <div class="big-win-hint">KLIKNITE BILO GDE ZA NASTAVAK</div>
+    </div>
+  </div>
+
   <!-- Smart PWA Install Bottom Bar / Floating Prompt -->
   <aside class="pwa-install-banner" id="pwa-install-banner" aria-label="Instalacija aplikacije">
     <div class="pwa-banner-glow"></div>
     <div class="pwa-banner-content">
       <div class="pwa-banner-icon-wrap">
-        <img src="assets/icons/icon-192.png" alt="MaxBet Casino" class="pwa-banner-logo" />
+        <img src="assets/icons/icon-192.png" alt="IGT Casino" class="pwa-banner-logo" />
         <span class="pwa-banner-badge">APP</span>
       </div>
       <div class="pwa-banner-text">
-        <div class="pwa-banner-title" data-i18n="pwaBannerTitle">Instalirajte MaxBet Casino</div>
+        <div class="pwa-banner-title" data-i18n="pwaBannerTitle">Instalirajte IGT Casino</div>
         <div class="pwa-banner-sub" data-i18n="pwaBannerSub">Igrajte na punom ekranu bez browser traka, brže i glatko!</div>
       </div>
     </div>
@@ -787,8 +937,8 @@
     <div class="login-card-frame">
       <div class="login-glow-bar"></div>
       <div class="login-header">
-        <img src="assets/logo.svg" alt="MaxBet" class="login-logo-img" />
-        <h2 class="login-heading" data-i18n="loginTitle">MAXBET DEMO PRIJAVA</h2>
+        <img src="assets/logo.svg" alt="IGT" class="login-logo-img" />
+        <h2 class="login-heading" data-i18n="loginTitle">IGT DEMO PRIJAVA</h2>
         <p class="login-subheading" data-i18n="loginSub">Pristup 3D kazino platformi i igračkom profilu</p>
       </div>
 
@@ -956,30 +1106,264 @@
     </div>
   </div>
 
+  <!-- Volatility & Math Preset Modal -->
+  <div class="modal-overlay volatility-overlay" id="volatility-modal">
+    <div class="volatility-modal-box">
+      <div class="volatility-modal-head">
+        <div class="volatility-title-wrap">
+          <span class="volatility-top-badge">🎰 MATEMATIKA & VOLATILNOST</span>
+          <h2 class="volatility-modal-title">IZABERITE PROFIL AUTOMATA</h2>
+          <p class="volatility-modal-subtitle">Podesite učestalost dobitaka ili uključite stalne dobitke za prezentaciju igara</p>
+        </div>
+        <button class="volatility-close-btn" id="volatility-close-btn" title="Zatvori">✕</button>
+      </div>
+
+      <div class="volatility-cards-grid">
+        <!-- 1. Casino Standard -->
+        <div class="volatility-option-card active" data-preset="standard">
+          <div class="volatility-card-ribbon ribbon-gold">PREPORUČENO</div>
+          <div class="volatility-card-header">
+            <span class="volatility-card-icon">🎰</span>
+            <div class="volatility-card-titles">
+              <h3 class="volatility-opt-title">Casino Standard</h3>
+              <span class="volatility-opt-rtp">~96.0% RTP • Hit Rate ~25%</span>
+            </div>
+          </div>
+          <p class="volatility-card-desc">Standardna industrijska slot matematika. Balansirani dobici i gubici. Isplata za 2 simbola važi isključivo za zlatnike, ostali simboli traže punu liniju.</p>
+          <div class="volatility-card-specs">
+            <div class="spec-pill"><span class="spec-label">Udarac:</span> <span class="spec-val">1 od 4 spina</span></div>
+            <div class="spec-pill"><span class="spec-label">Obrt za bonus:</span> <span class="spec-val">450 - 850 RSD</span></div>
+          </div>
+          <button class="btn-select-preset" data-preset="standard">IZABERI PROFIL</button>
+        </div>
+
+        <!-- 2. Low Volatility -->
+        <div class="volatility-option-card" data-preset="low">
+          <div class="volatility-card-ribbon ribbon-green">ČEŠĆI DOBICI</div>
+          <div class="volatility-card-header">
+            <span class="volatility-card-icon">🛡️</span>
+            <div class="volatility-card-titles">
+              <h3 class="volatility-opt-title">Niska Volatilnost</h3>
+              <span class="volatility-opt-rtp">~97.0% RTP • Hit Rate ~40%</span>
+            </div>
+          </div>
+          <p class="volatility-card-desc">Češći manji dobici za duže trajanje kredita i opušteniju sesiju. 2 simbola plaćaju za zlatnike, zvona i sedmice.</p>
+          <div class="volatility-card-specs">
+            <div class="spec-pill"><span class="spec-label">Udarac:</span> <span class="spec-val">Skoro svaki 2. spin</span></div>
+            <div class="spec-pill"><span class="spec-label">Obrt za bonus:</span> <span class="spec-val">350 - 700 RSD</span></div>
+          </div>
+          <button class="btn-select-preset" data-preset="low">IZABERI PROFIL</button>
+        </div>
+
+        <!-- 3. High Volatility -->
+        <div class="volatility-option-card" data-preset="high">
+          <div class="volatility-card-ribbon ribbon-red">VISOK RIZIK & VEĆE ISPLATE</div>
+          <div class="volatility-card-header">
+            <span class="volatility-card-icon">🔥</span>
+            <div class="volatility-card-titles">
+              <h3 class="volatility-opt-title">Visoka Volatilnost</h3>
+              <span class="volatility-opt-rtp">~94.5% RTP • Hit Rate ~16%</span>
+            </div>
+          </div>
+          <p class="volatility-card-desc">Visok adrenalinski rizik. Ređi dobici, ali NEMA isplate za 2 simbola — isključivo 3 simbola plaćaju uz +50% veće iznose (1.5x Multiplier)!</p>
+          <div class="volatility-card-specs">
+            <div class="spec-pill"><span class="spec-label">Udarac:</span> <span class="spec-val">1 od 6 spinova</span></div>
+            <div class="spec-pill"><span class="spec-label">Obrt za bonus:</span> <span class="spec-val">650 - 1200 RSD</span></div>
+          </div>
+          <button class="btn-select-preset" data-preset="high">IZABERI PROFIL</button>
+        </div>
+
+        <!-- 4. Demo / Promo Mode (100% Hit) -->
+        <div class="volatility-option-card" data-preset="demo">
+          <div class="volatility-card-ribbon ribbon-purple">100% DOBITAK • PREZENTACIJA</div>
+          <div class="volatility-card-header">
+            <span class="volatility-card-icon">🚀</span>
+            <div class="volatility-card-titles">
+              <h3 class="volatility-opt-title">Demo Prezentacija</h3>
+              <span class="volatility-opt-rtp">100% Hit • Promo Show</span>
+            </div>
+          </div>
+          <p class="volatility-card-desc">Garantovan dobitak na svakom spinu! Idealan režim za demonstraciju automata klijentima, brzo otključavanje Mina, Točka i Karata.</p>
+          <div class="volatility-card-specs">
+            <div class="spec-pill"><span class="spec-label">Udarac:</span> <span class="spec-val">SVAKI SPIN DOBITAN</span></div>
+            <div class="spec-pill"><span class="spec-label">Obrt za bonus:</span> <span class="spec-val">Munjevito (70 - 130 RSD)</span></div>
+          </div>
+          <button class="btn-select-preset" data-preset="demo">IZABERI PROFIL</button>
+        </div>
+      </div>
+
+      <div class="volatility-footer-note">
+        💡 <em>Promena profila trenutno ažurira sve igre (Classic, Royal 3x3, Mines) i brzinu punjenja bonusa.</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buy Bonus Modal (Kupovina Bonusa) -->
+  <div class="modal-overlay buy-bonus-overlay" id="buy-bonus-modal">
+    <div class="buy-bonus-modal-box">
+      <div class="buy-bonus-modal-head">
+        <div class="buy-bonus-title-wrap">
+          <span class="buy-bonus-top-badge">⚡ VIP DIREKTNA AKCIJA</span>
+          <h2 class="buy-bonus-modal-title">KUPOVINA BONUSA</h2>
+          <p class="buy-bonus-modal-subtitle">Preskočite čekanje i odmah aktivirajte željeni bonus po izboru!</p>
+        </div>
+        <button class="buy-bonus-close-btn" id="buy-bonus-close" title="Zatvori">✕</button>
+      </div>
+
+      <div class="buy-bonus-cards-grid">
+        <!-- 1. Točak Sreće -->
+        <div class="buy-bonus-card card-wheel">
+          <div class="buy-card-ribbon ribbon-gold">JACKPOT & MULTIPLIERS</div>
+          <div class="buy-card-visual">
+            <span class="buy-card-icon">🎡</span>
+          </div>
+          <div class="buy-card-content">
+            <h3 class="buy-card-title">Točak Sreće</h3>
+            <p class="buy-card-desc">Garantovan ulazak u Točak Sreće sa novčanim nagradama, besplatnim spinovima i šansom za Diamond Jackpot!</p>
+            <div class="buy-price-tag" id="buy-price-val-wheel">900 KR (900 RSD)</div>
+            <button class="btn-confirm-buy btn-buy-wheel" data-feature="wheel" id="buy-btn-val-wheel">KUPI ZA 900 RSD</button>
+          </div>
+        </div>
+
+        <!-- 2. IGT Mini-Mines -->
+        <div class="buy-bonus-card card-mines">
+          <div class="buy-card-ribbon ribbon-amber">HIGH REWARD • CASHOUT</div>
+          <div class="buy-card-visual">
+            <span class="buy-card-icon">💣</span>
+          </div>
+          <div class="buy-card-content">
+            <h3 class="buy-card-title">IGT Mini-Mines</h3>
+            <p class="buy-card-desc">Otvorite polja, sakupljajte dragulje sa rastućim multiplikatorima i naplatite ulog pre nego što detonira mina!</p>
+            <div class="buy-price-tag" id="buy-price-val-mines">700 KR (700 RSD)</div>
+            <button class="btn-confirm-buy btn-buy-mines" data-feature="mines" id="buy-btn-val-mines">KUPI ZA 700 RSD</button>
+          </div>
+        </div>
+
+        <!-- 3. Super Free Spins -->
+        <div class="buy-bonus-card card-freespins">
+          <div class="buy-card-ribbon ribbon-cyan">10 SPINS • 2X MULTIPLIER</div>
+          <div class="buy-card-visual">
+            <span class="buy-card-icon">⚡</span>
+          </div>
+          <div class="buy-card-content">
+            <h3 class="buy-card-title">Super Besplatni Spinovi</h3>
+            <p class="buy-card-desc">10 garantovanih besplatnih spinova sa stalnim 2x multiplikatorom na sve dobitne linije i kombinacije!</p>
+            <div class="buy-price-tag" id="buy-price-val-freespins">1,000 KR (1,000 RSD)</div>
+            <button class="btn-confirm-buy btn-buy-freespins" data-feature="freespins" id="buy-btn-val-freespins">KUPI ZA 1,000 RSD</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="buy-bonus-footer-note">
+        💡 <em>Cena kupovine bonusa automatski se računa na osnovu Vašeg trenutnog uloga (Bet) i denominacije.</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tournament Lobby Modal -->
+  <div class="modal-overlay tournament-overlay" id="tournament-modal">
+    <div class="tournament-modal-box">
+      <div class="tournament-modal-head">
+        <div class="tournament-title-wrap">
+          <span class="tournament-top-badge">🏆 120s HIGH-SPEED IZAZOV</span>
+          <h2 class="tournament-modal-title">IGT CASINO TURNIR</h2>
+          <p class="tournament-modal-subtitle">Takmičite se za vrh tabele sa 5.000 turnirskih kredita!</p>
+        </div>
+        <button class="tournament-close-btn" id="tournament-close-btn" title="Zatvori">✕</button>
+      </div>
+
+      <div class="tournament-body-content">
+        <div class="tournament-info-banner">
+          <div class="tour-info-card">
+            <span class="tic-icon">⏱️</span>
+            <div class="tic-meta">
+              <span class="tic-label">TRAJANJE</span>
+              <span class="tic-val">120 Sekundi</span>
+            </div>
+          </div>
+          <div class="tour-info-card">
+            <span class="tic-icon">💰</span>
+            <div class="tic-meta">
+              <span class="tic-label">START KREDITI</span>
+              <span class="tic-val">5,000 KR</span>
+            </div>
+          </div>
+          <div class="tour-info-card">
+            <span class="tic-icon">🛡️</span>
+            <div class="tic-meta">
+              <span class="tic-label">VAŠ SALDO</span>
+              <span class="tic-val">100% Bezbedan</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tournament-leaderboard-section">
+          <h3 class="tour-lead-title">👑 TRENUTNA TABELA ŠAMPIONA</h3>
+          <div class="tournament-lead-list" id="tournament-leaderboard-list">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="tournament-footer-actions">
+        <button class="btn-tournament-start" id="tournament-start-btn">ZAPOČNI TURNIR (120 SEKUNDI) 🚀</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tournament Results Modal -->
+  <div class="modal-overlay tournament-results-overlay" id="tournament-results-modal">
+    <div class="tournament-modal-box results-box">
+      <div class="tournament-results-celebration">
+        <span class="tour-trophy-large">🏆</span>
+        <h2 class="tour-finished-title">TURNIR JE ZAVRŠEN!</h2>
+        <p class="tour-finished-sub">Čestitamo! Vaš rezultat je uspešno zabeležen na tabeli šampiona.</p>
+      </div>
+
+      <div class="tour-result-metrics">
+        <div class="tour-metric-card">
+          <span class="tm-label">OSVOJENI POENI</span>
+          <span class="tm-val highlight-gold" id="tournament-result-score">0 RSD</span>
+        </div>
+        <div class="tour-metric-card">
+          <span class="tm-label">KONAČAN PLASMAN</span>
+          <span class="tm-val highlight-cyan" id="tournament-result-rank">#1. MESTO</span>
+        </div>
+      </div>
+
+      <div class="tournament-footer-actions">
+        <button class="btn-tournament-start" id="tournament-results-close-btn">NASTAVI IGRU ✨</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
-  <script src="js/audio.js?v=61"></script>
-  <script src="js/i18n.js?v=61"></script>
-  <script src="js/particles.js?v=63"></script>
+  <script src="js/audio.js?v=65"></script>
+  <script src="js/i18n.js?v=65"></script>
+  <script src="js/particles.js?v=65"></script>
   
   <!-- Core Platform Modules -->
-  <script src="js/core/player-tracker.js?v=61"></script>
-  <script src="js/core/wallet.js?v=61"></script>
-  <script src="js/core/jackpots.js?v=61"></script>
-  <script src="js/core/meters.js?v=61"></script>
-  <script src="js/core/gamble.js?v=61"></script>
-  <script src="js/core/math-manager.js?v=61"></script>
-  <script src="js/core/admin.js?v=61"></script>
-  <script src="js/core/lobby.js?v=61"></script>
+  <script src="js/core/player-tracker.js?v=65"></script>
+  <script src="js/core/wallet.js?v=65"></script>
+  <script src="js/core/jackpots.js?v=65"></script>
+  <script src="js/core/meters.js?v=65"></script>
+  <script src="js/core/wheel.js?v=65"></script>
+  <script src="js/core/bonus-features.js?v=65"></script>
+  <script src="js/core/tournament.js?v=65"></script>
+  <script src="js/core/gamble.js?v=65"></script>
+  <script src="js/core/math-manager.js?v=65"></script>
+  <script src="js/core/admin.js?v=65"></script>
+  <script src="js/core/lobby.js?v=65"></script>
 
   <!-- Game Modules -->
-  <script src="js/games/classic/symbols.js?v=61"></script>
-  <script src="js/games/classic/classic.js?v=61"></script>
-  <script src="js/games/royal3x3/symbols.js?v=61"></script>
-  <script src="js/games/royal3x3/royal3x3.js?v=61"></script>
-  <script src="js/games/mines/mines.js?v=61"></script>
-  <script src="js/games/mines/mini-mines.js?v=61"></script>
+  <script src="js/games/classic/symbols.js?v=65"></script>
+  <script src="js/games/classic/classic.js?v=65"></script>
+  <script src="js/games/royal3x3/symbols.js?v=65"></script>
+  <script src="js/games/royal3x3/royal3x3.js?v=65"></script>
+  <script src="js/games/mines/mines.js?v=65"></script>
+  <script src="js/games/mines/mini-mines.js?v=65"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=61"></script>
+  <script src="js/app.js?v=65"></script>
 </body>
 </html>

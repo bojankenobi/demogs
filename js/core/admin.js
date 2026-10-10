@@ -1,12 +1,12 @@
 /**
- * MaxBet - Operator / Admin Control Panel
- * Secret activation via 5 clicks on MaxBet logo or keyboard shortcut Ctrl+Shift+A / `~`
+ * IGT - Operator / Admin Control Panel
+ * Secret activation via 5 clicks on IGT logo or keyboard shortcut Ctrl+Shift+A / `~`
  * Enables live RTP Presets, symbol weight tuning, RTP Monte Carlo simulation, and instant demo triggers.
  */
 class AdminPanel {
   constructor(app) {
     this.app = app;
-    this.mathManager = new window.SlotMathManager();
+    this.mathManager = (this.app && this.app.mathManager) ? this.app.mathManager : new window.SlotMathManager();
     this.app.mathManager = this.mathManager;
 
     this.logoClicks = 0;
@@ -27,7 +27,7 @@ class AdminPanel {
         <div class="admin-header">
           <div class="admin-title-wrap">
             <span class="admin-badge">OPERATOR / DEMO</span>
-            <h2 class="admin-title">⚙️ MAXBET ADMIN PANEL</h2>
+            <h2 class="admin-title">⚙️ IGT ADMIN PANEL</h2>
           </div>
           <button class="admin-close-btn" id="admin-close-btn" title="Zatvori">✕</button>
         </div>

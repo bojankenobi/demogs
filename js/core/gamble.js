@@ -196,16 +196,26 @@ class CardGambleGame {
           if (this.gambleTakeBtn) this.gambleTakeBtn.disabled = false;
         }, 900);
       } else {
-        // If it came from a win, deduct the win from balance since it was already added to balance
+        const lostAmount = this.gambleAmount;
+        // If it came from a spin win, deduct the win from balance since it was previously added to balance
         if (!this.fromBet) {
-          this.wallet.balance = Math.max(0, this.wallet.balance - this.gambleAmount);
+          if (typeof this.wallet.deductLoss === 'function') {
+            this.wallet.deductLoss(lostAmount);
+          } else {
+            this.wallet.balance = Math.max(0, this.wallet.balance - lostAmount);
+            this.wallet.setLastWin(0);
+            this.wallet.updateUI();
+          }
+        } else {
+          this.wallet.setLastWin(0);
+          this.wallet.updateUI();
         }
-        this.wallet.setLastWin(0);
         this.gambleAmount = 0;
+        this.updateUI();
 
         if (window.slotAudio) window.slotAudio.playGambleLose();
         if (window.slotApp) {
-          window.slotApp.showMessage(window.i18n ? window.i18n.t('gambleLost') : '❌ VIŠE SREĆE DRUGI PUT!', 'normal');
+          window.slotApp.showMessage(`❌ POGREŠAN IZBOR! IZGUBLJENO: ${lostAmount} KREDITA!`, 'normal');
         }
 
         setTimeout(() => {

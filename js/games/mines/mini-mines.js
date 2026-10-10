@@ -1,5 +1,5 @@
 /**
- * MaxBet - Mini-Mines Slot Bonus Round
+ * IGT - Mini-Mines Slot Bonus Round
  * Replaces the long respin mode with an interactive, high-tension choice-driven bonus.
  * Triggered when 3+ Gold Coins land on the reels during slot spins.
  * Players uncover vault tiles to reveal Gold Coins, Diamonds and Multipliers,
@@ -186,14 +186,24 @@ class MiniMinesBonus {
   }
 
   triggerMineHit(idx, tileEl) {
-    tileEl.classList.add('revealed', 'exploded-mine');
-    const bombName = window.i18n ? window.i18n.t('minesBomb') : 'MINA';
-    tileEl.innerHTML = `
-      <div class="tile-win-reveal">
-        <img src="assets/symbols/bomb.svg" class="mini-sym-img bomb-shake" alt="${bombName}" />
-        <span class="tile-mine-badge">BOOM!</span>
-      </div>
-    `;
+    if (typeof idx === 'object' && idx !== null && idx.nodeType) {
+      const temp = tileEl;
+      tileEl = idx;
+      idx = typeof temp === 'number' ? temp : 0;
+    }
+    if (!tileEl && this.grid) {
+      tileEl = this.grid.querySelector(`.mini-mines-tile[data-index="${idx}"]`) || this.grid.querySelector('.mini-mines-tile');
+    }
+    if (tileEl) {
+      tileEl.classList.add('revealed', 'exploded-mine');
+      const bombName = window.i18n ? window.i18n.t('minesBomb') : 'MINA';
+      tileEl.innerHTML = `
+        <div class="tile-win-reveal">
+          <img src="assets/symbols/bomb.svg" class="mini-sym-img bomb-shake" alt="${bombName}" />
+          <span class="tile-mine-badge">BOOM!</span>
+        </div>
+      `;
+    }
 
     if (window.slotAudio && window.slotAudio.playMineExplode) {
       window.slotAudio.playMineExplode();
@@ -233,10 +243,19 @@ class MiniMinesBonus {
       });
     }
 
-    // In slot bonus round, hitting a mine keeps half or starter prize as consolation
-    const consolationPrize = Math.max(Math.round(this.totalWin * 0.4), Math.round(this.bet * 2));
-    this.totalWin = consolationPrize;
+    // Authentic Casino Rule: hitting a mine wipes out all accumulated bonus winnings (0 RSD)!
+    this.totalWin = 0;
     this.updateUI();
+
+    if (this.statusText) {
+      this.statusText.textContent = '💥 MINA EKSPLODIRALA! IZGUBLJEN SAV DOBITAK (0 RSD)!';
+      this.statusText.classList.add('alert-danger');
+    }
+
+    if (this.cashoutBtn) {
+      this.cashoutBtn.disabled = true;
+      this.cashoutBtn.classList.add('is-disabled');
+    }
 
     setTimeout(() => {
       this.finishBonus(false);
@@ -259,6 +278,10 @@ class MiniMinesBonus {
       }
       if (window.particleEngine) {
         window.particleEngine.spawnCelebration(allSafeCleared);
+      }
+    } else {
+      if (window.slotAudio && window.slotAudio.playMineExplode) {
+        window.slotAudio.playMineExplode();
       }
     }
 

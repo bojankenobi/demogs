@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <radialGradient id="wheelOuterGold" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff2a1"/>
+      <stop offset="60%" stop-color="#d4af37"/>
+      <stop offset="90%" stop-color="#996515"/>
+      <stop offset="100%" stop-color="#593b0c"/>
+    </radialGradient>
+    <radialGradient id="wheelCenterGold" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#f6c845"/>
+      <stop offset="100%" stop-color="#b8790b"/>
+    </radialGradient>
+    <linearGradient id="purpleSeg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b85afd"/>
+      <stop offset="100%" stop-color="#58118d"/>
+    </linearGradient>
+    <linearGradient id="goldSeg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#cc8800"/>
+    </linearGradient>
+    <linearGradient id="cyanSeg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff"/>
+      <stop offset="100%" stop-color="#0066aa"/>
+    </linearGradient>
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Ambient Glow & Golden Rim -->
+  <circle cx="50" cy="50" r="48" fill="url(#wheelOuterGold)" filter="url(#goldGlow)"/>
+  <circle cx="50" cy="50" r="44" fill="#0d021a" stroke="#ffd700" stroke-width="1.5"/>
+
+  <!-- Wheel Segments (Pie Slices) -->
+  <g transform="translate(50, 50)">
+    <!-- 8 Slices (45 deg each) -->
+    <path d="M0,0 L0,-43 A43,43 0 0,1 30.4,-30.4 Z" fill="url(#purpleSeg)"/>
+    <path d="M0,0 L30.4,-30.4 A43,43 0 0,1 43,0 Z" fill="url(#goldSeg)"/>
+    <path d="M0,0 L43,0 A43,43 0 0,1 30.4,30.4 Z" fill="url(#cyanSeg)"/>
+    <path d="M0,0 L30.4,30.4 A43,43 0 0,1 0,43 Z" fill="url(#purpleSeg)"/>
+    <path d="M0,0 L0,43 A43,43 0 0,1 -30.4,30.4 Z" fill="url(#goldSeg)"/>
+    <path d="M0,0 L-30.4,30.4 A43,43 0 0,1 -43,0 Z" fill="url(#cyanSeg)"/>
+    <path d="M0,0 L-43,0 A43,43 0 0,1 -30.4,-30.4 Z" fill="url(#purpleSeg)"/>
+    <path d="M0,0 L-30.4,-30.4 A43,43 0 0,1 0,-43 Z" fill="url(#goldSeg)"/>
+
+    <!-- Segment Divider Spokes -->
+    <line x1="0" y1="-43" x2="0" y2="43" stroke="#ffd700" stroke-width="1.2"/>
+    <line x1="-43" y1="0" x2="43" y2="0" stroke="#ffd700" stroke-width="1.2"/>
+    <line x1="-30.4" y1="-30.4" x2="30.4" y2="30.4" stroke="#ffd700" stroke-width="1.2"/>
+    <line x1="-30.4" y1="30.4" x2="30.4" y2="-30.4" stroke="#ffd700" stroke-width="1.2"/>
+
+    <!-- Perimeter Pegs (Gold Studs) -->
+    <circle cx="0" cy="-41" r="1.8" fill="#ffffff"/>
+    <circle cx="29" cy="-29" r="1.8" fill="#ffffff"/>
+    <circle cx="41" cy="0" r="1.8" fill="#ffffff"/>
+    <circle cx="29" cy="29" r="1.8" fill="#ffffff"/>
+    <circle cx="0" cy="41" r="1.8" fill="#ffffff"/>
+    <circle cx="-29" cy="29" r="1.8" fill="#ffffff"/>
+    <circle cx="-41" cy="0" r="1.8" fill="#ffffff"/>
+    <circle cx="-29" cy="-29" r="1.8" fill="#ffffff"/>
+  </g>
+
+  <!-- Center Metallic Medallion -->
+  <circle cx="50" cy="50" r="22" fill="url(#wheelOuterGold)" stroke="#ffd700" stroke-width="2"/>
+  <circle cx="50" cy="50" r="18" fill="#120324"/>
+  <circle cx="50" cy="50" r="14" fill="url(#wheelCenterGold)"/>
+
+  <!-- Top Needle Pointer -->
+  <polygon points="50,11 44,2 56,2" fill="#ffd700" stroke="#996515" stroke-width="1"/>
+  <circle cx="50" cy="4" r="2" fill="#ffffff"/>
+
+  <!-- Text Banner WHEEL -->
+  <path d="M15,53 Q50,60 85,53" fill="none" id="textCurve"/>
+  <rect x="18" y="44" width="64" height="15" rx="4" fill="#0d011c" stroke="#ffd700" stroke-width="1.2"/>
+  <text x="50" y="55" font-family="'Impact', 'Arial Black', sans-serif" font-size="11" font-weight="900" fill="#ffd700" text-anchor="middle" letter-spacing="1.5">WHEEL</text>
+</svg>

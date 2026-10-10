@@ -1,5 +1,5 @@
 /**
- * MaxBet Xtension Link - Game Engine
+ * IGT Xtension Link - Game Engine
  * 5 Reels x 3 Rows Base Game -> Expanding up to 5x8 in Xtension Link Bonus.
  * Unlock levels:
  *  - 4th Row: 8 Spheres
@@ -429,7 +429,7 @@ class GrandXtensionGame {
       window.slotAudio.playJackpot();
     }
     if (window.slotApp) {
-      window.slotApp.showMessage('⚡ MAXBET XTENSION LINK POKRENUT! PRITISNITE SPIN ZA RESPIN ⚡', 'jackpot');
+      window.slotApp.showMessage('⚡ IGT XTENSION LINK POKRENUT! PRITISNITE SPIN ZA RESPIN ⚡', 'jackpot');
     }
 
     this.showBonusUI();

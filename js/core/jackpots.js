@@ -276,6 +276,50 @@ class CasinoJackpots {
       onWinCallback(tier, prize, msgKey);
     }
   }
+
+  claimTier(tier) {
+    let prize = 0;
+    let badgeClass = '';
+    let msgKey = '';
+
+    if (tier === 'diamond' || tier === 'grand') {
+      prize = parseFloat(this.jackpotDiamond.toFixed(2));
+      this.jackpotDiamond = this.config.diamond.seed;
+      this.displayDiamond = this.config.diamond.seed;
+      badgeClass = '.jp-diamond';
+      msgKey = 'jackpotWonDiamond';
+    } else if (tier === 'gold') {
+      prize = parseFloat(this.jackpotGold.toFixed(2));
+      this.jackpotGold = this.config.gold.seed;
+      this.displayGold = this.config.gold.seed;
+      badgeClass = '.jp-gold';
+      msgKey = 'jackpotWonGold';
+    } else {
+      prize = parseFloat(this.jackpotSilver.toFixed(2));
+      this.jackpotSilver = this.config.silver.seed;
+      this.displaySilver = this.config.silver.seed;
+      badgeClass = '.jp-silver';
+      msgKey = 'jackpotWonSilver';
+    }
+
+    if (this.wallet) {
+      this.wallet.addWin(prize);
+    }
+    this.render();
+
+    const pod = document.querySelector(badgeClass);
+    if (pod) {
+      pod.classList.add('jp-hit-pulse');
+      setTimeout(() => pod.classList.remove('jp-hit-pulse'), 5000);
+    }
+
+    if (window.slotAudio && window.slotAudio.playJackpot) window.slotAudio.playJackpot();
+    if (window.particleEngine) window.particleEngine.spawnCelebration(true);
+
+    const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
+    const creditsWon = Math.round(prize / denom);
+    return { tier, prize, creditsWon };
+  }
 }
 
 window.CasinoJackpots = CasinoJackpots;
