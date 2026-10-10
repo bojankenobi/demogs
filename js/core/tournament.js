@@ -106,7 +106,10 @@ class CasinoTournament {
 
   openModal() {
     if (this.isActive) {
-      if (window.slotApp) window.slotApp.showMessage('⚡ TURNIR JE VEĆ U TOKU!', 'warning');
+      if (window.slotApp) {
+        const msg = window.i18n ? window.i18n.t('tourAlreadyActive') : '⚡ TURNIR JE VEĆ U TOKU!';
+        window.slotApp.showMessage(msg, 'warning');
+      }
       return;
     }
     this.loadLeaderboard();
@@ -154,7 +157,8 @@ class CasinoTournament {
     if (window.particleEngine) window.particleEngine.spawnCelebration(true);
 
     if (window.slotApp) {
-      window.slotApp.showMessage('🏆 TURNIR JE POČEO! 2 MINUTA ZA MAKSIMALAN DOBITAK! ⚡', 'jackpot');
+      const msg = window.i18n ? window.i18n.t('tourStartedMsg') : '🏆 TURNIR JE POČEO! 2 MINUTA ZA MAKSIMALAN DOBITAK! ⚡';
+      window.slotApp.showMessage(msg, 'jackpot');
     }
 
     // Timer loop
@@ -214,9 +218,10 @@ class CasinoTournament {
     this.wallet.updateUI();
 
     // Check placement on leaderboard
+    const fallbackName = window.i18n ? window.i18n.t('tourPlayerYou') : 'Vi (Igrač)';
     const playerName = (window.slotApp && window.slotApp.playerTracker && window.slotApp.playerTracker.profile.username)
       ? window.slotApp.playerTracker.profile.username
-      : 'Vi (Igrač)';
+      : fallbackName;
 
     this.leaderboard.push({ name: playerName, score: Math.round(this.tournamentScore) });
     this.leaderboard.sort((a, b) => b.score - a.score);
@@ -224,7 +229,9 @@ class CasinoTournament {
     this.saveLeaderboard();
 
     const userRank = this.leaderboard.findIndex(item => item.name === playerName) + 1;
-    const rankLabel = userRank > 0 ? `#${userRank}. MESTO` : 'TOP 10';
+    const rankLabel = userRank > 0 
+      ? (window.i18n ? window.i18n.t('tourRankPlace', { rank: userRank }) : `#${userRank}. MESTO`)
+      : 'TOP 10';
 
     if (this.resultScoreEl) this.resultScoreEl.textContent = `${Math.round(this.tournamentScore).toLocaleString()} RSD`;
     if (this.resultRankEl) this.resultRankEl.textContent = rankLabel;
@@ -235,7 +242,10 @@ class CasinoTournament {
     if (window.particleEngine) window.particleEngine.spawnCelebration(true);
 
     if (window.slotApp) {
-      window.slotApp.showMessage(`🎉 ZAVRŠEN TURNIR! RANG: ${rankLabel} (${Math.round(this.tournamentScore)} RSD)!`, 'jackpot');
+      const msg = window.i18n 
+        ? window.i18n.t('tourFinishedMsg', { rank: rankLabel, score: Math.round(this.tournamentScore).toLocaleString() })
+        : `🎉 ZAVRŠEN TURNIR! RANG: ${rankLabel} (${Math.round(this.tournamentScore)} RSD)!`;
+      window.slotApp.showMessage(msg, 'jackpot');
     }
   }
 }

@@ -193,13 +193,134 @@
       profileCloseBtn: 'ZATVORI',
       denominationLabel: 'DENOM',
       profileDenomDesc: 'Izaberite koliko dinara vredi 1 kredit:',
+      profileDepositDesc: 'Dodajte fiktivna sredstva na svoj račun u dinarima radi testiranja igre:',
+      profileDepositBtn: 'DOPUNI RSD',
+      depositSuccessMsg: '💰 USPEŠNO UPLAĆENO +{rsd} RSD (+{credits} KR)!',
+
+      // Wheel of Fortune
       wheelTitle: '✦ WHEEL OF FORTUNE ✦',
       wheelSub: 'OSVOJITE DO 200x ULOGA, JACKPOT ILI BESPLATNE SPINOVE!',
       wheelSpinBtn: '🎰 ZAVRTI TOČAK SREĆE 🎰',
       wheelSpinning: '⏳ TOČAK SE VRTI...',
       wheelClaimBtn: '💰 PREUZMI DOBITAK & NASTAVI 💰',
       wheelCloseBtn: '✕ ZATVORI',
-      wheelWonLabel: 'OSVOJENI DOBITAK:'
+      wheelWonLabel: 'OSVOJENI DOBITAK:',
+      wheelCloseTitle: 'Zatvori točak (ESC)',
+      wheelLockedMsg: '🎡 IGT TOČAK SREĆE: PUNITE MERAČ SPINOVIMA (TRENUTNO {pct}%)',
+      wheelBankruptMsg: '💥 BANKRUPT! 0 RSD (POKUŠAJTE PONOVO)',
+      wheelFsAwarded: '{spins} BESPLATNIH SPINOVA ({mult}x START)!',
+      wheelJackpotAwarded: 'JACKPOT {tier} ({amount} RSD)!',
+
+      // Volatility & Math Modal
+      volatilityPillTitle: 'Podešavanje volatilnosti i stalnih dobitaka',
+      volatilityFooterTitle: 'Podešavanje Volatilnosti & Prezentacija',
+      volatilityBadge: '🎰 MATEMATIKA & VOLATILNOST',
+      volatilityTitle: 'IZABERITE PROFIL AUTOMATA',
+      volatilitySubtitle: 'Podesite učestalost dobitaka ili uključite stalne dobitke za prezentaciju igara',
+      volatilityCloseTitle: 'Zatvori',
+      volatilityRibbonRecommended: 'PREPORUČENO',
+      volatilityStandardTitle: 'Casino Standard',
+      volatilityStandardRtp: '~96.0% RTP • Hit Rate ~25%',
+      volatilityStandardDesc: 'Standardna industrijska slot matematika. Balansirani dobici i gubici. Isplata za 2 simbola važi isključivo za zlatnike, ostali simboli traže punu liniju.',
+      volatilityHitLabel: 'Udarac:',
+      volatilityHitStandard: '1 od 4 spina',
+      volatilityBonusTurnoverLabel: 'Obrt za bonus:',
+      volatilitySelectBtn: 'IZABERI PROFIL',
+      volatilityRibbonGreen: 'ČEŠĆI DOBICI',
+      volatilityLowTitle: 'Niska Volatilnost',
+      volatilityLowRtp: '~97.0% RTP • Hit Rate ~40%',
+      volatilityLowDesc: 'Češći manji dobici za duže trajanje kredita i opušteniju sesiju. 2 simbola plaćaju za zlatnike, zvona i sedmice.',
+      volatilityHitLow: 'Skoro svaki 2. spin',
+      volatilityRibbonRed: 'VISOK RIZIK & VEĆE ISPLATE',
+      volatilityHighTitle: 'Visoka Volatilnost',
+      volatilityHighRtp: '~94.5% RTP • Hit Rate ~16%',
+      volatilityHighDesc: 'Visok adrenalinski rizik. Ređi dobici, ali NEMA isplate za 2 simbola — isključivo 3 simbola plaćaju uz +50% veće iznose (1.5x Multiplier)!',
+      volatilityHitHigh: '1 od 6 spinova',
+      volatilityRibbonPurple: '100% DOBITAK • PREZENTACIJA',
+      volatilityDemoTitle: 'Demo Prezentacija',
+      volatilityDemoRtp: '100% Hit • Promo Show',
+      volatilityDemoDesc: 'Garantovan dobitak na svakom spinu! Idealan režim za demonstraciju automata klijentima, brzo otključavanje Mina, Točka i Karata.',
+      volatilityHitDemo: 'SVAKI SPIN DOBITAN',
+      volatilityTurnoverDemo: 'Munjevito (70 - 130 RSD)',
+      volatilityFooterNote: '💡 Promena profila trenutno ažurira sve igre (Classic, Royal 3x3, Mines) i brzinu punjenja bonusa.',
+      mathPresetActivated: '⚡ MATEMATIČKI REŽIM: {name}',
+
+      // Buy Bonus Modal
+      buyBonusTitle: 'Kupi Bonus: Direktan ulaz u Točak, Mine ili Free Spinove!',
+      buyBonusBadge: '⚡ VIP DIREKTNA AKCIJA',
+      buyBonusModalTitle: 'KUPOVINA BONUSA',
+      buyBonusModalSub: 'Preskočite čekanje i odmah aktivirajte željeni bonus po izboru!',
+      buyCardWheelTitle: 'Točak Sreće',
+      buyCardWheelDesc: 'Garantovan ulazak u Točak Sreće sa novčanim nagradama, besplatnim spinovima i šansom za Diamond Jackpot!',
+      buyCardMinesTitle: 'IGT Mini-Mines',
+      buyCardMinesDesc: 'Otvorite polja, sakupljajte dragulje sa rastućim multiplikatorima i naplatite ulog pre nego što detonira mina!',
+      buyCardFsTitle: 'Super Besplatni Spinovi',
+      buyCardFsDesc: '10 garantovanih besplatnih spinova sa stalnim 2x multiplikatorom na sve dobitne linije i kombinacije!',
+      buyBtnPrefix: 'KUPI ZA {amount} RSD',
+      buyBonusFooterNote: '💡 Cena kupovine bonusa automatski se računa na osnovu Vašeg trenutnog uloga (Bet) i denominacije.',
+      notEnoughCreditsForBuy: 'NEMATE DOVOLJNO SREDSTAVA ZA KUPOVINU BONUSA!',
+      buyBonusPurchased: '⚡ KUPLJEN BONUS: {name} (-{cost} RSD)!',
+
+      // Tournament Mode
+      tournamentBtnTitle: 'Turnirski Režim (120s Izazov)',
+      tourBannerBadge: '🏆 IGT TURNIR',
+      tourExitTitle: 'Napusti turnir',
+      tournamentModalBadge: '🏆 120s HIGH-SPEED IZAZOV',
+      tournamentModalTitle: 'IGT CASINO TURNIR',
+      tournamentModalSubtitle: 'Takmičite se za vrh tabele sa 5.000 turnirskih kredita!',
+      tourDurationLabel: 'TRAJANJE',
+      tourDurationVal: '120 Sekundi',
+      tourStartCreditsLabel: 'START KREDITI',
+      tourBalanceLabel: 'VAŠ SALDO',
+      tourSafeVal: '100% Bezbedan',
+      tourLeaderboardTitle: '👑 TRENUTNA TABELA ŠAMPIONA',
+      tourStartBtn: 'ZAPOČNI TURNIR (120 SEKUNDI) 🚀',
+      tourFinishedTitle: 'TURNIR JE ZAVRŠEN!',
+      tourFinishedSub: 'Čestitamo! Vaš rezultat je uspešno zabeležen na tabeli šampiona.',
+      tourPointsWonLabel: 'OSVOJENI POENI',
+      tourFinalRankLabel: 'KONAČAN PLASMAN',
+      tourContinueBtn: 'NASTAVI IGRU ✨',
+      tourAlreadyActive: '⚡ TURNIR JE VEĆ U TOKU!',
+      tourStartedMsg: '🏆 TURNIR JE POČEO! 2 MINUTA ZA MAKSIMALAN DOBITAK! ⚡',
+      tourFinishedMsg: '🎉 ZAVRŠEN TURNIR! RANG: {rank} ({score} RSD)!',
+      tourPlayerYou: 'Vi (Igrač)',
+      tourRankPlace: '#{rank}. MESTO',
+
+      // Meters & Top Buttons & Ambience
+      meterCardsTitle: 'Karte / Duplanje Bonus',
+      meterWheelTitle: 'IGT Točak Sreće - Kliknite ili napunite za igru!',
+      meterWheelLabel: 'TOČAK',
+      goldenBetTitle: 'Golden Bet: +25% ulog za 2x brži Točak i Mine!',
+      ambientTitle: 'Vegas Casino Ambijent (Šum & Zvona)',
+
+      // Free Spins Banner & Summary
+      fsBannerTitle: 'SUPER BONUS REŽIM',
+      fsMultLabel: 'MNOŽILAC:',
+      fsSummaryTitle: 'ČESTITAMO!',
+      fsSummarySub: 'ZAVRŠENI BESPLATNI SPINOVI',
+      fsSummaryClaim: 'PREUZMI DOBITAK',
+      fsSuperBonusTrigger: '⚡ SUPER BONUS: {spins} BESPLATNIH SPINOVA ({mult}x MNOŽILAC)!',
+      fsMultIncreased: '🔥 MNOŽILAC POVEĆAN NA {mult}x!',
+      fsRetriggerMsg: '🎉 RETRIGGER: +{spins} DODATNIH BESPLATNIH SPINOVA!',
+
+      // Gamble & Mini-Mines
+      gambleLostChoice: '❌ POGREŠAN IZBOR! IZGUBLJENO: {amount} KREDITA!',
+      miniMinesWipedOut: '💥 MINA EKSPLODIRALA! IZGUBLJEN SAV DOBITAK (0 RSD)!',
+
+      // Extra Profile & Login & HUD Labels
+      profileDepositSectionTitle: '💳 FIKTIVNA DOPUNA DINARA (DEMO)',
+      profileDenomSectionTitle: '🎰 DENOMINACIJA (VREDNOST KREDITA)',
+      profileBonusesSectionTitle: '🏆 BONISI & JACKPOTI',
+      profileJackpotSummaryLabel: 'Osvojeni Jackpoti (S / G / D):',
+      loginUsernameLabel: 'Korisničko ime / Nickname:',
+      loginPinLabel: 'PIN Kod (opciono):',
+      loginUserPlaceholder: 'Vaše korisničko ime / Nickname',
+      loginPinPlaceholder: 'Demo PIN (opciono)',
+      depositPlaceholder: 'Iznos u RSD...',
+      fsSpinsLabel: 'SPINOVI:',
+      tourTimeLabel: 'VREME:',
+      tourScoreLabel: 'POENI:',
+      buyBonusBtnText: 'KUPI BONUS'
     },
     en: {
       brandSub: 'IGT CASINO',
@@ -391,13 +512,134 @@
       denominationLabel: 'DENOM',
       profileDepositDesc: 'Add fictional demo funds in RSD to test slot gameplay:',
       profileDenomDesc: 'Select RSD coin value per 1 credit:',
+      profileDepositDesc: 'Add fictional demo funds in RSD to test slot gameplay:',
+      profileDepositBtn: 'DEPOSIT RSD',
+      depositSuccessMsg: '💰 DEPOSIT SUCCESSFUL: +{rsd} RSD (+{credits} CREDITS)!',
+
+      // Wheel of Fortune
       wheelTitle: '✦ WHEEL OF FORTUNE ✦',
       wheelSub: 'WIN UP TO 200x BET, JACKPOT OR FREE SPINS!',
       wheelSpinBtn: '🎰 SPIN THE WHEEL 🎰',
       wheelSpinning: '⏳ WHEEL IS SPINNING...',
       wheelClaimBtn: '💰 COLLECT PRIZE & CONTINUE 💰',
       wheelCloseBtn: '✕ CLOSE',
-      wheelWonLabel: 'PRIZE WON:'
+      wheelWonLabel: 'PRIZE WON:',
+      wheelCloseTitle: 'Close wheel (ESC)',
+      wheelLockedMsg: '🎡 IGT WHEEL OF FORTUNE: CHARGE METER VIA SPINS (CURRENTLY {pct}%)',
+      wheelBankruptMsg: '💥 BANKRUPT! 0 RSD (TRY AGAIN)',
+      wheelFsAwarded: '{spins} FREE SPINS ({mult}x START)!',
+      wheelJackpotAwarded: 'JACKPOT {tier} ({amount} RSD)!',
+
+      // Volatility & Math Modal
+      volatilityPillTitle: 'Volatility and guaranteed win configuration',
+      volatilityFooterTitle: 'Volatility & Presentation Settings',
+      volatilityBadge: '🎰 MATH & VOLATILITY',
+      volatilityTitle: 'SELECT SLOT PROFILE',
+      volatilitySubtitle: 'Adjust win frequency or enable presentation mode for guaranteed wins',
+      volatilityCloseTitle: 'Close',
+      volatilityRibbonRecommended: 'RECOMMENDED',
+      volatilityStandardTitle: 'Casino Standard',
+      volatilityStandardRtp: '~96.0% RTP • Hit Rate ~25%',
+      volatilityStandardDesc: 'Standard industrial slot mathematics. Balanced wins and losses. 2-symbol payout applies only to Gold Coins, other symbols require a full 3-line.',
+      volatilityHitLabel: 'Hit Rate:',
+      volatilityHitStandard: '1 in 4 spins',
+      volatilityBonusTurnoverLabel: 'Bonus Turnover:',
+      volatilitySelectBtn: 'SELECT PROFILE',
+      volatilityRibbonGreen: 'FREQUENT WINS',
+      volatilityLowTitle: 'Low Volatility',
+      volatilityLowRtp: '~97.0% RTP • Hit Rate ~40%',
+      volatilityLowDesc: 'Frequent smaller wins for longer credit endurance and relaxed gameplay. 2 symbols pay for Coins, Bells, and Sevens.',
+      volatilityHitLow: 'Nearly every 2nd spin',
+      volatilityRibbonRed: 'HIGH RISK & BIG PAYOUTS',
+      volatilityHighTitle: 'High Volatility',
+      volatilityHighRtp: '~94.5% RTP • Hit Rate ~16%',
+      volatilityHighDesc: 'High adrenaline risk. Rarer wins, but NO 2-symbol payouts — only 3-of-a-kind pays with +50% larger amounts (1.5x Multiplier)!',
+      volatilityHitHigh: '1 in 6 spins',
+      volatilityRibbonPurple: '100% HIT • PRESENTATION',
+      volatilityDemoTitle: 'Demo Presentation',
+      volatilityDemoRtp: '100% Hit • Promo Show',
+      volatilityDemoDesc: 'Guaranteed win on every single spin! Ideal mode for demonstrating the cabinet to clients, rapidly unlocking Mines, Wheel and Cards.',
+      volatilityHitDemo: 'EVERY SPIN WINS',
+      volatilityTurnoverDemo: 'Lightning Fast (70 - 130 RSD)',
+      volatilityFooterNote: '💡 Profile changes immediately update all games (Classic, Royal 3x3, Mines) and bonus meter charging rates.',
+      mathPresetActivated: '⚡ MATH PROFILE: {name}',
+
+      // Buy Bonus Modal
+      buyBonusTitle: 'Buy Bonus: Direct entry into Wheel, Mines, or Free Spins!',
+      buyBonusBadge: '⚡ VIP INSTANT ACTION',
+      buyBonusModalTitle: 'BUY BONUS',
+      buyBonusModalSub: 'Skip the wait and instantly trigger your bonus of choice!',
+      buyCardWheelTitle: 'Wheel of Fortune',
+      buyCardWheelDesc: 'Guaranteed entry to the Wheel of Fortune with cash prizes, free spins, and a shot at the Diamond Jackpot!',
+      buyCardMinesTitle: 'IGT Mini-Mines',
+      buyCardMinesDesc: 'Uncover tiles, gather gems with climbing multipliers, and cash out before hitting a mine!',
+      buyCardFsTitle: 'Super Free Spins',
+      buyCardFsDesc: '10 guaranteed free spins with persistent 2x multiplier on all winning lines and combinations!',
+      buyBtnPrefix: 'BUY FOR {amount} RSD',
+      buyBonusFooterNote: '💡 Bonus buy cost is automatically calculated based on your current Bet and denomination.',
+      notEnoughCreditsForBuy: 'INSUFFICIENT FUNDS TO BUY BONUS!',
+      buyBonusPurchased: '⚡ BONUS PURCHASED: {name} (-{cost} RSD)!',
+
+      // Tournament Mode
+      tournamentBtnTitle: 'Tournament Mode (120s Challenge)',
+      tourBannerBadge: '🏆 IGT TOURNAMENT',
+      tourExitTitle: 'Exit Tournament',
+      tournamentModalBadge: '🏆 120s HIGH-SPEED CHALLENGE',
+      tournamentModalTitle: 'IGT CASINO TOURNAMENT',
+      tournamentModalSubtitle: 'Compete for the top of the leaderboard with 5,000 tournament credits!',
+      tourDurationLabel: 'DURATION',
+      tourDurationVal: '120 Seconds',
+      tourStartCreditsLabel: 'START CREDITS',
+      tourBalanceLabel: 'YOUR BALANCE',
+      tourSafeVal: '100% Protected',
+      tourLeaderboardTitle: '👑 CURRENT CHAMPIONS LEADERBOARD',
+      tourStartBtn: 'START TOURNAMENT (120 SECONDS) 🚀',
+      tourFinishedTitle: 'TOURNAMENT COMPLETED!',
+      tourFinishedSub: 'Congratulations! Your score has been entered on the champions leaderboard.',
+      tourPointsWonLabel: 'POINTS EARNED',
+      tourFinalRankLabel: 'FINAL RANKING',
+      tourContinueBtn: 'CONTINUE PLAYING ✨',
+      tourAlreadyActive: '⚡ TOURNAMENT IS ALREADY ACTIVE!',
+      tourStartedMsg: '🏆 TOURNAMENT STARTED! 2 MINUTES FOR MAXIMUM WIN! ⚡',
+      tourFinishedMsg: '🎉 TOURNAMENT FINISHED! RANK: {rank} ({score} RSD)!',
+      tourPlayerYou: 'You (Player)',
+      tourRankPlace: '#{rank} PLACE',
+
+      // Meters & Top Buttons & Ambience
+      meterCardsTitle: 'Cards / Gamble Bonus',
+      meterWheelTitle: 'IGT Wheel of Fortune - Click or charge to play!',
+      meterWheelLabel: 'WHEEL',
+      goldenBetTitle: 'Golden Bet: +25% bet for 2x faster Wheel & Mines charging!',
+      ambientTitle: 'Vegas Casino Ambience (Crowd & Bells)',
+
+      // Free Spins Banner & Summary
+      fsBannerTitle: 'SUPER BONUS MODE',
+      fsMultLabel: 'MULTIPLIER:',
+      fsSummaryTitle: 'CONGRATULATIONS!',
+      fsSummarySub: 'FREE SPINS COMPLETED',
+      fsSummaryClaim: 'COLLECT WIN',
+      fsSuperBonusTrigger: '⚡ SUPER BONUS: {spins} FREE SPINS ({mult}x MULTIPLIER)!',
+      fsMultIncreased: '🔥 MULTIPLIER INCREASED TO {mult}x!',
+      fsRetriggerMsg: '🎉 RETRIGGER: +{spins} EXTRA FREE SPINS!',
+
+      // Gamble & Mini-Mines
+      gambleLostChoice: '❌ WRONG CHOICE! LOST: {amount} CREDITS!',
+      miniMinesWipedOut: '💥 MINE EXPLODED! ALL BONUS WINNINGS LOST (0 RSD)!',
+
+      // Extra Profile & Login & HUD Labels
+      profileDepositSectionTitle: '💳 FICTIONAL RSD DEPOSIT (DEMO)',
+      profileDenomSectionTitle: '🎰 DENOMINATION (COIN VALUE)',
+      profileBonusesSectionTitle: '🏆 BONUSES & JACKPOTS',
+      profileJackpotSummaryLabel: 'Jackpots Won (S / G / D):',
+      loginUsernameLabel: 'Username / Nickname:',
+      loginPinLabel: 'PIN Code (optional):',
+      loginUserPlaceholder: 'Your username / nickname',
+      loginPinPlaceholder: 'Demo PIN (optional)',
+      depositPlaceholder: 'Amount in RSD...',
+      fsSpinsLabel: 'SPINS:',
+      tourTimeLabel: 'TIME:',
+      tourScoreLabel: 'SCORE:',
+      buyBonusBtnText: 'BUY BONUS'
     }
   };
 
@@ -438,6 +680,18 @@
         if (window.slotApp.lobby && typeof window.slotApp.lobby.updateCurrentLabel === 'function') {
           window.slotApp.lobby.updateCurrentLabel();
         }
+        if (window.slotApp.buyBonus && typeof window.slotApp.buyBonus.updatePrices === 'function') {
+          window.slotApp.buyBonus.updatePrices();
+        }
+        if (window.slotApp.tournament && typeof window.slotApp.tournament.renderLeaderboard === 'function') {
+          window.slotApp.tournament.renderLeaderboard();
+        }
+        if (window.slotApp.mathManager && typeof window.slotApp.mathManager.updateHUD === 'function') {
+          window.slotApp.mathManager.updateHUD();
+        }
+        if (window.slotApp.wheelBonus && typeof window.slotApp.wheelBonus.drawWheel === 'function') {
+          window.slotApp.wheelBonus.drawWheel(window.slotApp.wheelBonus.currentRotation);
+        }
       }
     }
 
@@ -463,6 +717,12 @@
         const key = el.getAttribute('data-i18n-title');
         if (key) {
           el.setAttribute('title', this.t(key));
+        }
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (key) {
+          el.setAttribute('placeholder', this.t(key));
         }
       });
 

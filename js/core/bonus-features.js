@@ -53,7 +53,10 @@ class FreeSpinsManager {
     if (window.particleEngine) window.particleEngine.spawnCelebration(true);
 
     if (window.slotApp && window.slotApp.showMessage) {
-      window.slotApp.showMessage(`⚡ SUPER BONUS: ${spins} BESPLATNIH SPINOVA (${startMultiplier}x MNOŽILAC)!`, 'jackpot');
+      const msg = window.i18n 
+        ? window.i18n.t('fsSuperBonusTrigger', { spins, mult: startMultiplier }) 
+        : `⚡ SUPER BONUS: ${spins} BESPLATNIH SPINOVA (${startMultiplier}x MNOŽILAC)!`;
+      window.slotApp.showMessage(msg, 'jackpot');
     }
   }
 
@@ -84,7 +87,10 @@ class FreeSpinsManager {
         if (window.slotAudio) window.slotAudio.playMultiplierUp(this.currentMultiplier);
         this.updateHUD();
         if (window.slotApp && window.slotApp.showMessage) {
-          window.slotApp.showMessage(`🔥 MNOŽILAC POVEĆAN NA ${this.currentMultiplier}x!`, 'jackpot');
+          const msg = window.i18n
+            ? window.i18n.t('fsMultIncreased', { mult: this.currentMultiplier })
+            : `🔥 MNOŽILAC POVEĆAN NA ${this.currentMultiplier}x!`;
+          window.slotApp.showMessage(msg, 'jackpot');
         }
       }, 350);
     }
@@ -101,7 +107,10 @@ class FreeSpinsManager {
     if (window.slotAudio) window.slotAudio.playJackpot();
     if (window.particleEngine) window.particleEngine.spawnCelebration(true);
     if (window.slotApp && window.slotApp.showMessage) {
-      window.slotApp.showMessage(`🎉 RETRIGGER: +${extraSpins} DODATNIH BESPLATNIH SPINOVA!`, 'jackpot');
+      const msg = window.i18n
+        ? window.i18n.t('fsRetriggerMsg', { spins: extraSpins })
+        : `🎉 RETRIGGER: +${extraSpins} DODATNIH BESPLATNIH SPINOVA!`;
+      window.slotApp.showMessage(msg, 'jackpot');
     }
   }
 
@@ -127,7 +136,8 @@ class FreeSpinsManager {
     if (this.summaryModal && this.summaryWonEl) {
       const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
       const rsdTotal = (this.totalWon * denom).toLocaleString();
-      this.summaryWonEl.textContent = `+${this.totalWon.toLocaleString()} KREDITA (${rsdTotal} RSD)`;
+      const creditsLabel = window.i18n ? window.i18n.t('credits').toUpperCase() : 'KREDITA';
+      this.summaryWonEl.textContent = `+${this.totalWon.toLocaleString()} ${creditsLabel} (${rsdTotal} RSD)`;
       this.summaryModal.classList.add('active');
       if (window.slotAudio) window.slotAudio.playBigWinCheer('mega');
       if (window.particleEngine) window.particleEngine.spawnCelebration(true);
@@ -302,7 +312,11 @@ class BuyBonusManager {
       const priceBtnEl = document.getElementById(`buy-btn-val-${key}`);
 
       if (priceValEl) priceValEl.textContent = `${costCredits.toLocaleString()} KR (${costRsd.toLocaleString()} RSD)`;
-      if (priceBtnEl) priceBtnEl.textContent = `KUPI ZA ${costRsd.toLocaleString()} RSD`;
+      if (priceBtnEl) {
+        priceBtnEl.textContent = window.i18n 
+          ? window.i18n.t('buyBtnPrefix', { amount: costRsd.toLocaleString() })
+          : `KUPI ZA ${costRsd.toLocaleString()} RSD`;
+      }
     });
   }
 
@@ -317,7 +331,8 @@ class BuyBonusManager {
 
     if (this.wallet.rsdBalance < costRsd) {
       if (window.slotApp) {
-        window.slotApp.showMessage('NEMATE DOVOLJNO SREDSTAVA ZA KUPOVINU BONUSA!', 'warning');
+        const msg = window.i18n ? window.i18n.t('notEnoughCreditsForBuy') : 'NEMATE DOVOLJNO SREDSTAVA ZA KUPOVINU BONUSA!';
+        window.slotApp.showMessage(msg, 'warning');
       }
       if (window.slotAudio) window.slotAudio.playClick();
       return;
@@ -338,7 +353,16 @@ class BuyBonusManager {
     this.closeModal();
 
     if (window.slotApp) {
-      window.slotApp.showMessage(`⚡ KUPLJEN BONUS: ${feat.name.toUpperCase()} (-${costRsd} RSD)!`, 'jackpot');
+      let featName = feat.name;
+      if (window.i18n) {
+        if (featureType === 'wheel') featName = window.i18n.t('buyCardWheelTitle');
+        else if (featureType === 'mines') featName = window.i18n.t('buyCardMinesTitle');
+        else if (featureType === 'freespins') featName = window.i18n.t('buyCardFsTitle');
+      }
+      const msg = window.i18n 
+        ? window.i18n.t('buyBonusPurchased', { name: featName.toUpperCase(), cost: costRsd })
+        : `⚡ KUPLJEN BONUS: ${feat.name.toUpperCase()} (-${costRsd} RSD)!`;
+      window.slotApp.showMessage(msg, 'jackpot');
     }
 
     setTimeout(() => {

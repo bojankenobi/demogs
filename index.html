@@ -37,7 +37,7 @@
     <header class="header-section">
       <div class="brand-logo-wrap">
         <img src="assets/logo.svg" alt="IGT" class="main-brand-logo">
-        <button class="btn-volatility-pill" id="btn-volatility-toggle" title="Podešavanje volatilnosti i stalnih dobitaka" aria-label="Volatilnost">
+        <button class="btn-volatility-pill" id="btn-volatility-toggle" title="Podešavanje volatilnosti i stalnih dobitaka" data-i18n-title="volatilityPillTitle" aria-label="Volatilnost">
           <span class="volatility-pulse-dot"></span>
           <span class="volatility-mode-label" id="hud-volatility-name">CASINO STD</span>
         </button>
@@ -87,7 +87,7 @@
       <!-- Bonus Charge Meters Bar: Diamond Cards & Emerald Mines (Fills with spins, unlocks 40s-50s frenzy) -->
       <div class="bonus-meters-bar" id="bonus-meters-bar">
         <!-- Diamond Cards Progress Meter -->
-        <div class="meter-pod meter-cards" id="meter-pod-cards" title="Karte / Duplanje Bonus">
+        <div class="meter-pod meter-cards" id="meter-pod-cards" title="Karte / Duplanje Bonus" data-i18n-title="meterCardsTitle">
           <div class="meter-badge">
             <span class="meter-icon">💎</span>
             <span class="meter-name" data-i18n="meterCardsLabel">KARTE</span>
@@ -100,7 +100,7 @@
         </div>
 
         <!-- Mines Progress Meter -->
-        <div class="meter-pod meter-mines" id="meter-pod-mines" title="IGT Mines Bonus">
+        <div class="meter-pod meter-mines" id="meter-pod-mines" title="IGT Mines Bonus" data-i18n-title="meterMinesLocked">
           <div class="meter-badge">
             <span class="meter-icon">💣</span>
             <span class="meter-name" data-i18n="meterMinesLabel">MINE</span>
@@ -113,10 +113,10 @@
         </div>
 
         <!-- IGT Wheel of Fortune Progress Meter -->
-        <div class="meter-pod meter-wheel" id="wheel-topbox-crown" title="IGT Točak Sreće - Kliknite ili napunite za igru!">
+        <div class="meter-pod meter-wheel" id="wheel-topbox-crown" title="IGT Točak Sreće - Kliknite ili napunite za igru!" data-i18n-title="meterWheelTitle">
           <div class="meter-badge">
             <span class="meter-icon" id="wheel-mini-disc">🎡</span>
-            <span class="meter-name">TOČAK</span>
+            <span class="meter-name" data-i18n="meterWheelLabel">TOČAK</span>
             <span class="meter-val" id="wheel-energy-val">0%</span>
           </div>
           <div class="meter-track">
@@ -133,14 +133,14 @@
       <div class="free-spins-hud-banner" id="free-spins-hud-banner" style="display: none;">
         <div class="fs-badge-left">
           <span class="fs-icon">⚡</span>
-          <span class="fs-label">SPINOVI:</span>
+          <span class="fs-label" data-i18n="fsSpinsLabel">SPINOVI:</span>
           <span class="fs-spins-count" id="fs-spins-left">10</span>
         </div>
         <div class="fs-badge-center">
-          <span class="fs-title">SUPER BONUS REŽIM</span>
+          <span class="fs-title" data-i18n="fsBannerTitle">SUPER BONUS REŽIM</span>
         </div>
         <div class="fs-badge-right">
-          <span class="fs-mult-label">MNOŽILAC:</span>
+          <span class="fs-mult-label" data-i18n="fsMultLabel">MNOŽILAC:</span>
           <span class="fs-multiplier-pill" id="fs-multiplier-val">2x</span>
         </div>
       </div>
@@ -149,18 +149,18 @@
       <div class="tournament-hud-banner" id="tournament-hud-banner" style="display: none;">
         <div class="tour-hud-col tour-hud-time">
           <span class="tour-icon">⏱️</span>
-          <span class="tour-label">VREME:</span>
+          <span class="tour-label" data-i18n="tourTimeLabel">VREME:</span>
           <span class="tour-timer-val" id="tournament-hud-time">02:00</span>
         </div>
         <div class="tour-hud-col tour-hud-title-col">
-          <span class="tour-badge-flag">🏆 IGT TURNIR</span>
+          <span class="tour-badge-flag" data-i18n="tourBannerBadge">🏆 IGT TURNIR</span>
           <span class="tour-rank-pill" id="tournament-hud-rank">#1</span>
         </div>
         <div class="tour-hud-col tour-hud-score">
-          <span class="tour-score-label">POENI:</span>
+          <span class="tour-score-label" data-i18n="tourScoreLabel">POENI:</span>
           <span class="tour-score-val" id="tournament-hud-score">0 RSD</span>
         </div>
-        <button class="tour-exit-btn" id="tour-exit-btn" title="Napusti turnir">✕</button>
+        <button class="tour-exit-btn" id="tour-exit-btn" title="Napusti turnir" data-i18n-title="tourExitTitle">✕</button>
       </div>
 
       <!-- Universal Responsive Scaler: Guarantees full visibility of cylinder & lever on all devices -->
@@ -349,13 +349,13 @@
 
           <!-- Feature Quick Row: Golden Bet (+25%) & Buy Bonus -->
           <div class="bet-features-row">
-            <button class="btn-golden-bet" id="btn-golden-bet" type="button" title="Golden Bet: +25% ulog za 2x brži Točak i Mine!">
+            <button class="btn-golden-bet" id="btn-golden-bet" type="button" title="Golden Bet: +25% ulog za 2x brži Točak i Mine!" data-i18n-title="goldenBetTitle">
               <span class="gb-badge">GOLDEN BET</span>
               <span class="gb-status">OFF</span>
             </button>
-            <button class="btn-buy-bonus" id="btn-buy-bonus" type="button" title="Kupi Bonus: Direktan ulaz u Točak, Mine ili Free Spinove!">
+            <button class="btn-buy-bonus" id="btn-buy-bonus" type="button" title="Kupi Bonus: Direktan ulaz u Točak, Mine ili Free Spinove!" data-i18n-title="buyBonusTitle">
               <span class="bb-icon">⚡</span>
-              <span class="bb-text">KUPI BONUS</span>
+              <span class="bb-text" data-i18n="buyBonusBtnText">KUPI BONUS</span>
             </button>
           </div>
         </div>
@@ -405,12 +405,12 @@
       </button>
 
       <!-- Vegas Casino Ambient Sound Toggle -->
-      <button class="btn-icon-mini btn-ambient" id="ambient-btn" title="Vegas Casino Ambijent (Šum & Zvona)" aria-label="Ambijent">
+      <button class="btn-icon-mini btn-ambient" id="ambient-btn" title="Vegas Casino Ambijent (Šum & Zvona)" data-i18n-title="ambientTitle" aria-label="Ambijent">
         <span class="ambient-icon">🎶</span>
       </button>
 
       <!-- 120s Casino Tournament Challenge -->
-      <button class="btn-icon-mini btn-tournament" id="tournament-btn" title="Turnirski Režim (120s Izazov)" aria-label="Turnir">
+      <button class="btn-icon-mini btn-tournament" id="tournament-btn" title="Turnirski Režim (120s Izazov)" data-i18n-title="tournamentBtnTitle" aria-label="Turnir">
         <span class="tour-icon">🏆</span>
       </button>
 
@@ -427,7 +427,7 @@
         </svg>
       </button>
 
-      <button class="btn-icon-mini btn-volatility-footer" id="volatility-footer-btn" title="Podešavanje Volatilnosti & Prezentacija" aria-label="Volatilnost">
+      <button class="btn-icon-mini btn-volatility-footer" id="volatility-footer-btn" title="Podešavanje Volatilnosti & Prezentacija" data-i18n-title="volatilityFooterTitle" aria-label="Volatilnost">
         <span class="volatility-icon-symbol">⚙️</span>
         <span class="volatility-badge-pill" id="hud-volatility-sub">STD</span>
       </button>
@@ -794,7 +794,7 @@
   <div class="modal-overlay wheel-modal-overlay" id="wheel-modal">
     <div class="modal-card wheel-modal-card">
       <!-- Close button in top-right corner of cabinet -->
-      <button class="wheel-close-btn" id="btn-wheel-close" title="Zatvori točak (ESC)" aria-label="Zatvori">✕</button>
+      <button class="wheel-close-btn" id="btn-wheel-close" title="Zatvori točak (ESC)" data-i18n-title="wheelCloseTitle" aria-label="Zatvori">✕</button>
 
       <!-- Vegas Top-Box Arch Header -->
       <div class="wheel-marquee-header">
@@ -802,9 +802,9 @@
           <span class="badge-text">IGT</span>
         </div>
         <div class="wheel-header-title">
-          <span class="marquee-star">✦</span> WHEEL OF FORTUNE <span class="marquee-star">✦</span>
+          <span class="marquee-star">✦</span> <span data-i18n="wheelTitle">WHEEL OF FORTUNE</span> <span class="marquee-star">✦</span>
         </div>
-        <div class="wheel-header-subtitle">OSVOJITE DO 200x ULOGA, JACKPOT ILI BESPLATNE SPINOVE!</div>
+        <div class="wheel-header-subtitle" data-i18n="wheelSub">OSVOJITE DO 200x ULOGA, JACKPOT ILI BESPLATNE SPINOVE!</div>
       </div>
       
       <!-- Circular Chassis & Mechanical Wheel Stage -->
@@ -831,14 +831,14 @@
 
       <!-- Spin Action & Win Display -->
       <div class="wheel-action-bar">
-        <button class="btn-spin-wheel" id="btn-spin-wheel">🎰 ZAVRTI TOČAK SREĆE 🎰</button>
+        <button class="btn-spin-wheel" id="btn-spin-wheel" data-i18n="wheelSpinBtn">🎰 ZAVRTI TOČAK SREĆE 🎰</button>
         
         <div class="wheel-win-announcement" id="wheel-win-announcement" style="display: none;">
           <div class="wheel-win-banner">
-            <span class="wheel-win-label">OSVOJENI DOBITAK:</span>
+            <span class="wheel-win-label" data-i18n="wheelWonLabel">OSVOJENI DOBITAK:</span>
             <span class="wheel-win-val" id="wheel-win-val">0 RSD</span>
           </div>
-          <button class="btn-wheel-claim" id="btn-wheel-claim">💰 PREUZMI DOBITAK & NASTAVI 💰</button>
+          <button class="btn-wheel-claim" id="btn-wheel-claim" data-i18n="wheelClaimBtn">💰 PREUZMI DOBITAK & NASTAVI 💰</button>
         </div>
       </div>
     </div>
@@ -848,10 +848,10 @@
   <div class="modal-overlay fs-summary-overlay" id="fs-summary-modal">
     <div class="modal-card fs-summary-card">
       <div class="fs-summary-icon">🎉</div>
-      <h2 class="fs-summary-title">ČESTITAMO!</h2>
-      <div class="fs-summary-subtitle">ZAVRŠENI BESPLATNI SPINOVI</div>
+      <h2 class="fs-summary-title" data-i18n="fsSummaryTitle">ČESTITAMO!</h2>
+      <div class="fs-summary-subtitle" data-i18n="fsSummarySub">ZAVRŠENI BESPLATNI SPINOVI</div>
       <div class="fs-summary-amount" id="fs-total-won-val">0 RSD</div>
-      <button class="btn-fs-claim" id="btn-fs-claim">PREUZMI DOBITAK</button>
+      <button class="btn-fs-claim" id="btn-fs-claim" data-i18n="fsSummaryClaim">PREUZMI DOBITAK</button>
     </div>
   </div>
 
@@ -951,7 +951,7 @@
         </div>
 
         <div class="login-field-group">
-          <label class="login-label" for="login-username">Korisničko ime / Nickname:</label>
+          <label class="login-label" for="login-username" data-i18n="loginUsernameLabel">Korisničko ime / Nickname:</label>
           <div class="login-input-wrap">
             <span class="login-input-icon">👤</span>
             <input type="text" id="login-username" class="login-input" placeholder="Vaše korisničko ime / Nickname" required data-i18n-placeholder="loginUserPlaceholder" maxlength="20" autocomplete="nickname" />
@@ -959,7 +959,7 @@
         </div>
 
         <div class="login-field-group">
-          <label class="login-label" for="login-pin">PIN Kod (opciono):</label>
+          <label class="login-label" for="login-pin" data-i18n="loginPinLabel">PIN Kod (opciono):</label>
           <div class="login-input-wrap">
             <span class="login-input-icon">🔒</span>
             <input type="password" id="login-pin" class="login-input" placeholder="Demo PIN (opciono)" data-i18n-placeholder="loginPinPlaceholder" maxlength="6" inputmode="numeric" />
@@ -1049,7 +1049,7 @@
 
         <!-- Bonuses & Jackpots Section -->
         <div class="profile-breakdown-section">
-          <div class="breakdown-title">🏆 BONISI & JACKPOTI</div>
+          <div class="breakdown-title" data-i18n="profileBonusesSectionTitle">🏆 BONISI & JACKPOTI</div>
           <div class="breakdown-row">
             <span class="breakdown-label" data-i18n="profileFreeSpinsCount">Besplatni Spinovi:</span>
             <span class="breakdown-val" id="profile-bonus-freespins">0</span>
@@ -1063,7 +1063,7 @@
             <span class="breakdown-val" id="profile-bonus-mines">0</span>
           </div>
           <div class="breakdown-row">
-            <span class="breakdown-label">Osvojeni Jackpoti (S / G / D):</span>
+            <span class="breakdown-label" data-i18n="profileJackpotSummaryLabel">Osvojeni Jackpoti (S / G / D):</span>
             <span class="breakdown-val val-gold" id="profile-jackpot-summary">0 / 0 / 0</span>
           </div>
           <div class="breakdown-row">
@@ -1074,7 +1074,7 @@
 
         <!-- Fictional RSD Wallet Deposit (Demo Dopuna Dinara) -->
         <div class="profile-deposit-section">
-          <div class="breakdown-title" style="color: #10b981;">💳 FIKTIVNA DOPUNA DINARA (DEMO)</div>
+          <div class="breakdown-title" style="color: #10b981;" data-i18n="profileDepositSectionTitle">💳 FIKTIVNA DOPUNA DINARA (DEMO)</div>
           <p class="profile-deposit-desc" data-i18n="profileDepositDesc">Dodajte fiktivna sredstva na svoj račun u dinarima radi testiranja igre:</p>
           <div class="profile-deposit-chips">
             <button type="button" class="btn-deposit-chip" data-amount="500">+500 RSD</button>
@@ -1083,14 +1083,14 @@
             <button type="button" class="btn-deposit-chip" data-amount="5000">+5.000 RSD</button>
           </div>
           <div class="profile-custom-deposit-row">
-            <input type="number" id="custom-deposit-input" class="input-custom-deposit" placeholder="Iznos u RSD..." min="100" max="50000" step="100">
+            <input type="number" id="custom-deposit-input" class="input-custom-deposit" placeholder="Iznos u RSD..." data-i18n-placeholder="depositPlaceholder" min="100" max="50000" step="100">
             <button type="button" class="btn-custom-deposit" id="btn-submit-custom-deposit" data-i18n="profileDepositBtn">DOPUNI RSD</button>
           </div>
         </div>
 
         <!-- Denomination Selector in Profile -->
         <div class="profile-denom-section">
-          <div class="breakdown-title">🎰 DENOMINACIJA (VREDNOST KREDITA)</div>
+          <div class="breakdown-title" data-i18n="profileDenomSectionTitle">🎰 DENOMINACIJA (VREDNOST KREDITA)</div>
           <p class="profile-deposit-desc" data-i18n="profileDenomDesc">Izaberite koliko dinara vredi 1 kredit:</p>
           <div class="profile-denom-chips">
             <button type="button" class="denom-pill-btn" data-denom="0.2">0.2 RSD</button>
@@ -1114,89 +1114,89 @@
     <div class="volatility-modal-box">
       <div class="volatility-modal-head">
         <div class="volatility-title-wrap">
-          <span class="volatility-top-badge">🎰 MATEMATIKA & VOLATILNOST</span>
-          <h2 class="volatility-modal-title">IZABERITE PROFIL AUTOMATA</h2>
-          <p class="volatility-modal-subtitle">Podesite učestalost dobitaka ili uključite stalne dobitke za prezentaciju igara</p>
+          <span class="volatility-top-badge" data-i18n="volatilityBadge">🎰 MATEMATIKA & VOLATILNOST</span>
+          <h2 class="volatility-modal-title" data-i18n="volatilityTitle">IZABERITE PROFIL AUTOMATA</h2>
+          <p class="volatility-modal-subtitle" data-i18n="volatilitySubtitle">Podesite učestalost dobitaka ili uključite stalne dobitke za prezentaciju igara</p>
         </div>
-        <button class="volatility-close-btn" id="volatility-close-btn" title="Zatvori">✕</button>
+        <button class="volatility-close-btn" id="volatility-close-btn" title="Zatvori" data-i18n-title="volatilityCloseTitle">✕</button>
       </div>
 
       <div class="volatility-cards-grid">
         <!-- 1. Casino Standard -->
         <div class="volatility-option-card active" data-preset="standard">
-          <div class="volatility-card-ribbon ribbon-gold">PREPORUČENO</div>
+          <div class="volatility-card-ribbon ribbon-gold" data-i18n="volatilityRibbonRecommended">PREPORUČENO</div>
           <div class="volatility-card-header">
             <span class="volatility-card-icon">🎰</span>
             <div class="volatility-card-titles">
-              <h3 class="volatility-opt-title">Casino Standard</h3>
-              <span class="volatility-opt-rtp">~96.0% RTP • Hit Rate ~25%</span>
+              <h3 class="volatility-opt-title" data-i18n="volatilityStandardTitle">Casino Standard</h3>
+              <span class="volatility-opt-rtp" data-i18n="volatilityStandardRtp">~96.0% RTP • Hit Rate ~25%</span>
             </div>
           </div>
-          <p class="volatility-card-desc">Standardna industrijska slot matematika. Balansirani dobici i gubici. Isplata za 2 simbola važi isključivo za zlatnike, ostali simboli traže punu liniju.</p>
+          <p class="volatility-card-desc" data-i18n="volatilityStandardDesc">Standardna industrijska slot matematika. Balansirani dobici i gubici. Isplata za 2 simbola važi isključivo za zlatnike, ostali simboli traže punu liniju.</p>
           <div class="volatility-card-specs">
-            <div class="spec-pill"><span class="spec-label">Udarac:</span> <span class="spec-val">1 od 4 spina</span></div>
-            <div class="spec-pill"><span class="spec-label">Obrt za bonus:</span> <span class="spec-val">450 - 850 RSD</span></div>
+            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityHitLabel">Udarac:</span> <span class="spec-val" data-i18n="volatilityHitStandard">1 od 4 spina</span></div>
+            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityBonusTurnoverLabel">Obrt za bonus:</span> <span class="spec-val">450 - 850 RSD</span></div>
           </div>
-          <button class="btn-select-preset" data-preset="standard">IZABERI PROFIL</button>
+          <button class="btn-select-preset" data-preset="standard" data-i18n="volatilitySelectBtn">IZABERI PROFIL</button>
         </div>
 
         <!-- 2. Low Volatility -->
         <div class="volatility-option-card" data-preset="low">
-          <div class="volatility-card-ribbon ribbon-green">ČEŠĆI DOBICI</div>
+          <div class="volatility-card-ribbon ribbon-green" data-i18n="volatilityRibbonGreen">ČEŠĆI DOBICI</div>
           <div class="volatility-card-header">
             <span class="volatility-card-icon">🛡️</span>
             <div class="volatility-card-titles">
-              <h3 class="volatility-opt-title">Niska Volatilnost</h3>
-              <span class="volatility-opt-rtp">~97.0% RTP • Hit Rate ~40%</span>
+              <h3 class="volatility-opt-title" data-i18n="volatilityLowTitle">Niska Volatilnost</h3>
+              <span class="volatility-opt-rtp" data-i18n="volatilityLowRtp">~97.0% RTP • Hit Rate ~40%</span>
             </div>
           </div>
-          <p class="volatility-card-desc">Češći manji dobici za duže trajanje kredita i opušteniju sesiju. 2 simbola plaćaju za zlatnike, zvona i sedmice.</p>
+          <p class="volatility-card-desc" data-i18n="volatilityLowDesc">Češći manji dobici za duže trajanje kredita i opušteniju sesiju. 2 simbola plaćaju za zlatnike, zvona i sedmice.</p>
           <div class="volatility-card-specs">
-            <div class="spec-pill"><span class="spec-label">Udarac:</span> <span class="spec-val">Skoro svaki 2. spin</span></div>
-            <div class="spec-pill"><span class="spec-label">Obrt za bonus:</span> <span class="spec-val">350 - 700 RSD</span></div>
+            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityHitLabel">Udarac:</span> <span class="spec-val" data-i18n="volatilityHitLow">Skoro svaki 2. spin</span></div>
+            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityBonusTurnoverLabel">Obrt za bonus:</span> <span class="spec-val">350 - 700 RSD</span></div>
           </div>
-          <button class="btn-select-preset" data-preset="low">IZABERI PROFIL</button>
+          <button class="btn-select-preset" data-preset="low" data-i18n="volatilitySelectBtn">IZABERI PROFIL</button>
         </div>
 
         <!-- 3. High Volatility -->
         <div class="volatility-option-card" data-preset="high">
-          <div class="volatility-card-ribbon ribbon-red">VISOK RIZIK & VEĆE ISPLATE</div>
+          <div class="volatility-card-ribbon ribbon-red" data-i18n="volatilityRibbonRed">VISOK RIZIK & VEĆE ISPLATE</div>
           <div class="volatility-card-header">
             <span class="volatility-card-icon">🔥</span>
             <div class="volatility-card-titles">
-              <h3 class="volatility-opt-title">Visoka Volatilnost</h3>
-              <span class="volatility-opt-rtp">~94.5% RTP • Hit Rate ~16%</span>
+              <h3 class="volatility-opt-title" data-i18n="volatilityHighTitle">Visoka Volatilnost</h3>
+              <span class="volatility-opt-rtp" data-i18n="volatilityHighRtp">~94.5% RTP • Hit Rate ~16%</span>
             </div>
           </div>
-          <p class="volatility-card-desc">Visok adrenalinski rizik. Ređi dobici, ali NEMA isplate za 2 simbola — isključivo 3 simbola plaćaju uz +50% veće iznose (1.5x Multiplier)!</p>
+          <p class="volatility-card-desc" data-i18n="volatilityHighDesc">Visok adrenalinski rizik. Ređi dobici, ali NEMA isplate za 2 simbola — isključivo 3 simbola plaćaju uz +50% veće iznose (1.5x Multiplier)!</p>
           <div class="volatility-card-specs">
-            <div class="spec-pill"><span class="spec-label">Udarac:</span> <span class="spec-val">1 od 6 spinova</span></div>
-            <div class="spec-pill"><span class="spec-label">Obrt za bonus:</span> <span class="spec-val">650 - 1200 RSD</span></div>
+            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityHitLabel">Udarac:</span> <span class="spec-val" data-i18n="volatilityHitHigh">1 od 6 spinova</span></div>
+            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityBonusTurnoverLabel">Obrt za bonus:</span> <span class="spec-val">650 - 1200 RSD</span></div>
           </div>
-          <button class="btn-select-preset" data-preset="high">IZABERI PROFIL</button>
+          <button class="btn-select-preset" data-preset="high" data-i18n="volatilitySelectBtn">IZABERI PROFIL</button>
         </div>
 
         <!-- 4. Demo / Promo Mode (100% Hit) -->
         <div class="volatility-option-card" data-preset="demo">
-          <div class="volatility-card-ribbon ribbon-purple">100% DOBITAK • PREZENTACIJA</div>
+          <div class="volatility-card-ribbon ribbon-purple" data-i18n="volatilityRibbonPurple">100% DOBITAK • PREZENTACIJA</div>
           <div class="volatility-card-header">
             <span class="volatility-card-icon">🚀</span>
             <div class="volatility-card-titles">
-              <h3 class="volatility-opt-title">Demo Prezentacija</h3>
-              <span class="volatility-opt-rtp">100% Hit • Promo Show</span>
+              <h3 class="volatility-opt-title" data-i18n="volatilityDemoTitle">Demo Prezentacija</h3>
+              <span class="volatility-opt-rtp" data-i18n="volatilityDemoRtp">100% Hit • Promo Show</span>
             </div>
           </div>
-          <p class="volatility-card-desc">Garantovan dobitak na svakom spinu! Idealan režim za demonstraciju automata klijentima, brzo otključavanje Mina, Točka i Karata.</p>
+          <p class="volatility-card-desc" data-i18n="volatilityDemoDesc">Garantovan dobitak na svakom spinu! Idealan režim za demonstraciju automata klijentima, brzo otključavanje Mina, Točka i Karata.</p>
           <div class="volatility-card-specs">
-            <div class="spec-pill"><span class="spec-label">Udarac:</span> <span class="spec-val">SVAKI SPIN DOBITAN</span></div>
-            <div class="spec-pill"><span class="spec-label">Obrt za bonus:</span> <span class="spec-val">Munjevito (70 - 130 RSD)</span></div>
+            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityHitLabel">Udarac:</span> <span class="spec-val" data-i18n="volatilityHitDemo">SVAKI SPIN DOBITAN</span></div>
+            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityBonusTurnoverLabel">Obrt za bonus:</span> <span class="spec-val" data-i18n="volatilityTurnoverDemo">Munjevito (70 - 130 RSD)</span></div>
           </div>
-          <button class="btn-select-preset" data-preset="demo">IZABERI PROFIL</button>
+          <button class="btn-select-preset" data-preset="demo" data-i18n="volatilitySelectBtn">IZABERI PROFIL</button>
         </div>
       </div>
 
-      <div class="volatility-footer-note">
-        💡 <em>Promena profila trenutno ažurira sve igre (Classic, Royal 3x3, Mines) i brzinu punjenja bonusa.</em>
+      <div class="volatility-footer-note" data-i18n="volatilityFooterNote">
+        💡 Promena profila trenutno ažurira sve igre (Classic, Royal 3x3, Mines) i brzinu punjenja bonusa.
       </div>
     </div>
   </div>
@@ -1206,11 +1206,11 @@
     <div class="buy-bonus-modal-box">
       <div class="buy-bonus-modal-head">
         <div class="buy-bonus-title-wrap">
-          <span class="buy-bonus-top-badge">⚡ VIP DIREKTNA AKCIJA</span>
-          <h2 class="buy-bonus-modal-title">KUPOVINA BONUSA</h2>
-          <p class="buy-bonus-modal-subtitle">Preskočite čekanje i odmah aktivirajte željeni bonus po izboru!</p>
+          <span class="buy-bonus-top-badge" data-i18n="buyBonusBadge">⚡ VIP DIREKTNA AKCIJA</span>
+          <h2 class="buy-bonus-modal-title" data-i18n="buyBonusModalTitle">KUPOVINA BONUSA</h2>
+          <p class="buy-bonus-modal-subtitle" data-i18n="buyBonusModalSub">Preskočite čekanje i odmah aktivirajte željeni bonus po izboru!</p>
         </div>
-        <button class="buy-bonus-close-btn" id="buy-bonus-close" title="Zatvori">✕</button>
+        <button class="buy-bonus-close-btn" id="buy-bonus-close" title="Zatvori" data-i18n-title="volatilityCloseTitle">✕</button>
       </div>
 
       <div class="buy-bonus-cards-grid">
@@ -1221,8 +1221,8 @@
             <span class="buy-card-icon">🎡</span>
           </div>
           <div class="buy-card-content">
-            <h3 class="buy-card-title">Točak Sreće</h3>
-            <p class="buy-card-desc">Garantovan ulazak u Točak Sreće sa novčanim nagradama, besplatnim spinovima i šansom za Diamond Jackpot!</p>
+            <h3 class="buy-card-title" data-i18n="buyCardWheelTitle">Točak Sreće</h3>
+            <p class="buy-card-desc" data-i18n="buyCardWheelDesc">Garantovan ulazak u Točak Sreće sa novčanim nagradama, besplatnim spinovima i šansom za Diamond Jackpot!</p>
             <div class="buy-price-tag" id="buy-price-val-wheel">900 KR (900 RSD)</div>
             <button class="btn-confirm-buy btn-buy-wheel" data-feature="wheel" id="buy-btn-val-wheel">KUPI ZA 900 RSD</button>
           </div>
@@ -1235,8 +1235,8 @@
             <span class="buy-card-icon">💣</span>
           </div>
           <div class="buy-card-content">
-            <h3 class="buy-card-title">IGT Mini-Mines</h3>
-            <p class="buy-card-desc">Otvorite polja, sakupljajte dragulje sa rastućim multiplikatorima i naplatite ulog pre nego što detonira mina!</p>
+            <h3 class="buy-card-title" data-i18n="buyCardMinesTitle">IGT Mini-Mines</h3>
+            <p class="buy-card-desc" data-i18n="buyCardMinesDesc">Otvorite polja, sakupljajte dragulje sa rastućim multiplikatorima i naplatite ulog pre nego što detonira mina!</p>
             <div class="buy-price-tag" id="buy-price-val-mines">700 KR (700 RSD)</div>
             <button class="btn-confirm-buy btn-buy-mines" data-feature="mines" id="buy-btn-val-mines">KUPI ZA 700 RSD</button>
           </div>
@@ -1249,16 +1249,16 @@
             <span class="buy-card-icon">⚡</span>
           </div>
           <div class="buy-card-content">
-            <h3 class="buy-card-title">Super Besplatni Spinovi</h3>
-            <p class="buy-card-desc">10 garantovanih besplatnih spinova sa stalnim 2x multiplikatorom na sve dobitne linije i kombinacije!</p>
+            <h3 class="buy-card-title" data-i18n="buyCardFsTitle">Super Besplatni Spinovi</h3>
+            <p class="buy-card-desc" data-i18n="buyCardFsDesc">10 garantovanih besplatnih spinova sa stalnim 2x multiplikatorom na sve dobitne linije i kombinacije!</p>
             <div class="buy-price-tag" id="buy-price-val-freespins">1,000 KR (1,000 RSD)</div>
             <button class="btn-confirm-buy btn-buy-freespins" data-feature="freespins" id="buy-btn-val-freespins">KUPI ZA 1,000 RSD</button>
           </div>
         </div>
       </div>
 
-      <div class="buy-bonus-footer-note">
-        💡 <em>Cena kupovine bonusa automatski se računa na osnovu Vašeg trenutnog uloga (Bet) i denominacije.</em>
+      <div class="buy-bonus-footer-note" data-i18n="buyBonusFooterNote">
+        💡 Cena kupovine bonusa automatski se računa na osnovu Vašeg trenutnog uloga (Bet) i denominacije.
       </div>
     </div>
   </div>
@@ -1268,11 +1268,11 @@
     <div class="tournament-modal-box">
       <div class="tournament-modal-head">
         <div class="tournament-title-wrap">
-          <span class="tournament-top-badge">🏆 120s HIGH-SPEED IZAZOV</span>
-          <h2 class="tournament-modal-title">IGT CASINO TURNIR</h2>
-          <p class="tournament-modal-subtitle">Takmičite se za vrh tabele sa 5.000 turnirskih kredita!</p>
+          <span class="tournament-top-badge" data-i18n="tournamentModalBadge">🏆 120s HIGH-SPEED IZAZOV</span>
+          <h2 class="tournament-modal-title" data-i18n="tournamentModalTitle">IGT CASINO TURNIR</h2>
+          <p class="tournament-modal-subtitle" data-i18n="tournamentModalSubtitle">Takmičite se za vrh tabele sa 5.000 turnirskih kredita!</p>
         </div>
-        <button class="tournament-close-btn" id="tournament-close-btn" title="Zatvori">✕</button>
+        <button class="tournament-close-btn" id="tournament-close-btn" title="Zatvori" data-i18n-title="volatilityCloseTitle">✕</button>
       </div>
 
       <div class="tournament-body-content">
@@ -1280,28 +1280,28 @@
           <div class="tour-info-card">
             <span class="tic-icon">⏱️</span>
             <div class="tic-meta">
-              <span class="tic-label">TRAJANJE</span>
-              <span class="tic-val">120 Sekundi</span>
+              <span class="tic-label" data-i18n="tourDurationLabel">TRAJANJE</span>
+              <span class="tic-val" data-i18n="tourDurationVal">120 Sekundi</span>
             </div>
           </div>
           <div class="tour-info-card">
             <span class="tic-icon">💰</span>
             <div class="tic-meta">
-              <span class="tic-label">START KREDITI</span>
+              <span class="tic-label" data-i18n="tourStartCreditsLabel">START KREDITI</span>
               <span class="tic-val">5,000 KR</span>
             </div>
           </div>
           <div class="tour-info-card">
             <span class="tic-icon">🛡️</span>
             <div class="tic-meta">
-              <span class="tic-label">VAŠ SALDO</span>
-              <span class="tic-val">100% Bezbedan</span>
+              <span class="tic-label" data-i18n="tourBalanceLabel">VAŠ SALDO</span>
+              <span class="tic-val" data-i18n="tourSafeVal">100% Bezbedan</span>
             </div>
           </div>
         </div>
 
         <div class="tournament-leaderboard-section">
-          <h3 class="tour-lead-title">👑 TRENUTNA TABELA ŠAMPIONA</h3>
+          <h3 class="tour-lead-title" data-i18n="tourLeaderboardTitle">👑 TRENUTNA TABELA ŠAMPIONA</h3>
           <div class="tournament-lead-list" id="tournament-leaderboard-list">
             <!-- Populated dynamically via JS -->
           </div>
@@ -1309,7 +1309,7 @@
       </div>
 
       <div class="tournament-footer-actions">
-        <button class="btn-tournament-start" id="tournament-start-btn">ZAPOČNI TURNIR (120 SEKUNDI) 🚀</button>
+        <button class="btn-tournament-start" id="tournament-start-btn" data-i18n="tourStartBtn">ZAPOČNI TURNIR (120 SEKUNDI) 🚀</button>
       </div>
     </div>
   </div>
@@ -1319,23 +1319,23 @@
     <div class="tournament-modal-box results-box">
       <div class="tournament-results-celebration">
         <span class="tour-trophy-large">🏆</span>
-        <h2 class="tour-finished-title">TURNIR JE ZAVRŠEN!</h2>
-        <p class="tour-finished-sub">Čestitamo! Vaš rezultat je uspešno zabeležen na tabeli šampiona.</p>
+        <h2 class="tour-finished-title" data-i18n="tourFinishedTitle">TURNIR JE ZAVRŠEN!</h2>
+        <p class="tour-finished-sub" data-i18n="tourFinishedSub">Čestitamo! Vaš rezultat je uspešno zabeležen na tabeli šampiona.</p>
       </div>
 
       <div class="tour-result-metrics">
         <div class="tour-metric-card">
-          <span class="tm-label">OSVOJENI POENI</span>
+          <span class="tm-label" data-i18n="tourPointsWonLabel">OSVOJENI POENI</span>
           <span class="tm-val highlight-gold" id="tournament-result-score">0 RSD</span>
         </div>
         <div class="tour-metric-card">
-          <span class="tm-label">KONAČAN PLASMAN</span>
+          <span class="tm-label" data-i18n="tourFinalRankLabel">KONAČAN PLASMAN</span>
           <span class="tm-val highlight-cyan" id="tournament-result-rank">#1. MESTO</span>
         </div>
       </div>
 
       <div class="tournament-footer-actions">
-        <button class="btn-tournament-start" id="tournament-results-close-btn">NASTAVI IGRU ✨</button>
+        <button class="btn-tournament-start" id="tournament-results-close-btn" data-i18n="tourContinueBtn">NASTAVI IGRU ✨</button>
       </div>
     </div>
   </div>

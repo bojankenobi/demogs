@@ -248,7 +248,9 @@ class MiniMinesBonus {
     this.updateUI();
 
     if (this.statusText) {
-      this.statusText.textContent = '💥 MINA EKSPLODIRALA! IZGUBLJEN SAV DOBITAK (0 RSD)!';
+      this.statusText.textContent = window.i18n 
+        ? window.i18n.t('miniMinesWipedOut')
+        : '💥 MINA EKSPLODIRALA! IZGUBLJEN SAV DOBITAK (0 RSD)!';
       this.statusText.classList.add('alert-danger');
     }
 

@@ -152,7 +152,17 @@ class SlotMathManager {
 
     if (window.slotApp && window.slotApp.showMessage) {
       const p = this.getActiveProfile();
-      window.slotApp.showMessage(`⚡ MATEMATIČKI REŽIM: ${p.name.toUpperCase()}`, 'jackpot');
+      let localizedName = p.name;
+      if (window.i18n) {
+        if (this.activePreset === 'standard') localizedName = window.i18n.t('volatilityStandardTitle');
+        else if (this.activePreset === 'low') localizedName = window.i18n.t('volatilityLowTitle');
+        else if (this.activePreset === 'high') localizedName = window.i18n.t('volatilityHighTitle');
+        else if (this.activePreset === 'demo') localizedName = window.i18n.t('volatilityDemoTitle');
+      }
+      const msg = window.i18n 
+        ? window.i18n.t('mathPresetActivated', { name: localizedName.toUpperCase() })
+        : `⚡ MATEMATIČKI REŽIM: ${p.name.toUpperCase()}`;
+      window.slotApp.showMessage(msg, 'jackpot');
     }
   }
 

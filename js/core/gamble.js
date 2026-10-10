@@ -215,7 +215,10 @@ class CardGambleGame {
 
         if (window.slotAudio) window.slotAudio.playGambleLose();
         if (window.slotApp) {
-          window.slotApp.showMessage(`❌ POGREŠAN IZBOR! IZGUBLJENO: ${lostAmount} KREDITA!`, 'normal');
+          const msg = window.i18n 
+            ? window.i18n.t('gambleLostChoice', { amount: lostAmount })
+            : `❌ POGREŠAN IZBOR! IZGUBLJENO: ${lostAmount} KREDITA!`;
+          window.slotApp.showMessage(msg, 'normal');
         }
 
         setTimeout(() => {
