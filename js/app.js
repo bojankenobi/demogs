@@ -81,26 +81,36 @@ class IGTApp {
 
     // 4. Lobby
     this.lobby = new window.CasinoLobby(this.wallet, this.jackpots);
-    this.lobby.registerGame('classic', this.classicGame);
+    this.lobby.registerGame('classic', {
+      mount: () => {
+        this.restoreSlotUI();
+        this.classicGame.mount();
+      },
+      unmount: () => this.classicGame.unmount(),
+      spin: () => this.classicGame.spin(),
+      slamStop: () => this.classicGame.slamStop && this.classicGame.slamStop(),
+      get isSpinning() { return this.gameInstance.isSpinning; },
+      gameInstance: this.classicGame
+    });
     this.lobby.registerGame('royal3x3', {
       mount: () => {
-        const stage = document.querySelector('.slot-stage-scaler');
-        if (stage) stage.style.display = 'flex';
+        this.restoreSlotUI();
         this.royalGame.mount(false);
       },
       unmount: () => this.royalGame.unmount(),
       spin: () => this.royalGame.spin(),
+      slamStop: () => this.royalGame.slamStop && this.royalGame.slamStop(),
       get isSpinning() { return this.gameInstance.isSpinning; },
       gameInstance: this.royalGame
     });
     this.lobby.registerGame('fullfocus', {
       mount: () => {
-        const stage = document.querySelector('.slot-stage-scaler');
-        if (stage) stage.style.display = 'flex';
+        this.restoreSlotUI();
         this.royalGame.mount(true);
       },
       unmount: () => this.royalGame.unmount(),
       spin: () => this.royalGame.spin(),
+      slamStop: () => this.royalGame.slamStop && this.royalGame.slamStop(),
       get isSpinning() { return this.gameInstance.isSpinning; },
       gameInstance: this.royalGame
     });
@@ -128,19 +138,12 @@ class IGTApp {
       },
       unmount: () => {
         this.minesGame.unmount();
-
-        const stage = document.querySelector('.slot-stage-scaler');
-        if (stage) stage.style.display = 'flex';
-
-        // Restore slot controls panel and status banner
-        const controlsPanel = document.querySelector('.controls-panel');
-        if (controlsPanel) controlsPanel.style.display = 'flex';
-
-        const bannerWrap = document.querySelector('.status-banner-wrap');
-        if (bannerWrap) bannerWrap.style.display = 'block';
-
-        const container = document.querySelector('.game-container');
-        if (container) container.classList.remove('in-mines-mode');
+        this.restoreSlotUI();
+      },
+      forceExit: () => {
+        if (this.minesGame && typeof this.minesGame.forceExit === 'function') {
+          this.minesGame.forceExit();
+        }
       },
       spin: () => {
         if (this.minesGame.gameState === 'idle' || this.minesGame.gameState === 'cashed_out' || this.minesGame.gameState === 'exploded') {
@@ -149,7 +152,7 @@ class IGTApp {
           this.minesGame.cashout();
         }
       },
-      get isSpinning() { return this.gameInstance.isSpinning; },
+      get isSpinning() { return false; },
       gameInstance: this.minesGame
     });
 
@@ -172,6 +175,22 @@ class IGTApp {
     if (window.AdminPanel) {
       this.adminPanel = new window.AdminPanel(this);
     }
+  }
+
+  restoreSlotUI() {
+    const stage = document.querySelector('.slot-stage-scaler');
+    if (stage) stage.style.display = 'flex';
+
+    const controlsPanel = document.querySelector('.controls-panel');
+    if (controlsPanel) controlsPanel.style.display = 'flex';
+
+    const bannerWrap = document.querySelector('.status-banner-wrap');
+    if (bannerWrap) bannerWrap.style.display = 'block';
+
+    const container = document.querySelector('.game-container');
+    if (container) container.classList.remove('in-mines-mode');
+
+    this.updateSpinButtonState();
   }
 
   showMessage(msg, type = 'normal') {

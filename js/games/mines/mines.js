@@ -138,7 +138,21 @@ class MinesGame {
     this.resetGameState();
   }
 
+  forceExit() {
+    if (this.gameState === 'playing') {
+      if (this.revealedCount > 0) {
+        // Automatically cash out collected winnings for the player
+        this.cashout();
+      } else {
+        // Refund unplayed bet if no tiles were touched
+        this.wallet.addWin(this.currentBet);
+        this.resetGameState();
+      }
+    }
+  }
+
   unmount() {
+    this.forceExit();
     if (this.viewContainer) {
       this.viewContainer.style.display = 'none';
     }
@@ -484,7 +498,7 @@ class MinesGame {
   }
 
   get isSpinning() {
-    return this.gameState === 'playing';
+    return false;
   }
 }
 

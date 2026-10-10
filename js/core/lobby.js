@@ -82,7 +82,16 @@ class CasinoLobby {
   }
 
   switchGame(gameId) {
-    if (this.activeGame && this.activeGame.isSpinning) return;
+    if (this.activeGameId === gameId) return;
+
+    if (this.activeGame && this.activeGame.isSpinning) {
+      if (typeof this.activeGame.forceExit === 'function') {
+        this.activeGame.forceExit();
+      } else {
+        return;
+      }
+    }
+
     if (this.activeGame && typeof this.activeGame.unmount === 'function') {
       this.activeGame.unmount();
     }
