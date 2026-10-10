@@ -320,7 +320,25 @@
       fsSpinsLabel: 'SPINOVI:',
       tourTimeLabel: 'VREME:',
       tourScoreLabel: 'POENI:',
-      buyBonusBtnText: 'KUPI BONUS'
+      buyBonusBtnText: 'KUPI BONUS',
+
+      // Unified Casino Menu (Mobile & Tablet)
+      menuTitle: 'Glavni Meni & Podešavanja',
+      menuLabel: 'MENI',
+      menuBadge: '⚡ IGT CASINO TERMINAL',
+      menuModalTitle: 'GLAVNI MENI & PODEŠAVANJA',
+      menuVolatilityDesc: 'Podesite učestalost dobitaka ili uključite stalne dobitke',
+      menuTourDesc: 'High-speed turnir sa 5.000 kredita i tabelom šampiona',
+      menuProfileDesc: 'Lični RTP, istorijat dobitaka, denominacija i dopuna RSD',
+      menuPaytableDesc: 'Isplate simbola, dobitne linije i bonus pravila',
+      menuLangTitle: 'Jezik / Language',
+      menuLangDesc: 'Prebacite između srpskog i engleskog jezika',
+      menuAmbientTitle: 'Casino Ambijent',
+      menuAmbientDesc: 'Pozadinski zvuk kazina, žamor i zveckanje žetona',
+      menuSoundTitle: 'Zvučni Efekti',
+      menuSoundDesc: 'Zvukovi spinovanja, dobitaka i proslave',
+      menuInstallDesc: 'Igrajte na celom ekranu bez browser traka',
+      menuCloseBtn: 'POVRATAK NA IGRU'
     },
     en: {
       brandSub: 'IGT CASINO',
@@ -639,7 +657,25 @@
       fsSpinsLabel: 'SPINS:',
       tourTimeLabel: 'TIME:',
       tourScoreLabel: 'SCORE:',
-      buyBonusBtnText: 'BUY BONUS'
+      buyBonusBtnText: 'BUY BONUS',
+
+      // Unified Casino Menu (Mobile & Tablet)
+      menuTitle: 'Main Menu & Settings',
+      menuLabel: 'MENU',
+      menuBadge: '⚡ IGT CASINO TERMINAL',
+      menuModalTitle: 'MAIN MENU & SETTINGS',
+      menuVolatilityDesc: 'Adjust win frequency or enable presentation mode',
+      menuTourDesc: 'High-speed tournament with 5,000 credits and leaderboard',
+      menuProfileDesc: 'Personal RTP, win history, denomination and RSD refill',
+      menuPaytableDesc: 'Symbol payouts, paylines and bonus rules',
+      menuLangTitle: 'Language / Jezik',
+      menuLangDesc: 'Switch between English and Serbian language',
+      menuAmbientTitle: 'Casino Ambience',
+      menuAmbientDesc: 'Background casino chatter, bells and chip clinks',
+      menuSoundTitle: 'Sound Effects',
+      menuSoundDesc: 'Spin sounds, win chimes and celebrations',
+      menuInstallDesc: 'Play full screen without browser bars',
+      menuCloseBtn: 'BACK TO GAME'
     }
   };
 
@@ -730,6 +766,10 @@
       const langLabel = document.getElementById('lang-current-label');
       if (langLabel) {
         langLabel.textContent = this.currentLang.toUpperCase();
+      }
+      const menuLangBadge = document.getElementById('menu-current-lang-badge');
+      if (menuLangBadge) {
+        menuLangBadge.textContent = this.currentLang.toUpperCase();
       }
       const langToggleBtn = document.getElementById('lang-toggle');
       if (langToggleBtn) {

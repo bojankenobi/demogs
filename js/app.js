@@ -405,6 +405,7 @@ class IGTApp {
           ambientBtn.classList.toggle('active', isPlaying);
           const msg = isPlaying ? '🔊 VEGAS CASINO AMBIJENT UKLJUČEN' : 'CASINO AMBIJENT UTIŠAN';
           this.showMessage(msg, 'info');
+          this.updateCasinoMenuUI();
         }
       });
     }
@@ -417,6 +418,7 @@ class IGTApp {
     }
 
     this.initVolatilityModal();
+    this.initCasinoMenu();
   }
 
   openVolatilityModal() {
@@ -459,7 +461,7 @@ class IGTApp {
           this.mathManager.setPreset(presetId);
           this.updateVolatilityUI();
           if (window.slotAudio && window.slotAudio.playCoinDrop) window.slotAudio.playCoinDrop();
-          setTimeout(() => closeModal(), 280);
+          setTimeout(() => this.closeVolatilityModal(), 280);
         }
       };
 
@@ -485,10 +487,194 @@ class IGTApp {
       subLbl.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : '100%')));
     }
 
+    const menuVolBadge = document.getElementById('menu-current-volatility-badge');
+    if (menuVolBadge) {
+      menuVolBadge.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : '100%')));
+    }
+
     document.querySelectorAll('.volatility-option-card').forEach(card => {
       const pid = card.getAttribute('data-preset');
       card.classList.toggle('active', pid === activeId);
     });
+  }
+
+  /* ==========================================================================
+     UNIFIED CASINO MENU (Tablet & Mobile Sleek Hub)
+     ========================================================================== */
+  openCasinoMenu() {
+    const modal = document.getElementById('casino-menu-modal');
+    if (modal) modal.classList.add('active');
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+    this.updateCasinoMenuUI();
+  }
+
+  closeCasinoMenu() {
+    const modal = document.getElementById('casino-menu-modal');
+    if (modal) modal.classList.remove('active');
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+  }
+
+  updateCasinoMenuUI() {
+    // 1. Volatility badge in menu
+    const volBadge = document.getElementById('menu-current-volatility-badge');
+    if (volBadge && this.mathManager) {
+      const activeId = this.mathManager.activePreset;
+      volBadge.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : '100%')));
+    }
+
+    // 2. Language badge in menu
+    const langBadge = document.getElementById('menu-current-lang-badge');
+    if (langBadge && window.i18n) {
+      langBadge.textContent = (window.i18n.currentLang || 'sr').toUpperCase();
+    }
+
+    // 3. Ambient badge in menu
+    const ambBadge = document.getElementById('menu-ambient-status-badge');
+    if (ambBadge && window.slotAudio) {
+      const isAmb = !!window.slotAudio.isAmbientPlaying;
+      ambBadge.textContent = isAmb ? 'ON' : 'OFF';
+      ambBadge.className = 'menu-pill-badge ' + (isAmb ? 'badge-green' : '');
+    }
+
+    // 4. Sound badge & icon in menu
+    const sndBadge = document.getElementById('menu-sound-status-badge');
+    const sndIcon = document.getElementById('menu-sound-icon');
+    if (sndBadge && window.slotAudio) {
+      const isMuted = !!window.slotAudio.isMuted;
+      sndBadge.textContent = isMuted ? 'OFF' : 'ON';
+      sndBadge.className = 'menu-pill-badge ' + (isMuted ? '' : 'badge-green');
+      if (sndIcon) sndIcon.textContent = isMuted ? '🔇' : '🔊';
+    }
+  }
+
+  initCasinoMenu() {
+    const modal = document.getElementById('casino-menu-modal');
+    const openBtn = document.getElementById('casino-menu-btn');
+    const closeBtn = document.getElementById('casino-menu-close');
+    const returnBtn = document.getElementById('btn-menu-close-action');
+
+    if (openBtn) openBtn.addEventListener('click', () => this.openCasinoMenu());
+    if (closeBtn) closeBtn.addEventListener('click', () => this.closeCasinoMenu());
+    if (returnBtn) returnBtn.addEventListener('click', () => this.closeCasinoMenu());
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) this.closeCasinoMenu();
+      });
+    }
+
+    // Option 1: Volatility & Math settings
+    const optVolatility = document.getElementById('menu-opt-volatility');
+    if (optVolatility) {
+      optVolatility.addEventListener('click', () => {
+        this.closeCasinoMenu();
+        setTimeout(() => this.openVolatilityModal(), 120);
+      });
+    }
+
+    // Option 2: Tournament
+    const optTournament = document.getElementById('menu-opt-tournament');
+    if (optTournament) {
+      optTournament.addEventListener('click', () => {
+        this.closeCasinoMenu();
+        if (this.tournament) {
+          setTimeout(() => this.tournament.openModal(), 120);
+        }
+      });
+    }
+
+    // Option 3: Player Profile & Deposit
+    const optProfile = document.getElementById('menu-opt-profile');
+    if (optProfile) {
+      optProfile.addEventListener('click', () => {
+        this.closeCasinoMenu();
+        setTimeout(() => {
+          if (typeof this.openProfileModal === 'function') {
+            this.openProfileModal();
+          }
+        }, 120);
+      });
+    }
+
+    // Option 4: Paytable & Rules
+    const optPaytable = document.getElementById('menu-opt-paytable');
+    if (optPaytable) {
+      optPaytable.addEventListener('click', () => {
+        this.closeCasinoMenu();
+        const paytableModal = document.getElementById('paytable-modal');
+        if (paytableModal) {
+          setTimeout(() => {
+            if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+            paytableModal.classList.add('active');
+          }, 120);
+        }
+      });
+    }
+
+    // Option 5: Language Toggle
+    const optLang = document.getElementById('menu-opt-lang');
+    if (optLang) {
+      optLang.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        if (window.i18n) {
+          window.i18n.toggleLanguage();
+          this.updateCasinoMenuUI();
+        }
+      });
+    }
+
+    // Option 6: Casino Ambience Toggle
+    const optAmbient = document.getElementById('menu-opt-ambient');
+    if (optAmbient) {
+      optAmbient.addEventListener('click', () => {
+        if (window.slotAudio) {
+          const isPlaying = window.slotAudio.toggleCasinoAmbient();
+          const ambientBtn = document.getElementById('ambient-btn');
+          if (ambientBtn) ambientBtn.classList.toggle('active', isPlaying);
+          this.updateCasinoMenuUI();
+          const isEn = window.i18n && window.i18n.currentLang === 'en';
+          const msg = isPlaying 
+            ? (isEn ? '🔊 CASINO AMBIENCE ON' : '🔊 VEGAS CASINO AMBIJENT UKLJUČEN') 
+            : (isEn ? 'CASINO AMBIENCE MUTED' : 'CASINO AMBIJENT UTIŠAN');
+          this.showMessage(msg, 'info');
+        }
+      });
+    }
+
+    // Option 7: Sound Effects Toggle
+    const optSound = document.getElementById('menu-opt-sound');
+    if (optSound) {
+      optSound.addEventListener('click', () => {
+        if (window.slotAudio) {
+          const isMuted = window.slotAudio.toggleMute();
+          const soundBtn = document.getElementById('sound-btn');
+          if (soundBtn) {
+            soundBtn.classList.toggle('muted', isMuted);
+            const onIcon = soundBtn.querySelector('.sound-on-icon');
+            const offIcon = soundBtn.querySelector('.sound-off-icon');
+            if (onIcon && offIcon) {
+              onIcon.style.display = isMuted ? 'none' : 'block';
+              offIcon.style.display = isMuted ? 'block' : 'none';
+            }
+          }
+          this.updateCasinoMenuUI();
+        }
+      });
+    }
+
+    // Option 8: PWA App Installation
+    const optInstall = document.getElementById('menu-opt-install');
+    if (optInstall) {
+      optInstall.addEventListener('click', () => {
+        this.closeCasinoMenu();
+        const installBtn = document.getElementById('pwa-install-btn');
+        if (installBtn) {
+          installBtn.click();
+        }
+      });
+    }
+
+    this.updateCasinoMenuUI();
   }
 }
 
@@ -602,10 +788,25 @@ document.addEventListener('DOMContentLoaded', () => {
     lever.addEventListener('pointercancel', finishLeverDrag);
   }
 
-  // Spacebar Spin
+  // Spacebar Spin & Escape Key to close modals
   window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const casinoMenuModal = document.getElementById('casino-menu-modal');
+      if (casinoMenuModal && casinoMenuModal.classList.contains('active')) {
+        app.closeCasinoMenu();
+        return;
+      }
+      const volModal = document.getElementById('volatility-modal');
+      if (volModal && volModal.classList.contains('active')) {
+        app.closeVolatilityModal();
+        return;
+      }
+    }
     const paytableModal = document.getElementById('paytable-modal');
-    if (e.code === 'Space' && !e.repeat && (!paytableModal || !paytableModal.classList.contains('active'))) {
+    const casinoMenuModal = document.getElementById('casino-menu-modal');
+    if (e.code === 'Space' && !e.repeat && 
+        (!paytableModal || !paytableModal.classList.contains('active')) &&
+        (!casinoMenuModal || !casinoMenuModal.classList.contains('active'))) {
       e.preventDefault();
       app.spin();
     }
@@ -623,6 +824,9 @@ document.addEventListener('DOMContentLoaded', () => {
         onIcon.style.display = isMuted ? 'none' : 'block';
         offIcon.style.display = isMuted ? 'block' : 'none';
       }
+      if (app && typeof app.updateCasinoMenuUI === 'function') {
+        app.updateCasinoMenuUI();
+      }
     });
   }
 
@@ -631,7 +835,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (langToggleBtn) {
     langToggleBtn.addEventListener('click', () => {
       if (window.slotAudio) window.slotAudio.playClick();
-      if (window.i18n) window.i18n.toggleLanguage();
+      if (window.i18n) {
+        window.i18n.toggleLanguage();
+        if (app && typeof app.updateCasinoMenuUI === 'function') {
+          app.updateCasinoMenuUI();
+        }
+      }
     });
   }
 

@@ -37,10 +37,6 @@
     <header class="header-section">
       <div class="brand-logo-wrap">
         <img src="assets/logo.svg" alt="IGT" class="main-brand-logo">
-        <button class="btn-volatility-pill" id="btn-volatility-toggle" title="Podešavanje volatilnosti i stalnih dobitaka" data-i18n-title="volatilityPillTitle" aria-label="Volatilnost">
-          <span class="volatility-pulse-dot"></span>
-          <span class="volatility-mode-label" id="hud-volatility-name">CASINO STD</span>
-        </button>
       </div>
       <!-- Live Casino Jackpots Bar: SILVER, GOLD & DIAMOND (Thin Metallic Frames) -->
       <div class="jackpots-ticker-bar" id="jackpots-ticker-bar">
@@ -373,7 +369,7 @@
       </div>
     </section>
 
-    <!-- Minimalist Footer Controls (IGT Game Selector & System Icons) -->
+    <!-- Minimalist Footer Controls (IGT Game Selector, Quick Sound & Casino Menu) -->
     <footer class="aux-row">
       <!-- IGT Game Selector Button -->
       <button class="btn-grand-game-select" id="egt-game-select-btn" title="Izaberi Igru / Select Game" aria-label="Izaberi Igru">
@@ -383,18 +379,20 @@
         <span class="grand-caret">▲</span>
       </button>
 
-      <button class="btn-icon-mini" id="paytable-btn" title="Pravila i Isplate" data-i18n-title="rulesAndPayouts" aria-label="Pravila">
+      <!-- Desktop-Only Extended System Icons (Hidden on Mobile & Tablet in favor of clean Menu) -->
+      <button class="btn-icon-mini desktop-only-icon" id="paytable-btn" title="Pravila i Isplate" data-i18n-title="rulesAndPayouts" aria-label="Pravila">
         <svg class="gold-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 .88-.36 1.68-.93 2.25z"/>
         </svg>
       </button>
 
-      <button class="btn-icon-mini btn-install" id="pwa-install-btn" title="Instaliraj App" data-i18n-title="installApp" aria-label="Instaliraj App">
+      <button class="btn-icon-mini btn-install desktop-only-icon" id="pwa-install-btn" title="Instaliraj App" data-i18n-title="installApp" aria-label="Instaliraj App">
         <svg class="gold-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-4.2-5.79l1.79-1.79 1.41 1.41L12 16.83l-4-4.01 1.41-1.41 1.79 1.79V8h2v5.21z"/>
         </svg>
       </button>
 
+      <!-- Quick 1-Tap Sound Mute Toggle (Always visible) -->
       <button class="btn-icon-mini" id="sound-btn" title="Zvuk" data-i18n-title="sound" aria-label="Zvuk">
         <svg class="gold-icon sound-on-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
@@ -404,32 +402,36 @@
         </svg>
       </button>
 
-      <!-- Vegas Casino Ambient Sound Toggle -->
-      <button class="btn-icon-mini btn-ambient" id="ambient-btn" title="Vegas Casino Ambijent (Šum & Zvona)" data-i18n-title="ambientTitle" aria-label="Ambijent">
+      <button class="btn-icon-mini btn-ambient desktop-only-icon" id="ambient-btn" title="Vegas Casino Ambijent (Šum & Zvona)" data-i18n-title="ambientTitle" aria-label="Ambijent">
         <span class="ambient-icon">🎶</span>
       </button>
 
-      <!-- 120s Casino Tournament Challenge -->
-      <button class="btn-icon-mini btn-tournament" id="tournament-btn" title="Turnirski Režim (120s Izazov)" data-i18n-title="tournamentBtnTitle" aria-label="Turnir">
+      <button class="btn-icon-mini btn-tournament desktop-only-icon" id="tournament-btn" title="Turnirski Režim (120s Izazov)" data-i18n-title="tournamentBtnTitle" aria-label="Turnir">
         <span class="tour-icon">🏆</span>
       </button>
 
-      <button class="btn-icon-mini btn-player-profile" id="player-profile-btn" title="Profil igrača & statistika" data-i18n-title="profileModalTitle" aria-label="Profil igrača">
+      <button class="btn-icon-mini btn-player-profile desktop-only-icon" id="player-profile-btn" title="Profil igrača & statistika" data-i18n-title="profileModalTitle" aria-label="Profil igrača">
         <svg class="gold-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
         </svg>
         <span class="profile-badge-18-pill">18+</span>
       </button>
 
-      <button class="btn-icon-mini btn-lang" id="lang-toggle" title="Promeni jezik / Change language" aria-label="Jezik">
+      <button class="btn-icon-mini btn-lang desktop-only-icon" id="lang-toggle" title="Promeni jezik / Change language" aria-label="Jezik">
         <svg class="gold-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/>
         </svg>
       </button>
 
-      <button class="btn-icon-mini btn-volatility-footer" id="volatility-footer-btn" title="Podešavanje Volatilnosti & Prezentacija" data-i18n-title="volatilityFooterTitle" aria-label="Volatilnost">
+      <button class="btn-icon-mini btn-volatility-footer desktop-only-icon" id="volatility-footer-btn" title="Podešavanje Volatilnosti & Prezentacija" data-i18n-title="volatilityFooterTitle" aria-label="Volatilnost">
         <span class="volatility-icon-symbol">⚙️</span>
         <span class="volatility-badge-pill" id="hud-volatility-sub">STD</span>
+      </button>
+
+      <!-- Unified Casino Menu Button (Mobile & Tablet Prime Access) -->
+      <button class="btn-casino-menu" id="casino-menu-btn" title="Glavni Meni & Podešavanja" data-i18n-title="menuTitle" aria-label="Meni">
+        <span class="menu-icon-bars">☰</span>
+        <span class="menu-label-text" data-i18n="menuLabel">MENI</span>
       </button>
     </footer>
   </main>
@@ -1336,6 +1338,128 @@
 
       <div class="tournament-footer-actions">
         <button class="btn-tournament-start" id="tournament-results-close-btn" data-i18n="tourContinueBtn">NASTAVI IGRU ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Casino Unified Menu Modal (Tablet & Mobile Sleek Menu) -->
+  <div class="modal-overlay casino-menu-overlay" id="casino-menu-modal">
+    <div class="casino-menu-box">
+      <div class="casino-menu-head">
+        <div class="casino-menu-brand">
+          <span class="menu-top-badge" data-i18n="menuBadge">⚡ IGT CASINO TERMINAL</span>
+          <h2 class="casino-menu-title" data-i18n="menuModalTitle">GLAVNI MENI & PODEŠAVANJA</h2>
+        </div>
+        <button class="casino-menu-close-btn" id="casino-menu-close" title="Zatvori meni" data-i18n-title="volatilityCloseTitle">✕</button>
+      </div>
+
+      <div class="casino-menu-grid">
+        <!-- 1. Matematika & Volatilnost (Settings) -->
+        <button type="button" class="menu-action-card card-volatility" id="menu-opt-volatility">
+          <div class="menu-card-icon-wrap">⚙️</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title" data-i18n="volatilityTitle">Matematika & Volatilnost</span>
+              <span class="menu-pill-badge" id="menu-current-volatility-badge">STD</span>
+            </div>
+            <p class="menu-card-desc" data-i18n="menuVolatilityDesc">Podesite učestalost dobitaka ili uključite stalne dobitke</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+
+        <!-- 2. Kazino Turnir (120s Izazov) -->
+        <button type="button" class="menu-action-card card-tournament" id="menu-opt-tournament">
+          <div class="menu-card-icon-wrap">🏆</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title" data-i18n="tournamentModalTitle">IGT Casino Turnir</span>
+              <span class="menu-pill-badge badge-cyan">120s</span>
+            </div>
+            <p class="menu-card-desc" data-i18n="menuTourDesc">High-speed turnir sa 5.000 kredita i tabelom šampiona</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+
+        <!-- 3. Profil Igrača & Fiktivna Dopuna -->
+        <button type="button" class="menu-action-card card-profile" id="menu-opt-profile">
+          <div class="menu-card-icon-wrap">👤</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title" data-i18n="profileModalTitle">Profil Igrača & Statistika</span>
+              <span class="menu-pill-badge badge-green">18+</span>
+            </div>
+            <p class="menu-card-desc" data-i18n="menuProfileDesc">Lični RTP, istorijat dobitaka, denominacija i dopuna RSD</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+
+        <!-- 4. Pravila & Tabela Dobitaka -->
+        <button type="button" class="menu-action-card card-paytable" id="menu-opt-paytable">
+          <div class="menu-card-icon-wrap">❓</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title" data-i18n="rulesAndPayouts">Pravila & Tabela Dobitaka</span>
+            </div>
+            <p class="menu-card-desc" data-i18n="menuPaytableDesc">Isplate simbola, dobitne linije i bonus pravila</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+
+        <!-- 5. Jezik (Language Toggle) -->
+        <button type="button" class="menu-action-card card-lang" id="menu-opt-lang">
+          <div class="menu-card-icon-wrap">🌐</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title" data-i18n="menuLangTitle">Jezik / Language</span>
+              <span class="menu-pill-badge badge-gold" id="menu-current-lang-badge">SR</span>
+            </div>
+            <p class="menu-card-desc" data-i18n="menuLangDesc">Prebacite između srpskog i engleskog jezika</p>
+          </div>
+          <span class="menu-card-arrow">⇄</span>
+        </button>
+
+        <!-- 6. Ambijentalni Zvuk (Casino Ambience) -->
+        <button type="button" class="menu-action-card card-ambient" id="menu-opt-ambient">
+          <div class="menu-card-icon-wrap">🎶</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title" data-i18n="menuAmbientTitle">Casino Ambijent</span>
+              <span class="menu-pill-badge" id="menu-ambient-status-badge">OFF</span>
+            </div>
+            <p class="menu-card-desc" data-i18n="menuAmbientDesc">Pozadinski zvuk kazina, žamor i zveckanje žetona</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+
+        <!-- 7. Zvučni Efekti (Sound Effects) -->
+        <button type="button" class="menu-action-card card-sound" id="menu-opt-sound">
+          <div class="menu-card-icon-wrap" id="menu-sound-icon">🔊</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title" data-i18n="menuSoundTitle">Zvučni Efekti</span>
+              <span class="menu-pill-badge badge-green" id="menu-sound-status-badge">ON</span>
+            </div>
+            <p class="menu-card-desc" data-i18n="menuSoundDesc">Zvukovi spinovanja, dobitaka i proslave</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+
+        <!-- 8. Instaliraj PWA Aplikaciju -->
+        <button type="button" class="menu-action-card card-install" id="menu-opt-install">
+          <div class="menu-card-icon-wrap">📲</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title" data-i18n="installApp">Instaliraj App (PWA)</span>
+              <span class="menu-pill-badge badge-purple">FULLSCREEN</span>
+            </div>
+            <p class="menu-card-desc" data-i18n="menuInstallDesc">Igrajte na celom ekranu bez browser traka</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+      </div>
+
+      <div class="casino-menu-footer">
+        <button type="button" class="btn-menu-close-action" id="btn-menu-close-action" data-i18n="menuCloseBtn">POVRATAK NA IGRU</button>
       </div>
     </div>
   </div>
