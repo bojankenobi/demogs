@@ -203,7 +203,13 @@ gsc/
    Navigate to `http://localhost:8000` (or `http://localhost:8000/index.html`).
 4. **Access Standalone Operator Admin Dashboard:**
    - **Direct URL:** Open `http://localhost:8000/admin.html` in a separate tab or on a secondary operator display.
-   - **Cabinet Shortcut:** Press the **`~`** (Backquote) key or click the **Grand Slot logo 5 times** within 2.5 seconds on the slot screen. This automatically launches `admin.html` in a dedicated operator window.
+   - **Cabinet Shortcut:** Press the **`~`** (Backquote) key or click the **Grand Slot logo 5 times** within 2.5 seconds on the slot screen. An in-game luxury PIN modal will prompt for operator authorization before opening the dashboard.
+   - **Dual-Layer Operator PIN Security Suite:**
+     - **Default Factory PIN:** `7777`
+     - **Touch & Keyboard Keypad:** 4-digit luxury golden PIN pad with interactive dot indicators.
+     - **Brute-Force Lockout:** Automatically imposes a **30-second lockout** after 5 consecutive incorrect attempts.
+     - **5-Minute Auto-Lock Watchdog:** Automatically locks operator sessions upon 5 minutes of inactivity.
+     - **Custom PIN Management:** Operators can change the 4-digit PIN directly in the "System & Settings" tab (`admin.html`) with instant cross-tab synchronization.
    - **Real-Time Cross-Tab Telemetry:** The operator dashboard and player terminal communicate bidirectionally with zero latency via `BroadcastChannel('grandslot_admin_channel')` and fallback `localStorage` synchronization:
      - Real-time balance, game mode, and progressive jackpot telemetry.
      - Live volatility presets & custom reel symbol weight updates.
@@ -360,7 +366,13 @@ Celokupan zvuk se generiše sintetički u realnom vremenu bez eksternih audio fa
    Posetite `http://localhost:8000` (ili `http://localhost:8000/index.html`).
 4. **Pristup Zasebnom Operaterskom Admin Panelu:**
    - **Direktna adresa:** Otvorite `http://localhost:8000/admin.html` u posebnom tabu, prozoru ili na sekundarnom operaterskom ekranu.
-   - **Prečica sa aparata:** Pritisnite taster **`~`** (tilda) na tastaturi ili kliknite **5 puta na Grand Slot logo** unutar 2.5 sekunde na ekranu slota — aplikacija automatski otvara `admin.html`.
+   - **Prečica sa aparata:** Pritisnite taster **`~`** (tilda) na tastaturi ili kliknite **5 puta na Grand Slot logo** unutar 2.5 sekunde na ekranu slota — slot mašina otvara luksuzni modalni PIN pad za autorizaciju pre pristupa dashboardu.
+   - **Dvoslojni Bezbednosni PIN Sistem:**
+     - **Fabrički podrazumevani PIN:** `7777`
+     - **Interaktivni PIN Pad:** Zlatna numerička tastatura na dodir i tastaturu sa 4 tačkasta indikatora.
+     - **Zaštita od pogađanja (Brute-Force):** Nakon 5 netačnih unosa, sistem uvodi **privremenu blokadu od 30 sekundi** sa odbrojavanjem.
+     - **Auto-Lock neaktivnosti:** Automatsko zaključavanje sesije nakon 5 minuta neaktivnosti.
+     - **Promena PIN koda:** Operater može u svakom trenutku promeniti 4-cifreni PIN u tabu "Sistem & Povezivanje" (`admin.html`), uz trenutnu sinhronizaciju sa slotom.
    - **Dvosmerna telemetrija u realnom vremenu:** Zasebni admin panel i slot igra komuniciraju u realnom vremenu bez kašnjenja preko `BroadcastChannel('grandslot_admin_channel')` mehanizma (uz automatsku sinhronizaciju kroz `localStorage`):
      - **Telemetrija uživo:** Prikaz statusa konekcije, stanja kredita igrača, aktivne igre, profila volatilnosti i trenutnih iznosa Silver/Gold/Diamond džekpota.
      - **Profili i težine simbola:** Menjanje RTP profila u letu i fino podešavanje verovatnoća simbola na rilovima.

@@ -11,6 +11,7 @@ class AdminDashboard {
     this.lastState = null;
     this.connectionTimeout = null;
 
+    this.initSecurity();
     this.initChannel();
     this.initTabs();
     this.initPresetsAndWeights();
@@ -460,6 +461,299 @@ class AdminDashboard {
     this.toastTimeout = setTimeout(() => {
       toast.classList.remove('visible');
     }, 2800);
+  }
+
+  /* ==========================================================================
+     Operator PIN Security & Auto-Lock System
+     ========================================================================== */
+
+  static hashPin(pin) {
+    let hash = 0x811c9dc5;
+    const str = 'GSC_SALT_2026_' + String(pin).trim();
+    for (let i = 0; i < str.length; i++) {
+      hash ^= str.charCodeAt(i);
+      hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+    }
+    return (hash >>> 0).toString(16);
+  }
+
+  getStoredPinHash() {
+    const key = 'grandslot_operator_pin_hash';
+    let stored = localStorage.getItem(key);
+    if (!stored) {
+      stored = AdminDashboard.hashPin('7777');
+      try { localStorage.setItem(key, stored); } catch (e) {}
+    }
+    return stored;
+  }
+
+  verifyPin(inputPin) {
+    return AdminDashboard.hashPin(inputPin) === this.getStoredPinHash();
+  }
+
+  initSecurity() {
+    this.currentPinInput = '';
+    this.inactivityTimer = null;
+    this.lockoutInterval = null;
+
+    this.lockOverlay = document.getElementById('admin-lock-screen');
+    this.feedbackEl = document.getElementById('admin-pin-feedback');
+    this.pinDots = document.querySelectorAll('#admin-pin-dots .pin-dot');
+    this.pinCard = document.querySelector('.pin-card-box');
+
+    // Check lockout first
+    this.checkLockout();
+
+    // Check existing session auth
+    const isAuthed = sessionStorage.getItem('grandslot_admin_session_auth') === 'true';
+    if (isAuthed && !this.isLockedOut()) {
+      this.unlockSession(false);
+    } else {
+      this.lockSession(false);
+    }
+
+    // Keypad button clicks
+    const keypad = document.getElementById('admin-pin-keypad');
+    if (keypad) {
+      keypad.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const key = btn.getAttribute('data-key');
+        this.handleKeypadInput(key);
+      });
+    }
+
+    // Physical keyboard input
+    window.addEventListener('keydown', (e) => {
+      // If locked, capture numeric keys
+      if (this.lockOverlay && !this.lockOverlay.classList.contains('hidden')) {
+        if (e.key >= '0' && e.key <= '9') {
+          e.preventDefault();
+          this.handleKeypadInput(e.key);
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          this.handleKeypadInput('BACK');
+        } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+          e.preventDefault();
+          this.handleKeypadInput('C');
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (this.currentPinInput.length === 4) {
+            this.submitPin();
+          }
+        }
+      }
+    });
+
+    // Manual lock button in top nav
+    const lockBtn = document.getElementById('btn-lock-session');
+    if (lockBtn) {
+      lockBtn.addEventListener('click', () => {
+        this.lockSession(true);
+        this.showToast('🔒 Sesija operatera je zaključana.');
+      });
+    }
+
+    // Inactivity watchdog (5 minutes = 300,000 ms)
+    const resetWatchdog = () => this.resetInactivityWatchdog();
+    ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
+      window.addEventListener(evt, resetWatchdog, { passive: true });
+    });
+
+    // Change PIN form
+    this.initChangePinForm();
+  }
+
+  handleKeypadInput(key) {
+    if (this.isLockedOut()) return;
+
+    if (key >= '0' && key <= '9') {
+      if (this.currentPinInput.length < 4) {
+        this.currentPinInput += key;
+        this.updatePinDots();
+        if (this.currentPinInput.length === 4) {
+          setTimeout(() => this.submitPin(), 90);
+        }
+      }
+    } else if (key === 'BACK') {
+      if (this.currentPinInput.length > 0) {
+        this.currentPinInput = this.currentPinInput.slice(0, -1);
+        this.updatePinDots();
+      }
+    } else if (key === 'C') {
+      this.currentPinInput = '';
+      this.updatePinDots();
+      this.setFeedback('', '');
+    }
+  }
+
+  updatePinDots() {
+    this.pinDots.forEach((dot, idx) => {
+      if (idx < this.currentPinInput.length) {
+        dot.classList.add('filled');
+      } else {
+        dot.classList.remove('filled');
+      }
+    });
+  }
+
+  submitPin() {
+    if (this.isLockedOut()) return;
+
+    if (this.verifyPin(this.currentPinInput)) {
+      // Success!
+      localStorage.setItem('grandslot_pin_failed_attempts', '0');
+      this.setFeedback('✓ AUTORIZOVAN PRISTUP', 'success');
+      setTimeout(() => {
+        this.unlockSession(true);
+      }, 250);
+    } else {
+      // Failed attempt
+      let failed = parseInt(localStorage.getItem('grandslot_pin_failed_attempts') || '0', 10) + 1;
+      localStorage.setItem('grandslot_pin_failed_attempts', String(failed));
+
+      if (this.pinCard) {
+        this.pinCard.classList.remove('shake');
+        void this.pinCard.offsetWidth; // trigger reflow
+        this.pinCard.classList.add('shake');
+      }
+
+      if (failed >= 5) {
+        const lockoutUntil = Date.now() + 30000; // 30 seconds
+        localStorage.setItem('grandslot_pin_lockout_until', String(lockoutUntil));
+        localStorage.setItem('grandslot_pin_failed_attempts', '0');
+        this.startLockoutCountdown(lockoutUntil);
+      } else {
+        const left = 5 - failed;
+        this.setFeedback(`Netačan PIN kod! (Preostalo pokušaja: ${left})`, 'error');
+        this.currentPinInput = '';
+        this.updatePinDots();
+      }
+    }
+  }
+
+  isLockedOut() {
+    const until = parseInt(localStorage.getItem('grandslot_pin_lockout_until') || '0', 10);
+    return Date.now() < until;
+  }
+
+  checkLockout() {
+    const until = parseInt(localStorage.getItem('grandslot_pin_lockout_until') || '0', 10);
+    if (Date.now() < until) {
+      this.startLockoutCountdown(until);
+    }
+  }
+
+  startLockoutCountdown(until) {
+    if (this.lockoutInterval) clearInterval(this.lockoutInterval);
+    this.currentPinInput = '';
+    this.updatePinDots();
+
+    const updateTimer = () => {
+      const remainingSec = Math.ceil((until - Date.now()) / 1000);
+      if (remainingSec <= 0) {
+        clearInterval(this.lockoutInterval);
+        this.lockoutInterval = null;
+        localStorage.removeItem('grandslot_pin_lockout_until');
+        this.setFeedback('Pokušajte ponovo.', '');
+      } else {
+        this.setFeedback(`⚠️ Previše neuspešnih pokušaja! Sačekajte: ${remainingSec}s`, 'lockout');
+      }
+    };
+
+    updateTimer();
+    this.lockoutInterval = setInterval(updateTimer, 1000);
+  }
+
+  setFeedback(text, type) {
+    if (!this.feedbackEl) return;
+    this.feedbackEl.textContent = text;
+    this.feedbackEl.className = 'pin-feedback-msg ' + (type || '');
+  }
+
+  unlockSession(markSession = true) {
+    if (markSession) {
+      sessionStorage.setItem('grandslot_admin_session_auth', 'true');
+    }
+    if (this.lockOverlay) {
+      this.lockOverlay.classList.add('hidden');
+    }
+    this.currentPinInput = '';
+    this.updatePinDots();
+    this.setFeedback('', '');
+    this.resetInactivityWatchdog();
+  }
+
+  lockSession(clearSession = true) {
+    if (clearSession) {
+      sessionStorage.removeItem('grandslot_admin_session_auth');
+    }
+    if (this.lockOverlay) {
+      this.lockOverlay.classList.remove('hidden');
+    }
+    this.currentPinInput = '';
+    this.updatePinDots();
+    this.checkLockout();
+    if (this.inactivityTimer) clearTimeout(this.inactivityTimer);
+  }
+
+  resetInactivityWatchdog() {
+    if (this.lockOverlay && !this.lockOverlay.classList.contains('hidden')) return;
+    if (this.inactivityTimer) clearTimeout(this.inactivityTimer);
+    // 5 minutes = 300,000 ms
+    this.inactivityTimer = setTimeout(() => {
+      this.lockSession(true);
+      this.showToast('🔒 Sesija je automatski zaključana zbog neaktivnosti.');
+    }, 300000);
+  }
+
+  initChangePinForm() {
+    const saveBtn = document.getElementById('btn-save-new-pin');
+    const oldInput = document.getElementById('input-pin-old');
+    const newInput = document.getElementById('input-pin-new');
+    const confirmInput = document.getElementById('input-pin-confirm');
+    const msgEl = document.getElementById('pin-change-status-msg');
+
+    if (!saveBtn || !oldInput || !newInput || !confirmInput) return;
+
+    saveBtn.addEventListener('click', () => {
+      const oldVal = (oldInput.value || '').trim();
+      const newVal = (newInput.value || '').trim();
+      const confirmVal = (confirmInput.value || '').trim();
+
+      if (!this.verifyPin(oldVal)) {
+        msgEl.textContent = '❌ Trenutni PIN nije ispravan.';
+        msgEl.style.color = '#ef4444';
+        return;
+      }
+
+      if (!/^\d{4}$/.test(newVal)) {
+        msgEl.textContent = '❌ Novi PIN mora sadržati tačno 4 cifre (0-9).';
+        msgEl.style.color = '#ef4444';
+        return;
+      }
+
+      if (newVal !== confirmVal) {
+        msgEl.textContent = '❌ Novi PIN i potvrda se ne poklapaju.';
+        msgEl.style.color = '#ef4444';
+        return;
+      }
+
+      const newHash = AdminDashboard.hashPin(newVal);
+      localStorage.setItem('grandslot_operator_pin_hash', newHash);
+      
+      oldInput.value = '';
+      newInput.value = '';
+      confirmInput.value = '';
+
+      msgEl.textContent = '✓ PIN je uspešno promenjen!';
+      msgEl.style.color = '#00e676';
+      this.showToast('🔐 Operaterski PIN je uspešno ažuriran!');
+
+      setTimeout(() => {
+        msgEl.textContent = '';
+      }, 4000);
+    });
   }
 }
 
