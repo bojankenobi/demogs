@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grand Slot Club - Operator Admin Dashboard</title>
+  
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/icons/favicon.png">
+  <link rel="stylesheet" href="css/admin.css?v=70">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="admin-nav-header">
+    <div class="nav-brand-wrap">
+      <img src="assets/logo.svg" alt="Grand Slot Club" class="admin-logo-img">
+      <span class="admin-badge-tag">OPERATOR CONTROL</span>
+    </div>
+
+    <div class="nav-actions-wrap">
+      <div class="conn-pill disconnected" id="conn-status-pill">
+        <span class="conn-dot"></span>
+        <span id="conn-status-text">ČEKAM SLOT MAŠINU</span>
+      </div>
+
+      <a href="index.html" target="_blank" class="btn-open-slot">
+        <span>🎰</span> Otvori Slot Mašinu
+      </a>
+    </div>
+  </header>
+
+  <!-- Live Telemetry Status Strip -->
+  <section class="telemetry-strip" aria-label="Live Telemetry">
+    <div class="stat-telemetry-box">
+      <span class="stat-box-lbl">AKTIVNA IGRA</span>
+      <span class="stat-box-val" id="tel-active-game">Royal 3x3 (5 Linija)</span>
+    </div>
+    <div class="stat-telemetry-box">
+      <span class="stat-box-lbl">STANJE IGRAČA</span>
+      <span class="stat-box-val val-green" id="tel-player-balance">0 RSD</span>
+    </div>
+    <div class="stat-telemetry-box">
+      <span class="stat-box-lbl">MATEMATIKA</span>
+      <span class="stat-box-val val-gold" id="tel-active-preset">CASINO STD</span>
+    </div>
+    <div class="stat-telemetry-box">
+      <span class="stat-box-lbl">🥈 SILVER DŽEKPOT</span>
+      <span class="stat-box-val val-silver" id="tel-jackpot-silver">80 RSD</span>
+    </div>
+    <div class="stat-telemetry-box">
+      <span class="stat-box-lbl">🏆 GOLD DŽEKPOT</span>
+      <span class="stat-box-val val-gold" id="tel-jackpot-gold">250 RSD</span>
+    </div>
+    <div class="stat-telemetry-box">
+      <span class="stat-box-lbl">💎 DIAMOND DŽEKPOT</span>
+      <span class="stat-box-val val-diamond" id="tel-jackpot-diamond">600 RSD</span>
+    </div>
+  </section>
+
+  <!-- Main Dashboard Work Area -->
+  <main class="dashboard-container">
+    <nav class="dashboard-tabs" aria-label="Admin Navigation Tabs">
+      <button type="button" class="dash-tab-btn active" data-tab="presets">📊 RTP & Matematika</button>
+      <button type="button" class="dash-tab-btn" data-tab="simulator">⚡ Monte Carlo Simulator</button>
+      <button type="button" class="dash-tab-btn" data-tab="triggers">🎯 Daljinske Komande</button>
+      <button type="button" class="dash-tab-btn" data-tab="push">🔔 Push Notifikacije</button>
+      <button type="button" class="dash-tab-btn" data-tab="info">ℹ️ Sistem & Povezivanje</button>
+    </nav>
+
+    <!-- TAB 1: RTP PRESETS & SYMBOL WEIGHTS -->
+    <section class="tab-pane active" id="pane-presets">
+      <div class="pane-intro-box">
+        <h2 class="pane-title">Matematički Profili & Volatilnost</h2>
+        <p class="pane-desc">Izaberite fabrički profil ili ručno prilagodite težine simbola. Sve izmene se u realnom vremenu primenjuju na aktivnu slot mašinu bez prekida spina.</p>
+      </div>
+
+      <div class="preset-grid">
+        <!-- 1. Casino Standard -->
+        <div class="preset-dash-card active" data-preset="standard">
+          <div class="preset-dash-head">
+            <span class="preset-dash-name">🎰 Casino Standard</span>
+            <span class="preset-dash-rtp">~96.0% RTP</span>
+          </div>
+          <p class="preset-dash-desc">Autentična kazino matematika (~25% hit rate). Samo zlatnik daje isplatu na 2 simbola; svi ostali traže punu liniju od 3 simbola.</p>
+          <button type="button" class="preset-btn-activate">AKTIVIRAJ PROFIL</button>
+        </div>
+
+        <!-- 2. Low Volatility -->
+        <div class="preset-dash-card" data-preset="low">
+          <div class="preset-dash-head">
+            <span class="preset-dash-name">🛡️ Niska Volatilnost</span>
+            <span class="preset-dash-rtp">~97.0% RTP</span>
+          </div>
+          <p class="preset-dash-desc">Češći manji dobici (~40% hit rate). 2 simbola plaćaju za zlatnike, zvona i sedmice. Niži potreban obrt za bonuse.</p>
+          <button type="button" class="preset-btn-activate">AKTIVIRAJ PROFIL</button>
+        </div>
+
+        <!-- 3. High Volatility -->
+        <div class="preset-dash-card" data-preset="high">
+          <div class="preset-dash-head">
+            <span class="preset-dash-name">🔥 Visoka Volatilnost</span>
+            <span class="preset-dash-rtp">~94.5% RTP</span>
+          </div>
+          <p class="preset-dash-desc">Visok adrenalinski rizik (~16.5% hit rate). Isključivo 3 simbola plaćaju uz +50% pojačane isplate (1.5x Multiplier)!</p>
+          <button type="button" class="preset-btn-activate">AKTIVIRAJ PROFIL</button>
+        </div>
+
+        <!-- 4. Demo Presentation -->
+        <div class="preset-dash-card" data-preset="demo">
+          <div class="preset-dash-head">
+            <span class="preset-dash-name">🎉 Demo Prezentacija</span>
+            <span class="preset-dash-rtp">100% HIT</span>
+          </div>
+          <p class="preset-dash-desc">Specijalni sajamski režim za demonstraciju automata. Garantovan dobitak na svakom spinu i munjevito punjenje bonusa.</p>
+          <button type="button" class="preset-btn-activate">AKTIVIRAJ PROFIL</button>
+        </div>
+      </div>
+
+      <div class="section-subtitle-bar">
+        <h3 class="section-subtitle">⚖️ Finog Podešavanje Težina Simbola (Symbol Weights)</h3>
+        <button type="button" class="btn-reset-weights" id="btn-reset-weights-default">🔄 Vrati na fabričke težine</button>
+      </div>
+
+      <div class="weights-grid" id="weights-dash-grid">
+        <!-- Dynamically populated -->
+      </div>
+    </section>
+
+    <!-- TAB 2: MONTE CARLO SIMULATOR -->
+    <section class="tab-pane" id="pane-simulator">
+      <div class="pane-intro-box">
+        <h2 class="pane-title">Monte Carlo RTP Simulator</h2>
+        <p class="pane-desc">Izvršite matematičku simulaciju od 10.000 do 100.000 spinova u milisekundama kako biste proverili stvarni realizovani RTP i frekvenciju pogodaka za trenutne težine simbola.</p>
+      </div>
+
+      <div class="sim-box-wrap">
+        <div class="sim-bar">
+          <div class="sim-select-group">
+            <label for="sim-game-choice">Igra za simulaciju:</label>
+            <select id="sim-game-choice" class="admin-input-select">
+              <option value="royal3x3">Royal 3x3 (5 Isplatnih Linija)</option>
+              <option value="classic">1-Line Classic Retro Slot</option>
+            </select>
+          </div>
+
+          <div class="sim-spins-group">
+            <button type="button" class="btn-sim-run" data-spins="10000">10.000 Spinova</button>
+            <button type="button" class="btn-sim-run active" data-spins="50000">50.000 Spinova</button>
+            <button type="button" class="btn-sim-run" data-spins="100000">100.000 Spinova</button>
+          </div>
+        </div>
+
+        <div class="sim-status-banner" id="sim-status-banner">
+          Kliknite na jedno od dugmadi iznad da pokrenete simulaciju.
+        </div>
+
+        <div class="sim-results-cards" id="sim-results-cards" style="display: none;">
+          <div class="sim-res-card">
+            <span class="sim-res-lbl">REALIZOVANI RTP</span>
+            <span class="sim-res-val" style="color: #ffd700;" id="sim-res-rtp">0%</span>
+          </div>
+          <div class="sim-res-card">
+            <span class="sim-res-lbl">HIT RATE (UČESTALOST)</span>
+            <span class="sim-res-val" id="sim-res-hitrate">0%</span>
+          </div>
+          <div class="sim-res-card">
+            <span class="sim-res-lbl">MAX WIN U SESIJI</span>
+            <span class="sim-res-val" style="color: #00e676;" id="sim-res-maxwin">0x</span>
+          </div>
+          <div class="sim-res-card">
+            <span class="sim-res-lbl">UKUPAN ULOG / DOBITAK</span>
+            <span class="sim-res-val" id="sim-res-betwin">0 / 0 RSD</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: DALJINSKE KOMANDE & TRIGGERS -->
+    <section class="tab-pane" id="pane-triggers">
+      <div class="pane-intro-box">
+        <h2 class="pane-title">Daljinske Komande za Slot</h2>
+        <p class="pane-desc">Trenutno okinite džekpotove, bonuse, menjajte stanje na računu ili prebacite igru na slot mašini u realnom vremenu.</p>
+      </div>
+
+      <div class="triggers-container">
+        <!-- 1. Jackpots -->
+        <div class="trigger-panel-card">
+          <h3 class="trigger-panel-title">🏆 Instant Džekpotovi (Must-Drop Drops)</h3>
+          <div class="trigger-buttons-grid">
+            <button type="button" class="btn-trigger-action silver" id="btn-cmd-silver">🥈 Trigger SILVER</button>
+            <button type="button" class="btn-trigger-action gold" id="btn-cmd-gold">🏆 Trigger GOLD</button>
+            <button type="button" class="btn-trigger-action diamond" id="btn-cmd-diamond">💎 Trigger DIAMOND</button>
+          </div>
+        </div>
+
+        <!-- 2. Bonuses -->
+        <div class="trigger-panel-card">
+          <h3 class="trigger-panel-title">⚡ Bonus Mehanike & Metri</h3>
+          <div class="trigger-buttons-grid">
+            <button type="button" class="btn-trigger-action" id="btn-cmd-wheel">🎡 Pokreni Točak Sreće</button>
+            <button type="button" class="btn-trigger-action" id="btn-cmd-mines">💣 Pokreni Mines Bonus</button>
+            <button type="button" class="btn-trigger-action" id="btn-cmd-cards">🃏 Napuni Cards (Gamble)</button>
+            <button type="button" class="btn-trigger-action frenzy" id="btn-cmd-doublerush">🔥 DOUBLE RUSH ODMAH</button>
+          </div>
+        </div>
+
+        <!-- 3. Wallet & Credits -->
+        <div class="trigger-panel-card">
+          <h3 class="trigger-panel-title">💰 Novčanik & Krediti Igrača</h3>
+          <div class="trigger-buttons-grid" style="margin-bottom: 12px;">
+            <button type="button" class="btn-trigger-action" id="btn-cmd-add10k">➕ Dodaj +10.000 RSD</button>
+            <button type="button" class="btn-trigger-action" id="btn-cmd-reset1k">🔄 Postavi na 1.000 RSD</button>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="number" id="input-custom-deposit-amount" placeholder="Prilagođeni RSD iznos..." class="push-input-text" style="flex: 1;" min="100" max="100000" step="500">
+            <button type="button" class="btn-trigger-action gold" id="btn-cmd-custom-deposit">Postavi</button>
+          </div>
+        </div>
+
+        <!-- 4. Game Switcher -->
+        <div class="trigger-panel-card">
+          <h3 class="trigger-panel-title">🎰 Daljinska Promena Igre (Lobby)</h3>
+          <div class="trigger-buttons-grid">
+            <button type="button" class="btn-trigger-action btn-switch-game" data-game="classic">1-Line Classic</button>
+            <button type="button" class="btn-trigger-action btn-switch-game" data-game="royal3x3">Royal 3x3</button>
+            <button type="button" class="btn-trigger-action btn-switch-game" data-game="fullfocus">Full Focus 3x3</button>
+            <button type="button" class="btn-trigger-action btn-switch-game" data-game="mines">Grand Mines X</button>
+          </div>
+        </div>
+
+        <!-- 5. Reset Session -->
+        <div class="trigger-panel-card" style="grid-column: 1 / -1;">
+          <h3 class="trigger-panel-title">🧹 Održavanje Sesije</h3>
+          <p style="font-size: 0.78rem; color: #b5a995; margin-bottom: 10px;">Resetuje keš, istorijat sesije, džekpotove i osvežava igru na početno fabričko stanje.</p>
+          <button type="button" class="btn-trigger-action" id="btn-cmd-reset-session" style="background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5;">
+            🧹 Resetuj Istoriju & Osveži Slot Mašinu
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: PUSH NOTIFIKACIJE & MARKETING -->
+    <section class="tab-pane" id="pane-push">
+      <div class="pane-intro-box">
+        <h2 class="pane-title">Push Notifikacije & Marketing Kampanje</h2>
+        <p class="pane-desc">Pošaljite obaveštenja povezanim igračima na desktop računarima i telefonima radi podizanja angažovanja.</p>
+      </div>
+
+      <div class="push-dash-layout">
+        <!-- Quick Preset Push Notifications -->
+        <div class="push-card">
+          <h3 class="trigger-panel-title">⚡ Brze Marketinške Notifikacije</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button type="button" class="btn-trigger-action gold" id="btn-push-jackpot-alert" style="justify-content: flex-start; padding: 12px 14px;">
+              🏆 Pošalji Džekpot Alarm (Preko 180.000 RSD)
+            </button>
+            <button type="button" class="btn-trigger-action" id="btn-push-tour-alert" style="justify-content: flex-start; padding: 12px 14px;">
+              ⚡ Pošalji Poziv na 120s Turnir
+            </button>
+            <button type="button" class="btn-trigger-action" id="btn-push-bonus-alert" style="justify-content: flex-start; padding: 12px 14px;">
+              🎁 Pošalji Obaveštenje za Točak Sreće
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Push Creator -->
+        <div class="push-card">
+          <h3 class="trigger-panel-title">✉️ Prilagođena Push Notifikacija</h3>
+          <div class="push-form-group">
+            <label for="input-push-title">Naslov notifikacije:</label>
+            <input type="text" id="input-push-title" class="push-input-text" placeholder="npr. 🌟 HAPPY HOUR POČINJE!">
+          </div>
+          <div class="push-form-group">
+            <label for="input-push-body">Tekst poruke:</label>
+            <input type="text" id="input-push-body" class="push-input-text" placeholder="npr. Dupli obrt za Točak Sreće narednih 60 minuta!">
+          </div>
+          <button type="button" class="btn-send-custom-push" id="btn-send-custom-push">POŠALJI NOTIFIKACIJU</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: SISTEM & UPUTSTVO -->
+    <section class="tab-pane" id="pane-info">
+      <div class="pane-intro-box">
+        <h2 class="pane-title">Sistem & Povezivanje</h2>
+        <p class="pane-desc">Informacije o arhitekturi odvojenog Admin Panela i komunikaciji sa slot mašinom.</p>
+      </div>
+
+      <div class="push-card">
+        <h3 class="trigger-panel-title">📡 Kako radi dvosmerna komunikacija?</h3>
+        <p style="font-size: 0.84rem; color: #d1c7b7; line-height: 1.6; margin-bottom: 12px;">
+          Admin Panel koristi standardni W3C <strong>BroadcastChannel API</strong> (kanal: <code>grandslot_admin_channel</code>) uz automatski <strong>localStorage storage-event fallback</strong>. 
+          To znači da operater može otvoriti ovaj dashboard na:
+        </p>
+        <ul style="font-size: 0.82rem; color: #b5a995; line-height: 1.7; margin-left: 20px; margin-bottom: 16px;">
+          <li>Drugom monitoru na istom računaru</li>
+          <li>Zasebnom prozoru ili tabu u browseru</li>
+          <li>Tabletu ili laptopu operatera u istoj lokalnoj mreži</li>
+        </ul>
+        <p style="font-size: 0.84rem; color: #d1c7b7; line-height: 1.6; margin-bottom: 12px;">
+          Komande se izvršavaju <strong>momentalno i bez kašnjenja</strong>. Kada promenite matematički profil ili okinete džekpot, slot mašina u drugom prozoru reaguje u realnom vremenu uz zvučnu i vizuelnu potvrdu.
+        </p>
+        <h3 class="trigger-panel-title" style="margin-top: 18px;">⌨️ Prečice na slot mašini</h3>
+        <p style="font-size: 0.82rem; color: #b5a995; line-height: 1.6;">
+          Operater na samom slot automatu i dalje može otvoriti ovaj prozor u svakom trenutku pomoću tastera <strong>`~`</strong> (tilda), kombinacije <strong>Ctrl + Shift + A</strong> ili sa <strong>5 brzih klikova na Grand Slot logo</strong> u zaglavlju.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="js/games/classic/symbols.js?v=70"></script>
+  <script src="js/core/math-manager.js?v=70"></script>
+  <script src="js/admin-dashboard.js?v=70"></script>
+</body>
+</html>

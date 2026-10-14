@@ -147,7 +147,8 @@ gsc/
 │   └── style.css         # 3D cylinder replica styles, responsive scaler, Grandslot dark/gold theme
 ├── js/
 │   ├── core/
-│   │   ├── admin.js           # Operator panel for jackpot/RTP adjustments & simulation
+│   │   ├── admin.js           # Legacy embedded modal engine (retained for backward compatibility)
+│   │   ├── admin-bridge.js    # Decoupled zero-latency BroadcastChannel telemetry bridge
 │   │   ├── bonus-features.js  # Free Spins manager, celebration FX, Buy Bonus engine
 │   │   ├── gamble.js          # Red/Black card gamble game engine
 │   │   ├── jackpots.js        # Progressive & mystery jackpot logic
@@ -163,11 +164,16 @@ gsc/
 │   │   ├── classic/           # 1-Line Classic retro stepper game
 │   │   ├── royal3x3/          # Royal 3x3 multi-line game & SVG paylines
 │   │   └── mines/             # Standalone Mines X & in-slot Mini-Mines bonus
+│   ├── admin-dashboard.js     # Standalone operator control dashboard controller
 │   ├── app.js                 # Central orchestrator & lifecycle controller
 │   ├── audio.js               # Web Audio API synthesizer & Vegas ambient engine
 │   ├── i18n.js                # Bilingual localization (English / Serbian)
 │   └── particles.js           # Canvas particle celebration burst FX
-├── index.html                 # Main single-page application entrypoint
+├── index.html                 # Main player single-page slot terminal
+├── admin.html                 # Standalone luxury operator control dashboard
+├── css/
+│   ├── admin.css              # Standalone admin dashboard stylesheet
+│   └── style.css              # Grand Slot luxury player terminal stylesheet
 ├── manifest.webmanifest       # PWA configuration manifest
 ├── sw.js                      # Service Worker for offline play & push notifications
 ├── start.bat                  # One-click Windows local server launcher
@@ -193,10 +199,17 @@ gsc/
      ```bash
      npx serve .
      ```
-3. **Open in your browser:**
-   Navigate to `http://localhost:8000`.
-4. **Access Secret Operator Panel:**
-   Click the main **Grand Slot logo 5 times** within 2.5 seconds, or press the **`~`** (Backquote) key.
+3. **Open Player Terminal in browser:**
+   Navigate to `http://localhost:8000` (or `http://localhost:8000/index.html`).
+4. **Access Standalone Operator Admin Dashboard:**
+   - **Direct URL:** Open `http://localhost:8000/admin.html` in a separate tab or on a secondary operator display.
+   - **Cabinet Shortcut:** Press the **`~`** (Backquote) key or click the **Grand Slot logo 5 times** within 2.5 seconds on the slot screen. This automatically launches `admin.html` in a dedicated operator window.
+   - **Real-Time Cross-Tab Telemetry:** The operator dashboard and player terminal communicate bidirectionally with zero latency via `BroadcastChannel('grandslot_admin_channel')` and fallback `localStorage` synchronization:
+     - Real-time balance, game mode, and progressive jackpot telemetry.
+     - Live volatility presets & custom reel symbol weight updates.
+     - Ultra-fast Monte Carlo RTP simulation (up to 100,000 spins/sec).
+     - Remote triggers: instant jackpot drops, bonus launches, balance modifications, and remote game switching.
+     - Marketing push notification broadcasts.
 
 ---
 ---
@@ -343,7 +356,14 @@ Celokupan zvuk se generiše sintetički u realnom vremenu bez eksternih audio fa
      ```bash
      npx serve .
      ```
-3. **Otvorite u pretraživaču:**
-   Posetite `http://localhost:8000`.
-4. **Pristup Tajnom Admin Panelu:**
-   Kliknite **5 puta na logo** unutar 2.5 sekunde ili pritisnite taster **`~`** (tilda).
+3. **Otvorite slot terminal u pretraživaču:**
+   Posetite `http://localhost:8000` (ili `http://localhost:8000/index.html`).
+4. **Pristup Zasebnom Operaterskom Admin Panelu:**
+   - **Direktna adresa:** Otvorite `http://localhost:8000/admin.html` u posebnom tabu, prozoru ili na sekundarnom operaterskom ekranu.
+   - **Prečica sa aparata:** Pritisnite taster **`~`** (tilda) na tastaturi ili kliknite **5 puta na Grand Slot logo** unutar 2.5 sekunde na ekranu slota — aplikacija automatski otvara `admin.html`.
+   - **Dvosmerna telemetrija u realnom vremenu:** Zasebni admin panel i slot igra komuniciraju u realnom vremenu bez kašnjenja preko `BroadcastChannel('grandslot_admin_channel')` mehanizma (uz automatsku sinhronizaciju kroz `localStorage`):
+     - **Telemetrija uživo:** Prikaz statusa konekcije, stanja kredita igrača, aktivne igre, profila volatilnosti i trenutnih iznosa Silver/Gold/Diamond džekpota.
+     - **Profili i težine simbola:** Menjanje RTP profila u letu i fino podešavanje verovatnoća simbola na rilovima.
+     - **Brzinski Monte Carlo simulator:** Testiranje od 1.000 do 100.000 spinova u sekundi za trenutnu proveru ostvarenog RTP-a i frekvencije pogodaka.
+     - **Daljinsko forsiranje (Triggers):** Trenutno okidanje pada džekpota, aktivacija Točka Sreće, Mini-Mina ili Super Besplatnih Spinova, promena stanja novčanika i daljinsko prebacivanje igre igraču.
+     - **Slanje push notifikacija:** Slanje promotivnih i sistemskih obaveštenja povezanim igračima.

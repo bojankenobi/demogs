@@ -176,8 +176,10 @@ class IGTApp {
       this.notifications = new window.NotificationManager(this);
     }
 
-    // 6. Admin / Operator Control Panel
-    if (window.AdminPanel) {
+    // 6. Admin Remote Bridge (Connects to standalone admin.html)
+    if (window.AdminBridge) {
+      this.adminBridge = new window.AdminBridge(this);
+    } else if (window.AdminPanel) {
       this.adminPanel = new window.AdminPanel(this);
     }
   }

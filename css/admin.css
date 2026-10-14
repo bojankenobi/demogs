@@ -1,0 +1,778 @@
+/* ==========================================================================
+   Grand Slot Club - Standalone Operator Admin Dashboard Styles
+   Color Palette: Obsidian #090a0f, Amber-Gold #221406 / #ffd700 / #f59e0b
+   ========================================================================== */
+
+:root {
+  --bg-main: #090a0f;
+  --bg-card: rgba(26, 17, 7, 0.88);
+  --bg-card-hover: rgba(45, 27, 10, 0.95);
+  --border-gold: rgba(255, 215, 0, 0.28);
+  --border-gold-glow: #ffd700;
+  --text-main: #f8fafc;
+  --text-muted: #b5a995;
+  --accent-gold: #ffd700;
+  --accent-green: #00e676;
+  --accent-red: #ef4444;
+  --accent-cyan: #38bdf8;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Cinzel', serif, Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-main);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(34, 20, 6, 0.6) 0%, transparent 50%),
+    radial-gradient(circle at 0% 100%, rgba(18, 11, 4, 0.8) 0%, transparent 50%);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   Header Bar & Connection Status
+   ========================================================================== */
+
+.admin-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: rgba(13, 8, 3, 0.85);
+  border-bottom: 1px solid var(--border-gold);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-logo-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8));
+}
+
+.admin-badge-tag {
+  background: linear-gradient(135deg, #ffd700, #b45309);
+  color: #000;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.8px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.nav-actions-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Connection Pill */
+.conn-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  transition: all 0.3s;
+}
+
+.conn-pill.connected {
+  background: rgba(0, 230, 118, 0.12);
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  color: var(--accent-green);
+}
+
+.conn-pill.disconnected {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: var(--accent-red);
+}
+
+.conn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.btn-open-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: linear-gradient(135deg, #ffd700, #d49514);
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-decoration: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(255, 215, 0, 0.25);
+  transition: all 0.2s;
+}
+
+.btn-open-slot:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.45);
+}
+
+/* ==========================================================================
+   Telemetry Status Strip (Live Slot Metrics)
+   ========================================================================== */
+
+.telemetry-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  padding: 18px 28px 6px;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.stat-telemetry-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.stat-box-lbl {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.stat-box-val {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-box-val.val-gold {
+  color: var(--accent-gold);
+}
+
+.stat-box-val.val-green {
+  color: var(--accent-green);
+}
+
+.stat-box-val.val-silver {
+  color: #e2e8f0;
+}
+
+.stat-box-val.val-diamond {
+  color: #38bdf8;
+}
+
+/* ==========================================================================
+   Dashboard Main Container & Tab System
+   ========================================================================== */
+
+.dashboard-container {
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px 28px 40px;
+}
+
+.dashboard-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border-gold);
+  margin-bottom: 22px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.dash-tab-btn {
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  border-radius: 6px 6px 0 0;
+}
+
+.dash-tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 215, 0, 0.05);
+}
+
+.dash-tab-btn.active {
+  color: var(--accent-gold);
+  border-bottom-color: var(--accent-gold);
+  background: rgba(255, 215, 0, 0.08);
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+.pane-intro-box {
+  margin-bottom: 20px;
+}
+
+.pane-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.pane-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Tab 1: RTP Presets & Weights Editor
+   ========================================================================== */
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.preset-dash-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.preset-dash-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent-gold);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 14px rgba(255, 215, 0, 0.2);
+}
+
+.preset-dash-card.active {
+  border-color: var(--accent-gold);
+  background: rgba(255, 215, 0, 0.14);
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.3);
+}
+
+.preset-dash-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preset-dash-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.preset-dash-card.active .preset-dash-name {
+  color: var(--accent-gold);
+}
+
+.preset-dash-rtp {
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(0, 230, 118, 0.15);
+  color: var(--accent-green);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.preset-dash-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.preset-btn-activate {
+  width: 100%;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-gold);
+  color: var(--accent-gold);
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.preset-dash-card:hover .preset-btn-activate {
+  background: var(--accent-gold);
+  color: #000;
+  border-color: var(--accent-gold);
+}
+
+.preset-dash-card.active .preset-btn-activate {
+  background: var(--accent-gold);
+  color: #000;
+  border-color: var(--accent-gold);
+  font-weight: 900;
+}
+
+/* Weights Editor Section */
+.section-subtitle-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-subtitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.btn-reset-weights {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-gold);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-reset-weights:hover {
+  color: #fff;
+  border-color: var(--accent-gold);
+}
+
+.weights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.weight-row-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 10px 14px;
+  transition: border-color 0.2s;
+}
+
+.weight-row-card:hover {
+  border-color: var(--accent-gold);
+}
+
+.sym-left-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sym-icon-preview {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+}
+
+.sym-text-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sym-title-txt {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.sym-payout-txt {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.sym-payout-txt strong {
+  color: var(--accent-gold);
+}
+
+.sym-weight-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sym-weight-input {
+  width: 54px;
+  background: #000;
+  border: 1px solid var(--border-gold);
+  color: var(--accent-gold);
+  font-size: 0.95rem;
+  font-weight: 900;
+  border-radius: 6px;
+  padding: 5px 6px;
+  text-align: center;
+  outline: none;
+}
+
+.sym-weight-input:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+/* ==========================================================================
+   Tab 2: Monte Carlo Simulator
+   ========================================================================== */
+
+.sim-box-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.sim-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+  margin-bottom: 18px;
+}
+
+.sim-select-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sim-select-group label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.admin-input-select {
+  background: #000;
+  border: 1px solid var(--border-gold);
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+}
+
+.sim-spins-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-sim-run {
+  background: rgba(45, 27, 10, 0.9);
+  border: 1px solid var(--border-gold);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-sim-run:hover {
+  background: rgba(65, 38, 14, 0.98);
+  border-color: var(--accent-gold);
+}
+
+.btn-sim-run.active {
+  background: var(--accent-gold);
+  color: #000;
+  border-color: var(--accent-gold);
+  font-weight: 900;
+}
+
+.sim-status-banner {
+  background: #000;
+  border: 1px dashed rgba(255, 215, 0, 0.35);
+  border-radius: 10px;
+  padding: 12px 18px;
+  color: var(--accent-gold);
+  font-size: 0.84rem;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.sim-results-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.sim-res-card {
+  background: rgba(18, 11, 4, 0.95);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sim-res-lbl {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.sim-res-val {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #fff;
+}
+
+/* ==========================================================================
+   Tab 3: Remote Controls & Triggers
+   ========================================================================== */
+
+.triggers-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.trigger-panel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.trigger-panel-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+  padding-bottom: 8px;
+}
+
+.trigger-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.btn-trigger-action {
+  padding: 10px 12px;
+  background: rgba(35, 21, 9, 0.85);
+  border: 1px solid var(--border-gold);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.btn-trigger-action:hover {
+  background: rgba(55, 33, 13, 0.98);
+  border-color: var(--accent-gold);
+  transform: translateY(-1px);
+}
+
+.btn-trigger-action.silver {
+  border-color: #cbd5e1;
+  color: #f1f5f9;
+}
+
+.btn-trigger-action.gold {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.btn-trigger-action.diamond {
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.btn-trigger-action.frenzy {
+  background: linear-gradient(135deg, #d97706, #ef4444);
+  border-color: #f59e0b;
+  color: #fff;
+  font-weight: 900;
+}
+
+/* ==========================================================================
+   Tab 4: Push Notifications & Marketing
+   ========================================================================== */
+
+.push-dash-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 860px) {
+  .push-dash-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.push-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.push-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.push-form-group label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.push-input-text {
+  background: #000;
+  border: 1px solid var(--border-gold);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.push-input-text:focus {
+  border-color: var(--accent-gold);
+}
+
+.btn-send-custom-push {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #ffd700, #b45309);
+  color: #000;
+  font-size: 0.88rem;
+  font-weight: 900;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-send-custom-push:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Operator Toast Popup
+   ========================================================================== */
+
+.admin-toast-popup {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  background: rgba(18, 11, 4, 0.95);
+  border: 1px solid var(--accent-gold);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 16px rgba(255, 215, 0, 0.35);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.admin-toast-popup.visible {
+  display: flex;
+  transform: translateY(0);
+}
