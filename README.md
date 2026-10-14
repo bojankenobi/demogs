@@ -6,6 +6,9 @@
 [![Performance](https://img.shields.io/badge/Performance-60--120%20FPS%20GPU-00e676.svg)](#)
 [![Audio](https://img.shields.io/badge/Audio-Web%20Audio%20API%20Synthesized-d4af37.svg)](#)
 
+> 🌐 **Live Demo & Instant Play:** [https://bojankenobi.github.io/demogs/](https://bojankenobi.github.io/demogs/)  
+> 🔐 **Operator Control Dashboard:** [https://bojankenobi.github.io/demogs/admin.html](https://bojankenobi.github.io/demogs/admin.html) *(Default PIN: `7777`)*  
+> 🔄 **CI/CD Deployment:** Automated via GitHub Actions workflow (`.github/workflows/deploy.yml`)  
 > **Language / Jezik:** [English Documentation](#english-documentation) | [Srpska Dokumentacija](#srpska-dokumentacija)
 
 ---
@@ -218,6 +221,21 @@ gsc/
      - Marketing push notification broadcasts.
 
 ---
+
+### 🌐 7. Free Cloud Hosting on GitHub Pages
+
+The repository includes an automated GitHub Actions deployment workflow (`.github/workflows/deploy.yml`).
+
+To activate your free online link:
+1. Open the repository on GitHub: [https://github.com/bojankenobi/demogs](https://github.com/bojankenobi/demogs)
+2. Go to **Settings** > **Pages** (in the left sidebar).
+3. Under **Build and deployment** > **Source**, choose **"GitHub Actions"**.
+4. GitHub will automatically deploy your live links:
+   - **Player Terminal:** [https://bojankenobi.github.io/demogs/](https://bojankenobi.github.io/demogs/)
+   - **Operator Dashboard:** [https://bojankenobi.github.io/demogs/admin.html](https://bojankenobi.github.io/demogs/admin.html) *(Default PIN: `7777`)*
+
+---
+
 ---
 
 <a name="srpska-dokumentacija"></a>
@@ -379,3 +397,17 @@ Celokupan zvuk se generiše sintetički u realnom vremenu bez eksternih audio fa
      - **Brzinski Monte Carlo simulator:** Testiranje od 1.000 do 100.000 spinova u sekundi za trenutnu proveru ostvarenog RTP-a i frekvencije pogodaka.
      - **Daljinsko forsiranje (Triggers):** Trenutno okidanje pada džekpota, aktivacija Točka Sreće, Mini-Mina ili Super Besplatnih Spinova, promena stanja novčanika i daljinsko prebacivanje igre igraču.
      - **Slanje push notifikacija:** Slanje promotivnih i sistemskih obaveštenja povezanim igračima.
+
+---
+
+### 🌐 6. Besplatno Online Pokretanje na GitHub Pages
+
+Repozitorijum sadrži pripremljen GitHub Actions workflow (`.github/workflows/deploy.yml`) za automatski deploy.
+
+Za aktivaciju javnog online linka potrebno je samo:
+1. Otvorite repozitorijum na GitHub-u: [https://github.com/bojankenobi/demogs](https://github.com/bojankenobi/demogs)
+2. Uđite u **Settings** > **Pages** (u levom meniju).
+3. Pod stavkom **Build and deployment** > **Source**, izaberite **"GitHub Actions"**.
+4. GitHub će automatski objaviti sajt na javnim linkovima:
+   - **Igra za igrače:** [https://bojankenobi.github.io/demogs/](https://bojankenobi.github.io/demogs/)
+   - **Operaterski Admin Dashboard:** [https://bojankenobi.github.io/demogs/admin.html](https://bojankenobi.github.io/demogs/admin.html) *(PIN: `7777`)*
