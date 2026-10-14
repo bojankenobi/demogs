@@ -382,12 +382,32 @@
           <span id="pin-change-status-msg" style="font-size: 0.84rem; font-weight: 700;"></span>
         </div>
       </div>
+
+      <!-- WebRTC Remote Slot Connection Card -->
+      <div class="push-card" style="margin-top: 18px;">
+        <h3 class="trigger-panel-title">📡 Povezivanje sa Daljinskim Aparatom (WebRTC / Internet)</h3>
+        <p style="font-size: 0.84rem; color: #d1c7b7; line-height: 1.5; margin-bottom: 14px;">
+          Unesite 6-cifrenu šifru sobe aparata (npr. <code>GSC-7842</code>) ili skenirajte QR kod na aparatu da biste upravljali slotom sa ovog telefona ili tableta preko interneta.
+        </p>
+
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px;">
+          <input type="text" id="input-webrtc-room" class="push-input-text" placeholder="npr. GSC-7842" style="max-width: 220px; font-weight: 800; text-transform: uppercase;">
+          <button type="button" class="btn-send-custom-push" id="btn-connect-webrtc" style="max-width: 240px;">
+            POVEŽI SE PREKO MREŽE
+          </button>
+          <button type="button" class="btn-lock-session" id="btn-disconnect-webrtc" style="display: none; padding: 10px 16px;">
+            ✕ Prekini Vezu
+          </button>
+        </div>
+        <div id="webrtc-conn-feedback" style="font-size: 0.82rem; font-weight: 700; color: #b5a995;"></div>
+      </div>
     </section>
   </main>
 
   <!-- Scripts -->
+  <script src="js/lib/peerjs.min.js"></script>
   <script src="js/games/classic/symbols.js?v=71"></script>
   <script src="js/core/math-manager.js?v=71"></script>
-  <script src="js/admin-dashboard.js?v=71"></script>
+  <script src="js/admin-dashboard.js?v=72"></script>
 </body>
 </html>

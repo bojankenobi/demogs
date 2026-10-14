@@ -10,9 +10,13 @@ class AdminDashboard {
     this.isConnected = false;
     this.lastState = null;
     this.connectionTimeout = null;
+    this.peer = null;
+    this.remoteConn = null;
+    this.isRemoteConnected = false;
 
     this.initSecurity();
     this.initChannel();
+    this.initWebRTC();
     this.initTabs();
     this.initPresetsAndWeights();
     this.initSimulator();
@@ -76,7 +80,16 @@ class AdminDashboard {
       try {
         this.channel.postMessage(data);
       } catch (e) {
-        console.warn('Failed to send command to slot:', e);
+        console.warn('Failed to send command to slot via channel:', e);
+      }
+    }
+
+    // Forward to remote slot via WebRTC DataChannel (phone to remote kiosk)
+    if (this.remoteConn && this.remoteConn.open) {
+      try {
+        this.remoteConn.send(data);
+      } catch (e) {
+        console.warn('Failed to send command to slot via WebRTC:', e);
       }
     }
 
@@ -90,14 +103,15 @@ class AdminDashboard {
     if (!data || !data.action) return;
 
     if (data.action === 'SLOT_ONLINE' || data.action === 'STATE_UPDATE') {
-      this.setConnected(true);
+      const label = this.isRemoteConnected ? `WEBRTC (${this.targetRoomId})` : 'LOKALNO (LIVE)';
+      this.setConnected(true, label);
       if (data.state) {
         this.applyLiveState(data.state);
       }
     }
   }
 
-  setConnected(connected) {
+  setConnected(connected, label) {
     this.isConnected = connected;
     const pill = document.getElementById('conn-status-pill');
     const txt = document.getElementById('conn-status-text');
@@ -105,7 +119,7 @@ class AdminDashboard {
     if (pill && txt) {
       if (connected) {
         pill.className = 'conn-pill connected';
-        txt.textContent = 'POVEZAN SA SLOTOM (LIVE)';
+        txt.textContent = label ? `POVEZAN: ${label}` : 'POVEZAN SA SLOTOM (LIVE)';
       } else {
         pill.className = 'conn-pill disconnected';
         txt.textContent = 'ČEKAM SLOT MAŠINU';
@@ -754,6 +768,145 @@ class AdminDashboard {
         msgEl.textContent = '';
       }, 4000);
     });
+  }
+
+  /* ==========================================================================
+     WebRTC Remote Cloud Pairing (Phone / Tablet to Remote Kiosk)
+     ========================================================================== */
+
+  initWebRTC() {
+    if (typeof Peer === 'undefined') {
+      console.info('PeerJS not loaded; WebRTC remote sync disabled.');
+      return;
+    }
+
+    // Check URL parameters for ?room=GSC-XXXX
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomFromUrl = urlParams.get('room');
+    const storedRoom = localStorage.getItem('grandslot_target_room_id');
+    const initialRoom = (roomFromUrl || storedRoom || '').toUpperCase().trim();
+
+    const roomInput = document.getElementById('input-webrtc-room');
+    if (roomInput && initialRoom) {
+      roomInput.value = initialRoom;
+    }
+
+    // Connect button in Tab 5
+    const connectBtn = document.getElementById('btn-connect-webrtc');
+    if (connectBtn) {
+      connectBtn.addEventListener('click', () => {
+        const val = (roomInput ? roomInput.value : '').toUpperCase().trim();
+        if (val) {
+          this.connectToRemoteSlot(val);
+        } else {
+          this.setWebRTCFeedback('Unesite šifru sobe aparata (npr. GSC-7842)', 'error');
+        }
+      });
+    }
+
+    // Disconnect button in Tab 5
+    const disconnectBtn = document.getElementById('btn-disconnect-webrtc');
+    if (disconnectBtn) {
+      disconnectBtn.addEventListener('click', () => {
+        this.disconnectRemoteSlot();
+      });
+    }
+
+    // Auto-connect if room specified in URL
+    if (initialRoom) {
+      setTimeout(() => {
+        this.connectToRemoteSlot(initialRoom);
+      }, 500);
+    }
+  }
+
+  connectToRemoteSlot(roomId) {
+    if (typeof Peer === 'undefined') return;
+
+    this.targetRoomId = roomId.toUpperCase().trim();
+    localStorage.setItem('grandslot_target_room_id', this.targetRoomId);
+
+    this.setWebRTCFeedback(`Povezujem se sa aparatom [${this.targetRoomId}]...`, 'info');
+
+    const targetPeerId = 'grandslot-slot-' + this.targetRoomId.toLowerCase();
+
+    try {
+      if (this.peer) {
+        try { this.peer.destroy(); } catch (e) {}
+      }
+
+      this.peer = new Peer({ debug: 1 });
+
+      this.peer.on('open', () => {
+        this.remoteConn = this.peer.connect(targetPeerId, { reliable: true });
+
+        this.remoteConn.on('open', () => {
+          this.isRemoteConnected = true;
+          this.setConnected(true, `WEBRTC (${this.targetRoomId})`);
+          this.setWebRTCFeedback(`🟢 Povezan sa aparatom [${this.targetRoomId}] u realnom vremenu!`, 'success');
+          this.showToast(`🟢 Uspešno povezan sa aparatom [${this.targetRoomId}]!`);
+
+          const connectBtn = document.getElementById('btn-connect-webrtc');
+          const disconnectBtn = document.getElementById('btn-disconnect-webrtc');
+          if (connectBtn) connectBtn.style.display = 'none';
+          if (disconnectBtn) disconnectBtn.style.display = 'inline-flex';
+
+          this.sendCommand({ action: 'REQUEST_STATE' });
+        });
+
+        this.remoteConn.on('data', (data) => {
+          this.handleMessage(data);
+        });
+
+        this.remoteConn.on('close', () => {
+          this.isRemoteConnected = false;
+          this.setConnected(false);
+          this.setWebRTCFeedback(`⚠️ Veza sa aparatom [${this.targetRoomId}] je prekinuta.`, 'error');
+
+          const connectBtn = document.getElementById('btn-connect-webrtc');
+          const disconnectBtn = document.getElementById('btn-disconnect-webrtc');
+          if (connectBtn) connectBtn.style.display = 'inline-block';
+          if (disconnectBtn) disconnectBtn.style.display = 'none';
+        });
+      });
+
+      this.peer.on('error', (err) => {
+        console.warn('Admin WebRTC peer error:', err);
+        this.setWebRTCFeedback(`❌ Greška pri povezivanju: proverite da li je aparat uključen.`, 'error');
+      });
+    } catch (e) {
+      console.warn('WebRTC connection failed:', e);
+      this.setWebRTCFeedback(`❌ Neuspešna inicijalizacija WebRTC veze.`, 'error');
+    }
+  }
+
+  disconnectRemoteSlot() {
+    if (this.remoteConn) {
+      try { this.remoteConn.close(); } catch (e) {}
+      this.remoteConn = null;
+    }
+    if (this.peer) {
+      try { this.peer.destroy(); } catch (e) {}
+      this.peer = null;
+    }
+    this.isRemoteConnected = false;
+    this.setConnected(false);
+    localStorage.removeItem('grandslot_target_room_id');
+    this.setWebRTCFeedback('Veza je prekinuta.', 'info');
+
+    const connectBtn = document.getElementById('btn-connect-webrtc');
+    const disconnectBtn = document.getElementById('btn-disconnect-webrtc');
+    if (connectBtn) connectBtn.style.display = 'inline-block';
+    if (disconnectBtn) disconnectBtn.style.display = 'none';
+  }
+
+  setWebRTCFeedback(msg, type) {
+    const el = document.getElementById('webrtc-conn-feedback');
+    if (!el) return;
+    el.textContent = msg;
+    if (type === 'success') el.style.color = '#00e676';
+    else if (type === 'error') el.style.color = '#ef4444';
+    else el.style.color = '#ffd700';
   }
 }
 

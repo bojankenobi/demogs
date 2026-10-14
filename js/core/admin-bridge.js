@@ -1,7 +1,7 @@
 /**
  * Grandslot - Admin Remote Bridge
  * Connects the slot game to the standalone Operator Admin Dashboard (admin.html)
- * via the BroadcastChannel API and localStorage.
+ * via BroadcastChannel, localStorage, and WebRTC (PeerJS) cloud remote sync.
  */
 class AdminBridge {
   constructor(app) {
@@ -10,10 +10,77 @@ class AdminBridge {
     this.channel = null;
     this.logoClicks = 0;
     this.lastLogoClickTime = 0;
+    this.remoteConnections = [];
+    this.peer = null;
+    this.roomId = this.getOrCreateRoomId();
 
     this.initChannel();
+    this.initWebRTC();
     this.initShortcuts();
     this.attachTelemetryHooks();
+  }
+
+  getOrCreateRoomId() {
+    let roomId = localStorage.getItem('grandslot_slot_room_id');
+    if (!roomId) {
+      roomId = 'GSC-' + Math.floor(1000 + Math.random() * 9000);
+      try { localStorage.setItem('grandslot_slot_room_id', roomId); } catch (e) {}
+    }
+    return roomId;
+  }
+
+  initWebRTC() {
+    if (typeof Peer === 'undefined') {
+      console.info('PeerJS not loaded; WebRTC remote sync disabled.');
+      return;
+    }
+
+    const peerId = 'grandslot-slot-' + this.roomId.toLowerCase();
+    try {
+      this.peer = new Peer(peerId, { debug: 1 });
+
+      this.peer.on('open', () => {
+        this.updateRemoteStatus('WAITING');
+      });
+
+      this.peer.on('connection', (conn) => {
+        this.remoteConnections = this.remoteConnections || [];
+        this.remoteConnections.push(conn);
+        this.updateRemoteStatus('CONNECTED');
+        if (this.app && this.app.showMessage) {
+          this.app.showMessage(`📱 OPERATER POVEZAN SA TELEFONA [${this.roomId}]`, 'info');
+        }
+
+        conn.on('data', (data) => {
+          this.handleMessage(data);
+        });
+
+        conn.on('close', () => {
+          this.remoteConnections = this.remoteConnections.filter(c => c !== conn);
+          if (this.remoteConnections.length === 0) {
+            this.updateRemoteStatus('WAITING');
+          }
+        });
+
+        // Send instant telemetry state to remote device
+        setTimeout(() => {
+          try {
+            conn.send({ action: 'STATE_UPDATE', state: this.getTelemetryState() });
+          } catch (e) {}
+        }, 150);
+      });
+
+      this.peer.on('error', (err) => {
+        // If peer ID already taken (e.g. reload), recreate with suffix
+        if (err.type === 'unavailable-id') {
+          console.warn('Peer ID taken, resetting room ID...');
+          this.roomId = 'GSC-' + Math.floor(1000 + Math.random() * 9000);
+          localStorage.setItem('grandslot_slot_room_id', this.roomId);
+        }
+      });
+    } catch (e) {
+      console.warn('Failed to initialize WebRTC Peer on slot:', e);
+    }
   }
 
   initChannel() {
@@ -50,6 +117,15 @@ class AdminBridge {
       } catch (e) {
         console.warn('Failed to post message on admin channel:', e);
       }
+    }
+
+    // Forward to remote WebRTC connections (mobile phones / tablets)
+    if (this.remoteConnections && this.remoteConnections.length > 0) {
+      this.remoteConnections.forEach(conn => {
+        try {
+          if (conn.open) conn.send(data);
+        } catch (err) {}
+      });
     }
 
     // Also persist telemetry to localStorage for initial dashboard load
@@ -160,11 +236,12 @@ class AdminBridge {
     }
   }
 
-  broadcastState() {
-    if (!this.app) return;
+  getTelemetryState() {
+    if (!this.app) return {};
 
-    const state = {
+    return {
       timestamp: Date.now(),
+      roomId: this.roomId,
       balance: this.app.wallet ? this.app.wallet.rsdBalance : 0,
       credits: this.app.wallet ? this.app.wallet.credits : 0,
       bet: this.app.wallet ? this.app.wallet.bet : 20,
@@ -178,7 +255,10 @@ class AdminBridge {
         diamond: this.app.jackpots ? Math.floor(this.app.jackpots.pots.diamond.current) : 600
       }
     };
+  }
 
+  broadcastState() {
+    const state = this.getTelemetryState();
     this.postMessage({ action: 'STATE_UPDATE', state });
   }
 
@@ -221,13 +301,19 @@ class AdminBridge {
     return AdminBridge.hashPin(inputPin) === this.getStoredPinHash();
   }
 
-  createPinModal() {
+  renderPinPadView() {
     let modal = document.getElementById('slot-operator-pin-modal');
-    if (modal) return modal;
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'slot-operator-pin-modal';
+      modal.className = 'slot-pin-modal-overlay';
+      document.body.appendChild(modal);
 
-    modal = document.createElement('div');
-    modal.id = 'slot-operator-pin-modal';
-    modal.className = 'slot-pin-modal-overlay';
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) this.closePinModal();
+      });
+    }
+
     modal.innerHTML = `
       <div class="slot-pin-modal-card">
         <button type="button" class="slot-pin-close-btn" id="slot-pin-close-btn" aria-label="Zatvori">&times;</button>
@@ -268,14 +354,8 @@ class AdminBridge {
       </div>
     `;
 
-    document.body.appendChild(modal);
-
     const closeBtn = modal.querySelector('#slot-pin-close-btn');
     if (closeBtn) closeBtn.addEventListener('click', () => this.closePinModal());
-
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) this.closePinModal();
-    });
 
     const keypad = modal.querySelector('#slot-pin-keypad');
     if (keypad) {
@@ -290,8 +370,100 @@ class AdminBridge {
     return modal;
   }
 
+  showOperatorHub() {
+    let modal = document.getElementById('slot-operator-pin-modal');
+    if (!modal) return;
+
+    const currentOrigin = window.location.origin;
+    const currentPath = window.location.pathname.replace(/index\.html$/, '');
+    const adminUrl = `${currentOrigin}${currentPath}admin.html?room=${this.roomId}`;
+
+    modal.innerHTML = `
+      <div class="slot-pin-modal-card">
+        <button type="button" class="slot-pin-close-btn" id="slot-hub-close-x" aria-label="Zatvori">&times;</button>
+        <div class="slot-pin-brand-header">
+          <img src="assets/logo.svg" alt="Grand Slot Club" class="slot-pin-brand-logo">
+          <span class="slot-pin-badge">OPERATOR HUB</span>
+        </div>
+        <h2 class="slot-pin-title">OPERATERSKI CENTAR</h2>
+        <p class="slot-pin-subtitle" style="margin-bottom: 12px;">Upravljanje slot terminalom lokalno ili daljinski</p>
+
+        <div class="slot-operator-hub">
+          <button type="button" class="btn-hub-open-local" id="btn-hub-open-local">
+            <span>🖥️</span> OTVORI KONTROLNU TABLU NA OVOM EKRANU
+          </button>
+
+          <div class="hub-divider">ILI POVEŽI TELEFON / TABLET</div>
+
+          <div class="hub-qr-card">
+            <span class="hub-qr-title">📱 SKENIRAJTE KAMEROM TELEFONA</span>
+            <div class="hub-qr-box" id="hub-qr-container"></div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:0.75rem; color:#b5a995;">ŠIFRA APARATA:</span>
+              <span class="hub-room-pill">${this.roomId}</span>
+            </div>
+
+            <div class="hub-remote-status-pill ${this.remoteConnections && this.remoteConnections.length > 0 ? 'connected' : 'waiting'}" id="hub-remote-status">
+              <span class="hub-remote-dot"></span>
+              <span id="hub-remote-status-text">${this.remoteConnections && this.remoteConnections.length > 0 ? 'OPERATER POVEZAN (UŽIVO)' : 'ČEKAM POVEZIVANJE TELEFONA...'}</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn-hub-close-action" id="btn-hub-close-bottom">
+            ✕ Zatvori ovaj meni i ostavi slot u igri
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Render QR Code using QRCode library
+    const qrContainer = modal.querySelector('#hub-qr-container');
+    if (qrContainer && typeof QRCode !== 'undefined') {
+      qrContainer.innerHTML = '';
+      try {
+        new QRCode(qrContainer, {
+          text: adminUrl,
+          width: 140,
+          height: 140,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch (e) {
+        console.warn('QR Code generation error:', e);
+      }
+    }
+
+    const openLocalBtn = modal.querySelector('#btn-hub-open-local');
+    if (openLocalBtn) {
+      openLocalBtn.addEventListener('click', () => {
+        this.openAdminDashboard();
+      });
+    }
+
+    const closeX = modal.querySelector('#slot-hub-close-x');
+    if (closeX) closeX.addEventListener('click', () => this.closePinModal());
+
+    const closeBottom = modal.querySelector('#btn-hub-close-bottom');
+    if (closeBottom) closeBottom.addEventListener('click', () => this.closePinModal());
+  }
+
+  updateRemoteStatus(status) {
+    const pill = document.getElementById('hub-remote-status');
+    const text = document.getElementById('hub-remote-status-text');
+    if (!pill || !text) return;
+
+    if (status === 'CONNECTED') {
+      pill.className = 'hub-remote-status-pill connected';
+      text.textContent = 'OPERATER POVEZAN (UŽIVO)';
+    } else {
+      pill.className = 'hub-remote-status-pill waiting';
+      text.textContent = 'ČEKAM POVEZIVANJE TELEFONA...';
+    }
+  }
+
   requestAdminAccess() {
-    this.createPinModal();
+    this.renderPinPadView();
     this.currentPin = '';
     this.updatePinDots();
     this.setPinFeedback('', '');
@@ -368,8 +540,7 @@ class AdminBridge {
       } catch (e) {}
 
       setTimeout(() => {
-        this.closePinModal();
-        this.openAdminDashboard();
+        this.showOperatorHub();
       }, 250);
     } else {
       let failed = parseInt(localStorage.getItem('grandslot_pin_failed_attempts') || '0', 10) + 1;

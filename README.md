@@ -236,6 +236,22 @@ To activate your free online link:
 
 ---
 
+
+### 📱 8. Mobile & Cross-Device Remote Control (WebRTC PeerJS & QR Pairing)
+
+Control physical slot terminals or remote screen displays directly from a mobile phone or tablet over the internet or local Wi-Fi:
+
+1. **Access Operator Hub on the Slot Screen:**
+   - Press **`~`** (Backquote) or click the **Grand Slot logo 5 times**.
+   - Enter your 4-digit PIN (default: `7777`).
+2. **Scan the Dynamic QR Code:**
+   - The screen renders an on-screen QR code and a unique 6-character Room Code (e.g. `GSC-7842`).
+   - Scan the QR code using any smartphone camera. It opens `admin.html?room=GSC-7842`.
+3. **Instant Real-Time Control (<50ms):**
+   - The phone connects directly to the slot terminal via an encrypted **WebRTC DataChannel** (PeerJS).
+   - The operator can close the modal on the slot terminal so players continue playing, while the operator drops jackpots, triggers bonus rounds, tunes RTP, or monitors telemetry in real-time from anywhere in the venue!
+
+---
 ---
 
 <a name="srpska-dokumentacija"></a>
@@ -411,3 +427,19 @@ Za aktivaciju javnog online linka potrebno je samo:
 4. GitHub će automatski objaviti sajt na javnim linkovima:
    - **Igra za igrače:** [https://bojankenobi.github.io/demogs/](https://bojankenobi.github.io/demogs/)
    - **Operaterski Admin Dashboard:** [https://bojankenobi.github.io/demogs/admin.html](https://bojankenobi.github.io/demogs/admin.html) *(PIN: `7777`)*
+
+---
+
+### 📱 7. Daljinsko Upravljanje sa Telefona i Tableta (WebRTC & QR Kod)
+
+Upravljajte slot terminalom ili javnim ekranom direktno sa mobilnog telefona ili tableta preko interneta ili Wi-Fi mreže bez ikakvog servera:
+
+1. **Otvorite Operaterski Hub na slotu:**
+   - Pritisnite **`~`** (tilda) na tastaturi ili kliknite **5 puta na logo**.
+   - Unesite 4-cifreni PIN (fabrički: `7777`).
+2. **Skenirajte dinamički QR kod:**
+   - Na ekranu slota pojavljuje se veliki QR kod i 6-cifrena šifra sobe (npr. `GSC-7842`).
+   - Skenirajte QR kod kamerom bilo kog pametnog telefona — otvara se admin panel povezan na taj aparat.
+3. **Trenutna dvosmerna kontrola uživo (<50ms):**
+   - Telefon uspostavlja direktnu enkriptovanu **WebRTC DataChannel** vezu (PeerJS) sa slot mašinom.
+   - Operater može zatvoriti prozor na slotu kako bi igrači nesmetano igrali, dok sa svog telefona u realnom vremenu prati stanje, daljinski pušta džekpote, aktivira Točak Sreće ili menja profile volatilnosti!

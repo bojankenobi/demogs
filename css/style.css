@@ -8923,6 +8923,168 @@ body.free-spins-active .slot-cylinder-replica {
   font-weight: 600;
 }
 
+/* ==========================================================================
+   Operator Hub (Post-PIN: Local Dashboard & Remote Phone QR Pairing)
+   ========================================================================== */
+
+.slot-operator-hub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 14px;
+}
+
+.btn-hub-open-local {
+  width: 100%;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #ffd700 0%, #b45309 100%);
+  border: none;
+  border-radius: 10px;
+  color: #000;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.35);
+  transition: all 0.2s;
+}
+
+.btn-hub-open-local:hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.hub-divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #78716c;
+  letter-spacing: 1px;
+}
+
+.hub-divider::before, .hub-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.hub-qr-card {
+  width: 100%;
+  background: rgba(10, 6, 2, 0.7);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.hub-qr-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 0.6px;
+}
+
+.hub-qr-box {
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 136px;
+  min-width: 136px;
+}
+
+.hub-room-pill {
+  font-family: monospace;
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  padding: 4px 14px;
+  border-radius: 6px;
+}
+
+.hub-remote-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.hub-remote-status-pill.waiting {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fde68a;
+}
+
+.hub-remote-status-pill.connected {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #6ee7b7;
+}
+
+.hub-remote-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.hub-remote-status-pill.waiting .hub-remote-dot {
+  background: #f59e0b;
+}
+
+.hub-remote-status-pill.connected .hub-remote-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulseRemoteDot 1.5s infinite;
+}
+
+@keyframes pulseRemoteDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.btn-hub-close-action {
+  width: 100%;
+  padding: 9px;
+  background: transparent;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: 8px;
+  color: #b5a995;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-hub-close-action:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+
 
 
 
