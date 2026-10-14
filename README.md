@@ -142,15 +142,22 @@ All audio effects are generated in real-time through the browser's Web Audio API
 
 ```
 gsc/
+├── api/                       # Vercel Serverless Function API endpoints
+│   ├── _db.js                 # Neon Serverless PostgreSQL connector with demo fallback
+│   ├── db/init.js             # One-click schema & index initializer
+│   ├── players/sync.js        # Automatic player telemetry & push token upsert
+│   ├── players/list.js        # Segmented player CRM directory & VIP status toggle
+│   └── push/send.js           # Smart Web Push dispatcher targeting segments or players
 ├── assets/
-│   ├── icons/            # PWA icons (192x192, 512x512, maskable, favicon)
-│   ├── symbols/          # SVG symbols (Flower, Bell, Bar, Seven, Crown, Coin, Diamond, Bomb)
-│   └── logo.svg          # Official Grand Slot horizontal luxury logo
+│   ├── icons/                 # PWA icons (192x192, 512x512, maskable, favicon)
+│   ├── symbols/               # SVG symbols (Flower, Bell, Bar, Seven, Crown, Coin, Diamond, Bomb)
+│   └── logo.svg               # Official Grand Slot horizontal luxury logo
 ├── css/
-│   └── style.css         # 3D cylinder replica styles, responsive scaler, Grandslot dark/gold theme
+│   ├── admin.css              # Standalone admin dashboard & CRM stylesheet
+│   └── style.css              # Grand Slot luxury player terminal stylesheet
 ├── js/
 │   ├── core/
-│   │   ├── admin.js           # Legacy embedded modal engine (retained for backward compatibility)
+│   │   ├── admin.js           # Legacy embedded modal engine (backward compatibility)
 │   │   ├── admin-bridge.js    # Decoupled zero-latency BroadcastChannel telemetry bridge
 │   │   ├── bonus-features.js  # Free Spins manager, celebration FX, Buy Bonus engine
 │   │   ├── gamble.js          # Red/Black card gamble game engine
@@ -159,7 +166,7 @@ gsc/
 │   │   ├── math-manager.js    # Volatility presets & payout configuration
 │   │   ├── meters.js          # Dual turnover-based bonus meters
 │   │   ├── notifications.js   # Web Push & in-app background retention manager
-│   │   ├── player-tracker.js  # 18+ player session & statistics persistence
+│   │   ├── player-tracker.js  # Player profile, persistent ID & backend auto-sync
 │   │   ├── tournament.js      # 120s tournament engine, leaderboard & HUD
 │   │   ├── wallet.js          # RSD / Credit wallet, Golden Bet toggle, denomination
 │   │   └── wheel.js           # Wheel of Fortune bonus engine
@@ -167,16 +174,19 @@ gsc/
 │   │   ├── classic/           # 1-Line Classic retro stepper game
 │   │   ├── royal3x3/          # Royal 3x3 multi-line game & SVG paylines
 │   │   └── mines/             # Standalone Mines X & in-slot Mini-Mines bonus
-│   ├── admin-dashboard.js     # Standalone operator control dashboard controller
-│   ├── app.js                 # Central orchestrator & lifecycle controller
+│   ├── admin-dashboard.js     # Standalone operator control dashboard & CRM controller
+│   ├── app.js                 # Central orchestrator & promo bonus claim listener
 │   ├── audio.js               # Web Audio API synthesizer & Vegas ambient engine
 │   ├── i18n.js                # Bilingual localization (English / Serbian)
 │   └── particles.js           # Canvas particle celebration burst FX
+├── scripts/
+│   └── generate-vapid.js      # Standalone Node.js script for generating VAPID keypairs
+├── schema.sql                 # Neon PostgreSQL schema definition with performance indexes
+├── package.json               # Backend dependencies (@neondatabase/serverless, web-push)
+├── vercel.json                # Vercel serverless routing and headers configuration
+├── .env.example               # Environment variables template for database & VAPID keys
 ├── index.html                 # Main player single-page slot terminal
-├── admin.html                 # Standalone luxury operator control dashboard
-├── css/
-│   ├── admin.css              # Standalone admin dashboard stylesheet
-│   └── style.css              # Grand Slot luxury player terminal stylesheet
+├── admin.html                 # Standalone luxury operator control dashboard & CRM
 ├── manifest.webmanifest       # PWA configuration manifest
 ├── sw.js                      # Service Worker for offline play & push notifications
 ├── start.bat                  # One-click Windows local server launcher
@@ -250,6 +260,52 @@ Control physical slot terminals or remote screen displays directly from a mobile
 3. **Instant Real-Time Control (<50ms):**
    - The phone connects directly to the slot terminal via an encrypted **WebRTC DataChannel** (PeerJS).
    - The operator can close the modal on the slot terminal so players continue playing, while the operator drops jackpots, triggers bonus rounds, tunes RTP, or monitors telemetry in real-time from anywhere in the venue!
+
+---
+
+### 👥 9. Central Player CRM Database & Smart Push Marketing Hub ("One Admin Changes All")
+
+The platform features an enterprise-grade Serverless Marketing & CRM infrastructure designed on a **"one admin controls all"** principle, combining **Neon Serverless PostgreSQL** with **Vercel Serverless Functions** and the standard **W3C Web Push Protocol (RFC 8292 / VAPID)**.
+
+#### 🏛️ Architecture & Database Design
+- **Persistent Player Profiles (`players` table):**
+  - Unique persistent player identity (`gsc_usr_XXXX`) preserved in device storage across browser sessions.
+  - Automatically records turnover, spin count, total wins, favorite game, and device telemetry.
+  - Stores standard W3C PushSubscription JSON payloads for real-time mobile and desktop notifications.
+  - Tracks VIP loyalty membership (`STANDARD` vs `VIP`).
+- **Marketing Push Logs (`push_campaigns` table):**
+  - Keeps full audit logs of sent promotional campaigns, targeted segments, recipient counts, and timestamps.
+- **Serverless API Layer (`api/`):**
+  - `POST /api/players/sync`: Real-time player profile upsert and token sync.
+  - `GET /api/players/list`: Live directory query with segmentation filtering (`all`, `vip`, `active_today`, `inactive`) and search.
+  - `POST /api/players/list`: Instant operator toggle of player VIP status.
+  - `POST /api/push/send`: Multi-targeted Web Push dispatch engine with cryptographic VAPID signing.
+  - `POST /api/db/init`: Idempotent schema initialization tool creating tables and indexes in Neon.
+
+#### 🎯 Smart Promotional Push Rewards (Direct In-Game Action)
+Unlike ordinary static notifications, Grand Slot Club push notifications are actionable and can deliver real rewards directly into the player's session when clicked:
+- **🎰 Free Spins Rewards (`free_spins:10` / `free_spins:25`):** Clicking the notification automatically opens the game and activates a 10 or 25 Free Spins session with a persistent **2x Win Multiplier** and celebratory particle fireworks.
+- **🎁 Instant Credit Bonuses (`credit_bonus:200` / `credit_bonus:500` / `credit_bonus:1000`):** Automatically credits the bonus amount in RSD directly into the player's wallet balance with coin drop sound effects.
+- **Dual Delivery System:** Works seamlessly via Service Worker `postMessage` if the player already has a slot window open, or via secure URL query parameters (`?promo_action=...&promo_val=...`) if launched afresh from a locked phone screen.
+
+#### ⚙️ Quick Setup Guide (Neon & Vercel)
+1. **Neon PostgreSQL:**
+   - Create a free serverless database at [Neon.tech](https://neon.tech).
+   - Copy your connection string (`postgresql://user:password@ep-xyz.neon.tech/neondb?sslmode=require`).
+2. **Generate VAPID Keys:**
+   ```bash
+   node scripts/generate-vapid.js
+   ```
+3. **Deploy on Vercel:**
+   - Import the repository into [Vercel](https://vercel.com).
+   - In **Project Settings > Environment Variables**, add:
+     - `DATABASE_URL`: Your Neon connection string
+     - `VAPID_PUBLIC_KEY`: Generated public key
+     - `VAPID_PRIVATE_KEY`: Generated private key
+     - `VAPID_EMAIL`: `mailto:support@grandslotclub.rs`
+4. **Initialize Database:**
+   - Call `/api/db/init` (or execute `schema.sql` directly in the Neon SQL console).
+   - The system includes a realistic demo fallback mode, ensuring zero crashes even when running locally without active cloud database credentials!
 
 ---
 ---
@@ -443,3 +499,49 @@ Upravljajte slot terminalom ili javnim ekranom direktno sa mobilnog telefona ili
 3. **Trenutna dvosmerna kontrola uživo (<50ms):**
    - Telefon uspostavlja direktnu enkriptovanu **WebRTC DataChannel** vezu (PeerJS) sa slot mašinom.
    - Operater može zatvoriti prozor na slotu kako bi igrači nesmetano igrali, dok sa svog telefona u realnom vremenu prati stanje, daljinski pušta džekpote, aktivira Točak Sreće ili menja profile volatilnosti!
+
+---
+
+### 👥 8. Centralna Baza Korisnika (CRM) i Smart Push Marketing ("Jedan Admin Menja Sve")
+
+Platforma implementira naprednu Serverless CRM i Web Push marketing infrastrukturu zasnovanu na principu **"jedan centralni admin menja sve"**, povezujući **Neon Serverless PostgreSQL** bazu podataka, **Vercel Serverless Functions** i standardni **W3C Web Push protokol (RFC 8292 / VAPID)**.
+
+#### 🏛️ Arhitektura i Baza Podataka
+- **Stalni Profili Igrača (`players` tabela):**
+  - Svaki uređaj/igrač dobija trajni identifikator (`gsc_usr_XXXX`) koji se čuva u memoriji pretraživača.
+  - Automatski beleži ukupan obrt (turnover), broj spinova, dobitke, omiljenu igru i tehničke podatke uređaja.
+  - Čuva standardne W3C PushSubscription tokene za isporuku obaveštenja na telefone i računare.
+  - Podržava VIP lojaliti status (`STANDARD` i `VIP`).
+- **Istorijat Marketinških Kampanja (`push_campaigns` tabela):**
+  - Beleži sve poslate push kampanje, ciljane segmente korisnika, broj primalaca i tačan datum slanja.
+- **Serverless API Sloj (`api/`):**
+  - `POST /api/players/sync`: Automatska sinhronizacija metrike igrača i push tokena pri spinovima.
+  - `GET /api/players/list`: Brza pretraga i segmentacija korisnika (`all`, `vip`, `active_today`, `inactive`).
+  - `POST /api/players/list`: Jednim klikom operater dodeljuje ili ukida VIP status igraču.
+  - `POST /api/push/send`: Sistem za slanje Web Push notifikacija sa kriptografskim VAPID potpisivanjem.
+  - `POST /api/db/init`: Automatska inicijalizacija tabela i indeksa u Neon PostgreSQL bazi.
+
+#### 🎯 Smart Promotivne Push Nagrade (Direktna Akcija u Igri)
+Za razliku od klasičnih tekstualnih obaveštenja, Grand Slot Club notifikacije nose interaktivne promotivne nagrade koje se aktiviraju samim klikom igrača na poruku:
+- **🎰 Poklon Besplatni Spinovi (`free_spins:10` / `free_spins:25`):** Klik na notifikaciju automatski otvara igru i pokreće sesiju od 10 ili 25 Besplatnih Spinova sa trajnim **2x Množiocem dobitka** i konfetama.
+- **🎁 Instant Keš Bonusi (`credit_bonus:200` / `credit_bonus:500` / `credit_bonus:1000`):** Automatski dopunjuje dinarski račun igrača (+200, +500 ili +1.000 RSD) uz prateći zvučni efekat kovanica.
+- **Dvostruka Isporuka:** Radi trenutno preko Service Worker `postMessage` mehanizma ukoliko je igraču igra već otvorena, ili preko bezbednih URL parametara (`?promo_action=...&promo_val=...`) ukoliko igrač klikne na notifikaciju dok mu je telefon bio zaključan.
+
+#### ⚙️ Uputstvo za Podešavanje (Neon & Vercel)
+1. **Neon PostgreSQL Baza:**
+   - Napravite besplatan nalog i bazu na [Neon.tech](https://neon.tech).
+   - Kopirajte connection string (`postgresql://user:password@ep-xyz.neon.tech/neondb?sslmode=require`).
+2. **Generisanje VAPID Ključeva:**
+   ```bash
+   node scripts/generate-vapid.js
+   ```
+3. **Objavljivanje na Vercel:**
+   - Povežite repozitorijum sa [Vercel](https://vercel.com) platformom.
+   - U sekciji **Project Settings > Environment Variables** dodajte:
+     - `DATABASE_URL`: Vaš Neon connection string
+     - `VAPID_PUBLIC_KEY`: Generisani javni VAPID ključ
+     - `VAPID_PRIVATE_KEY`: Generisani privatni VAPID ključ
+     - `VAPID_EMAIL`: `mailto:support@grandslotclub.rs`
+4. **Inicijalizacija Baze:**
+   - Pokrenite `/api/db/init` (ili unesite upite iz `schema.sql` direktno u Neon SQL konzoli).
+   - Sistem sadrži ugrađeni realistični simulacioni režim koji garantuje nesmetan rad čak i u lokalnom razvoju pre unosa cloud ključeva!

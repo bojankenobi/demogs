@@ -1,0 +1,21 @@
+{
+  "name": "grand-slot-club",
+  "version": "2.0.0",
+  "description": "Grand Slot Club - Luxury Multi-Game Casino Terminal & Slot Engine",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve .",
+    "generate-vapid": "node scripts/generate-vapid.js"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

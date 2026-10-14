@@ -109,7 +109,7 @@
       <button type="button" class="dash-tab-btn active" data-tab="presets">📊 RTP & Matematika</button>
       <button type="button" class="dash-tab-btn" data-tab="simulator">⚡ Monte Carlo Simulator</button>
       <button type="button" class="dash-tab-btn" data-tab="triggers">🎯 Daljinske Komande</button>
-      <button type="button" class="dash-tab-btn" data-tab="push">🔔 Push Notifikacije</button>
+      <button type="button" class="dash-tab-btn" data-tab="push">👥 CRM & Push Marketing</button>
       <button type="button" class="dash-tab-btn" data-tab="info">ℹ️ Sistem & Povezivanje</button>
     </nav>
 
@@ -285,17 +285,76 @@
       </div>
     </section>
 
-    <!-- TAB 4: PUSH NOTIFIKACIJE & MARKETING -->
+    <!-- TAB 4: CRM & MARKETING NOTIFIKACIJE -->
     <section class="tab-pane" id="pane-push">
       <div class="pane-intro-box">
-        <h2 class="pane-title">Push Notifikacije & Marketing Kampanje</h2>
-        <p class="pane-desc">Pošaljite obaveštenja povezanim igračima na desktop računarima i telefonima radi podizanja angažovanja.</p>
+        <h2 class="pane-title">👥 CRM Baza Korisnika & Smart Push Kampanje</h2>
+        <p class="pane-desc">Centralni marketing panel: pregledajte bazu registrovanih igrača, filtrirajte segmente i šaljite ciljane promotivne push notifikacije sa besplatnim spinovima i kreditnim bonusima.</p>
       </div>
 
+      <!-- CRM Analytics KPI Cards -->
+      <div class="crm-kpi-grid">
+        <div class="crm-kpi-card">
+          <span class="crm-kpi-title">👥 UKUPNO IGRAČA</span>
+          <span class="crm-kpi-val" id="crm-stat-total-players">0</span>
+        </div>
+        <div class="crm-kpi-card">
+          <span class="crm-kpi-title">🔔 PUSH PRETPLAĆENI</span>
+          <span class="crm-kpi-val" id="crm-stat-push-enabled">0</span>
+        </div>
+        <div class="crm-kpi-card">
+          <span class="crm-kpi-title">👑 VIP KORISNICI</span>
+          <span class="crm-kpi-val" id="crm-stat-vip-count">0</span>
+        </div>
+        <div class="crm-kpi-card">
+          <span class="crm-kpi-title">⚡ AKTIVNI DANAS</span>
+          <span class="crm-kpi-val" id="crm-stat-active-today">0</span>
+        </div>
+      </div>
+
+      <!-- CRM Filter Bar & Search -->
+      <div class="crm-controls-bar">
+        <div class="crm-segment-filters">
+          <button type="button" class="crm-filter-btn active" data-segment="all">Svi Igrači</button>
+          <button type="button" class="crm-filter-btn" data-segment="vip">👑 VIP Klub</button>
+          <button type="button" class="crm-filter-btn" data-segment="active_today">⚡ Aktivni Danas</button>
+          <button type="button" class="crm-filter-btn" data-segment="inactive">💤 Neaktivni (>3 dana)</button>
+        </div>
+        <div style="display: flex; gap: 8px; flex: 1; max-width: 420px;">
+          <input type="text" id="crm-player-search" class="push-input-text" placeholder="🔍 Pretraži ID ili nadimak..." style="flex: 1; padding: 6px 12px; font-size: 0.8rem;">
+          <button type="button" class="btn-trigger-action" id="btn-crm-refresh" style="padding: 6px 12px;">🔄 Osveži</button>
+        </div>
+      </div>
+
+      <!-- Player CRM Table -->
+      <div class="crm-table-box">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>ID Igrača</th>
+              <th>Nadimak / Alias</th>
+              <th>Status</th>
+              <th>Obrt (RSD)</th>
+              <th>Spinovi</th>
+              <th>Poslednja Aktivnost</th>
+              <th>Push</th>
+              <th>Akcija</th>
+            </tr>
+          </thead>
+          <tbody id="crm-players-table-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">Učitavanje baze igrača iz sistema...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Push Dispatch Area -->
       <div class="push-dash-layout">
         <!-- Quick Preset Push Notifications -->
         <div class="push-card">
-          <h3 class="trigger-panel-title">⚡ Brze Marketinške Notifikacije</h3>
+          <h3 class="trigger-panel-title">⚡ Brzi Događaji & Sistemski Alarmi</h3>
+          <p style="font-size: 0.78rem; color: #b5a995; margin-bottom: 14px;">Instant notifikacije za buđenje aktivnosti u celoj bazi aktivnih igrača.</p>
           <div style="display: flex; flex-direction: column; gap: 10px;">
             <button type="button" class="btn-trigger-action gold" id="btn-push-jackpot-alert" style="justify-content: flex-start; padding: 12px 14px;">
               🏆 Pošalji Džekpot Alarm (Preko 180.000 RSD)
@@ -309,18 +368,51 @@
           </div>
         </div>
 
-        <!-- Custom Push Creator -->
+        <!-- Custom Smart Promo Push Campaign -->
         <div class="push-card">
-          <h3 class="trigger-panel-title">✉️ Prilagođena Push Notifikacija</h3>
+          <h3 class="trigger-panel-title">🎯 Smart Push Kampanja sa Bonusom</h3>
+          
           <div class="push-form-group">
-            <label for="input-push-title">Naslov notifikacije:</label>
-            <input type="text" id="input-push-title" class="push-input-text" placeholder="npr. 🌟 HAPPY HOUR POČINJE!">
+            <label for="select-push-target">Ciljna Grupa (Segmentacija):</label>
+            <select id="select-push-target" class="push-select-dropdown">
+              <option value="all">📢 Svi Pretplaćeni Igrači (Globalno)</option>
+              <option value="vip">👑 Samo VIP Klub Igrači</option>
+              <option value="inactive">💤 Neaktivni Igrači (>3 dana bez spina)</option>
+              <option value="single">🎯 Pojedinačni Igrač (Specifičan ID)</option>
+            </select>
           </div>
+
+          <div class="push-form-group" id="group-target-player-id" style="display: none;">
+            <label for="input-target-player-id">ID Ciljanog Igrača:</label>
+            <input type="text" id="input-target-player-id" class="push-input-text" placeholder="npr. gsc_usr_7891">
+          </div>
+
           <div class="push-form-group">
-            <label for="input-push-body">Tekst poruke:</label>
-            <input type="text" id="input-push-body" class="push-input-text" placeholder="npr. Dupli obrt za Točak Sreće narednih 60 minuta!">
+            <label for="input-push-title">Naslov Notifikacije:</label>
+            <input type="text" id="input-push-title" class="push-input-text" placeholder="npr. 🌟 SPECIJALNI POKLON ZA VAS!">
           </div>
-          <button type="button" class="btn-send-custom-push" id="btn-send-custom-push">POŠALJI NOTIFIKACIJU</button>
+
+          <div class="push-form-group">
+            <label for="input-push-body">Tekst Poruke:</label>
+            <input type="text" id="input-push-body" class="push-input-text" placeholder="npr. Otvorite igru i preuzmite svojih 25 besplatnih spinova odmah!">
+          </div>
+
+          <div class="push-form-group">
+            <label for="select-push-promo">Smart Promotivna Nagrada (Klik aktivira bonus):</label>
+            <select id="select-push-promo" class="push-select-dropdown">
+              <option value="none:0">Bez Promocije (Samo tekstualno obaveštenje)</option>
+              <option value="free_spins:10" selected>🎰 10 Besplatnih Spinova (2x Množilac)</option>
+              <option value="free_spins:25">🎰 25 Besplatnih Spinova (VIP Bonus)</option>
+              <option value="credit_bonus:200">🎁 +200 RSD Kreditni Bonus</option>
+              <option value="credit_bonus:500">🎁 +500 RSD Kreditni Bonus</option>
+              <option value="credit_bonus:1000">💎 +1.000 RSD VIP Keš Bonus</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn-send-custom-push" id="btn-send-custom-push">
+            🚀 POŠALJI SMART PUSH KAMPANJU
+          </button>
+          <div id="push-campaign-status" style="margin-top: 10px; font-size: 0.8rem; text-align: center; min-height: 18px;"></div>
         </div>
       </div>
     </section>

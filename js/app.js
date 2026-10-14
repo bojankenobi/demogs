@@ -182,6 +182,74 @@ class IGTApp {
     } else if (window.AdminPanel) {
       this.adminPanel = new window.AdminPanel(this);
     }
+
+    // 7. Check for Smart Push Promotional Rewards
+    this.initPromoBonusListener();
+    this.checkPromoBonusFromUrl();
+  }
+
+  /* ==========================================================================
+     Smart Promotional Bonus Claims (Push Notifications)
+     ========================================================================== */
+
+  initPromoBonusListener() {
+    if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'CLAIM_PROMO_BONUS') {
+          this.claimPromoBonus(event.data.promo);
+        }
+      });
+    }
+  }
+
+  checkPromoBonusFromUrl() {
+    if (typeof window === 'undefined' || !window.location.search) return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('promo_action')) {
+        const action = params.get('promo_action');
+        const val = parseInt(params.get('promo_val'), 10) || 0;
+        
+        // Clean URL so refresh doesn't re-trigger
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        setTimeout(() => {
+          this.claimPromoBonus({ promoAction: action, promoValue: val });
+        }, 1200);
+      }
+    } catch (e) {
+      console.warn('Promo URL parsing error:', e);
+    }
+  }
+
+  claimPromoBonus(promo) {
+    if (!promo || !promo.promoAction || promo.promoAction === 'none') return;
+
+    if (promo.promoAction === 'free_spins') {
+      const spins = Number(promo.promoValue) || 10;
+      if (this.freeSpinsManager) {
+        this.freeSpinsManager.start(spins, 2);
+      }
+      if (window.slotAudio && window.slotAudio.playBigWin) {
+        window.slotAudio.playBigWin();
+      }
+      if (window.particleEngine && window.particleEngine.burst) {
+        window.particleEngine.burst(300, 250);
+      }
+      this.showMessage(`🎰 POKLON PROMOCIJA: Aktivirano +${spins} BESPLATNIH SPINOVA (2x Množilac)!`, 'jackpot');
+    } else if (promo.promoAction === 'credit_bonus') {
+      const credits = Number(promo.promoValue) || 500;
+      if (this.wallet && this.wallet.addFictionalRsd) {
+        this.wallet.addFictionalRsd(credits);
+      }
+      if (window.slotAudio && window.slotAudio.playBigWin) {
+        window.slotAudio.playBigWin();
+      }
+      if (window.particleEngine && window.particleEngine.burst) {
+        window.particleEngine.burst(300, 250);
+      }
+      this.showMessage(`🎁 POKLON BONUS: Čestitamo! Vaš račun je dopunjen sa +${credits.toLocaleString()} RSD!`, 'win');
+    }
   }
 
   restoreSlotUI() {

@@ -222,8 +222,22 @@ class AdminBridge {
           else if (data.notifType === 'tournament') this.app.notifications.triggerTournamentAlert();
           else if (data.notifType === 'bonus') this.app.notifications.triggerBonusAlert();
           else if (data.title && data.body) {
-            this.app.notifications.sendPushNotification(data.title, data.body);
-            this.app.showMessage(`🔔 PUSH POSLAT: ${data.title}`, 'win');
+            const myPlayerId = this.app.playerTracker ? this.app.playerTracker.profile.id : null;
+            if (data.targetType === 'single' && data.targetPlayerId && data.targetPlayerId !== myPlayerId) {
+              break; // Message was targeted to another player ID
+            }
+            if (data.targetType === 'vip' && this.app.playerTracker?.profile?.vipTier !== 'VIP') {
+              break; // Message was targeted to VIP players
+            }
+
+            this.app.notifications.sendPushNotification(data.title, data.body, {
+              url: `./?promo_action=${data.promoAction || 'none'}&promo_val=${data.promoValue || 0}`
+            });
+            this.app.showMessage(`🔔 PUSH PRIMLJEN: ${data.title}`, 'win');
+
+            if (data.promoAction && data.promoAction !== 'none' && this.app.claimPromoBonus) {
+              this.app.claimPromoBonus({ promoAction: data.promoAction, promoValue: data.promoValue });
+            }
           }
         }
         break;

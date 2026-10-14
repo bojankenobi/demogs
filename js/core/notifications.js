@@ -27,9 +27,29 @@ class NotificationManager {
         const reg = await navigator.serviceWorker.register('sw.js');
         this.swRegistration = reg;
         if (reg.update) reg.update();
+        await this.fetchSubscription();
       } catch (err) {
         console.warn('Service Worker registration note:', err);
       }
+    }
+  }
+
+  async fetchSubscription() {
+    if (!this.swRegistration || !('pushManager' in this.swRegistration)) return null;
+    try {
+      const sub = await this.swRegistration.pushManager.getSubscription();
+      if (sub) {
+        window.currentPushSubscription = sub.toJSON ? sub.toJSON() : sub;
+        if (this.app?.playerTracker) {
+          this.app.playerTracker.syncWithBackend({ 
+            push_subscription: window.currentPushSubscription, 
+            is_push_enabled: true 
+          });
+        }
+      }
+      return sub;
+    } catch (e) {
+      return null;
     }
   }
 
@@ -71,6 +91,7 @@ class NotificationManager {
         this.isEnabled = true;
         localStorage.setItem(this.STORAGE_KEY, 'true');
         this.updateUI();
+        await this.fetchSubscription();
 
         // Audio feedback
         if (window.slotAudio && window.slotAudio.playClick) {

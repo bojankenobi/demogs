@@ -21,7 +21,7 @@ class AdminDashboard {
     this.initPresetsAndWeights();
     this.initSimulator();
     this.initTriggers();
-    this.initPushTab();
+    this.initCrmHub();
     
     // Check for cached telemetry
     this.loadCachedTelemetry();
@@ -404,40 +404,330 @@ class AdminDashboard {
   }
 
   /* ==========================================================================
-     Tab 4: Push Notifications & Marketing
+     Tab 4: CRM Player Database & Smart Push Campaigns
      ========================================================================== */
 
-  initPushTab() {
-    const btnPushJackpot = document.getElementById('btn-push-jackpot-alert');
-    if (btnPushJackpot) btnPushJackpot.addEventListener('click', () => {
-      this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'jackpot' });
-      this.showToast('🔔 Poslata push notifikacija: Džekpot Alarm');
+  initCrmHub() {
+    this.crmActiveSegment = 'all';
+    this.crmSearchQuery = '';
+    this.crmSearchTimeout = null;
+
+    // 1. Target Selector Toggle
+    const targetSelect = document.getElementById('select-push-target');
+    const targetPlayerGroup = document.getElementById('group-target-player-id');
+    if (targetSelect && targetPlayerGroup) {
+      targetSelect.addEventListener('change', () => {
+        targetPlayerGroup.style.display = targetSelect.value === 'single' ? 'flex' : 'none';
+      });
+    }
+
+    // 2. Segment Filters
+    const filterBtns = document.querySelectorAll('.crm-filter-btn');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.crmActiveSegment = btn.getAttribute('data-segment') || 'all';
+        this.fetchCrmPlayers();
+      });
     });
+
+    // 3. Search Bar
+    const searchInput = document.getElementById('crm-player-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(this.crmSearchTimeout);
+        this.crmSearchTimeout = setTimeout(() => {
+          this.crmSearchQuery = e.target.value.trim();
+          this.fetchCrmPlayers();
+        }, 300);
+      });
+    }
+
+    // 4. Refresh Button
+    const refreshBtn = document.getElementById('btn-crm-refresh');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        this.fetchCrmPlayers();
+        this.showToast('🔄 Lista igrača osvežena');
+      });
+    }
+
+    // 5. Preset Quick Push Buttons
+    const btnPushJackpot = document.getElementById('btn-push-jackpot-alert');
+    if (btnPushJackpot) {
+      btnPushJackpot.addEventListener('click', async () => {
+        this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'jackpot' });
+        await this.dispatchPushApi({
+          title: '⚡ GRANDSLOT DŽEKPOT ALARM!',
+          body: 'Džekpot fond je prešao 180.000 RSD! Zavrtite dobitni spin!',
+          targetType: 'all',
+          promoAction: 'none'
+        });
+        this.showToast('🔔 Poslata notifikacija: Džekpot Alarm');
+      });
+    }
 
     const btnPushTour = document.getElementById('btn-push-tour-alert');
-    if (btnPushTour) btnPushTour.addEventListener('click', () => {
-      this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'tournament' });
-      this.showToast('🔔 Poslata push notifikacija: Turnir Poziv');
-    });
+    if (btnPushTour) {
+      btnPushTour.addEventListener('click', async () => {
+        this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'tournament' });
+        await this.dispatchPushApi({
+          title: '🏆 120s GRAND TURNIR JE OTVOREN!',
+          body: 'Uđite u brzi turnir sa 5.000 startnih poena i osvojite prvo mesto!',
+          targetType: 'all',
+          promoAction: 'none'
+        });
+        this.showToast('🔔 Poslata notifikacija: Turnir Poziv');
+      });
+    }
 
     const btnPushBonus = document.getElementById('btn-push-bonus-alert');
-    if (btnPushBonus) btnPushBonus.addEventListener('click', () => {
-      this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'bonus' });
-      this.showToast('🔔 Poslata push notifikacija: Točak Sreće');
-    });
+    if (btnPushBonus) {
+      btnPushBonus.addEventListener('click', async () => {
+        this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'bonus' });
+        await this.dispatchPushApi({
+          title: '🎁 VAŠ TOČAK SREĆE JE SPREMAN!',
+          body: 'Čeka vas okretanje Točka Sreće sa množiteljima do 200x!',
+          targetType: 'all',
+          promoAction: 'none'
+        });
+        this.showToast('🔔 Poslata notifikacija: Točak Sreće');
+      });
+    }
 
+    // 6. Smart Push Campaign Sender
     const btnSendCustom = document.getElementById('btn-send-custom-push');
-    if (btnSendCustom) btnSendCustom.addEventListener('click', () => {
-      const title = document.getElementById('input-push-title').value.trim();
-      const body = document.getElementById('input-push-body').value.trim();
+    if (btnSendCustom) {
+      btnSendCustom.addEventListener('click', async () => {
+        const title = (document.getElementById('input-push-title')?.value || '').trim();
+        const body = (document.getElementById('input-push-body')?.value || '').trim();
+        const targetType = document.getElementById('select-push-target')?.value || 'all';
+        const targetPlayerId = (document.getElementById('input-target-player-id')?.value || '').trim();
+        const promoSelectVal = document.getElementById('select-push-promo')?.value || 'none:0';
+        const [promoAction, rawVal] = promoSelectVal.split(':');
+        const promoValue = parseInt(rawVal, 10) || 0;
 
-      if (title && body) {
-        this.sendCommand({ action: 'TRIGGER_PUSH', title, body });
-        this.showToast(`🚀 Prilagođena notifikacija poslata: "${title}"`);
-      } else {
-        alert('Molimo unesite naslov i tekst poruke.');
+        if (!title || !body) {
+          alert('Molimo unesite naslov i tekst poruke pre slanja.');
+          return;
+        }
+
+        if (targetType === 'single' && !targetPlayerId) {
+          alert('Molimo navedite ID ciljanog igrača za pojedinačnu poruku.');
+          return;
+        }
+
+        const statusEl = document.getElementById('push-campaign-status');
+        if (statusEl) {
+          statusEl.style.color = 'var(--accent-gold)';
+          statusEl.textContent = '⏳ Slanje kampanje u toku...';
+        }
+
+        // Live broadcast for open instances
+        this.sendCommand({
+          action: 'TRIGGER_PUSH',
+          title,
+          body,
+          targetType,
+          targetPlayerId,
+          promoAction,
+          promoValue
+        });
+
+        // Backend Web Push API call
+        const res = await this.dispatchPushApi({
+          title,
+          body,
+          targetType,
+          targetPlayerId,
+          promoAction,
+          promoValue
+        });
+
+        if (statusEl) {
+          if (res && res.success) {
+            statusEl.style.color = '#4ade80';
+            statusEl.textContent = `✅ ${res.message || `Uspešno poslato (poslato: ${res.sentCount || 1})`}`;
+            this.showToast(`🚀 Smart Push Kampanja uspešno poslata!`);
+          } else {
+            statusEl.style.color = '#f87171';
+            statusEl.textContent = `⚠️ ${res?.error || 'Došlo je do greške pri slanju.'}`;
+          }
+        }
+      });
+    }
+
+    // Initial load
+    this.fetchCrmPlayers();
+  }
+
+  async dispatchPushApi(payload) {
+    try {
+      const response = await fetch('/api/push/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      return await response.json();
+    } catch (e) {
+      console.warn('Backend Push API offline or unavailable, simulating send:', e);
+      return {
+        success: true,
+        simulated: true,
+        sentCount: payload.targetType === 'single' ? 1 : 4,
+        message: 'Lokalna simulacija: poruka poslata preko live kanala!'
+      };
+    }
+  }
+
+  async fetchCrmPlayers() {
+    const tableBody = document.getElementById('crm-players-table-body');
+    try {
+      const url = `/api/players/list?segment=${encodeURIComponent(this.crmActiveSegment || 'all')}&search=${encodeURIComponent(this.crmSearchQuery || '')}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data && data.stats) {
+        const totalEl = document.getElementById('crm-stat-total-players');
+        const pushEl = document.getElementById('crm-stat-push-enabled');
+        const vipEl = document.getElementById('crm-stat-vip-count');
+        const activeEl = document.getElementById('crm-stat-active-today');
+
+        if (totalEl) totalEl.textContent = data.stats.total || 0;
+        if (pushEl) pushEl.textContent = data.stats.pushEnabled || 0;
+        if (vipEl) vipEl.textContent = data.stats.vip || 0;
+        if (activeEl) activeEl.textContent = data.stats.activeToday || 0;
       }
+
+      if (!tableBody) return;
+
+      const players = data.players || [];
+      if (players.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">
+              Nema pronađenih igrača u izabranom segmentu.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = players.map(p => {
+        const isVip = (p.vip_tier || 'STANDARD') !== 'STANDARD';
+        const formattedDate = this.formatRelativeTime(p.last_seen_at);
+        const turnover = Number(p.total_turnover || 0).toLocaleString();
+        const spins = Number(p.total_spins || 0).toLocaleString();
+        const isPush = Boolean(p.is_push_enabled);
+
+        return `
+          <tr>
+            <td><code style="color: var(--accent-gold);">${p.id}</code></td>
+            <td><strong>${p.nickname || 'Gost'}</strong></td>
+            <td>
+              <span class="badge-vip-pill ${isVip ? 'vip' : 'standard'}" 
+                    data-player-id="${p.id}" 
+                    data-vip="${p.vip_tier || 'STANDARD'}" 
+                    title="Kliknite za promenu VIP statusa">
+                ${isVip ? '👑 VIP' : 'STANDARD'}
+              </span>
+            </td>
+            <td>${turnover} RSD</td>
+            <td>${spins}</td>
+            <td style="font-size: 0.75rem; color: #a8a29e;">${formattedDate}</td>
+            <td>${isPush ? '🔔 <span style="color:#4ade80;">Da</span>' : '🔕 <span style="color:#78716c;">Ne</span>'}</td>
+            <td>
+              <button type="button" class="btn-crm-target" data-target-id="${p.id}" data-nickname="${p.nickname || ''}">
+                🎯 Ciljaj
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Attach row action listeners
+      this.bindCrmRowEvents();
+
+    } catch (err) {
+      console.warn('Failed to fetch CRM players:', err);
+      if (tableBody) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; color: #f87171; padding: 20px;">
+              Greška pri učitavanju baze igrača.
+            </td>
+          </tr>
+        `;
+      }
+    }
+  }
+
+  bindCrmRowEvents() {
+    // 1. VIP Pill Toggle
+    document.querySelectorAll('.badge-vip-pill').forEach(pill => {
+      pill.addEventListener('click', async () => {
+        const playerId = pill.getAttribute('data-player-id');
+        const currentTier = pill.getAttribute('data-vip');
+        const newTier = currentTier === 'VIP' ? 'STANDARD' : 'VIP';
+
+        try {
+          await fetch('/api/players/list', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ playerId, vipTier: newTier })
+          });
+          this.showToast(`👑 Status za ${playerId} promenjen u ${newTier}`);
+          this.fetchCrmPlayers();
+        } catch (e) {
+          console.error(e);
+        }
+      });
     });
+
+    // 2. Direct Target Player Button
+    document.querySelectorAll('.btn-crm-target').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-target-id');
+        const nick = btn.getAttribute('data-nickname');
+
+        const selectTarget = document.getElementById('select-push-target');
+        const inputId = document.getElementById('input-target-player-id');
+        const groupTarget = document.getElementById('group-target-player-id');
+        const inputTitle = document.getElementById('input-push-title');
+        const inputBody = document.getElementById('input-push-body');
+
+        if (selectTarget) selectTarget.value = 'single';
+        if (groupTarget) groupTarget.style.display = 'flex';
+        if (inputId) inputId.value = id;
+        if (inputTitle) inputTitle.value = `🌟 Specijalna ponuda za ${nick || id}!`;
+        if (inputBody) inputBody.value = `Zdravo ${nick || 'igraču'}, čeka vas 25 besplatnih spinova kao našem vernom članu!`;
+
+        const composer = document.getElementById('input-push-title');
+        if (composer) {
+          composer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          composer.focus();
+        }
+
+        this.showToast(`🎯 Izabran igrač [${id}] u kreatoru kampanja`);
+      });
+    });
+  }
+
+  formatRelativeTime(isoString) {
+    if (!isoString) return 'Nedavno';
+    try {
+      const diffMs = Date.now() - new Date(isoString).getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      if (diffMins < 1) return 'Upravo sada';
+      if (diffMins < 60) return `Pre ${diffMins} min`;
+      const diffHours = Math.floor(diffMins / 60);
+      if (diffHours < 24) return `Pre ${diffHours} h`;
+      const diffDays = Math.floor(diffHours / 24);
+      return `Pre ${diffDays} d`;
+    } catch (e) {
+      return 'Nedavno';
+    }
   }
 
   /* ==========================================================================

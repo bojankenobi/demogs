@@ -148,12 +148,16 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'close') return;
 
-  const targetUrl = (event.notification.data && event.notification.data.url) || './';
+  const notifData = event.notification.data || {};
+  const targetUrl = notifData.url || './';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
         if (client.url && 'focus' in client) {
+          if (notifData.promoAction) {
+            client.postMessage({ type: 'CLAIM_PROMO_BONUS', promo: notifData });
+          }
           return client.focus();
         }
       }

@@ -7,11 +7,29 @@ class PlayerTracker {
     this.storageKey = 'igt_player_profile';
     this.sessionStartTime = Date.now();
     this.profile = this.loadProfile();
+
+    // Auto-sync with CRM backend after initial boot
+    setTimeout(() => {
+      this.syncWithBackend();
+    }, 1800);
+  }
+
+  generatePlayerId() {
+    const savedId = localStorage.getItem('gsc_player_id');
+    if (savedId) return savedId;
+    const newId = 'gsc_usr_' + Math.floor(1000 + Math.random() * 9000);
+    try {
+      localStorage.setItem('gsc_player_id', newId);
+    } catch (e) {}
+    return newId;
   }
 
   loadProfile() {
+    const persistentId = this.generatePlayerId();
     const defaultProfile = {
+      id: persistentId,
       username: '',
+      vipTier: 'STANDARD',
       pin: '',
       isVerified18: false,
       isLoggedIn: false,
@@ -87,6 +105,60 @@ class PlayerTracker {
     }
   }
 
+  async syncWithBackend(extra = {}) {
+    if (typeof fetch === 'undefined') return;
+
+    try {
+      let favoriteGame = 'royal3x3';
+      let maxSpins = -1;
+      const spins = this.profile.stats.spinsByGame || {};
+      for (const [game, count] of Object.entries(spins)) {
+        if (count > maxSpins) {
+          maxSpins = count;
+          favoriteGame = game;
+        }
+      }
+
+      const isPush = typeof Notification !== 'undefined' && Notification.permission === 'granted';
+      const pushSub = window.currentPushSubscription || null;
+
+      const payload = {
+        id: this.profile.id,
+        nickname: this.profile.username || ('Gost_' + this.profile.id.replace('gsc_usr_', '')),
+        vip_tier: this.profile.vipTier || 'STANDARD',
+        total_turnover: this.profile.stats.totalBet || 0,
+        total_spins: this.profile.stats.totalSpins || 0,
+        total_wins: this.profile.stats.totalWin || 0,
+        favorite_game: favoriteGame,
+        device_info: {
+          userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
+          language: typeof navigator !== 'undefined' ? navigator.language : '',
+          platform: typeof navigator !== 'undefined' ? navigator.platform : '',
+          screen: typeof window !== 'undefined' && window.screen ? `${window.screen.width}x${window.screen.height}` : ''
+        },
+        push_subscription: pushSub,
+        is_push_enabled: isPush,
+        ...extra
+      };
+
+      const res = await fetch('/api/players/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.player && data.player.vip_tier) {
+          this.profile.vipTier = data.player.vip_tier;
+          this.saveProfile();
+        }
+      }
+    } catch (e) {
+      // Offline / standalone fallback
+    }
+  }
+
   login(username, pin = '', rememberMe = true) {
     this.profile.username = username.trim() || 'Demo Player';
     this.profile.pin = pin;
@@ -95,6 +167,7 @@ class PlayerTracker {
     this.profile.rememberMe = rememberMe;
     this.sessionStartTime = Date.now();
     this.saveProfile();
+    this.syncWithBackend();
   }
 
   logout() {
@@ -125,6 +198,11 @@ class PlayerTracker {
     }
 
     this.saveProfile();
+
+    // Periodic sync every 10 spins
+    if (this.profile.stats.totalSpins % 10 === 0) {
+      this.syncWithBackend();
+    }
   }
 
   recordBonus(bonusType) {
