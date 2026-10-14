@@ -100,7 +100,8 @@ class IGTWheelBonus {
           } else {
             if (window.slotAudio) window.slotAudio.playClick();
             if (window.slotApp && window.slotApp.showMessage) {
-              window.slotApp.showMessage(`🎡 IGT TOČAK SREĆE: PUNITE MERAČ SPINOVIMA (TRENUTNO ${Math.floor(this.progress)}%)`, 'warning');
+              const msg = window.i18n ? window.i18n.t('wheelLockedMsg', { pct: Math.floor(this.progress) }) : `🎡 GRANDSLOT TOČAK SREĆE: PUNITE MERAČ SPINOVIMA (TRENUTNO ${Math.floor(this.progress)}%)`;
+              window.slotApp.showMessage(msg, 'warning');
             }
           }
         }
@@ -128,7 +129,7 @@ class IGTWheelBonus {
       const xPct = 50 + rPct * Math.cos(angle);
       const yPct = 50 + rPct * Math.sin(angle);
       const bulb = document.createElement('div');
-      bulb.className = `wheel-bulb ${i % 2 === 0 ? 'bulb-gold' : 'bulb-purple'}`;
+      bulb.className = `wheel-bulb ${i % 2 === 0 ? 'bulb-gold' : 'bulb-amber'}`;
       bulb.style.left = `${xPct.toFixed(3)}%`;
       bulb.style.top = `${yPct.toFixed(3)}%`;
       bulb.style.animationDelay = `${(i * 0.05).toFixed(2)}s`;
@@ -427,7 +428,7 @@ class IGTWheelBonus {
     ctx.lineWidth = Math.max(1.5, Math.round(renderSize * 0.005));
     ctx.stroke();
 
-    // Embossed IGT Brand Emblem
+    // Embossed Brand Emblem
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = `900 ${Math.round(renderSize * 0.046)}px Cinzel, serif`;
@@ -436,7 +437,7 @@ class IGTWheelBonus {
     ctx.shadowBlur = Math.round(renderSize * 0.015);
     ctx.shadowOffsetX = 1;
     ctx.shadowOffsetY = 1;
-    ctx.fillText('IGT', 0, 1);
+    ctx.fillText('GRAND', 0, 1);
 
     ctx.restore();
   }

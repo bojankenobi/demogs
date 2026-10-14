@@ -2,7 +2,7 @@
  * Royal 3x3 Slot Symbols and 5 Fixed Paylines
  */
 const ROYAL_SYMBOLS = [
-  { id: 'flower', name: 'IGT Simbol', svg: 'assets/symbols/logo-flower.svg', weight: 4, payout3: 100, payout2: 10 },
+  { id: 'flower', name: 'Zlatni Cvet', svg: 'assets/symbols/logo-flower.svg', weight: 4, payout3: 100, payout2: 10 },
   { id: 'wheel', name: 'Točak Sreće', svg: 'assets/symbols/wheel-scatter.svg', weight: 3, payout3: 50, payout2: 5, isWheelScatter: true },
   { id: 'crown', name: 'Zlatna Kruna', svg: 'assets/symbols/crown.svg', weight: 5, payout3: 75, payout2: 8 },
   { id: 'bar', name: 'BAR', svg: 'assets/symbols/bar.svg', weight: 6, payout3: 40, payout2: 5 },

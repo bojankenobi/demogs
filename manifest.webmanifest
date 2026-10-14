@@ -1,6 +1,6 @@
 {
-  "name": "IGT Casino",
-  "short_name": "IGT",
+  "name": "grandslot",
+  "short_name": "grandslot",
   "description": "Luksuzna 3D Slot PWA igra sa pravim kazino iskustvom",
   "start_url": "./index.html",
   "scope": "./",
@@ -11,8 +11,8 @@
     "minimal-ui",
     "window-controls-overlay"
   ],
-  "background_color": "#120324",
-  "theme_color": "#120324",
+  "background_color": "#090a0f",
+  "theme_color": "#090a0f",
   "orientation": "portrait",
   "categories": ["games", "casino", "entertainment"],
   "lang": "sr",

@@ -117,7 +117,7 @@ class CasinoLobby {
       } else if (gameId === 'royal3x3') {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameRoyal3x3') : 'ROYAL 3x3';
       } else if (gameId === 'mines') {
-        this.currentLabel.textContent = window.i18n ? window.i18n.t('gameMines') : 'IGT MINES X';
+        this.currentLabel.textContent = window.i18n ? window.i18n.t('gameMines') : 'GRAND MINES X';
       } else {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameClassic') : '1-LINE CLASSIC';
       }

@@ -128,7 +128,7 @@ class BonusMeters {
     }
     if (window.slotApp) {
       window.slotApp.showMessage(
-        window.i18n ? window.i18n.t('minesBonusActivated', { sec: this.minesTimeLeft }) : `❇️ IGT MINES OTKLJUČAN! (${this.minesTimeLeft}s)`,
+        window.i18n ? window.i18n.t('minesBonusActivated', { sec: this.minesTimeLeft }) : `❇️ GRAND MINES OTKLJUČAN! (${this.minesTimeLeft}s)`,
         'jackpot'
       );
     }

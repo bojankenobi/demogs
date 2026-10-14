@@ -5,7 +5,7 @@
  *  - Royal 3x3 Multi-Line Slot (5 Paylines with Golden Neon Vectors)
  */
 const SYMBOLS = [
-  { id: 'flower', name: 'IGT Simbol', svg: 'assets/symbols/logo-flower.svg', weight: 4, payout3: 100, payout2: 10 },
+  { id: 'flower', name: 'Zlatni Cvet', svg: 'assets/symbols/logo-flower.svg', weight: 4, payout3: 100, payout2: 10 },
   { id: 'crown', name: 'Zlatna Kruna', svg: 'assets/symbols/crown.svg', weight: 5, payout3: 75, payout2: 8 },
   { id: 'bar', name: 'BAR', svg: 'assets/symbols/bar.svg', weight: 6, payout3: 40, payout2: 5 },
   { id: 'horseshoe', name: 'Srećna Potkovica', svg: 'assets/symbols/horseshoe.svg', weight: 8, payout3: 30, payout2: 4 },
@@ -956,7 +956,7 @@ class SlotGame3D {
     if (this.holdWinModal) {
       this.holdWinModal.classList.add('active');
     }
-    this.showMessage(window.i18n ? window.i18n.t('holdWinHeading') : '🔥 IGT RESPINS AKTIVAN! 🔥', 'jackpot');
+    this.showMessage(window.i18n ? window.i18n.t('holdWinHeading') : '🔥 GRAND RESPINS AKTIVAN! 🔥', 'jackpot');
   }
 
   updateHoldWinUI() {

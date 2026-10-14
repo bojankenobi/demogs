@@ -110,6 +110,7 @@ class SlotMathManager {
     };
 
     this.activePreset = 'standard';
+    this.customWeights = null;
     this.loadConfig();
     this.applyToGames();
   }
@@ -119,8 +120,11 @@ class SlotMathManager {
       const saved = localStorage.getItem(this.STORAGE_KEY) || localStorage.getItem('igt_math_config_v1');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.activePreset && this.PRESETS[parsed.activePreset]) {
+        if (parsed.activePreset && (this.PRESETS[parsed.activePreset] || parsed.activePreset === 'custom')) {
           this.activePreset = parsed.activePreset;
+        }
+        if (parsed.customWeights) {
+          this.customWeights = parsed.customWeights;
         }
       }
     } catch (e) {
@@ -131,7 +135,8 @@ class SlotMathManager {
   saveConfig() {
     try {
       const data = {
-        activePreset: this.activePreset
+        activePreset: this.activePreset,
+        customWeights: this.customWeights || null
       };
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
@@ -143,9 +148,30 @@ class SlotMathManager {
     return this.PRESETS[this.activePreset] || this.PRESETS.standard;
   }
 
+  getActiveWeights() {
+    if (this.customWeights) return this.customWeights;
+    const profile = this.getActiveProfile();
+    return profile ? profile.weights : (this.PRESETS.standard ? this.PRESETS.standard.weights : {});
+  }
+
+  setCustomWeight(symbolId, weightVal) {
+    if (!this.customWeights) {
+      this.customWeights = Object.assign({}, this.getActiveWeights());
+    }
+    this.customWeights[symbolId] = Math.max(1, parseInt(weightVal, 10) || 1);
+    this.activePreset = 'custom';
+    this.saveConfig();
+    this.applyToGames();
+  }
+
   setPreset(presetId) {
-    if (!this.PRESETS[presetId]) return;
-    this.activePreset = presetId;
+    let pid = presetId;
+    if (pid === 'promo') pid = 'demo';
+    if (pid === 'tight') pid = 'high';
+
+    if (!this.PRESETS[pid]) return;
+    this.activePreset = pid;
+    this.customWeights = null;
     this.saveConfig();
     this.applyToGames();
     this.updateHUD();
@@ -168,7 +194,7 @@ class SlotMathManager {
 
   applyToGames() {
     const profile = this.getActiveProfile();
-    const weights = profile.weights;
+    const weights = this.getActiveWeights();
 
     // 1. Update CLASSIC_SYMBOLS
     if (window.CLASSIC_SYMBOLS) {
@@ -202,12 +228,12 @@ class SlotMathManager {
 
     const lbl = document.getElementById('hud-volatility-name');
     if (lbl) {
-      lbl.textContent = profile.shortName;
+      lbl.textContent = activeId === 'custom' ? 'CUSTOM' : profile.shortName;
     }
 
     const subLbl = document.getElementById('hud-volatility-sub');
     if (subLbl) {
-      subLbl.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : '100%')));
+      subLbl.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : (activeId === 'demo' ? '100%' : 'CUST'))));
     }
 
     // Highlight active card in volatility modal if open
@@ -223,7 +249,7 @@ class SlotMathManager {
   runSimulation(gameType = 'royal3x3', totalSpins = 50000) {
     const symbols = (gameType === 'classic') ? window.CLASSIC_SYMBOLS : window.ROYAL_SYMBOLS;
     const profile = this.getActiveProfile();
-    const weights = profile.weights;
+    const weights = this.getActiveWeights();
 
     const symList = symbols.map(s => ({
       id: s.id,

@@ -1,9 +1,9 @@
 /**
- * IGT Xtension Link - Symbols & Paylines
+ * Grand Xtension Link - Symbols & Paylines
  * 5 Reels, 3 to 8 Rows, 25 Paylines
  */
 const XTENSION_SYMBOLS = [
-  { id: 'flower', name: 'IGT Simbol', svg: 'assets/symbols/logo-flower.svg', weight: 4, payout5: 200, payout4: 50, payout3: 15, isWild: true },
+  { id: 'flower', name: 'Zlatni Cvet', svg: 'assets/symbols/logo-flower.svg', weight: 4, payout5: 200, payout4: 50, payout3: 15, isWild: true },
   { id: 'crown', name: 'Zlatna Kruna', svg: 'assets/symbols/crown.svg', weight: 5, payout5: 100, payout4: 30, payout3: 10 },
   { id: 'seven', name: 'Zlatna 7', svg: 'assets/symbols/seven.svg', weight: 7, payout5: 60, payout4: 20, payout3: 8 },
   { id: 'bar', name: 'BAR', svg: 'assets/symbols/bar.svg', weight: 8, payout5: 40, payout4: 15, payout3: 5 },

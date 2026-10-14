@@ -27,7 +27,7 @@ class AdminPanel {
         <div class="admin-header">
           <div class="admin-title-wrap">
             <span class="admin-badge">OPERATOR / DEMO</span>
-            <h2 class="admin-title">⚙️ IGT ADMIN PANEL</h2>
+            <h2 class="admin-title">⚙️ GRANDSLOT ADMIN PANEL</h2>
           </div>
           <button class="admin-close-btn" id="admin-close-btn" title="Zatvori">✕</button>
         </div>
@@ -46,28 +46,36 @@ class AdminPanel {
             </div>
 
             <div class="preset-cards-grid">
-              <div class="preset-card ${this.mathManager.activePreset === 'promo' ? 'active' : ''}" data-preset="promo">
-                <div class="preset-card-head">
-                  <span class="preset-name">🎉 Promo / Reklama</span>
-                  <span class="preset-rtp">~98.5% RTP</span>
-                </div>
-                <div class="preset-desc">Maksimalan doživljaj za sajmove i prezentacije. Izuzetno česti dobici i brzi bonusi.</div>
-              </div>
-
               <div class="preset-card ${this.mathManager.activePreset === 'standard' ? 'active' : ''}" data-preset="standard">
                 <div class="preset-card-head">
                   <span class="preset-name">🎰 Casino Standard</span>
-                  <span class="preset-rtp">~96.2% RTP</span>
+                  <span class="preset-rtp">~96.0% RTP</span>
                 </div>
                 <div class="preset-desc">Standardna industrijska slot matematika. Balansiran odnos adrenalina i dobitaka.</div>
               </div>
 
-              <div class="preset-card ${this.mathManager.activePreset === 'tight' ? 'active' : ''}" data-preset="tight">
+              <div class="preset-card ${this.mathManager.activePreset === 'low' ? 'active' : ''}" data-preset="low">
+                <div class="preset-card-head">
+                  <span class="preset-name">🛡️ Niska Volatilnost</span>
+                  <span class="preset-rtp">~97.0% RTP</span>
+                </div>
+                <div class="preset-desc">Češći manji dobici (~40% hit rate), umeren rizik i duže trajanje kredita.</div>
+              </div>
+
+              <div class="preset-card ${this.mathManager.activePreset === 'high' || this.mathManager.activePreset === 'tight' ? 'active' : ''}" data-preset="high">
                 <div class="preset-card-head">
                   <span class="preset-name">🔥 Visoka Volatilnost</span>
-                  <span class="preset-rtp">~93.8% RTP</span>
+                  <span class="preset-rtp">~94.5% RTP</span>
                 </div>
-                <div class="preset-desc">Veći rizik i ređi dobici, ali ekstremni pikovi. Za takmičenja i duže sesije.</div>
+                <div class="preset-desc">Veći rizik i ređi dobici, ali isključivo 3 ista simbola plaćaju uz +50% jače isplate!</div>
+              </div>
+
+              <div class="preset-card ${this.mathManager.activePreset === 'demo' || this.mathManager.activePreset === 'promo' ? 'active' : ''}" data-preset="demo">
+                <div class="preset-card-head">
+                  <span class="preset-name">🎉 Promo / Reklama</span>
+                  <span class="preset-rtp">100% Hit • Promo</span>
+                </div>
+                <div class="preset-desc">Maksimalan doživljaj za prezentacije. Garantovani dobici na svakom spinu i brzi bonusi.</div>
               </div>
             </div>
 
@@ -158,6 +166,15 @@ class AdminPanel {
                   <button class="admin-btn-trigger" id="btn-trigger-add-10k">➕ Dodaj +10.000 RSD</button>
                   <button class="admin-btn-trigger" id="btn-trigger-reset-1k">🔄 Postavi na 1.000 RSD</button>
                   <button class="admin-btn-trigger" id="btn-trigger-reset-stats">🧹 Resetuj istoriju sesije</button>
+                </div>
+              </div>
+
+              <div class="trigger-group">
+                <div class="trigger-group-title">🔔 Push Notifikacije (Test & Marketing)</div>
+                <div class="trigger-btns-row">
+                  <button class="admin-btn-trigger gold" id="btn-trigger-push-jackpot">🏆 Push Džekpot Alert</button>
+                  <button class="admin-btn-trigger" id="btn-trigger-push-tour">⚡ Push Turnir Alert</button>
+                  <button class="admin-btn-trigger" id="btn-trigger-push-bonus">🎁 Push Točak Sreće</button>
                 </div>
               </div>
             </div>
@@ -335,6 +352,28 @@ class AdminPanel {
       this.app.showMessage('🧹 Istorija sesije i keš resetovani', 'info');
       setTimeout(() => window.location.reload(), 500);
     });
+
+    // Push Notification Demo Triggers
+    const triggerPushJackpot = document.getElementById('btn-trigger-push-jackpot');
+    if (triggerPushJackpot) triggerPushJackpot.addEventListener('click', () => {
+      if (this.app.notifications) {
+        this.app.notifications.triggerJackpotAlert('gold');
+      }
+    });
+
+    const triggerPushTour = document.getElementById('btn-trigger-push-tour');
+    if (triggerPushTour) triggerPushTour.addEventListener('click', () => {
+      if (this.app.notifications) {
+        this.app.notifications.triggerTournamentAlert();
+      }
+    });
+
+    const triggerPushBonus = document.getElementById('btn-trigger-push-bonus');
+    if (triggerPushBonus) triggerPushBonus.addEventListener('click', () => {
+      if (this.app.notifications) {
+        this.app.notifications.triggerBonusAlert();
+      }
+    });
   }
 
   renderWeightsEditor() {
@@ -406,6 +445,15 @@ class AdminPanel {
   open() {
     this.isOpen = true;
     this.modalEl.classList.add('active');
+    
+    // Synchronize active preset highlight
+    const curPreset = this.mathManager.activePreset;
+    this.modalEl.querySelectorAll('.preset-card').forEach(c => {
+      const pid = c.getAttribute('data-preset');
+      const isActive = (pid === curPreset) || (pid === 'demo' && curPreset === 'promo') || (pid === 'high' && curPreset === 'tight');
+      c.classList.toggle('active', isActive);
+    });
+
     this.renderWeightsEditor();
     if (window.slotAudio) window.slotAudio.playClick();
   }

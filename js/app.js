@@ -171,6 +171,11 @@ class IGTApp {
       }
     }
 
+    // 5.5 Notification Manager
+    if (window.NotificationManager) {
+      this.notifications = new window.NotificationManager(this);
+    }
+
     // 6. Admin / Operator Control Panel
     if (window.AdminPanel) {
       this.adminPanel = new window.AdminPanel(this);
@@ -545,6 +550,11 @@ class IGTApp {
       sndBadge.className = 'menu-pill-badge ' + (isMuted ? '' : 'badge-green');
       if (sndIcon) sndIcon.textContent = isMuted ? '🔇' : '🔊';
     }
+
+    // 5. Notifications badge in menu
+    if (this.notifications) {
+      this.notifications.updateUI();
+    }
   }
 
   initCasinoMenu() {
@@ -662,7 +672,25 @@ class IGTApp {
       });
     }
 
-    // Option 8: PWA App Installation
+    // Option 8: Official Website Link
+    const optWebsite = document.getElementById('menu-opt-website');
+    if (optWebsite) {
+      optWebsite.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+      });
+    }
+
+    // Option 9: Push Notifications Toggle
+    const optNotif = document.getElementById('menu-opt-notifications');
+    if (optNotif) {
+      optNotif.addEventListener('click', () => {
+        if (this.notifications) {
+          this.notifications.toggle();
+        }
+      });
+    }
+
+    // Option 10: PWA App Installation
     const optInstall = document.getElementById('menu-opt-install');
     if (optInstall) {
       optInstall.addEventListener('click', () => {
@@ -947,7 +975,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Fallback for Desktop/Unsupported browsers: show gentle prompt
     if (app && typeof app.showMessage === 'function') {
-      const msg = window.i18n ? window.i18n.t('pwaBannerTitle') : 'Instalirajte IGT Casino';
+      const msg = window.i18n ? window.i18n.t('pwaBannerTitle') : 'Instalirajte Grand Slot';
       app.showMessage(msg, 'gold');
     }
   }

@@ -12,8 +12,8 @@
       <stop offset="100%" stop-color="#b8790b"/>
     </radialGradient>
     <linearGradient id="purpleSeg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#b85afd"/>
-      <stop offset="100%" stop-color="#58118d"/>
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#b45309"/>
     </linearGradient>
     <linearGradient id="goldSeg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffd700"/>
@@ -31,7 +31,7 @@
 
   <!-- Outer Ambient Glow & Golden Rim -->
   <circle cx="50" cy="50" r="48" fill="url(#wheelOuterGold)" filter="url(#goldGlow)"/>
-  <circle cx="50" cy="50" r="44" fill="#0d021a" stroke="#ffd700" stroke-width="1.5"/>
+  <circle cx="50" cy="50" r="44" fill="#120902" stroke="#ffd700" stroke-width="1.5"/>
 
   <!-- Wheel Segments (Pie Slices) -->
   <g transform="translate(50, 50)">

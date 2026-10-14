@@ -2,3 +2,5 @@
 Thumbs.db
 *.log
 scratch/
+backup_igt_before_grandslot/
+GRANDSLOT/

@@ -1,34 +1,22 @@
 /**
- * IGT Slot - Canvas Particle & Floating Coins Engine
- * Embosses the authentic IGT Emblem onto 3D floating coins.
+ * Happy Hour Slot - Canvas Particle & Floating Coins Engine
+ * Embosses the authentic brand flower onto floating coins.
  */
 
-// Official IGT Logo Paths (I - G - T) extracted from vector asset
-const IGT_EMBLEM_PATHS = (typeof Path2D !== 'undefined') ? [
-  // Letter I
-  {
-    path: new Path2D('M0 0 C9.57 0 19.14 0 29 0 C29.28 50.98 29.28 50.98 19.07 64.89 C17.64 67.72 18.03 69.02 19 72 C19.74 73.57 20.54 75.11 21.38 76.62 C31.23 95.7 29.12 119.21 29 140 C19.43 140 9.86 140 0 140 C-0.07 134.74 -0.13 129.48 -0.16 124.22 C-0.18 122.43 -0.2 120.65 -0.23 118.87 C-0.43 104.7 -0.61 89.92 6.75 77.31 C9.32 73.13 9.32 73.13 9.88 68.44 C8.87 65.65 7.58 63.21 6.12 60.62 C-0.66 47.23 -0.4 33.22 -0.19 18.56 C-0.17 16.75 -0.16 14.94 -0.15 13.13 C-0.12 8.75 -0.06 4.38 0 0 Z'),
-    fill: '#B85AFD',
-    tx: 1.0,
-    ty: 5.0
-  },
-  // Letter G
-  {
-    path: new Path2D('M0 0 C1.01 0.01 2.02 0.02 3.06 0.02 C10.92 0.2 17.46 1.18 24.69 4.44 C26.07 5.04 26.07 5.04 27.49 5.65 C42.28 12.87 51.54 24.69 57.02 39.99 C57.69 42.44 57.69 42.44 57.69 46.44 C53.17 46.73 48.65 46.91 44.12 47.06 C42.85 47.15 41.57 47.23 40.26 47.32 C30.94 47.56 30.94 47.56 27.26 44.27 C24.78 40.79 23.04 37.49 21.69 33.44 C19.82 32.35 19.82 32.35 17.69 31.44 C16.54 30.65 15.39 29.86 14.25 29.06 C1.05 20.92 -14.66 20.52 -29.46 23.83 C-32.76 24.64 -36.03 25.54 -39.31 26.44 C-40.98 26.79 -42.64 27.13 -44.31 27.44 C-51.55 48.8 -54.31 73.86 -44.55 94.89 C-37.56 108.98 -28.58 117.09 -13.61 122.44 C-5.29 124.96 3.02 125.96 11.69 125.44 C12.54 125.45 13.4 125.46 14.29 125.48 C17.29 125.29 19.06 124.94 21.69 123.44 C29.14 113.09 30.55 101.95 31.69 89.44 C21.46 89.44 11.23 89.44 0.69 89.44 C0.69 82.18 0.69 74.92 0.69 67.44 C20.16 67.44 39.63 67.44 59.69 67.44 C59.69 86.77 55.48 102.73 41.62 116.74 C35.67 122.21 28.91 125.97 21.64 129.41 C19.41 130.59 17.43 131.98 15.38 133.44 C6.17 139.62 -2.68 141.12 -13.67 141.01 C-15.68 141 -17.68 141.03 -19.69 141.07 C-35.02 141.05 -49.01 134.99 -60.3 124.6 C-72.7 111.24 -79 94.43 -79.69 76.31 C-78.97 58.57 -71.78 45.38 -59.13 33.37 C-50.34 25.44 -50.34 25.44 -46.31 25.44 C-46.05 24.86 -45.78 24.28 -45.51 23.68 C-39.66 12.71 -28.27 5.6 -16.76 1.85 C-11.14 0.21 -5.83 -0.06 0 0 Z'),
-    fill: '#B859FD',
-    tx: 124.3125,
-    ty: 4.5625
-  },
-  // Letter T
-  {
-    path: new Path2D('M0 0 C37.29 0 74.58 0 113 0 C113 8.25 113 16.5 113 25 C99.47 25 85.94 25 72 25 C71.67 30.94 71.34 36.88 71 43 C69.58 51.29 67.64 57.48 63.3 64.66 C61.62 67.67 61.62 67.67 61 71 C62.09 73.32 62.09 73.32 63.75 75.62 C75.26 94 72.18 119.37 72 140 C62.43 140 52.86 140 43 140 C42.93 135.04 42.87 130.08 42.84 125.13 C42.82 123.45 42.8 121.77 42.77 120.09 C42.51 102.71 43.31 84.5 54 70 C52.93 67.81 51.82 65.69 50.6 63.58 C47.32 57.67 45.3 52.11 44.12 45.5 C44.01 44.84 43.89 44.17 43.76 43.49 C42.77 37.19 43 31.57 43 25 C28.81 25 14.62 25 0 25 C0 16.75 0 8.5 0 0 Z'),
-    fill: '#B640FC',
-    tx: 187.0,
-    ty: 5.0
-  }
-] : [];
-const MAXBET_EMBLEM_PATHS = IGT_EMBLEM_PATHS;
+// Brand Flower Paths extracted from the SVG logo
+const FLOWER_CENTER_PATH = (typeof Path2D !== 'undefined') ? new Path2D(
+  "M64.88,42.15c-.25,0-.45.18-.49.42-.02.13-1.94,11.8-4.94,14.78-3,2.98-14.68,4.83-14.81,4.85-.24.04-.42.24-.43.49,0,.25.18.45.42.49.13.02,11.8,1.94,14.78,4.94,2.98,3,4.83,14.68,4.85,14.81.03.24.24.42.49.42s.45-.18.49-.42c.02-.13,1.94-11.8,4.94-14.78,3-2.98,14.68-4.83,14.81-4.85.24-.03.42-.24.42-.49,0-.25-.18-.45-.42-.49-.13-.02-11.8-1.94-14.78-4.94-2.98-3-4.83-14.68-4.85-14.81-.03-.24-.24-.42-.49-.42h0Z"
+) : null;
 
+const FLOWER_PETALS_PATH = (typeof Path2D !== 'undefined') ? new Path2D(
+  "M85.07,0 L64.88,12.11 L64.88,36.33 L85.07,24.22 Z " +
+  "M29.39,6.8 L26.28,30.13 L45.22,45.23 L48.33,21.9 Z " +
+  "M0,54.56 L16.3,71.54 L39.91,66.15 L23.61,49.17 Z " +
+  "M19.02,107.33 L42.46,105.17 L52.96,83.35 L29.53,85.5 Z " +
+  "M72.13,125.35 L85.06,105.68 L74.54,83.86 L61.62,103.53 Z " +
+  "M119.33,95.07 L112.02,72.7 L88.4,67.31 L95.72,89.68 Z " +
+  "M125.09,39.28 L103.03,31.05 L84.1,46.16 L106.15,54.38 Z"
+) : null;
 
 class ParticleEngine {
   constructor(canvasId) {
@@ -119,39 +107,29 @@ class ParticleEngine {
         cctx.fill();
       }
 
-      // Embossed IGT Logo Relief
-      if (IGT_EMBLEM_PATHS && IGT_EMBLEM_PATHS.length > 0) {
-        const emblemTargetWidth = radius * (isBack ? 1.25 : 1.35);
-        const s = emblemTargetWidth / 300.0;
+      // Embossed Brand Flower Relief
+      if (FLOWER_PETALS_PATH && FLOWER_CENTER_PATH) {
+        const flowerRadius = radius * (isBack ? 0.40 : 0.46);
+        const s = flowerRadius / 62.5;
 
         // Shadow pass
         cctx.save();
         cctx.translate(cx + 1.2, cy + 1.5);
         cctx.scale(s, s);
-        cctx.translate(-150, -75);
+        cctx.translate(-62.54, -62.67);
         cctx.fillStyle = 'rgba(38, 16, 0, 0.85)';
-        for (let i = 0; i < IGT_EMBLEM_PATHS.length; i++) {
-          const item = IGT_EMBLEM_PATHS[i];
-          cctx.save();
-          cctx.translate(item.tx, item.ty);
-          cctx.fill(item.path);
-          cctx.restore();
-        }
+        cctx.fill(FLOWER_PETALS_PATH);
+        cctx.fill(FLOWER_CENTER_PATH);
         cctx.restore();
 
-        // Authentic metallic / vibrant IGT purple emblem pass
+        // Raised metallic face pass
         cctx.save();
         cctx.translate(cx, cy);
         cctx.scale(s, s);
-        cctx.translate(-150, -75);
-        for (let i = 0; i < IGT_EMBLEM_PATHS.length; i++) {
-          const item = IGT_EMBLEM_PATHS[i];
-          cctx.save();
-          cctx.translate(item.tx, item.ty);
-          cctx.fillStyle = item.fill;
-          cctx.fill(item.path);
-          cctx.restore();
-        }
+        cctx.translate(-62.54, -62.67);
+        cctx.fillStyle = isBack ? '#ffd54f' : '#fff9d6';
+        cctx.fill(FLOWER_PETALS_PATH);
+        cctx.fill(FLOWER_CENTER_PATH);
         cctx.restore();
       }
 
@@ -208,14 +186,14 @@ class ParticleEngine {
         tiltAxis: Math.random() * Math.PI,
         size: isCoin ? (16 + Math.random() * 18) : (3 + Math.random() * 5),
         isCoin: isCoin,
-        color: isCoin ? '#ffd700' : (Math.random() > 0.5 ? '#fff4b8' : (Math.random() > 0.5 ? '#b859fd' : '#e040fb')),
+        color: isCoin ? '#ffd700' : (Math.random() > 0.5 ? '#fff4b8' : '#f59e0b'),
         alpha: 1,
         decay: 0.009 + Math.random() * 0.012
       });
     }
   }
 
-  // Draw authentic 3D Extruded Gold Bullion Coin with tangible depth & embossed IGT emblem
+  // Draw authentic 3D Extruded Gold Bullion Coin with tangible depth & embossed brand flower
   draw3DCoin(x, y, radius, tiltAngle, tiltAxis, spinAngle, opacity) {
     if (opacity <= 0 || radius <= 0) return;
     const ctx = this.ctx;

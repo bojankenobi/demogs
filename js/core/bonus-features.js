@@ -259,7 +259,7 @@ class BuyBonusManager {
 
     this.features = {
       wheel: { mult: 45, name: 'Točak Sreće', icon: '🎡' },
-      mines: { mult: 35, name: 'IGT Mini-Mines', icon: '💣' },
+      mines: { mult: 35, name: 'Grand Mini-Mines', icon: '💣' },
       freespins: { mult: 50, name: 'Super Besplatni Spinovi', icon: '⚡' }
     };
 

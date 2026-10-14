@@ -429,7 +429,7 @@ class GrandXtensionGame {
       window.slotAudio.playJackpot();
     }
     if (window.slotApp) {
-      window.slotApp.showMessage('⚡ IGT XTENSION LINK POKRENUT! PRITISNITE SPIN ZA RESPIN ⚡', 'jackpot');
+      window.slotApp.showMessage('⚡ GRAND XTENSION LINK POKRENUT! PRITISNITE SPIN ZA RESPIN ⚡', 'jackpot');
     }
 
     this.showBonusUI();
