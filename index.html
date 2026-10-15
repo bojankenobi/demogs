@@ -935,59 +935,133 @@
     </div>
   </div>
 
-  <!-- 18+ Mandatory Demo Login Modal / Age Gate -->
+  <!-- VIP Player Authentication Modal (Login & Registration with 1.000 RSD Welcome Bonus) -->
   <div class="modal-overlay login-gate-overlay" id="login-modal">
-    <div class="login-card-frame">
+    <div class="login-card-frame auth-card-frame">
       <div class="login-glow-bar"></div>
+      
       <div class="login-header">
         <img src="assets/logo.svg" alt="grandslot" class="login-logo-img" />
-        <h2 class="login-heading" data-i18n="loginTitle">GRANDSLOT DEMO PRIJAVA</h2>
-        <p class="login-subheading" data-i18n="loginSub">Pristup 3D kazino platformi i igračkom profilu</p>
+        <h2 class="login-heading" id="auth-modal-title">GRAND SLOT VIP KLUB</h2>
+        <p class="login-subheading" id="auth-modal-sub">Pristup bezbednoj platformi i personalizovanim promocijama</p>
       </div>
 
-      <form class="login-form" id="login-form">
-        <div class="login-notice-box" data-i18n="loginNotice18">
-          🔞 Strogo zabranjeno licima mlađim od 18 godina. Igrajte odgovorno.
-        </div>
-
-        <div class="login-field-group">
-          <label class="login-label" for="login-username" data-i18n="loginUsernameLabel">Korisničko ime / Nickname:</label>
-          <div class="login-input-wrap">
-            <span class="login-input-icon">👤</span>
-            <input type="text" id="login-username" class="login-input" placeholder="Vaše korisničko ime / Nickname" required data-i18n-placeholder="loginUserPlaceholder" maxlength="20" autocomplete="nickname" />
-          </div>
-        </div>
-
-        <div class="login-field-group">
-          <label class="login-label" for="login-pin" data-i18n="loginPinLabel">PIN Kod (opciono):</label>
-          <div class="login-input-wrap">
-            <span class="login-input-icon">🔒</span>
-            <input type="password" id="login-pin" class="login-input" placeholder="Demo PIN (opciono)" data-i18n-placeholder="loginPinPlaceholder" maxlength="6" inputmode="numeric" />
-          </div>
-        </div>
-
-        <div class="login-checkbox-group">
-          <label class="login-checkbox-label">
-            <input type="checkbox" id="login-age-check" class="login-checkbox" required />
-            <span class="checkbox-custom"></span>
-            <span class="checkbox-text" data-i18n="loginAgeConfirm">Potvrđujem da imam 18+ godina i prihvatam uslove.</span>
-          </label>
-
-          <label class="login-checkbox-label">
-            <input type="checkbox" id="login-remember-me" class="login-checkbox" checked />
-            <span class="checkbox-custom"></span>
-            <span class="checkbox-text" data-i18n="loginRememberMe">Zapamti me na ovom uređaju</span>
-          </label>
-        </div>
-
-        <div class="login-error-msg" id="login-error-msg"></div>
-
-        <button type="submit" class="btn-login-submit" id="btn-login-submit">
-          <span class="btn-login-shine"></span>
-          <span class="btn-login-icon">🎰</span>
-          <span class="btn-login-text" data-i18n="loginSubmitBtn">POTVRDI I UĐI U IGRU</span>
+      <!-- Dual Tab Navigation: Prijava vs Registracija -->
+      <div class="auth-tabs-nav">
+        <button type="button" class="auth-tab-btn active" id="auth-tab-login">
+          <span class="auth-tab-icon">🔑</span>
+          <span>PRIJAVA</span>
         </button>
-      </form>
+        <button type="button" class="auth-tab-btn" id="auth-tab-register">
+          <span class="auth-tab-icon">✨</span>
+          <span>REGISTRACIJA</span>
+          <span class="auth-tab-badge">+1.000 RSD</span>
+        </button>
+      </div>
+
+      <!-- Live Dynamic Alert Box (Error / Success) -->
+      <div class="auth-alert-box" id="auth-alert-box" style="display: none;"></div>
+
+      <!-- TAB 1: PRIJAVA (LOGIN) -->
+      <div class="auth-panel" id="auth-panel-login">
+        <form class="login-form" id="login-form">
+          <div class="login-field-group">
+            <label class="login-label" for="login-username">Korisničko ime:</label>
+            <div class="login-input-wrap">
+              <span class="login-input-icon">👤</span>
+              <input type="text" id="login-username" class="login-input" placeholder="Vaše korisničko ime" required autocomplete="username" maxlength="30" />
+            </div>
+          </div>
+
+          <div class="login-field-group">
+            <label class="login-label" for="login-password">Lozinka:</label>
+            <div class="login-input-wrap">
+              <span class="login-input-icon">🔒</span>
+              <input type="password" id="login-password" class="login-input with-toggle" placeholder="Unesite lozinku" required autocomplete="current-password" />
+              <button type="button" class="auth-pw-toggle" id="toggle-login-password" title="Prikaži / sakrij lozinku">👁️</button>
+            </div>
+          </div>
+
+          <div class="login-checkbox-group">
+            <label class="login-checkbox-label">
+              <input type="checkbox" id="login-remember-me" class="login-checkbox" checked />
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">Zapamti me na ovom uređaju</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-login-submit" id="btn-login-submit">
+            <span class="btn-login-shine"></span>
+            <span class="btn-login-icon">🔑</span>
+            <span class="btn-login-text" id="btn-login-text">PRIJAVI SE</span>
+          </button>
+
+          <div class="auth-switch-footer">
+            <span>Nemaš nalog?</span>
+            <button type="button" class="auth-switch-link" id="link-go-to-reg">Registruj se i uzmi 1.000 RSD bonusa &rarr;</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 2: REGISTRACIJA (SIGN UP) -->
+      <div class="auth-panel hidden" id="auth-panel-register">
+        <form class="login-form" id="register-form">
+          <div class="auth-bonus-banner">
+            <div class="auth-bonus-badge">🎁 BONUS DOBRODOŠLICE</div>
+            <div class="auth-bonus-amount">1.000 RSD</div>
+            <div class="auth-bonus-desc">Automatski raspoloživo na vašem računu odmah nakon registracije!</div>
+          </div>
+
+          <div class="login-field-group">
+            <label class="login-label" for="reg-username">Korisničko ime:</label>
+            <div class="login-input-wrap">
+              <span class="login-input-icon">👤</span>
+              <input type="text" id="reg-username" class="login-input" placeholder="Izaberite korisničko ime (min 3 karaktera)" required autocomplete="username" minlength="3" maxlength="30" />
+            </div>
+          </div>
+
+          <div class="login-field-group">
+            <label class="login-label" for="reg-password">Lozinka:</label>
+            <div class="login-input-wrap">
+              <span class="login-input-icon">🔒</span>
+              <input type="password" id="reg-password" class="login-input with-toggle" placeholder="Minimalno 6 karaktera" required autocomplete="new-password" minlength="6" />
+              <button type="button" class="auth-pw-toggle" id="toggle-reg-password" title="Prikaži / sakrij lozinku">👁️</button>
+            </div>
+          </div>
+
+          <div class="login-field-group">
+            <label class="login-label" for="reg-phone">Broj telefona (opciono):</label>
+            <div class="login-input-wrap">
+              <span class="login-input-icon">📱</span>
+              <input type="tel" id="reg-phone" class="login-input" placeholder="npr. 0641234567" autocomplete="tel" maxlength="25" />
+            </div>
+            <span class="auth-field-hint">Za prijem VIP vaučera, ličnih promocija i nagradnih QR kodova.</span>
+          </div>
+
+          <div class="login-checkbox-group">
+            <label class="login-checkbox-label">
+              <input type="checkbox" id="reg-age-check" class="login-checkbox" required />
+              <span class="checkbox-custom"></span>
+              <span class="checkbox-text">Potvrđujem da imam 18+ godina i prihvatam pravila igre.</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn-login-submit btn-register-submit" id="btn-register-submit">
+            <span class="btn-login-shine"></span>
+            <span class="btn-login-icon">🎁</span>
+            <span class="btn-login-text" id="btn-reg-text">REGISTRUJ SE I UZMI 1.000 RSD</span>
+          </button>
+
+          <div class="auth-switch-footer">
+            <span>Već imaš profil?</span>
+            <button type="button" class="auth-switch-link" id="link-go-to-login">Prijavi se ovde &rarr;</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="login-notice-box auth-18-footer">
+        🔞 Strogo zabranjeno licima mlađim od 18 godina. Igrajte odgovorno.
+      </div>
     </div>
   </div>
 

@@ -161,15 +161,8 @@ class IGTApp {
 
     this.initControls();
 
-    // 5. Check 18+ Login State & Open Appropriate Modal
-    if (this.playerTracker && !this.playerTracker.profile.isLoggedIn) {
-      const loginModal = document.getElementById('login-modal');
-      if (loginModal) loginModal.classList.add('active');
-    } else {
-      if (this.lobby) {
-        this.lobby.openModal();
-      }
-    }
+    // 5. Check Player Session & Prompt Auth
+    this.initPlayerSession();
 
     // 5.5 Notification Manager
     if (window.NotificationManager) {
@@ -737,6 +730,30 @@ class IGTApp {
     if (this.isAutoSpin && (!this.lobby.activeGame || !this.lobby.activeGame.isSpinning)) {
       this.spin();
     }
+  }
+
+  async initPlayerSession() {
+    const loginModal = document.getElementById('login-modal');
+    if (this.playerTracker && this.playerTracker.getAuthToken()) {
+      try {
+        const res = await this.playerTracker.checkSession();
+        if (res && res.success && res.player) {
+          if (this.wallet && res.player.balance_rsd != null) {
+            this.wallet.setBalanceFromAuth(res.player.balance_rsd);
+          }
+          if (typeof window.updateHeaderProfile === 'function') {
+            window.updateHeaderProfile();
+          }
+          if (loginModal) loginModal.classList.remove('active');
+          if (this.lobby) this.lobby.openModal();
+          return;
+        }
+      } catch (err) {
+        console.warn('Init session check error:', err);
+      }
+    }
+
+    if (loginModal) loginModal.classList.add('active');
   }
 
   initControls() {
@@ -1342,20 +1359,94 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(showInstallBanner, 2000);
   }
 
-  // 18+ Login & Player Profile UI Controller
+  // VIP Authentication & Player Profile UI Controller
   const loginModal = document.getElementById('login-modal');
+  const authTabLogin = document.getElementById('auth-tab-login');
+  const authTabRegister = document.getElementById('auth-tab-register');
+  const authPanelLogin = document.getElementById('auth-panel-login');
+  const authPanelRegister = document.getElementById('auth-panel-register');
+  const authAlertBox = document.getElementById('auth-alert-box');
+  const linkGoToReg = document.getElementById('link-go-to-reg');
+  const linkGoToLogin = document.getElementById('link-go-to-login');
+
   const loginForm = document.getElementById('login-form');
   const loginUserInput = document.getElementById('login-username');
-  const loginPinInput = document.getElementById('login-pin');
-  const loginAgeCheck = document.getElementById('login-age-check');
+  const loginPassInput = document.getElementById('login-password');
   const loginRememberCheck = document.getElementById('login-remember-me');
-  const loginErrorMsg = document.getElementById('login-error-msg');
+  const btnLoginSubmit = document.getElementById('btn-login-submit');
+  const btnLoginText = document.getElementById('btn-login-text');
+  const toggleLoginPass = document.getElementById('toggle-login-password');
+
+  const registerForm = document.getElementById('register-form');
+  const regUserInput = document.getElementById('reg-username');
+  const regPassInput = document.getElementById('reg-password');
+  const regPhoneInput = document.getElementById('reg-phone');
+  const regAgeCheck = document.getElementById('reg-age-check');
+  const btnRegisterSubmit = document.getElementById('btn-register-submit');
+  const btnRegText = document.getElementById('btn-reg-text');
+  const toggleRegPass = document.getElementById('toggle-reg-password');
+
   const headerPlayerName = document.getElementById('header-player-name');
   const playerProfileBtn = document.getElementById('player-profile-btn');
   const profileModal = document.getElementById('profile-modal');
   const profileCloseX = document.getElementById('profile-close-x');
   const profileCloseBtn = document.getElementById('profile-close-btn');
   const profileLogoutBtn = document.getElementById('profile-logout-btn');
+
+  function showAuthAlert(msg, type = 'error') {
+    if (!authAlertBox) return;
+    authAlertBox.className = `auth-alert-box ${type}`;
+    const icon = type === 'success' ? '✅' : '⚠️';
+    authAlertBox.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+    authAlertBox.style.display = 'flex';
+  }
+
+  function clearAuthAlert() {
+    if (authAlertBox) {
+      authAlertBox.style.display = 'none';
+      authAlertBox.innerHTML = '';
+    }
+  }
+
+  function switchAuthTab(tab) {
+    clearAuthAlert();
+    if (tab === 'register') {
+      authTabLogin?.classList.remove('active');
+      authTabRegister?.classList.add('active');
+      authPanelLogin?.classList.add('hidden');
+      authPanelRegister?.classList.remove('hidden');
+      if (regUserInput) regUserInput.focus();
+    } else {
+      authTabRegister?.classList.remove('active');
+      authTabLogin?.classList.add('active');
+      authPanelRegister?.classList.add('hidden');
+      authPanelLogin?.classList.remove('hidden');
+      if (loginUserInput) loginUserInput.focus();
+    }
+  }
+  window.switchAuthTab = switchAuthTab;
+
+  if (authTabLogin) authTabLogin.addEventListener('click', () => switchAuthTab('login'));
+  if (authTabRegister) authTabRegister.addEventListener('click', () => switchAuthTab('register'));
+  if (linkGoToReg) linkGoToReg.addEventListener('click', () => switchAuthTab('register'));
+  if (linkGoToLogin) linkGoToLogin.addEventListener('click', () => switchAuthTab('login'));
+
+  // Password Visibility Toggles
+  if (toggleLoginPass && loginPassInput) {
+    toggleLoginPass.addEventListener('click', () => {
+      const isPass = loginPassInput.type === 'password';
+      loginPassInput.type = isPass ? 'text' : 'password';
+      toggleLoginPass.textContent = isPass ? '🙈' : '👁️';
+    });
+  }
+
+  if (toggleRegPass && regPassInput) {
+    toggleRegPass.addEventListener('click', () => {
+      const isPass = regPassInput.type === 'password';
+      regPassInput.type = isPass ? 'text' : 'password';
+      toggleRegPass.textContent = isPass ? '🙈' : '👁️';
+    });
+  }
 
   function updateHeaderProfile() {
     if (!app || !app.playerTracker) return;
@@ -1365,9 +1456,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (playerProfileBtn) {
       const uName = profile.isLoggedIn ? (profile.username || 'Igrač') : 'Prijava';
-      playerProfileBtn.title = `${uName} (18+) - Profil & Statistika`;
+      playerProfileBtn.title = `${uName} (18+) - Profil & VIP Klub`;
     }
   }
+  window.updateHeaderProfile = updateHeaderProfile;
 
   // Pre-fill remembered username
   if (app && app.playerTracker && app.playerTracker.profile) {
@@ -1377,32 +1469,114 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHeaderProfile();
   }
 
+  // Handle Login Submit
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!loginAgeCheck || !loginAgeCheck.checked) {
-        if (loginErrorMsg) {
-          loginErrorMsg.textContent = window.i18n ? window.i18n.t('loginAgeRequiredMsg') : 'Morate potvrditi da imate 18 ili više godina!';
-          loginErrorMsg.style.display = 'block';
-        }
+      clearAuthAlert();
+
+      const username = (loginUserInput ? loginUserInput.value : '').trim();
+      const password = (loginPassInput ? loginPassInput.value : '').trim();
+      const remember = loginRememberCheck ? loginRememberCheck.checked : true;
+
+      if (!username || !password) {
+        showAuthAlert('Molimo unesite korisničko ime i lozinku.');
         return;
       }
 
-      const username = (loginUserInput ? loginUserInput.value : '').trim() || 'Demo Player';
-      const pin = loginPinInput ? loginPinInput.value : '';
-      const remember = loginRememberCheck ? loginRememberCheck.checked : true;
+      if (btnLoginSubmit) btnLoginSubmit.disabled = true;
+      if (btnLoginText) btnLoginText.textContent = 'Povezivanje...';
 
-      if (app && app.playerTracker) {
-        app.playerTracker.login(username, pin, remember);
+      try {
+        const res = await app.playerTracker.login(username, password, remember);
+        if (!res.success) {
+          showAuthAlert(res.error || 'Pogrešno korisničko ime ili lozinka.');
+          if (btnLoginSubmit) btnLoginSubmit.disabled = false;
+          if (btnLoginText) btnLoginText.textContent = 'PRIJAVI SE';
+          return;
+        }
+
+        showAuthAlert('Uspešna prijava! Učitavanje profila...', 'success');
+        if (window.slotAudio) window.slotAudio.playClick();
+
+        if (app.wallet && res.player.balance_rsd != null) {
+          app.wallet.setBalanceFromAuth(res.player.balance_rsd);
+        }
+        updateHeaderProfile();
+
+        setTimeout(() => {
+          if (loginModal) loginModal.classList.remove('active');
+          if (btnLoginSubmit) btnLoginSubmit.disabled = false;
+          if (btnLoginText) btnLoginText.textContent = 'PRIJAVI SE';
+          if (app.lobby) app.lobby.openModal();
+          app.showMessage(`✨ Dobrodošli nazad, ${res.player.username}!`, 'info');
+        }, 500);
+
+      } catch (err) {
+        showAuthAlert('Greška pri komunikaciji sa serverom.');
+        if (btnLoginSubmit) btnLoginSubmit.disabled = false;
+        if (btnLoginText) btnLoginText.textContent = 'PRIJAVI SE';
+      }
+    });
+  }
+
+  // Handle Register Submit
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAuthAlert();
+
+      if (!regAgeCheck || !regAgeCheck.checked) {
+        showAuthAlert('Morate potvrditi da imate 18+ godina radi odgovornog igranja.');
+        return;
       }
 
-      if (window.slotAudio) window.slotAudio.playClick();
-      if (loginModal) loginModal.classList.remove('active');
-      updateHeaderProfile();
+      const username = (regUserInput ? regUserInput.value : '').trim();
+      const password = (regPassInput ? regPassInput.value : '').trim();
+      const phone = (regPhoneInput ? regPhoneInput.value : '').trim() || null;
 
-      // Open games lobby upon successful login
-      if (app && app.lobby) {
-        app.lobby.openModal();
+      if (!username || username.length < 3) {
+        showAuthAlert('Korisničko ime mora imati najmanje 3 karaktera.');
+        return;
+      }
+
+      if (!password || password.length < 6) {
+        showAuthAlert('Lozinka mora imati najmanje 6 karaktera.');
+        return;
+      }
+
+      if (btnRegisterSubmit) btnRegisterSubmit.disabled = true;
+      if (btnRegText) btnRegText.textContent = 'Otvaranje VIP naloga...';
+
+      try {
+        const res = await app.playerTracker.register(username, password, phone);
+        if (!res.success) {
+          showAuthAlert(res.error || 'Greška pri registraciji.');
+          if (btnRegisterSubmit) btnRegisterSubmit.disabled = false;
+          if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 RSD';
+          return;
+        }
+
+        showAuthAlert('🎁 Čestitamo! Dobili ste 1.000 RSD bonusa dobrodošlice!', 'success');
+        if (window.slotAudio) window.slotAudio.playCoinDrop();
+
+        if (app.wallet && res.player.balance_rsd != null) {
+          app.wallet.setBalanceFromAuth(res.player.balance_rsd);
+        }
+        updateHeaderProfile();
+
+        setTimeout(() => {
+          if (loginModal) loginModal.classList.remove('active');
+          if (btnRegisterSubmit) btnRegisterSubmit.disabled = false;
+          if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 RSD';
+          if (app.lobby) app.lobby.openModal();
+          app.showMessage(`🎁 Čestitamo ${res.player.username}! 1.000 RSD bonusa je spremno!`, 'jackpot');
+        }, 800);
+
+      } catch (err) {
+        showAuthAlert('Greška pri komunikaciji sa serverom.');
+        if (btnRegisterSubmit) btnRegisterSubmit.disabled = false;
+        if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 RSD';
       }
     });
   }
@@ -1494,6 +1668,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       closeProfileModal();
       updateHeaderProfile();
+      if (typeof switchAuthTab === 'function') {
+        switchAuthTab('login');
+      }
       if (loginModal) loginModal.classList.add('active');
     });
   }

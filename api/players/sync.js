@@ -17,6 +17,7 @@ export default async function handler(req, res) {
     id,
     nickname,
     vip_tier,
+    balance_rsd,
     total_turnover,
     total_spins,
     total_wins,
@@ -45,12 +46,15 @@ export default async function handler(req, res) {
     const isPush = Boolean(is_push_enabled && push_subscription);
     const subJson = push_subscription ? JSON.stringify(push_subscription) : null;
     const deviceJson = device_info ? JSON.stringify(device_info) : '{}';
+    const hasBalance = balance_rsd !== undefined && balance_rsd !== null;
+    const balanceNum = hasBalance ? Math.max(0, Number(balance_rsd)) : 1000.00;
 
     const result = await sql`
       INSERT INTO players (
         id,
         nickname,
         vip_tier,
+        balance_rsd,
         total_turnover,
         total_spins,
         total_wins,
@@ -64,6 +68,7 @@ export default async function handler(req, res) {
         ${id},
         ${nickname || null},
         ${vip_tier || 'STANDARD'},
+        ${balanceNum},
         ${Number(total_turnover || 0)},
         ${Number(total_spins || 0)},
         ${Number(total_wins || 0)},
@@ -75,6 +80,7 @@ export default async function handler(req, res) {
       )
       ON CONFLICT (id) DO UPDATE SET
         nickname = COALESCE(EXCLUDED.nickname, players.nickname),
+        balance_rsd = CASE WHEN ${hasBalance} THEN ${balanceNum} ELSE players.balance_rsd END,
         total_turnover = GREATEST(players.total_turnover, EXCLUDED.total_turnover),
         total_spins = GREATEST(players.total_spins, EXCLUDED.total_spins),
         total_wins = GREATEST(players.total_wins, EXCLUDED.total_wins),

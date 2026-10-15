@@ -24,7 +24,11 @@ export default async function handler(req, res) {
     await sql`
       CREATE TABLE IF NOT EXISTS players (
         id VARCHAR(64) PRIMARY KEY,
+        username VARCHAR(64) UNIQUE NULL,
         nickname VARCHAR(64),
+        password_hash VARCHAR(255) NULL,
+        phone VARCHAR(32) NULL,
+        balance_rsd NUMERIC(14, 2) DEFAULT 1000.00,
         vip_tier VARCHAR(32) DEFAULT 'STANDARD',
         total_turnover NUMERIC(14, 2) DEFAULT 0.00,
         total_spins INTEGER DEFAULT 0,
@@ -33,16 +37,29 @@ export default async function handler(req, res) {
         device_info JSONB DEFAULT '{}'::jsonb,
         push_subscription JSONB DEFAULT NULL,
         is_push_enabled BOOLEAN DEFAULT FALSE,
+        auth_token VARCHAR(128) NULL,
+        is_verified_18 BOOLEAN DEFAULT TRUE,
         last_seen_at TIMESTAMPTZ DEFAULT NOW(),
         created_at TIMESTAMPTZ DEFAULT NOW()
       );
     `;
+
+    // Ensure columns exist if table was created previously
+    await sql`ALTER TABLE players ADD COLUMN IF NOT EXISTS username VARCHAR(64);`;
+    await sql`ALTER TABLE players ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255);`;
+    await sql`ALTER TABLE players ADD COLUMN IF NOT EXISTS phone VARCHAR(32);`;
+    await sql`ALTER TABLE players ADD COLUMN IF NOT EXISTS balance_rsd NUMERIC(14, 2) DEFAULT 1000.00;`;
+    await sql`ALTER TABLE players ADD COLUMN IF NOT EXISTS auth_token VARCHAR(128);`;
+    await sql`ALTER TABLE players ADD COLUMN IF NOT EXISTS is_verified_18 BOOLEAN DEFAULT TRUE;`;
 
     // 2. Create indexes
     await sql`CREATE INDEX IF NOT EXISTS idx_players_last_seen ON players (last_seen_at DESC);`;
     await sql`CREATE INDEX IF NOT EXISTS idx_players_vip ON players (vip_tier);`;
     await sql`CREATE INDEX IF NOT EXISTS idx_players_push ON players (is_push_enabled);`;
     await sql`CREATE INDEX IF NOT EXISTS idx_players_turnover ON players (total_turnover DESC);`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_players_username ON players (username);`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_players_phone ON players (phone);`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_players_token ON players (auth_token);`;
 
     // 3. Create push_campaigns table
     await sql`

@@ -1,17 +1,47 @@
 /**
- * IGT - Player Tracker & Analytics Engine
- * Manages player profile, 18+ verification state, sessions, and comprehensive statistics.
+ * IGT - Player Tracker & Authentication Engine
+ * Manages real player profile, credentials, Neon DB sessions, and comprehensive game analytics.
  */
 class PlayerTracker {
   constructor() {
     this.storageKey = 'igt_player_profile';
+    this.tokenKey = 'gsc_auth_token';
     this.sessionStartTime = Date.now();
     this.profile = this.loadProfile();
 
     // Auto-sync with CRM backend after initial boot
     setTimeout(() => {
-      this.syncWithBackend();
+      if (this.profile.isLoggedIn) {
+        this.syncWithBackend();
+      }
     }, 1800);
+  }
+
+  getAuthToken() {
+    try {
+      return localStorage.getItem(this.tokenKey) || sessionStorage.getItem(this.tokenKey) || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  setAuthToken(token, remember = true) {
+    try {
+      if (remember) {
+        localStorage.setItem(this.tokenKey, token);
+        sessionStorage.removeItem(this.tokenKey);
+      } else {
+        sessionStorage.setItem(this.tokenKey, token);
+        localStorage.removeItem(this.tokenKey);
+      }
+    } catch (e) {}
+  }
+
+  clearAuthToken() {
+    try {
+      localStorage.removeItem(this.tokenKey);
+      sessionStorage.removeItem(this.tokenKey);
+    } catch (e) {}
   }
 
   generatePlayerId() {
@@ -29,7 +59,9 @@ class PlayerTracker {
     const defaultProfile = {
       id: persistentId,
       username: '',
+      phone: '',
       vipTier: 'STANDARD',
+      balance_rsd: 1000.00,
       pin: '',
       isVerified18: false,
       isLoggedIn: false,
@@ -105,6 +137,122 @@ class PlayerTracker {
     }
   }
 
+  async checkSession() {
+    const token = this.getAuthToken();
+    if (!token) {
+      this.profile.isLoggedIn = false;
+      return { success: false, reason: 'no_token' };
+    }
+
+    try {
+      const res = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.player) {
+        this.profile.id = data.player.id;
+        this.profile.username = data.player.username || data.player.nickname;
+        this.profile.phone = data.player.phone || null;
+        this.profile.vipTier = data.player.vip_tier || 'STANDARD';
+        this.profile.balance_rsd = Number(data.player.balance_rsd != null ? data.player.balance_rsd : 1000.00);
+        this.profile.isLoggedIn = true;
+        this.profile.isVerified18 = true;
+        this.saveProfile();
+        return { success: true, player: data.player };
+      } else {
+        // Invalid or expired token
+        this.clearAuthToken();
+        this.profile.isLoggedIn = false;
+        this.saveProfile();
+        return { success: false, error: data.error || 'Sesija je istekla.' };
+      }
+    } catch (e) {
+      console.warn('Session check network fallback:', e);
+      return { success: this.profile.isLoggedIn, player: this.profile };
+    }
+  }
+
+  async register(username, password, phone = null, nickname = null) {
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, phone, nickname })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || 'Greška pri registraciji.' };
+      }
+
+      this.setAuthToken(data.token, true);
+      this.profile.id = data.player.id;
+      this.profile.username = data.player.username || username;
+      this.profile.phone = data.player.phone || phone;
+      this.profile.vipTier = data.player.vip_tier || 'STANDARD';
+      this.profile.balance_rsd = Number(data.player.balance_rsd != null ? data.player.balance_rsd : 1000.00);
+      this.profile.isLoggedIn = true;
+      this.profile.isVerified18 = true;
+      this.profile.rememberMe = true;
+      this.sessionStartTime = Date.now();
+      this.saveProfile();
+
+      try {
+        localStorage.setItem('gsc_player_id', data.player.id);
+      } catch (e) {}
+
+      return { success: true, player: data.player, token: data.token, message: data.message };
+    } catch (e) {
+      return { success: false, error: 'Mrežna greška pri povezivanju sa serverom.' };
+    }
+  }
+
+  async login(username, password, rememberMe = true) {
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, error: data.error || 'Pogrešno korisničko ime ili lozinka.' };
+      }
+
+      this.setAuthToken(data.token, rememberMe);
+      this.profile.id = data.player.id;
+      this.profile.username = data.player.username || username;
+      this.profile.phone = data.player.phone || null;
+      this.profile.vipTier = data.player.vip_tier || 'STANDARD';
+      this.profile.balance_rsd = Number(data.player.balance_rsd != null ? data.player.balance_rsd : 1000.00);
+      this.profile.isLoggedIn = true;
+      this.profile.isVerified18 = true;
+      this.profile.rememberMe = rememberMe;
+      this.sessionStartTime = Date.now();
+      this.saveProfile();
+
+      try {
+        localStorage.setItem('gsc_player_id', data.player.id);
+      } catch (e) {}
+
+      return { success: true, player: data.player, token: data.token, message: data.message };
+    } catch (e) {
+      return { success: false, error: 'Mrežna greška pri povezivanju sa serverom.' };
+    }
+  }
+
+  logout() {
+    this.clearAuthToken();
+    this.profile.isLoggedIn = false;
+    if (!this.profile.rememberMe) {
+      this.profile.username = '';
+      this.profile.phone = '';
+      this.profile.isVerified18 = false;
+    }
+    this.saveProfile();
+  }
+
   async syncWithBackend(extra = {}) {
     if (typeof fetch === 'undefined') return;
 
@@ -121,11 +269,15 @@ class PlayerTracker {
 
       const isPush = typeof Notification !== 'undefined' && Notification.permission === 'granted';
       const pushSub = window.currentPushSubscription || null;
+      const currentRsd = (window.app && window.app.wallet)
+        ? window.app.wallet.rsdBalance
+        : (this.profile.balance_rsd != null ? this.profile.balance_rsd : 1000.00);
 
       const payload = {
         id: this.profile.id,
         nickname: this.profile.username || ('Gost_' + this.profile.id.replace('gsc_usr_', '')),
         vip_tier: this.profile.vipTier || 'STANDARD',
+        balance_rsd: currentRsd,
         total_turnover: this.profile.stats.totalBet || 0,
         total_spins: this.profile.stats.totalSpins || 0,
         total_wins: this.profile.stats.totalWin || 0,
@@ -141,43 +293,29 @@ class PlayerTracker {
         ...extra
       };
 
+      const headers = { 'Content-Type': 'application/json' };
+      const token = this.getAuthToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch('/api/players/sync', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload)
       });
 
       if (res.ok) {
         const data = await res.json();
-        if (data && data.player && data.player.vip_tier) {
-          this.profile.vipTier = data.player.vip_tier;
+        if (data && data.player) {
+          if (data.player.vip_tier) this.profile.vipTier = data.player.vip_tier;
+          if (data.player.balance_rsd != null) this.profile.balance_rsd = Number(data.player.balance_rsd);
           this.saveProfile();
         }
       }
     } catch (e) {
       // Offline / standalone fallback
     }
-  }
-
-  login(username, pin = '', rememberMe = true) {
-    this.profile.username = username.trim() || 'Demo Player';
-    this.profile.pin = pin;
-    this.profile.isVerified18 = true;
-    this.profile.isLoggedIn = true;
-    this.profile.rememberMe = rememberMe;
-    this.sessionStartTime = Date.now();
-    this.saveProfile();
-    this.syncWithBackend();
-  }
-
-  logout() {
-    this.profile.isLoggedIn = false;
-    if (!this.profile.rememberMe) {
-      this.profile.username = '';
-      this.profile.pin = '';
-      this.profile.isVerified18 = false;
-    }
-    this.saveProfile();
   }
 
   recordSpin(gameId, betAmount, winAmount = 0) {

@@ -167,9 +167,23 @@ class CasinoWallet {
       this.saveState();
       this.updateUI();
       if (window.slotAudio) window.slotAudio.playCoinDrop();
+      if (window.slotApp && window.slotApp.playerTracker) {
+        window.slotApp.playerTracker.syncWithBackend();
+      }
       return Math.floor(num / this.activeDenom);
     }
     return 0;
+  }
+
+  setBalanceFromAuth(rsdAmount) {
+    const num = parseFloat(rsdAmount);
+    if (!isNaN(num) && num >= 0) {
+      this.rsdBalance = num;
+      this.lastWinCredits = 0;
+      this.lastWinRsd = 0;
+      this.saveState();
+      this.updateUI();
+    }
   }
 
   addCredits(credits = 500) {

@@ -3,10 +3,14 @@
 -- Run this script in the Neon SQL Editor or via /api/db/init
 -- ==============================================================================
 
--- 1. Players Registry (CRM & Telemetry)
+-- 1. Players Registry (CRM, Auth & Telemetry)
 CREATE TABLE IF NOT EXISTS players (
   id VARCHAR(64) PRIMARY KEY,
+  username VARCHAR(64) UNIQUE NULL,
   nickname VARCHAR(64),
+  password_hash VARCHAR(255) NULL,
+  phone VARCHAR(32) NULL,
+  balance_rsd NUMERIC(14, 2) DEFAULT 1000.00,
   vip_tier VARCHAR(32) DEFAULT 'STANDARD',
   total_turnover NUMERIC(14, 2) DEFAULT 0.00,
   total_spins INTEGER DEFAULT 0,
@@ -15,15 +19,20 @@ CREATE TABLE IF NOT EXISTS players (
   device_info JSONB DEFAULT '{}'::jsonb,
   push_subscription JSONB DEFAULT NULL,
   is_push_enabled BOOLEAN DEFAULT FALSE,
+  auth_token VARCHAR(128) NULL,
+  is_verified_18 BOOLEAN DEFAULT TRUE,
   last_seen_at TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Fast lookup indexes for player CRM segmentation
+-- Fast lookup indexes for player CRM & Authentication
 CREATE INDEX IF NOT EXISTS idx_players_last_seen ON players (last_seen_at DESC);
 CREATE INDEX IF NOT EXISTS idx_players_vip ON players (vip_tier);
 CREATE INDEX IF NOT EXISTS idx_players_push ON players (is_push_enabled);
 CREATE INDEX IF NOT EXISTS idx_players_turnover ON players (total_turnover DESC);
+CREATE INDEX IF NOT EXISTS idx_players_username ON players (username);
+CREATE INDEX IF NOT EXISTS idx_players_phone ON players (phone);
+CREATE INDEX IF NOT EXISTS idx_players_token ON players (auth_token);
 
 -- 2. Push Notification Marketing Campaigns History
 CREATE TABLE IF NOT EXISTS push_campaigns (
