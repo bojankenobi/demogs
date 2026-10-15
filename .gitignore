@@ -4,3 +4,8 @@ Thumbs.db
 scratch/
 backup_igt_before_grandslot/
 GRANDSLOT/
+node_modules/
+.env
+.env.local
+.env.*.local
+
