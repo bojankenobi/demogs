@@ -423,10 +423,6 @@
         </svg>
       </button>
 
-      <button class="btn-icon-mini btn-volatility-footer desktop-only-icon" id="volatility-footer-btn" title="Podešavanje Volatilnosti & Prezentacija" data-i18n-title="volatilityFooterTitle" aria-label="Volatilnost">
-        <span class="volatility-icon-symbol">⚙️</span>
-        <span class="volatility-badge-pill" id="hud-volatility-sub">STD</span>
-      </button>
 
       <!-- VIP Voucher & Promo Button (Glowing Golden Ticket) -->
       <button class="btn-icon-mini btn-voucher-hud" id="hud-voucher-btn" title="Moji VIP Vaučeri & Promocije" aria-label="Vaučeri" style="position: relative;">
@@ -672,11 +668,7 @@
         <p style="margin-top: 6px;"><strong data-i18n="ruleCardsTitle">♠️ KRISTALNI PIK (KARTE):</strong> <span data-i18n="ruleCardsDesc">Kada se gornja traka za karte napuni spinovima, Kristalni Pik počinje da svetli i pulsira! Dok svetli, možete ući u igru pogađanja crvene ili crne karte i uvećati dobitak.</span></p>
         <p style="margin-top: 6px;" data-i18n-html="linesRuleText">U <strong>Royal 3x3</strong> igri aktivno je <strong>5 linija</strong> (3 horizontalne + 2 dijagonalne). Dobici na više linija se sabiraju!</p>
         <p style="margin-top: 6px;" data-i18n="instructionsRuleText">Možete povući i 3D ručicu sa desne strane za pokretanje valjaka ili pritisnuti taster Space na tastaturi.</p>
-        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed rgba(255, 215, 0, 0.3); text-align: center;">
-          <button id="open-admin-from-rules" style="background: rgba(255, 215, 0, 0.12); border: 1px solid #ffd700; color: #ffd700; font-size: 0.78rem; font-weight: 800; padding: 6px 14px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;" data-i18n="openAdminPanel">
-            ⚙️ OTVORI ADMIN / OPERATOR PANEL
-          </button>
-        </div>
+
       </div>
     </div>
   </div>
@@ -1117,97 +1109,7 @@
     </div>
   </div>
 
-  <!-- Volatility & Math Preset Modal -->
-  <div class="modal-overlay volatility-overlay" id="volatility-modal">
-    <div class="volatility-modal-box">
-      <div class="volatility-modal-head">
-        <div class="volatility-title-wrap">
-          <span class="volatility-top-badge" data-i18n="volatilityBadge">🎰 MATEMATIKA & VOLATILNOST</span>
-          <h2 class="volatility-modal-title" data-i18n="volatilityTitle">IZABERITE PROFIL AUTOMATA</h2>
-          <p class="volatility-modal-subtitle" data-i18n="volatilitySubtitle">Podesite učestalost dobitaka ili uključite stalne dobitke za prezentaciju igara</p>
-        </div>
-        <button class="volatility-close-btn" id="volatility-close-btn" title="Zatvori" data-i18n-title="volatilityCloseTitle">✕</button>
-      </div>
 
-      <div class="volatility-cards-grid">
-        <!-- 1. Casino Standard -->
-        <div class="volatility-option-card active" data-preset="standard">
-          <div class="volatility-card-ribbon ribbon-gold" data-i18n="volatilityRibbonRecommended">PREPORUČENO</div>
-          <div class="volatility-card-header">
-            <span class="volatility-card-icon">🎰</span>
-            <div class="volatility-card-titles">
-              <h3 class="volatility-opt-title" data-i18n="volatilityStandardTitle">Casino Standard</h3>
-              <span class="volatility-opt-rtp" data-i18n="volatilityStandardRtp">~96.0% RTP • Hit Rate ~25%</span>
-            </div>
-          </div>
-          <p class="volatility-card-desc" data-i18n="volatilityStandardDesc">Standardna industrijska slot matematika. Balansirani dobici i gubici. Isplata za 2 simbola važi isključivo za zlatnike, ostali simboli traže punu liniju.</p>
-          <div class="volatility-card-specs">
-            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityHitLabel">Udarac:</span> <span class="spec-val" data-i18n="volatilityHitStandard">1 od 4 spina</span></div>
-            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityBonusTurnoverLabel">Obrt za bonus:</span> <span class="spec-val">450 - 850 RSD</span></div>
-          </div>
-          <button class="btn-select-preset" data-preset="standard" data-i18n="volatilitySelectBtn">IZABERI PROFIL</button>
-        </div>
-
-        <!-- 2. Low Volatility -->
-        <div class="volatility-option-card" data-preset="low">
-          <div class="volatility-card-ribbon ribbon-green" data-i18n="volatilityRibbonGreen">ČEŠĆI DOBICI</div>
-          <div class="volatility-card-header">
-            <span class="volatility-card-icon">🛡️</span>
-            <div class="volatility-card-titles">
-              <h3 class="volatility-opt-title" data-i18n="volatilityLowTitle">Niska Volatilnost</h3>
-              <span class="volatility-opt-rtp" data-i18n="volatilityLowRtp">~97.0% RTP • Hit Rate ~40%</span>
-            </div>
-          </div>
-          <p class="volatility-card-desc" data-i18n="volatilityLowDesc">Češći manji dobici za duže trajanje kredita i opušteniju sesiju. 2 simbola plaćaju za zlatnike, zvona i sedmice.</p>
-          <div class="volatility-card-specs">
-            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityHitLabel">Udarac:</span> <span class="spec-val" data-i18n="volatilityHitLow">Skoro svaki 2. spin</span></div>
-            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityBonusTurnoverLabel">Obrt za bonus:</span> <span class="spec-val">350 - 700 RSD</span></div>
-          </div>
-          <button class="btn-select-preset" data-preset="low" data-i18n="volatilitySelectBtn">IZABERI PROFIL</button>
-        </div>
-
-        <!-- 3. High Volatility -->
-        <div class="volatility-option-card" data-preset="high">
-          <div class="volatility-card-ribbon ribbon-red" data-i18n="volatilityRibbonRed">VISOK RIZIK & VEĆE ISPLATE</div>
-          <div class="volatility-card-header">
-            <span class="volatility-card-icon">🔥</span>
-            <div class="volatility-card-titles">
-              <h3 class="volatility-opt-title" data-i18n="volatilityHighTitle">Visoka Volatilnost</h3>
-              <span class="volatility-opt-rtp" data-i18n="volatilityHighRtp">~94.5% RTP • Hit Rate ~16%</span>
-            </div>
-          </div>
-          <p class="volatility-card-desc" data-i18n="volatilityHighDesc">Visok adrenalinski rizik. Ređi dobici, ali NEMA isplate za 2 simbola — isključivo 3 simbola plaćaju uz +50% veće iznose (1.5x Multiplier)!</p>
-          <div class="volatility-card-specs">
-            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityHitLabel">Udarac:</span> <span class="spec-val" data-i18n="volatilityHitHigh">1 od 6 spinova</span></div>
-            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityBonusTurnoverLabel">Obrt za bonus:</span> <span class="spec-val">650 - 1200 RSD</span></div>
-          </div>
-          <button class="btn-select-preset" data-preset="high" data-i18n="volatilitySelectBtn">IZABERI PROFIL</button>
-        </div>
-
-        <!-- 4. Demo / Promo Mode (100% Hit) -->
-        <div class="volatility-option-card" data-preset="demo">
-          <div class="volatility-card-ribbon ribbon-purple" data-i18n="volatilityRibbonPurple">100% DOBITAK • PREZENTACIJA</div>
-          <div class="volatility-card-header">
-            <span class="volatility-card-icon">🚀</span>
-            <div class="volatility-card-titles">
-              <h3 class="volatility-opt-title" data-i18n="volatilityDemoTitle">Demo Prezentacija</h3>
-              <span class="volatility-opt-rtp" data-i18n="volatilityDemoRtp">100% Hit • Promo Show</span>
-            </div>
-          </div>
-          <p class="volatility-card-desc" data-i18n="volatilityDemoDesc">Garantovan dobitak na svakom spinu! Idealan režim za demonstraciju automata klijentima, brzo otključavanje Mina, Točka i Karata.</p>
-          <div class="volatility-card-specs">
-            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityHitLabel">Udarac:</span> <span class="spec-val" data-i18n="volatilityHitDemo">SVAKI SPIN DOBITAN</span></div>
-            <div class="spec-pill"><span class="spec-label" data-i18n="volatilityBonusTurnoverLabel">Obrt za bonus:</span> <span class="spec-val" data-i18n="volatilityTurnoverDemo">Munjevito (70 - 130 RSD)</span></div>
-          </div>
-          <button class="btn-select-preset" data-preset="demo" data-i18n="volatilitySelectBtn">IZABERI PROFIL</button>
-        </div>
-      </div>
-
-      <div class="volatility-footer-note" data-i18n="volatilityFooterNote">
-        💡 Promena profila trenutno ažurira sve igre (Classic, Royal 3x3, Mines) i brzinu punjenja bonusa.
-      </div>
-    </div>
-  </div>
 
   <!-- Buy Bonus Modal (Kupovina Bonusa) -->
   <div class="modal-overlay buy-bonus-overlay" id="buy-bonus-modal">
@@ -1360,18 +1262,6 @@
       </div>
 
       <div class="casino-menu-grid">
-        <!-- 1. Matematika & Volatilnost (Settings) -->
-        <button type="button" class="menu-action-card card-volatility" id="menu-opt-volatility">
-          <div class="menu-card-icon-wrap">⚙️</div>
-          <div class="menu-card-info">
-            <div class="menu-card-title-row">
-              <span class="menu-card-title" data-i18n="volatilityTitle">Matematika & Volatilnost</span>
-              <span class="menu-pill-badge" id="menu-current-volatility-badge">STD</span>
-            </div>
-            <p class="menu-card-desc" data-i18n="menuVolatilityDesc">Podesite učestalost dobitaka ili uključite stalne dobitke</p>
-          </div>
-          <span class="menu-card-arrow">›</span>
-        </button>
 
         <!-- 2. Kazino Turnir (120s Izazov) -->
         <button type="button" class="menu-action-card card-tournament" id="menu-opt-tournament">

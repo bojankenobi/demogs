@@ -176,11 +176,9 @@ class IGTApp {
       this.notifications = new window.NotificationManager(this);
     }
 
-    // 6. Admin Remote Bridge (Connects to standalone admin.html)
+    // 6. Admin Remote Bridge (Connects silently in background to standalone admin.html)
     if (window.AdminBridge) {
       this.adminBridge = new window.AdminBridge(this);
-    } else if (window.AdminPanel) {
-      this.adminPanel = new window.AdminPanel(this);
     }
 
     // 7. Check for Smart Push Promotional Rewards & VIP Vouchers
@@ -806,86 +804,14 @@ class IGTApp {
       });
     }
 
-    this.initVolatilityModal();
     this.initCasinoMenu();
   }
 
-  openVolatilityModal() {
-    const modal = document.getElementById('volatility-modal');
-    if (modal) modal.classList.add('active');
-    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
-    this.updateVolatilityUI();
-  }
-
-  closeVolatilityModal() {
-    const modal = document.getElementById('volatility-modal');
-    if (modal) modal.classList.remove('active');
-    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
-  }
-
-  initVolatilityModal() {
-    const modal = document.getElementById('volatility-modal');
-    const headerBtn = document.getElementById('btn-volatility-toggle');
-    const footerBtn = document.getElementById('volatility-footer-btn');
-    const closeBtn = document.getElementById('volatility-close-btn');
-
-    if (headerBtn) headerBtn.addEventListener('click', () => this.openVolatilityModal());
-    if (footerBtn) footerBtn.addEventListener('click', () => this.openVolatilityModal());
-    if (closeBtn) closeBtn.addEventListener('click', () => this.closeVolatilityModal());
-    if (modal) {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) this.closeVolatilityModal();
-      });
-    }
-
-    // Bind cards and selection buttons
-    const cards = document.querySelectorAll('.volatility-option-card');
-    cards.forEach(card => {
-      const presetId = card.getAttribute('data-preset');
-      const selectBtn = card.querySelector('.btn-select-preset');
-
-      const selectPreset = (e) => {
-        e.stopPropagation();
-        if (this.mathManager && presetId) {
-          this.mathManager.setPreset(presetId);
-          this.updateVolatilityUI();
-          if (window.slotAudio && window.slotAudio.playCoinDrop) window.slotAudio.playCoinDrop();
-          setTimeout(() => this.closeVolatilityModal(), 280);
-        }
-      };
-
-      card.addEventListener('click', selectPreset);
-      if (selectBtn) selectBtn.addEventListener('click', selectPreset);
-    });
-
-    this.updateVolatilityUI();
-  }
-
-  updateVolatilityUI() {
-    if (!this.mathManager) return;
-    const profile = this.mathManager.getActiveProfile();
-    const activeId = this.mathManager.activePreset;
-
-    const lbl = document.getElementById('hud-volatility-name');
-    if (lbl) {
-      lbl.textContent = profile.shortName;
-    }
-
-    const subLbl = document.getElementById('hud-volatility-sub');
-    if (subLbl) {
-      subLbl.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : '100%')));
-    }
-
-    const menuVolBadge = document.getElementById('menu-current-volatility-badge');
-    if (menuVolBadge) {
-      menuVolBadge.textContent = (activeId === 'standard' ? 'STD' : (activeId === 'low' ? 'LOW' : (activeId === 'high' ? 'HIGH' : '100%')));
-    }
-
-    document.querySelectorAll('.volatility-option-card').forEach(card => {
-      const pid = card.getAttribute('data-preset');
-      card.classList.toggle('active', pid === activeId);
-    });
-  }
+  // Deprecated in-game volatility modal (now managed exclusively via standalone admin.html)
+  openVolatilityModal() {}
+  closeVolatilityModal() {}
+  initVolatilityModal() {}
+  updateVolatilityUI() {}
 
   /* ==========================================================================
      UNIFIED CASINO MENU (Tablet & Mobile Sleek Hub)
@@ -957,14 +883,6 @@ class IGTApp {
       });
     }
 
-    // Option 1: Volatility & Math settings
-    const optVolatility = document.getElementById('menu-opt-volatility');
-    if (optVolatility) {
-      optVolatility.addEventListener('click', () => {
-        this.closeCasinoMenu();
-        setTimeout(() => this.openVolatilityModal(), 120);
-      });
-    }
 
     // Option 2: Tournament
     const optTournament = document.getElementById('menu-opt-tournament');
