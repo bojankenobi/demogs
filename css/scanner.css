@@ -1,0 +1,431 @@
+/**
+ * Grand Slot Club - Mobile Staff QR Voucher Scanner Styles
+ * Luxury Dark Obsidian & 24K Gold Aesthetic
+ */
+
+:root {
+  --bg-main: #090a0f;
+  --bg-card: #120b04;
+  --accent-gold: #ffd700;
+  --border-gold: rgba(255, 215, 0, 0.28);
+  --text-main: #ffffff;
+  --text-muted: #b5a995;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --color-success: #00e676;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 30px;
+}
+
+/* Header */
+.scanner-header {
+  background: linear-gradient(180deg, rgba(26, 17, 7, 0.98) 0%, rgba(9, 10, 15, 0.95) 100%);
+  border-bottom: 1px solid var(--border-gold);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.scanner-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scanner-brand img {
+  height: 28px;
+}
+
+.scanner-title-wrap h1 {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--accent-gold);
+  letter-spacing: 0.5px;
+}
+
+.scanner-title-wrap span {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.btn-header-action {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid var(--border-gold);
+  color: var(--accent-gold);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-header-action:hover {
+  background: rgba(255, 215, 0, 0.2);
+}
+
+/* Container */
+.scanner-container {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Shift Info Card */
+.shift-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shift-info-lbl {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.shift-operator-name {
+  font-size: 0.88rem;
+  color: #fff;
+  font-weight: 800;
+}
+
+.btn-edit-shift {
+  background: transparent;
+  border: none;
+  color: var(--accent-gold);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Camera Viewport */
+.camera-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border: 2px solid var(--border-gold);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#scanner-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Targeting Reticle Overlay */
+.reticle-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+  pointer-events: none;
+}
+
+.reticle-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: #ffd700;
+  border-style: solid;
+}
+
+.reticle-corner.tl { top: 0; left: 0; border-width: 4px 0 0 4px; border-top-left-radius: 10px; }
+.reticle-corner.tr { top: 0; right: 0; border-width: 4px 4px 0 0; border-top-right-radius: 10px; }
+.reticle-corner.bl { bottom: 0; left: 0; border-width: 0 0 4px 4px; border-bottom-left-radius: 10px; }
+.reticle-corner.br { bottom: 0; right: 0; border-width: 0 4px 4px 0; border-bottom-right-radius: 10px; }
+
+.scan-laser-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ffd700, #ff4444, #ffd700, transparent);
+  box-shadow: 0 0 12px #ffd700, 0 0 4px #fff;
+  animation: laserScan 2.4s ease-in-out infinite;
+}
+
+@keyframes laserScan {
+  0% { top: 8%; opacity: 0.3; }
+  50% { top: 92%; opacity: 1; }
+  100% { top: 8%; opacity: 0.3; }
+}
+
+.camera-hint {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 4px 12px;
+  margin: 0 20px;
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+/* Manual Code Fallback Input */
+.manual-input-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.manual-input-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.manual-code-input {
+  flex: 1;
+  background: #000;
+  border: 1px solid var(--border-gold);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  outline: none;
+  text-transform: uppercase;
+}
+
+.manual-code-input:focus {
+  border-color: var(--accent-gold);
+}
+
+.btn-check-manual {
+  background: linear-gradient(135deg, #ffd700, #b45309);
+  color: #000;
+  font-size: 0.85rem;
+  font-weight: 900;
+  border: none;
+  border-radius: 8px;
+  padding: 0 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-check-manual:hover {
+  filter: brightness(1.15);
+}
+
+/* Verification Result Modal / Card */
+.verification-card {
+  display: none;
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  border: 2px solid;
+  animation: popIn 0.25s ease-out;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.verification-card.valid {
+  border-color: var(--color-success);
+  box-shadow: 0 0 25px rgba(0, 230, 118, 0.35);
+}
+
+.verification-card.error {
+  border-color: var(--color-error);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.35);
+}
+
+.verif-badge-status {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.verification-card.valid .verif-badge-status {
+  background: rgba(0, 230, 118, 0.2);
+  border: 1px solid var(--color-success);
+  color: var(--color-success);
+}
+
+.verification-card.error .verif-badge-status {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+
+.verif-player-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.verif-vip-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 215, 0, 0.2);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  margin-left: 6px;
+}
+
+.verif-reward-box {
+  background: #000;
+  border: 1px dashed rgba(255, 215, 0, 0.3);
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+}
+
+.verif-reward-val {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--accent-gold);
+}
+
+.verif-reward-desc {
+  font-size: 0.8rem;
+  color: #d1c7b7;
+  margin-top: 4px;
+}
+
+.verif-meta-list {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.verif-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-confirm-redeem {
+  flex: 2;
+  background: linear-gradient(135deg, #00e676, #059669);
+  color: #000;
+  font-size: 0.95rem;
+  font-weight: 900;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-confirm-redeem:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.btn-dismiss-verif {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Shift Scans Audit Log */
+.scans-log-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.scans-log-title {
+  font-size: 0.82rem;
+  color: var(--accent-gold);
+  font-weight: 800;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.scans-log-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scans-log-item {
+  background: rgba(0, 0, 0, 0.4);
+  border-left: 3px solid var(--color-success);
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.scans-item-name {
+  font-weight: 800;
+  color: #fff;
+}
+
+.scans-item-meta {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}

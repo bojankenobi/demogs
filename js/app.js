@@ -183,8 +183,9 @@ class IGTApp {
       this.adminPanel = new window.AdminPanel(this);
     }
 
-    // 7. Check for Smart Push Promotional Rewards
+    // 7. Check for Smart Push Promotional Rewards & VIP Vouchers
     this.initPromoBonusListener();
+    this.initVoucherHub();
     this.checkPromoBonusFromUrl();
   }
 
@@ -209,12 +210,23 @@ class IGTApp {
       if (params.has('promo_action')) {
         const action = params.get('promo_action');
         const val = parseInt(params.get('promo_val'), 10) || 0;
+        const title = params.get('promo_title') || '';
+        const body = params.get('promo_body') || '';
+        const img = params.get('promo_img') || '';
+        const loc = params.get('promo_loc') || '';
         
         // Clean URL so refresh doesn't re-trigger
         window.history.replaceState({}, document.title, window.location.pathname);
 
         setTimeout(() => {
-          this.claimPromoBonus({ promoAction: action, promoValue: val });
+          this.claimPromoBonus({
+            promoAction: action,
+            promoValue: val,
+            title,
+            body,
+            imageUrl: img,
+            location: loc
+          });
         }, 1200);
       }
     } catch (e) {
@@ -249,7 +261,309 @@ class IGTApp {
         window.particleEngine.burst(300, 250);
       }
       this.showMessage(`🎁 POKLON BONUS: Čestitamo! Vaš račun je dopunjen sa +${credits.toLocaleString()} RSD!`, 'win');
+    } else if (promo.promoAction === 'club_voucher' || promo.promoAction === 'interactive_promo' || promo.promoAction === 'voucher') {
+      this.openVoucherModal({
+        title: promo.title || 'VIP Promo Vaučer',
+        description: promo.body || 'Prijavite se za ovu ekskluzivnu promociju i preuzmite svoj VIP vaučer za Grand Slot Club!',
+        rewardValue: promo.promoValue || 1000,
+        imageUrl: promo.imageUrl || 'assets/symbols/crystal-spade-clean.png',
+        location: promo.location || 'Grand Slot Club Beograd'
+      });
     }
+  }
+
+  /* ==========================================================================
+     Omnichannel VIP Voucher & Interactive Promotion Hub
+     ========================================================================== */
+
+  initVoucherHub() {
+    this.activeVoucher = null;
+    this.voucherCountdownInterval = null;
+
+    try {
+      const cached = localStorage.getItem('gsc_active_voucher');
+      if (cached) {
+        this.activeVoucher = JSON.parse(cached);
+      }
+    } catch (e) {}
+
+    this.updateVoucherBadge();
+
+    const hudBtn = document.getElementById('hud-voucher-btn');
+    if (hudBtn) {
+      hudBtn.addEventListener('click', () => {
+        this.openVoucherModal();
+      });
+    }
+
+    const closeBtn = document.getElementById('btn-close-voucher-modal');
+    if (closeBtn) closeBtn.addEventListener('click', () => this.closeVoucherModal());
+
+    const doneBtn = document.getElementById('btn-done-voucher-card');
+    if (doneBtn) doneBtn.addEventListener('click', () => this.closeVoucherModal());
+
+    const backBtn = document.getElementById('btn-back-to-promo-view');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        this.switchVoucherView('promo');
+      });
+    }
+
+    const claimBtn = document.getElementById('btn-claim-promo-action');
+    if (claimBtn) {
+      claimBtn.addEventListener('click', async () => {
+        await this.claimActivePromoVoucher();
+      });
+    }
+
+    const modal = document.getElementById('vip-voucher-modal');
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) this.closeVoucherModal();
+      });
+    }
+
+    setTimeout(() => this.syncPlayerVouchers(), 2500);
+  }
+
+  updateVoucherBadge() {
+    const badge = document.getElementById('hud-voucher-badge');
+    if (!badge) return;
+
+    if (this.activeVoucher && this.activeVoucher.status === 'ACTIVE') {
+      const isExpired = new Date(this.activeVoucher.expires_at) < new Date();
+      if (!isExpired) {
+        badge.style.display = 'block';
+        return;
+      }
+    }
+    badge.style.display = 'none';
+  }
+
+  async syncPlayerVouchers() {
+    const playerId = this.playerTracker ? this.playerTracker.profile.id : null;
+    if (!playerId || typeof fetch === 'undefined') return;
+
+    try {
+      const res = await fetch(`/api/vouchers/my?playerId=${encodeURIComponent(playerId)}`);
+      const data = await res.json();
+      if (data && data.success && Array.isArray(data.vouchers)) {
+        const active = data.vouchers.find(v => v.status === 'ACTIVE' && new Date(v.expires_at) > new Date());
+        if (active) {
+          this.activeVoucher = active;
+          localStorage.setItem('gsc_active_voucher', JSON.stringify(active));
+        } else if (data.vouchers.length > 0) {
+          this.activeVoucher = data.vouchers[0];
+          localStorage.setItem('gsc_active_voucher', JSON.stringify(data.vouchers[0]));
+        }
+        this.updateVoucherBadge();
+      }
+    } catch (e) {}
+  }
+
+  openVoucherModal(promoPayload = null) {
+    const modal = document.getElementById('vip-voucher-modal');
+    if (!modal) return;
+
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+
+    modal.classList.add('active');
+
+    if (promoPayload) {
+      this.setupPromoViewData(promoPayload);
+      this.switchVoucherView('promo');
+    } else if (this.activeVoucher) {
+      this.renderVoucherCard(this.activeVoucher);
+      this.switchVoucherView('card');
+    } else {
+      this.setupPromoViewData({
+        title: 'VIP Promo Tiket 1.000 RSD',
+        description: 'Prijavite se za ekskluzivni vikend bonus i preuzmite lični VIP QR vaučer za igru na slot aparatima u Grand Slot Club-u!',
+        rewardValue: 1000,
+        rewardType: 'club_ticket',
+        location: 'Grand Slot Club - Kralja Milana 12, Beograd',
+        validHours: 48
+      });
+      this.switchVoucherView('promo');
+    }
+  }
+
+  closeVoucherModal() {
+    const modal = document.getElementById('vip-voucher-modal');
+    if (modal) modal.classList.remove('active');
+    if (this.voucherCountdownInterval) {
+      clearInterval(this.voucherCountdownInterval);
+      this.voucherCountdownInterval = null;
+    }
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+  }
+
+  switchVoucherView(viewName) {
+    const viewPromo = document.getElementById('voucher-view-promo');
+    const viewCard = document.getElementById('voucher-view-card');
+    if (viewPromo && viewCard) {
+      viewPromo.classList.toggle('active', viewName === 'promo');
+      viewCard.classList.toggle('active', viewName === 'card');
+    }
+  }
+
+  setupPromoViewData(data) {
+    this.currentPromoData = data;
+    const titleEl = document.getElementById('voucher-promo-title');
+    const descEl = document.getElementById('voucher-promo-desc');
+    const tagEl = document.getElementById('voucher-promo-value-tag');
+    const locEl = document.getElementById('voucher-promo-location');
+    const validEl = document.getElementById('voucher-promo-validity');
+    const imgEl = document.getElementById('voucher-promo-img');
+
+    if (titleEl) titleEl.textContent = data.title || 'Grand Slot VIP Promocija';
+    if (descEl) descEl.textContent = data.description || data.body || 'Preuzmite lični VIP vaučer za klub!';
+    if (tagEl) tagEl.textContent = `+${Number(data.rewardValue || data.promoValue || 1000).toLocaleString()} RSD POKLON`;
+    if (locEl) locEl.textContent = data.location || 'Grand Slot Club Beograd';
+    if (validEl) validEl.textContent = `${data.validHours || 48} sati`;
+    if (imgEl && data.imageUrl) imgEl.src = data.imageUrl;
+  }
+
+  async claimActivePromoVoucher() {
+    const btn = document.getElementById('btn-claim-promo-action');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Generisanje ličnog vaučera...';
+    }
+
+    const playerId = this.playerTracker ? this.playerTracker.profile.id : ('gsc_usr_' + Math.floor(1000 + Math.random() * 9000));
+    const pData = this.currentPromoData || {};
+
+    const payload = {
+      playerId,
+      campaignId: pData.campaignId || 'vip_promo',
+      title: pData.title || 'VIP Promo Tiket 1.000 RSD',
+      description: pData.description || '1.000 RSD Promo Tiket za slot aparate u klubu',
+      imageUrl: pData.imageUrl || 'assets/symbols/crystal-spade-clean.png',
+      rewardType: pData.rewardType || 'club_ticket',
+      rewardValue: Number(pData.rewardValue || pData.promoValue || 1000),
+      location: pData.location || 'Grand Slot Club - Kralja Milana 12, Beograd',
+      validHours: Number(pData.validHours || 48)
+    };
+
+    try {
+      const res = await fetch('/api/vouchers/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if (data && data.success && data.voucher) {
+        this.activeVoucher = data.voucher;
+        localStorage.setItem('gsc_active_voucher', JSON.stringify(data.voucher));
+
+        if (window.slotAudio && window.slotAudio.playBigWin) window.slotAudio.playBigWin();
+        if (window.particleEngine && window.particleEngine.burst) window.particleEngine.burst(300, 250);
+
+        this.renderVoucherCard(data.voucher);
+        this.switchVoucherView('card');
+        this.updateVoucherBadge();
+        this.showMessage('🎫 ČESTITAMO! VAŠ VIP VAUČER ZA KLUB JE SPREMAN!', 'win');
+      } else {
+        alert(data.error || 'Nije uspelo preuzimanje vaučera.');
+      }
+    } catch (e) {
+      const fakeVoucher = {
+        voucher_code: 'GSC-' + Math.floor(1000 + Math.random() * 9000) + '-VIP',
+        title: payload.title,
+        reward_value: payload.rewardValue,
+        location: payload.location,
+        expires_at: new Date(Date.now() + 48 * 3600000).toISOString(),
+        status: 'ACTIVE'
+      };
+      this.activeVoucher = fakeVoucher;
+      localStorage.setItem('gsc_active_voucher', JSON.stringify(fakeVoucher));
+      this.renderVoucherCard(fakeVoucher);
+      this.switchVoucherView('card');
+      this.updateVoucherBadge();
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '✅ PRIJAVI SE I PREUZMI VIP VAUČER';
+      }
+    }
+  }
+
+  renderVoucherCard(voucher) {
+    const playerNick = (this.playerTracker && this.playerTracker.profile.username) ? this.playerTracker.profile.username : 'Gost';
+    const isVip = (this.playerTracker && this.playerTracker.profile.vipTier === 'VIP');
+
+    const nameEl = document.getElementById('ticket-player-name');
+    const vipEl = document.getElementById('ticket-vip-tag');
+    const amtEl = document.getElementById('ticket-reward-amount');
+    const titleEl = document.getElementById('ticket-reward-title');
+    const codeEl = document.getElementById('ticket-code-val');
+    const statusPill = document.getElementById('ticket-status-pill');
+
+    if (nameEl) nameEl.textContent = playerNick;
+    if (vipEl) vipEl.style.display = isVip ? 'inline-block' : 'none';
+    if (amtEl) amtEl.textContent = Number(voucher.reward_value || 1000).toLocaleString() + ' RSD';
+    if (titleEl) titleEl.textContent = voucher.title || 'Fizički Promo Tiket za Slot Aparate';
+    if (codeEl) codeEl.textContent = voucher.voucher_code || 'GSC-VIP';
+
+    if (statusPill) {
+      if (voucher.status === 'REDEEMED') {
+        statusPill.textContent = '📜 ISKORIŠĆEN';
+        statusPill.className = 'ticket-status-pill redeemed';
+      } else {
+        statusPill.textContent = '🟢 AKTIVAN';
+        statusPill.className = 'ticket-status-pill';
+      }
+    }
+
+    const qrContainer = document.getElementById('ticket-qr-container');
+    if (qrContainer && typeof QRCode !== 'undefined') {
+      qrContainer.innerHTML = '';
+      try {
+        const qrPayload = JSON.stringify({
+          code: voucher.voucher_code,
+          player: this.playerTracker ? this.playerTracker.profile.id : '',
+          val: voucher.reward_value
+        });
+        new QRCode(qrContainer, {
+          text: qrPayload,
+          width: 146,
+          height: 146,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } catch (e) {
+        console.warn('QRCode generation fallback:', e);
+      }
+    }
+
+    if (this.voucherCountdownInterval) clearInterval(this.voucherCountdownInterval);
+
+    const updateTimer = () => {
+      const timerEl = document.getElementById('ticket-countdown-val');
+      if (!timerEl) return;
+
+      const diffMs = new Date(voucher.expires_at).getTime() - Date.now();
+      if (diffMs <= 0) {
+        timerEl.textContent = 'ISTEKAO';
+        timerEl.style.color = '#ef4444';
+        if (statusPill) {
+          statusPill.textContent = '⚠️ ISTEKAO';
+          statusPill.className = 'ticket-status-pill redeemed';
+        }
+        return;
+      }
+
+      const hours = Math.floor(diffMs / 3600000);
+      const mins = Math.floor((diffMs % 3600000) / 60000);
+      const secs = Math.floor((diffMs % 60000) / 1000);
+      timerEl.textContent = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    updateTimer();
+    this.voucherCountdownInterval = setInterval(updateTimer, 1000);
   }
 
   restoreSlotUI() {
@@ -660,6 +974,15 @@ class IGTApp {
         if (this.tournament) {
           setTimeout(() => this.tournament.openModal(), 120);
         }
+      });
+    }
+
+    // Option: VIP Vaučeri & Promocije
+    const optVoucher = document.getElementById('menu-opt-voucher');
+    if (optVoucher) {
+      optVoucher.addEventListener('click', () => {
+        this.closeCasinoMenu();
+        setTimeout(() => this.openVoucherModal(), 120);
       });
     }
 

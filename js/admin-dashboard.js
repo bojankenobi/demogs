@@ -412,6 +412,66 @@ class AdminDashboard {
     this.crmSearchQuery = '';
     this.crmSearchTimeout = null;
 
+    // 0. Campaign Template Presets
+    const templateSelect = document.getElementById('select-push-template');
+    if (templateSelect) {
+      templateSelect.addEventListener('change', () => {
+        const val = templateSelect.value;
+        const titleInput = document.getElementById('input-push-title');
+        const bodyInput = document.getElementById('input-push-body');
+        const imageInput = document.getElementById('input-push-image');
+        const locationInput = document.getElementById('input-push-location');
+        const promoSelect = document.getElementById('select-push-promo');
+
+        const templates = {
+          voucher_1000: {
+            title: '🎁 VIP PROMO TIKET 1.000 RSD',
+            body: 'Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu!',
+            image: 'assets/promotions/promo_voucher_bg.png',
+            location: 'Grand Slot Club - Glavna Filijala',
+            promo: 'voucher:1000'
+          },
+          voucher_drink: {
+            title: '🍸 VIP WELCOME DRINK NA ŠANKU',
+            body: 'Preuzmite svoj ekskluzivni koktel dobrodošlice prilikom posete klubu!',
+            image: 'assets/promotions/promo_drink_bg.png',
+            location: 'Grand Slot Club - VIP Bar',
+            promo: 'voucher_drink:1'
+          },
+          voucher_tournament: {
+            title: '🏆 VIP ULAZNICA ZA KAZINO TURNIR',
+            body: 'Obezbedite besplatan ulaz na ekskluzivni 120s slot turnir u klubu!',
+            image: 'assets/promotions/promo_tournament_bg.png',
+            location: 'Grand Slot Club - Arena 1',
+            promo: 'voucher_tour:1'
+          },
+          voucher_birthday: {
+            title: '🎂 SREĆAN ROĐENDAN OD GRAND SLOTA!',
+            body: 'Čeka vas rođendanski keš poklon od 2.000 RSD na blagajni kluba!',
+            image: 'assets/promotions/promo_birthday_bg.png',
+            location: 'Grand Slot Club - VIP Blagajna',
+            promo: 'voucher:2000'
+          },
+          free_spins_25: {
+            title: '🎰 VIP POKLON: 25 BESPLATNIH SPINOVA',
+            body: 'Zavrtite slot odmah uz 25 gratis spinova i duplirane dobitke!',
+            image: 'assets/promotions/promo_spins_bg.png',
+            location: 'Grand Slot Online',
+            promo: 'free_spins:25'
+          }
+        };
+
+        if (templates[val]) {
+          const t = templates[val];
+          if (titleInput) titleInput.value = t.title;
+          if (bodyInput) bodyInput.value = t.body;
+          if (imageInput) imageInput.value = t.image;
+          if (locationInput) locationInput.value = t.location;
+          if (promoSelect) promoSelect.value = t.promo;
+        }
+      });
+    }
+
     // 1. Target Selector Toggle
     const targetSelect = document.getElementById('select-push-target');
     const targetPlayerGroup = document.getElementById('group-target-player-id');
@@ -450,6 +510,15 @@ class AdminDashboard {
       refreshBtn.addEventListener('click', () => {
         this.fetchCrmPlayers();
         this.showToast('🔄 Lista igrača osvežena');
+      });
+    }
+
+    // 4b. Voucher Scans Refresh Button
+    const scansRefreshBtn = document.getElementById('btn-crm-scans-refresh');
+    if (scansRefreshBtn) {
+      scansRefreshBtn.addEventListener('click', () => {
+        this.fetchVoucherScans();
+        this.showToast('🔄 Dnevnik overenih vaučera osvežen');
       });
     }
 
@@ -502,6 +571,8 @@ class AdminDashboard {
       btnSendCustom.addEventListener('click', async () => {
         const title = (document.getElementById('input-push-title')?.value || '').trim();
         const body = (document.getElementById('input-push-body')?.value || '').trim();
+        const imageUrl = (document.getElementById('input-push-image')?.value || '').trim();
+        const location = (document.getElementById('input-push-location')?.value || '').trim() || 'Grand Slot Club - Glavna Filijala';
         const targetType = document.getElementById('select-push-target')?.value || 'all';
         const targetPlayerId = (document.getElementById('input-target-player-id')?.value || '').trim();
         const promoSelectVal = document.getElementById('select-push-promo')?.value || 'none:0';
@@ -529,6 +600,8 @@ class AdminDashboard {
           action: 'TRIGGER_PUSH',
           title,
           body,
+          imageUrl,
+          location,
           targetType,
           targetPlayerId,
           promoAction,
@@ -539,6 +612,8 @@ class AdminDashboard {
         const res = await this.dispatchPushApi({
           title,
           body,
+          imageUrl,
+          location,
           targetType,
           targetPlayerId,
           promoAction,
@@ -560,6 +635,7 @@ class AdminDashboard {
 
     // Initial load
     this.fetchCrmPlayers();
+    this.fetchVoucherScans();
   }
 
   async dispatchPushApi(payload) {
@@ -661,6 +737,82 @@ class AdminDashboard {
         `;
       }
     }
+  }
+
+  async fetchVoucherScans() {
+    const tableBody = document.getElementById('crm-scans-table-body');
+    if (!tableBody) return;
+
+    try {
+      const res = await fetch('/api/vouchers/scans');
+      const data = await res.json();
+      const scans = (data && data.scans) ? data.scans : [];
+
+      if (scans.length === 0) {
+        // Fallback to local demo storage if backend returns empty or demo
+        try {
+          const rawLocal = localStorage.getItem('gsc_redeemed_scans_demo') || '[]';
+          const localScans = JSON.parse(rawLocal);
+          if (localScans.length > 0) {
+            this.renderVoucherScansRows(localScans, tableBody);
+            return;
+          }
+        } catch (err) {}
+
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">
+              Još uvek nema overenih vaučera u kazinu.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      this.renderVoucherScansRows(scans, tableBody);
+
+    } catch (e) {
+      console.warn('Failed to fetch voucher scans from API, checking local storage:', e);
+      try {
+        const rawLocal = localStorage.getItem('gsc_redeemed_scans_demo') || '[]';
+        const localScans = JSON.parse(rawLocal);
+        if (localScans.length > 0) {
+          this.renderVoucherScansRows(localScans, tableBody);
+          return;
+        }
+      } catch (err) {}
+
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">
+            Dnevnik je spreman. Kada operater očita vaučer na mobilnom skeneru, pojaviće se ovde.
+          </td>
+        </tr>
+      `;
+    }
+  }
+
+  renderVoucherScansRows(scans, tableBody) {
+    tableBody.innerHTML = scans.map(s => {
+      const dateStr = s.redeemed_at ? new Date(s.redeemed_at).toLocaleString('sr-RS') : 'Upravo';
+      const isDrink = s.reward_type === 'drink';
+      const displayVal = isDrink ? '🍸 VIP Drink' : `${Number(s.reward_value || 0).toLocaleString()} RSD`;
+      return `
+        <tr>
+          <td style="font-size: 0.76rem; color: #a8a29e;">${dateStr}</td>
+          <td>
+            <strong style="color: #fff;">${s.player_nickname || 'Gost'}</strong>
+            <div style="font-size: 0.7rem; color: #a8a29e;">${s.player_id || ''}</div>
+          </td>
+          <td><code style="color: var(--accent-gold); font-weight: 700;">${s.voucher_code || ''}</code></td>
+          <td>${s.title || 'VIP Promo Tiket'}</td>
+          <td style="color: #4ade80; font-weight: 700;">${displayVal}</td>
+          <td><span style="color: #ffd700;">👤 ${s.redeemed_by_operator || 'Operater'}</span></td>
+          <td style="font-size: 0.78rem; color: #d1c7b7;">📍 ${s.redeemed_location || 'Glavna Filijala'}</td>
+          <td><span class="badge-vip-pill vip" style="background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #4ade80;">✅ Overen</span></td>
+        </tr>
+      `;
+    }).join('');
   }
 
   bindCrmRowEvents() {

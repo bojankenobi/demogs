@@ -9084,6 +9084,403 @@ body.free-spins-active .slot-cylinder-replica {
   border-color: rgba(255, 215, 0, 0.5);
 }
 
+/* ==========================================================================
+   VIP Voucher Modal & Interactive Promotion Hub
+   ========================================================================== */
+
+.btn-voucher-hud {
+  position: relative;
+  background: linear-gradient(135deg, rgba(38, 24, 8, 0.95), rgba(18, 12, 4, 0.98)) !important;
+  border: 1.5px solid rgba(255, 215, 0, 0.6) !important;
+  color: #ffd700 !important;
+  cursor: pointer;
+}
+
+.btn-voucher-hud:hover {
+  border-color: #ffd700 !important;
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.5) !important;
+  transform: translateY(-1px) scale(1.05);
+}
+
+.voucher-badge-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  background: #ff4444;
+  border: 1.5px solid #ffd700;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ff4444;
+  animation: pulseBadge 1.8s infinite;
+}
+
+@keyframes pulseBadge {
+  0% { transform: scale(0.9); box-shadow: 0 0 4px #ff4444; }
+  50% { transform: scale(1.15); box-shadow: 0 0 10px #ff4444; }
+  100% { transform: scale(0.9); box-shadow: 0 0 4px #ff4444; }
+}
+
+.voucher-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.voucher-modal-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.voucher-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #180f05 0%, #0c0803 100%);
+  border: 2px solid rgba(255, 215, 0, 0.45);
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.95), 0 0 25px rgba(255, 215, 0, 0.2);
+  padding: 22px 20px;
+  max-height: 92vh;
+  overflow-y: auto;
+  color: #fff;
+}
+
+.voucher-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s;
+}
+
+.voucher-modal-close:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.voucher-view-pane {
+  display: none;
+  flex-direction: column;
+}
+
+.voucher-view-pane.active {
+  display: flex;
+}
+
+/* View 1: Promo Opt-in View */
+.voucher-promo-hero {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.voucher-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.voucher-hero-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.voucher-promo-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #ffd700;
+  margin-bottom: 6px;
+  line-height: 1.25;
+}
+
+.voucher-promo-value-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(180, 83, 9, 0.25));
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  font-size: 0.85rem;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.voucher-promo-desc {
+  font-size: 0.82rem;
+  color: #d1c7b7;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.voucher-promo-meta-box {
+  background: #000;
+  border: 1px dashed rgba(255, 215, 0, 0.2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.76rem;
+  color: #b5a995;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.btn-voucher-action {
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 900;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-voucher-action.gold {
+  background: linear-gradient(135deg, #ffd700, #b45309);
+  color: #000;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+}
+
+.btn-voucher-action.gold:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.btn-voucher-action.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* View 2: VIP Ticket Card */
+.luxury-voucher-ticket {
+  background: radial-gradient(circle at 50% 0%, rgba(45, 27, 9, 0.95), #0d0803 100%);
+  border: 2px solid #ffd700;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+  padding-bottom: 10px;
+}
+
+.ticket-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  color: #ffd700;
+  letter-spacing: 0.8px;
+}
+
+.ticket-mini-logo {
+  height: 20px;
+}
+
+.ticket-status-pill {
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 230, 118, 0.2);
+  border: 1px solid #00e676;
+  color: #00e676;
+}
+
+.ticket-status-pill.redeemed {
+  background: rgba(148, 163, 184, 0.2);
+  border-color: #94a3b8;
+  color: #94a3b8;
+}
+
+.ticket-salutation {
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-for-lbl {
+  font-size: 0.65rem;
+  color: #b5a995;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+
+.ticket-player-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticket-player-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fff;
+}
+
+.ticket-vip-tag {
+  font-size: 0.65rem;
+  font-weight: 900;
+  background: rgba(255, 215, 0, 0.2);
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.ticket-reward-banner {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.ticket-reward-amount {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #ffd700;
+}
+
+.ticket-reward-title {
+  font-size: 0.78rem;
+  color: #d1c7b7;
+  font-weight: 600;
+}
+
+.ticket-qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.qr-canvas-wrapper {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 170px;
+  height: 170px;
+}
+
+.qr-canvas-wrapper img, .qr-canvas-wrapper canvas {
+  width: 146px !important;
+  height: 146px !important;
+}
+
+.ticket-code-label {
+  font-size: 0.65rem;
+  color: #b5a995;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.ticket-code-val {
+  font-family: monospace;
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffd700;
+}
+
+.ticket-footer-info {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ticket-timer-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+}
+
+.ticket-timer-lbl {
+  color: #b5a995;
+}
+
+.ticket-countdown-timer {
+  font-family: monospace;
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #ff9800;
+  background: #000;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 152, 0, 0.4);
+}
+
+.ticket-instructions {
+  font-size: 0.72rem;
+  color: #a8a29e;
+  line-height: 1.4;
+  text-align: center;
+}
+
+
 
 
 

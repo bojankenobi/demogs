@@ -8,6 +8,7 @@
 
 > 🌐 **Live Demo & Instant Play:** [https://bojankenobi.github.io/demogs/](https://bojankenobi.github.io/demogs/)  
 > 🔐 **Operator Control Dashboard:** [https://bojankenobi.github.io/demogs/admin.html](https://bojankenobi.github.io/demogs/admin.html) *(Default PIN: `7777`)*  
+> 📱 **Casino Staff Mobile QR Scanner:** [https://bojankenobi.github.io/demogs/scanner.html](https://bojankenobi.github.io/demogs/scanner.html)  
 > 🔄 **CI/CD Deployment:** Automated via GitHub Actions workflow (`.github/workflows/deploy.yml`)  
 > **Language / Jezik:** [English Documentation](#english-documentation) | [Srpska Dokumentacija](#srpska-dokumentacija)
 
@@ -147,13 +148,19 @@ gsc/
 │   ├── db/init.js             # One-click schema & index initializer
 │   ├── players/sync.js        # Automatic player telemetry & push token upsert
 │   ├── players/list.js        # Segmented player CRM directory & VIP status toggle
-│   └── push/send.js           # Smart Web Push dispatcher targeting segments or players
+│   ├── push/send.js           # Smart Web Push dispatcher targeting segments or players
+│   └── vouchers/              # Omnichannel O2O QR voucher & venue redemption API
+│       ├── claim.js           # Interactive promo opt-in & personal voucher generator
+│       ├── my.js              # Active & redeemed player voucher list
+│       ├── redeem.js          # Staff scanner preview & atomic voucher redemption
+│       └── scans.js           # Real-time venue audit log of redeemed club vouchers
 ├── assets/
 │   ├── icons/                 # PWA icons (192x192, 512x512, maskable, favicon)
 │   ├── symbols/               # SVG symbols (Flower, Bell, Bar, Seven, Crown, Coin, Diamond, Bomb)
 │   └── logo.svg               # Official Grand Slot horizontal luxury logo
 ├── css/
 │   ├── admin.css              # Standalone admin dashboard & CRM stylesheet
+│   ├── scanner.css            # Casino staff mobile QR scanner stylesheet & reticle
 │   └── style.css              # Grand Slot luxury player terminal stylesheet
 ├── js/
 │   ├── core/
@@ -174,8 +181,11 @@ gsc/
 │   │   ├── classic/           # 1-Line Classic retro stepper game
 │   │   ├── royal3x3/          # Royal 3x3 multi-line game & SVG paylines
 │   │   └── mines/             # Standalone Mines X & in-slot Mini-Mines bonus
+│   ├── lib/
+│   │   ├── peerjs.min.js      # P2P WebRTC data connection library
+│   │   └── qrcode.min.js      # In-browser luxury VIP QR code generator
 │   ├── admin-dashboard.js     # Standalone operator control dashboard & CRM controller
-│   ├── app.js                 # Central orchestrator & promo bonus claim listener
+│   ├── app.js                 # Central orchestrator & promo voucher hub listener
 │   ├── audio.js               # Web Audio API synthesizer & Vegas ambient engine
 │   ├── i18n.js                # Bilingual localization (English / Serbian)
 │   └── particles.js           # Canvas particle celebration burst FX
@@ -187,6 +197,7 @@ gsc/
 ├── .env.example               # Environment variables template for database & VAPID keys
 ├── index.html                 # Main player single-page slot terminal
 ├── admin.html                 # Standalone luxury operator control dashboard & CRM
+├── scanner.html               # Standalone mobile QR scanner for casino staff
 ├── manifest.webmanifest       # PWA configuration manifest
 ├── sw.js                      # Service Worker for offline play & push notifications
 ├── start.bat                  # One-click Windows local server launcher
@@ -306,6 +317,57 @@ Unlike ordinary static notifications, Grand Slot Club push notifications are act
 4. **Initialize Database:**
    - Call `/api/db/init` (or execute `schema.sql` directly in the Neon SQL console).
    - The system includes a realistic demo fallback mode, ensuring zero crashes even when running locally without active cloud database credentials!
+
+---
+
+### 🎫 10. Omnichannel O2O Marketing: Interactive Promotions, VIP QR Vouchers & Club Mobile Scanner
+
+To seamlessly bridge online mobile/desktop gameplay with physical Grand Slot Club casino locations, the platform features a complete **Online-to-Offline (O2O) Omnichannel Marketing Suite**:
+
+#### 📱 1. Interactive Promotional Opt-In & VIP Voucher Issuance
+- **Rich Push / In-Game Promotion Modal:**
+  - Players receive targeted push campaigns with luxury banners, descriptions, and opt-in buttons (`[ PRIJAVI SE ZA PROMOCIJU ]`).
+  - Opting in triggers `/api/vouchers/claim` to generate a personalized cryptographic VIP voucher with a unique alphanumeric identifier (`GSC-VOUCH-XXXX`).
+- **Luxury Personalized VIP Voucher Card (`#vip-voucher-modal`):**
+  - **Player Identity:** Automatically stamps the player's alias, VIP tier, and issue date.
+  - **Dynamic In-Browser QR Code:** Generated locally with zero external network requests using `qrcode.min.js`.
+  - **Live Countdown Expiry Timer:** Displays active remaining hours, minutes, and seconds until the voucher expires.
+  - **Venue & Reward Info:** Shows the exact club location (e.g. *Grand Slot Club - Glavna Filijala*) and reward details (e.g. *1.000 RSD za slot aparate*, *VIP Welcome Drink na šanku*, or *Turnirska ulaznica*).
+  - **Player Voucher Hub:** Players can reopen their active voucher at any time via the top HUD button (`[ 🎫 Vaučer ]`) or Casino Menu (`[ 🎫 Moji VIP Vaučeri & Promocije ]`).
+
+#### 📷 2. Casino Staff Mobile Scanner (`scanner.html`)
+- **Dedicated Light-Weight Web App:**
+  - Venue hosts, bartenders, and floor operators navigate to `scanner.html` on their smartphones or casino floor tablets.
+  - **Shift Authorization:** Quick sign-in with Operator Name (e.g. *Marko - Šank 1*) and Club Location.
+  - **Hardware Camera Viewfinder:** High-performance video scanner utilizing the browser's native `BarcodeDetector` API with continuous framing reticle and gold laser sweep animation.
+  - **Manual Barcode Gun / Keyboard Fallback:** Instant alphanumeric input field supporting handheld 2D Bluetooth/USB laser scanners or manual entry when camera access is restricted.
+  - **Web Audio Sound Effects:** Real-time dual-tone synthesizer feedback:
+    - *Success Tone (C5 -> G5 chord)*: Valid voucher detected.
+    - *Error Tone (low tritone drop)*: Expired, duplicate, or invalid voucher.
+
+#### 🛡️ 3. Two-Step Verification & Anti-Fraud Database Redemption
+1. **Inspection Step (`confirm: false`):** The scanner reads the QR code and instantly fetches voucher status from Neon PostgreSQL without marking it as spent. The staff screen displays a green verification card with player name, VIP status, reward value, and location.
+2. **Atomic Execution Step (`confirm: true`):** The operator taps the prominent green button `[ ✅ POTVRDI IZDAVANJE VAUČERA ]`. The backend atomically updates the voucher:
+   ```sql
+   UPDATE vouchers
+   SET status = 'REDEEMED',
+       redeemed_at = NOW(),
+       redeemed_by_operator = 'Marko - Šank 1',
+       redeemed_location = 'Grand Slot Club - Glavna Filijala'
+   WHERE voucher_code = '...' AND status = 'ACTIVE';
+   ```
+3. **Double-Spend Prevention:** Once redeemed, scanning the voucher again immediately triggers a red `🔴 ODBIJENO / NEVAŽEĆI` alert detailing when and by whom it was previously claimed.
+
+#### 📊 4. Central Admin Panel Live Audit Log (`admin.html`)
+- **VIP Campaign Presets:** Operator can dispatch one-click promotions:
+  - 🎁 *VIP Promo Tiket 1.000 RSD za aparate u klubu*
+  - 🍸 *VIP Welcome Drink & Koktel na šanku*
+  - 🏆 *VIP Ulaznica za 120s Kazino Turnir*
+  - 🎂 *Rođendanski Keš Poklon u Kazinu (2.000 RSD)*
+  - 🎨 *Prilagođena kampanja (Custom image URL, copy, and venue location)*
+- **Live Scans Audit Log Table:** Real-time log displaying verified club visits (`/api/vouchers/scans`):
+  - Timestamp, Player Name & ID, Voucher Code, Reward Type/Value, Staff Member, Club Location, and Status.
+  - Provides club management with complete visibility into customer foot traffic driven by online marketing campaigns.
 
 ---
 ---
@@ -545,3 +607,55 @@ Za razliku od klasičnih tekstualnih obaveštenja, Grand Slot Club notifikacije 
 4. **Inicijalizacija Baze:**
    - Pokrenite `/api/db/init` (ili unesite upite iz `schema.sql` direktno u Neon SQL konzoli).
    - Sistem sadrži ugrađeni realistični simulacioni režim koji garantuje nesmetan rad čak i u lokalnom razvoju pre unosa cloud ključeva!
+
+---
+
+### 🎫 9. Omnichannel (O2O) Marketing: Interaktivne Promocije, VIP QR Vaučeri i Mobilni Skener za Osoblje Kluba
+
+Kako bi se premostio jaz između online igranja na mobilnim telefonima/računarima i fizičkih lokacija Grand Slot Club kazina, razvijen je kompletan **Online-to-Offline (O2O) Omnichannel sistem**:
+
+#### 📱 1. Interaktivna Prijava za Promociju i VIP Vaučer Karta
+- **Push Notifikacija i Promotivni Prozor u Igri:**
+  - Igrači dobijaju obaveštenje sa slikom promocije i dugmetom za prijavu (`[ PRIJAVI SE ZA PROMOCIJU ]`).
+  - Klikom na prijavu poziva se `/api/vouchers/claim` koji igraču generiše personalizovani kriptografski VIP vaučer (`GSC-VOUCH-XXXX`).
+- **Luksuzna VIP Vaučer Karta (`#vip-voucher-modal`):**
+  - **Podaci o Igraču:** Automatski ispisuje nadimak igrača, VIP status i datum izdavanja.
+  - **Dinamički QR Kod:** Generisan u samom pretraživaču preko biblioteke `qrcode.min.js` bez spoljnih servera.
+  - **Odbrojavanje Uživo (Countdown Timer):** Prikazuje sate, minute i sekunde do isteka važenja vaučera.
+  - **Lokacija i Nagrada:** Navodi tačan klub gde se nagrada preuzima (npr. *Grand Slot Club - Glavna Filijala*) i vrstu nagrade (npr. *1.000 RSD promo tiket*, *VIP Welcome Drink* ili *Turnirska ulaznica*).
+  - **Brzi Pristup:** Igrač može otvoriti svoj vaučer u svakom trenutku preko svetlećeg dugmeta u gornjoj traci (`[ 🎫 Vaučer ]`) ili kroz Kazino Meni (`[ 🎫 Moji VIP Vaučeri & Promocije ]`).
+
+#### 📷 2. Mobilni Skener za Osoblje i Šankere Kazina (`scanner.html`)
+- **Samostalna Web Aplikacija za Telefone:**
+  - Domaćini, šankeri i blagajnici otvaraju `scanner.html` na svom pametnom telefonu ili tabletu.
+  - **Prijava Smene:** Brz unos imena operatera (npr. *Marko - Šank 1*) i lokacije kluba.
+  - **Kamera sa Ciljnikom i Zlatnim Laserom:** Koristi brzi `BarcodeDetector` API za trenutno automatsko očitavanje QR koda sa ekrana telefona gosta.
+  - **Ručni Unos i Podrška za Barcode Pištolje:** Polje za ručni unos koda ili povezivanje sa USB/Bluetooth skenerom.
+  - **Sintetizovani Zvučni Signali (Web Audio API):**
+    - *Prijatan akord (C5 -> G5)*: Vaučer je validan.
+    - *Duboki ton upozorenja*: Vaučer je istekao, neispravan ili već iskorišćen.
+
+#### 🛡️ 3. Dvoetapna Verifikacija i Sprečavanje Zloupotreba
+1. **Pregled bez poništavanja (`confirm: false`):** Skener prvo samo proverava status vaučera u Neon PostgreSQL bazi. Operateru se prikazuje zelena kartica sa podacima igrača i iznosom.
+2. **Zvanična Overa (`confirm: true`):** Operater pritiska veliko zeleno dugme `[ ✅ POTVRDI IZDAVANJE VAUČERA ]`. Sistem u bazi trajno menja status:
+   ```sql
+   UPDATE vouchers
+   SET status = 'REDEEMED',
+       redeemed_at = NOW(),
+       redeemed_by_operator = 'Marko - Šank 1',
+       redeemed_location = 'Grand Slot Club - Glavna Filijala'
+   WHERE voucher_code = '...' AND status = 'ACTIVE';
+   ```
+3. **Zaštita od Duplog Korišćenja:** Ukoliko igrač ponovo pokuša da prikaže isti vaučer, skener odmah prikazuje crveno upozorenje `🔴 ODBIJENO / NEVAŽEĆI` uz tačno vreme kada je i kod kog operatera vaučer već iskorišćen.
+
+#### 📊 4. Dnevnik Uživo u Centralnom Admin Panelu (`admin.html`)
+- **VIP Šabloni Promocija:** Operater jednim klikom bira unapred definisane akcije:
+  - 🎁 *VIP Promo Tiket 1.000 RSD za aparate u klubu*
+  - 🍸 *VIP Welcome Drink & Koktel na šanku*
+  - 🏆 *VIP Ulaznica za 120s Kazino Turnir*
+  - 🎂 *Rođendanski Keš Poklon u Kazinu (2.000 RSD)*
+  - 🎨 *Prilagođena kampanja (Custom slika, tekst i lokacija)*
+- **Tabela Overenih Dolazaka (Audit Log):** Pregled svih realizovanih poseta kazinu (`/api/vouchers/scans`):
+  - Vreme overe, Ime i ID igrača, Kod vaučera, Nagrada/Iznos, Ime operatera, Lokacija kluba i Status.
+  - Menadžment kluba u svakom trenutku ima jasan uvid u to koliko je gostiju privučeno iz online aplikacije u fizičke objekte.
+

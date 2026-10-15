@@ -20,7 +20,9 @@ export default async function handler(req, res) {
     targetType = 'all',
     targetPlayerId = null,
     promoAction = 'none',
-    promoValue = 0
+    promoValue = 0,
+    imageUrl = null,
+    location = 'Grand Slot Club - Glavna Filijala'
   } = req.body || {};
 
   if (!title || !body) {
@@ -95,6 +97,8 @@ export default async function handler(req, res) {
       targetUrl = `index.html?promo_action=free_spins&promo_val=${promoValue || 10}`;
     } else if (promoAction === 'credit_bonus') {
       targetUrl = `index.html?promo_action=credit_bonus&promo_val=${promoValue || 500}`;
+    } else if (promoAction && (promoAction.startsWith('voucher') || promoAction.startsWith('promo_'))) {
+      targetUrl = `index.html?promo_action=${encodeURIComponent(promoAction)}&promo_val=${promoValue || 1000}`;
     }
 
     const payload = JSON.stringify({
@@ -102,10 +106,13 @@ export default async function handler(req, res) {
       body: body,
       icon: 'assets/icons/icon-192.png',
       badge: 'assets/icons/favicon.png',
+      image: imageUrl || undefined,
       url: targetUrl,
       data: {
         promoAction,
         promoValue,
+        imageUrl,
+        location,
         timestamp: Date.now()
       }
     });

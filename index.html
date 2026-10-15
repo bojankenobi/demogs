@@ -428,6 +428,12 @@
         <span class="volatility-badge-pill" id="hud-volatility-sub">STD</span>
       </button>
 
+      <!-- VIP Voucher & Promo Button (Glowing Golden Ticket) -->
+      <button class="btn-icon-mini btn-voucher-hud" id="hud-voucher-btn" title="Moji VIP Vaučeri & Promocije" aria-label="Vaučeri" style="position: relative;">
+        <span class="voucher-icon-symbol">🎫</span>
+        <span class="voucher-badge-dot" id="hud-voucher-badge" style="display: none;"></span>
+      </button>
+
       <!-- Unified Casino Menu Button (Mobile & Tablet Prime Access) -->
       <button class="btn-casino-menu" id="casino-menu-btn" title="Glavni Meni & Podešavanja" data-i18n-title="menuTitle" aria-label="Meni">
         <span class="menu-icon-bars">☰</span>
@@ -1380,7 +1386,20 @@
           <span class="menu-card-arrow">›</span>
         </button>
 
-        <!-- 3. Profil Igrača & Fiktivna Dopuna -->
+        <!-- 3. Moji VIP Vaučeri & Promocije -->
+        <button type="button" class="menu-action-card card-voucher" id="menu-opt-voucher">
+          <div class="menu-card-icon-wrap">🎫</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title">Moji VIP Vaučeri & Promocije</span>
+              <span class="menu-pill-badge badge-gold" id="menu-vouchers-count-badge">QR</span>
+            </div>
+            <p class="menu-card-desc">Personalizovane kartice, promo tiketi i QR kodovi za kazino</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+
+        <!-- 4. Profil Igrača & Fiktivna Dopuna -->
         <button type="button" class="menu-action-card card-profile" id="menu-opt-profile">
           <div class="menu-card-icon-wrap">👤</div>
           <div class="menu-card-info">
@@ -1487,6 +1506,92 @@
       <div class="casino-menu-footer">
         <button type="button" class="btn-menu-close-action" id="btn-menu-close-action" data-i18n="menuCloseBtn">POVRATAK NA IGRU</button>
       </div>
+    </div>
+  </div>
+
+  <!-- VIP Voucher & Interactive Promotion Modal -->
+  <div class="modal-overlay voucher-modal-overlay" id="vip-voucher-modal">
+    <div class="voucher-modal-card">
+      <button type="button" class="voucher-modal-close" id="btn-close-voucher-modal" aria-label="Zatvori">✕</button>
+
+      <!-- View 1: Interactive Promotion Details & Opt-In -->
+      <div id="voucher-view-promo" class="voucher-view-pane active">
+        <div class="voucher-promo-hero">
+          <img src="assets/symbols/crystal-spade-clean.png" alt="Promo Baner" class="voucher-hero-img" id="voucher-promo-img">
+          <div class="voucher-hero-badge">🌟 EKSKLUZIVNA PONUDA</div>
+        </div>
+        <div class="voucher-promo-body">
+          <h2 class="voucher-promo-title" id="voucher-promo-title">VIP Promo Tiket 1.000 RSD</h2>
+          <div class="voucher-promo-value-tag" id="voucher-promo-value-tag">+1.000 RSD PROMO TIKET</div>
+          <p class="voucher-promo-desc" id="voucher-promo-desc">
+            Prijavite se za ovu promociju i preuzmite lični VIP QR vaučer koji možete iskoristiti na šanku ili blagajni Grand Slot Club-a!
+          </p>
+          <div class="voucher-promo-meta-box">
+            <div>📍 Lokacija: <span id="voucher-promo-location">Grand Slot Club</span></div>
+            <div>⏳ Ponuda važi još: <span id="voucher-promo-validity">48 sati</span></div>
+          </div>
+          <button type="button" class="btn-voucher-action gold" id="btn-claim-promo-action">
+            ✅ PRIJAVI SE I PREUZMI VIP VAUČER
+          </button>
+        </div>
+      </div>
+
+      <!-- View 2: Personalized VIP Voucher Card (Black & Gold Luxury with QR Code) -->
+      <div id="voucher-view-card" class="voucher-view-pane">
+        <div class="luxury-voucher-ticket">
+          <!-- Card Watermark & Branding -->
+          <div class="ticket-header">
+            <div class="ticket-brand">
+              <img src="assets/symbols/crystal-spade-clean.png" alt="Logo" class="ticket-mini-logo">
+              <span>GRAND SLOT CLUB VIP</span>
+            </div>
+            <div class="ticket-status-pill" id="ticket-status-pill">🟢 AKTIVAN</div>
+          </div>
+
+          <!-- Player Personalized Title -->
+          <div class="ticket-salutation">
+            <span class="ticket-for-lbl">EKSKLUZIVNO ZA ČLANA:</span>
+            <div class="ticket-player-name-row">
+              <span class="ticket-player-name" id="ticket-player-name">Gost</span>
+              <span class="ticket-vip-tag" id="ticket-vip-tag">👑 VIP</span>
+            </div>
+          </div>
+
+          <!-- Voucher Benefit Highlight -->
+          <div class="ticket-reward-banner">
+            <div class="ticket-reward-amount" id="ticket-reward-amount">1.000 RSD</div>
+            <div class="ticket-reward-title" id="ticket-reward-title">Fizički Promo Tiket za Slot Aparate</div>
+          </div>
+
+          <!-- Dynamic QR Code & Barcode Area -->
+          <div class="ticket-qr-section">
+            <div class="qr-canvas-wrapper" id="ticket-qr-container"></div>
+            <div class="ticket-code-label">KOD VAUČERA:</div>
+            <div class="ticket-code-val" id="ticket-code-val">GSC-7842-VIP</div>
+          </div>
+
+          <!-- Countdown Timer & Details -->
+          <div class="ticket-footer-info">
+            <div class="ticket-timer-wrap">
+              <span class="ticket-timer-lbl">⏳ Preostalo vreme za korišćenje:</span>
+              <span class="ticket-countdown-timer" id="ticket-countdown-val">47:59:59</span>
+            </div>
+            <div class="ticket-instructions">
+              📍 <strong>Grand Slot Club</strong> • Pokažite ovaj ekran osoblju na šanku ili blagajni kluba.
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; display: flex; gap: 8px;">
+          <button type="button" class="btn-voucher-action secondary" id="btn-back-to-promo-view" style="flex: 1;">
+            Promocije
+          </button>
+          <button type="button" class="btn-voucher-action gold" id="btn-done-voucher-card" style="flex: 2;">
+            U redu, sačuvano
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 

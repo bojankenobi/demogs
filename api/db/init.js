@@ -62,9 +62,36 @@ export default async function handler(req, res) {
 
     await sql`CREATE INDEX IF NOT EXISTS idx_campaigns_created ON push_campaigns (created_at DESC);`;
 
+    // 4. Create vouchers table
+    await sql`
+      CREATE TABLE IF NOT EXISTS vouchers (
+        id VARCHAR(64) PRIMARY KEY,
+        player_id VARCHAR(64) NOT NULL,
+        campaign_id VARCHAR(64) NULL,
+        voucher_code VARCHAR(64) UNIQUE NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        description TEXT NULL,
+        image_url TEXT NULL,
+        reward_type VARCHAR(64) NOT NULL DEFAULT 'club_ticket',
+        reward_value NUMERIC(10, 2) DEFAULT 0.00,
+        location VARCHAR(255) DEFAULT 'Grand Slot Club',
+        expires_at TIMESTAMPTZ NOT NULL,
+        status VARCHAR(32) DEFAULT 'ACTIVE',
+        redeemed_at TIMESTAMPTZ NULL,
+        redeemed_by_operator VARCHAR(255) NULL,
+        redeemed_location VARCHAR(255) NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `;
+
+    await sql`CREATE INDEX IF NOT EXISTS idx_vouchers_code ON vouchers (voucher_code);`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_vouchers_player ON vouchers (player_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_vouchers_status ON vouchers (status);`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_vouchers_redeemed ON vouchers (redeemed_at DESC);`;
+
     return res.status(200).json({
       success: true,
-      message: 'Neon PostgreSQL šema je uspešno inicijalizovana (players & push_campaigns).'
+      message: 'Neon PostgreSQL šema je uspešno inicijalizovana (players, push_campaigns, vouchers).'
     });
   } catch (error) {
     console.error('Database init error:', error);

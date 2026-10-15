@@ -370,8 +370,20 @@
 
         <!-- Custom Smart Promo Push Campaign -->
         <div class="push-card">
-          <h3 class="trigger-panel-title">🎯 Smart Push Kampanja sa Bonusom</h3>
+          <h3 class="trigger-panel-title">🎯 Smart Push Kampanja sa Bonusom / Vaučerom</h3>
           
+          <div class="push-form-group">
+            <label for="select-push-template">⚡ Izaberi VIP Šablon Promocije / Vaučera:</label>
+            <select id="select-push-template" class="push-select-dropdown">
+              <option value="custom">🎨 Prilagođena kampanja (Ručni unos)</option>
+              <option value="voucher_1000" selected>🎁 VIP Promo Tiket 1.000 RSD za aparate u klubu</option>
+              <option value="voucher_drink">🍸 VIP Welcome Drink & Koktel na šanku</option>
+              <option value="voucher_tournament">🏆 VIP Ulaznica za 120s Kazino Turnir</option>
+              <option value="voucher_birthday">🎂 Rođendanski Keš Poklon u Kazinu (2.000 RSD)</option>
+              <option value="free_spins_25">🎰 VIP Online Poklon: 25 Besplatnih Spinova</option>
+            </select>
+          </div>
+
           <div class="push-form-group">
             <label for="select-push-target">Ciljna Grupa (Segmentacija):</label>
             <select id="select-push-target" class="push-select-dropdown">
@@ -389,23 +401,37 @@
 
           <div class="push-form-group">
             <label for="input-push-title">Naslov Notifikacije:</label>
-            <input type="text" id="input-push-title" class="push-input-text" placeholder="npr. 🌟 SPECIJALNI POKLON ZA VAS!">
+            <input type="text" id="input-push-title" class="push-input-text" placeholder="npr. 🌟 SPECIJALNI POKLON ZA VAS!" value="🎁 VIP PROMO TIKET 1.000 RSD">
           </div>
 
           <div class="push-form-group">
             <label for="input-push-body">Tekst Poruke:</label>
-            <input type="text" id="input-push-body" class="push-input-text" placeholder="npr. Otvorite igru i preuzmite svojih 25 besplatnih spinova odmah!">
+            <input type="text" id="input-push-body" class="push-input-text" placeholder="npr. Otvorite igru i preuzmite svojih 25 besplatnih spinova odmah!" value="Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu!">
           </div>
 
           <div class="push-form-group">
-            <label for="select-push-promo">Smart Promotivna Nagrada (Klik aktivira bonus):</label>
+            <label for="input-push-image">URL Promotivne Slike (Bannera):</label>
+            <input type="text" id="input-push-image" class="push-input-text" placeholder="assets/promotions/voucher_1000.png ili https://..." value="assets/promotions/promo_voucher_bg.png">
+          </div>
+
+          <div class="push-form-group">
+            <label for="input-push-location">Lokacija Kluba za Preuzimanje:</label>
+            <input type="text" id="input-push-location" class="push-input-text" value="Grand Slot Club - Glavna Filijala" placeholder="npr. Grand Slot Club - Glavna Filijala">
+          </div>
+
+          <div class="push-form-group">
+            <label for="select-push-promo">Smart Promotivna Nagrada (Klik aktivira bonus / vaučer):</label>
             <select id="select-push-promo" class="push-select-dropdown">
               <option value="none:0">Bez Promocije (Samo tekstualno obaveštenje)</option>
-              <option value="free_spins:10" selected>🎰 10 Besplatnih Spinova (2x Množilac)</option>
-              <option value="free_spins:25">🎰 25 Besplatnih Spinova (VIP Bonus)</option>
-              <option value="credit_bonus:200">🎁 +200 RSD Kreditni Bonus</option>
-              <option value="credit_bonus:500">🎁 +500 RSD Kreditni Bonus</option>
-              <option value="credit_bonus:1000">💎 +1.000 RSD VIP Keš Bonus</option>
+              <option value="voucher:1000" selected>🎫 Fizički Vaučer: 1.000 RSD za Slot Aparate u Klubu</option>
+              <option value="voucher_drink:1">🍸 Fizički Vaučer: VIP Welcome Drink na Šanku</option>
+              <option value="voucher_tour:1">🏆 Fizički Vaučer: VIP Besplatan Ulaz na Turnir</option>
+              <option value="voucher:2000">💎 Fizički Vaučer: 2.000 RSD Rođendanski Bonus</option>
+              <option value="free_spins:10">🎰 Online: 10 Besplatnih Spinova (2x Množilac)</option>
+              <option value="free_spins:25">🎰 Online: 25 Besplatnih Spinova (VIP Bonus)</option>
+              <option value="credit_bonus:200">🎁 Online: +200 RSD Kreditni Bonus</option>
+              <option value="credit_bonus:500">🎁 Online: +500 RSD Kreditni Bonus</option>
+              <option value="credit_bonus:1000">💎 Online: +1.000 RSD VIP Keš Bonus</option>
             </select>
           </div>
 
@@ -414,6 +440,58 @@
           </button>
           <div id="push-campaign-status" style="margin-top: 10px; font-size: 0.8rem; text-align: center; min-height: 18px;"></div>
         </div>
+      </div>
+
+      <!-- Staff Mobile Scanner Card -->
+      <div class="push-card" style="margin-top: 24px; border: 1px solid rgba(255, 215, 0, 0.35); background: linear-gradient(135deg, rgba(20, 20, 24, 0.95), rgba(30, 25, 12, 0.95));">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <h3 class="trigger-panel-title" style="margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+              <span>📱</span> Mobilni Skener za Osoblje & Šankere Kazina
+            </h3>
+            <p style="font-size: 0.82rem; color: #d1c7b7; margin: 0;">
+              Osoblje na ulazu ili šanku kazina otvara mobilni skener na telefonu radi brze verifikacije QR vaučera igrača u realnom vremenu.
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <a href="scanner.html" target="_blank" class="btn-trigger-action gold" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 18px;">
+              <span>📷</span> OTVORI MOBILNI SKENER
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Audit Log of Club Scans -->
+      <div class="pane-intro-box" style="margin-top: 28px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h3 class="pane-title" style="font-size: 1.15rem; margin-bottom: 4px;">🎟️ Dnevnik Verifikovanih Vaučera u Kazinu (Audit Log)</h3>
+            <p class="pane-desc" style="margin: 0;">Evidencija vaučera koje su igrači fizički doneli u klub i koje je operater verifikovao mobilnim skenerom.</p>
+          </div>
+          <button type="button" class="btn-trigger-action" id="btn-crm-scans-refresh" style="padding: 6px 14px;">🔄 Osveži Dnevnik</button>
+        </div>
+      </div>
+
+      <div class="crm-table-box" style="margin-top: 12px;">
+        <table class="crm-table">
+          <thead>
+            <tr>
+              <th>Vreme Overe</th>
+              <th>Igrač</th>
+              <th>Kod Vaučera</th>
+              <th>Naziv / Nagrada</th>
+              <th>Vrednost</th>
+              <th>Operater / Smena</th>
+              <th>Lokacija Kluba</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="crm-scans-table-body">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 24px;">Učitavanje dnevnika overenih vaučera...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 

@@ -40,3 +40,29 @@ CREATE TABLE IF NOT EXISTS push_campaigns (
 );
 
 CREATE INDEX IF NOT EXISTS idx_campaigns_created ON push_campaigns (created_at DESC);
+
+-- 3. Omnichannel VIP Vouchers & Club Physical Redemptions
+CREATE TABLE IF NOT EXISTS vouchers (
+  id VARCHAR(64) PRIMARY KEY,
+  player_id VARCHAR(64) NOT NULL,
+  campaign_id VARCHAR(64) NULL,
+  voucher_code VARCHAR(64) UNIQUE NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NULL,
+  image_url TEXT NULL,
+  reward_type VARCHAR(64) NOT NULL DEFAULT 'club_ticket',
+  reward_value NUMERIC(10, 2) DEFAULT 0.00,
+  location VARCHAR(255) DEFAULT 'Grand Slot Club',
+  expires_at TIMESTAMPTZ NOT NULL,
+  status VARCHAR(32) DEFAULT 'ACTIVE',
+  redeemed_at TIMESTAMPTZ NULL,
+  redeemed_by_operator VARCHAR(255) NULL,
+  redeemed_location VARCHAR(255) NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_vouchers_code ON vouchers (voucher_code);
+CREATE INDEX IF NOT EXISTS idx_vouchers_player ON vouchers (player_id);
+CREATE INDEX IF NOT EXISTS idx_vouchers_status ON vouchers (status);
+CREATE INDEX IF NOT EXISTS idx_vouchers_redeemed ON vouchers (redeemed_at DESC);
+

@@ -231,12 +231,19 @@ class AdminBridge {
             }
 
             this.app.notifications.sendPushNotification(data.title, data.body, {
-              url: `./?promo_action=${data.promoAction || 'none'}&promo_val=${data.promoValue || 0}`
+              url: `./?promo_action=${data.promoAction || 'none'}&promo_val=${data.promoValue || 0}&promo_title=${encodeURIComponent(data.title || '')}&promo_body=${encodeURIComponent(data.body || '')}&promo_img=${encodeURIComponent(data.imageUrl || '')}&promo_loc=${encodeURIComponent(data.location || '')}`
             });
             this.app.showMessage(`🔔 PUSH PRIMLJEN: ${data.title}`, 'win');
 
             if (data.promoAction && data.promoAction !== 'none' && this.app.claimPromoBonus) {
-              this.app.claimPromoBonus({ promoAction: data.promoAction, promoValue: data.promoValue });
+              this.app.claimPromoBonus({
+                promoAction: data.promoAction,
+                promoValue: data.promoValue,
+                title: data.title,
+                body: data.body,
+                imageUrl: data.imageUrl,
+                location: data.location
+              });
             }
           }
         }

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Grand Slot Club - Verifikator & Skener Vaučera</title>
+  
+  <link rel="icon" type="image/png" href="assets/icons/favicon.png">
+  <link rel="stylesheet" href="css/scanner.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="scanner-header">
+    <div class="scanner-brand">
+      <img src="assets/symbols/crystal-spade-clean.png" alt="Grand Slot Logo">
+      <div class="scanner-title-wrap">
+        <h1>GRAND SLOT CLUB</h1>
+        <span>Osoblje • Skener Vaučera</span>
+      </div>
+    </div>
+    <a href="admin.html" class="btn-header-action">📊 Admin Panel</a>
+  </header>
+
+  <main class="scanner-container">
+
+    <!-- Shift & Operator Info Bar -->
+    <div class="shift-card">
+      <div>
+        <div class="shift-info-lbl">Aktivni Operater & Lokacija</div>
+        <div class="shift-operator-name" id="display-operator-info">Marko (Šank 1) • Beograd</div>
+      </div>
+      <button type="button" class="btn-edit-shift" id="btn-edit-operator">Izmeni</button>
+    </div>
+
+    <!-- Camera Viewport Card -->
+    <div class="camera-box" id="camera-box">
+      <video id="scanner-video" playsinline muted autoplay></video>
+      
+      <!-- Targeting Reticle Overlay -->
+      <div class="reticle-overlay">
+        <div class="reticle-corner tl"></div>
+        <div class="reticle-corner tr"></div>
+        <div class="reticle-corner bl"></div>
+        <div class="reticle-corner br"></div>
+        <div class="scan-laser-line"></div>
+      </div>
+
+      <div class="camera-hint" id="camera-status-text">
+        📷 Uperite kameru ka QR kodu na telefonu ili računaru gosta
+      </div>
+    </div>
+
+    <!-- Manual Code Fallback (Keyboard / USB Scanner) -->
+    <div class="manual-input-card">
+      <label class="shift-info-lbl" for="input-manual-voucher-code">Ili ručno unesite kod sa ekrana gosta:</label>
+      <div class="manual-input-group">
+        <input type="text" id="input-manual-voucher-code" class="manual-code-input" placeholder="npr. GSC-7842-VIP" autocomplete="off" autocorrect="off" spellcheck="false">
+        <button type="button" class="btn-check-manual" id="btn-submit-manual">PROVERI</button>
+      </div>
+    </div>
+
+    <!-- Verification Result Card (Dynamic) -->
+    <section class="verification-card" id="verification-card">
+      <span class="verif-badge-status" id="verif-badge">🟢 VAŽEĆI VAUČER</span>
+
+      <div class="verif-player-title">
+        <span id="verif-player-name">Bojan K.</span>
+        <span class="verif-vip-tag" id="verif-vip-badge">👑 VIP</span>
+      </div>
+
+      <div class="verif-reward-box">
+        <div class="verif-reward-val" id="verif-reward-value">1.000 RSD</div>
+        <div class="verif-reward-desc" id="verif-reward-title">Promo Tiket za Slot Aparate u Klubu</div>
+      </div>
+
+      <div class="verif-meta-list">
+        <div>📍 Lokacija: <strong id="verif-location">Grand Slot Club</strong></div>
+        <div>⏳ Važi do: <span id="verif-expires">16.10. 20:00</span></div>
+        <div>🔢 Kod: <code id="verif-code" style="color: var(--accent-gold);">GSC-7842-VIP</code></div>
+        <div id="verif-error-msg" style="color: var(--color-error); font-weight: bold; margin-top: 6px; display: none;"></div>
+      </div>
+
+      <div class="verif-actions">
+        <button type="button" class="btn-confirm-redeem" id="btn-confirm-redeem">
+          ✅ POTVRDI IZDAVANJE VAUČERA
+        </button>
+        <button type="button" class="btn-dismiss-verif" id="btn-dismiss-verif">
+          Zatvori
+        </button>
+      </div>
+    </section>
+
+    <!-- Shift Scans Audit Log -->
+    <section class="scans-log-card">
+      <div class="scans-log-title">
+        <span>📋 Izdati Vaučeri u ovoj smeni</span>
+        <span id="shift-count-badge" style="color: var(--text-muted);">Ukupno: 0</span>
+      </div>
+      <ul class="scans-log-list" id="shift-scans-list">
+        <li style="color: var(--text-muted); font-size: 0.75rem; text-align: center; padding: 10px;">
+          Još uvek nema skeniranih vaučera u ovoj smeni.
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <script>
+    /**
+     * Grand Slot Club - Mobile Staff Scanner Controller
+     */
+    class StaffVoucherScanner {
+      constructor() {
+        this.video = document.getElementById('scanner-video');
+        this.cameraBox = document.getElementById('camera-box');
+        this.statusText = document.getElementById('camera-status-text');
+        this.verifCard = document.getElementById('verification-card');
+        this.currentInspectedVoucher = null;
+        this.shiftScans = [];
+        this.isScanning = true;
+        this.isBarcodeDetecting = false;
+
+        this.operatorName = localStorage.getItem('gsc_scanner_operator') || 'Marko (Šank 1)';
+        this.location = localStorage.getItem('gsc_scanner_location') || 'Grand Slot Club Beograd';
+
+        this.initAudio();
+        this.updateOperatorDisplay();
+        this.initControls();
+        this.startCamera();
+      }
+
+      initAudio() {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.audioCtx = new AudioContext();
+        } catch (e) {}
+      }
+
+      playTone(freq, type = 'sine', duration = 0.15) {
+        if (!this.audioCtx) return;
+        try {
+          if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.audioCtx.destination);
+          osc.start();
+          osc.stop(this.audioCtx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      playSuccessSound() {
+        this.playTone(587.33, 'triangle', 0.1);
+        setTimeout(() => this.playTone(880, 'sine', 0.25), 100);
+      }
+
+      playErrorSound() {
+        this.playTone(180, 'sawtooth', 0.35);
+      }
+
+      updateOperatorDisplay() {
+        const el = document.getElementById('display-operator-info');
+        if (el) el.textContent = `${this.operatorName} • ${this.location}`;
+      }
+
+      initControls() {
+        // Edit operator info
+        document.getElementById('btn-edit-operator').addEventListener('click', () => {
+          const name = prompt('Unesite vaše ime i radno mesto:', this.operatorName);
+          if (name && name.trim()) {
+            this.operatorName = name.trim();
+            localStorage.setItem('gsc_scanner_operator', this.operatorName);
+          }
+          const loc = prompt('Unesite naziv lokala / kluba:', this.location);
+          if (loc && loc.trim()) {
+            this.location = loc.trim();
+            localStorage.setItem('gsc_scanner_location', this.location);
+          }
+          this.updateOperatorDisplay();
+        });
+
+        // Manual submit
+        document.getElementById('btn-submit-manual').addEventListener('click', () => {
+          const input = document.getElementById('input-manual-voucher-code');
+          const code = (input.value || '').trim();
+          if (code) {
+            this.inspectVoucherCode(code);
+            input.value = '';
+          }
+        });
+
+        document.getElementById('input-manual-voucher-code').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            document.getElementById('btn-submit-manual').click();
+          }
+        });
+
+        // Dismiss inspection
+        document.getElementById('btn-dismiss-verif').addEventListener('click', () => {
+          this.verifCard.style.display = 'none';
+          this.isScanning = true;
+          this.currentInspectedVoucher = null;
+        });
+
+        // Confirm redemption
+        document.getElementById('btn-confirm-redeem').addEventListener('click', async () => {
+          if (!this.currentInspectedVoucher) return;
+          await this.executeRedeem(this.currentInspectedVoucher.voucher_code);
+        });
+      }
+
+      async startCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          if (this.statusText) {
+            this.statusText.textContent = '⚠️ Kamera nije podržana. Koristite ručni unos koda.';
+          }
+          return;
+        }
+
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+          });
+          this.video.srcObject = stream;
+          await this.video.play();
+          if (this.statusText) {
+            this.statusText.textContent = '📷 Uperite kameru ka QR kodu gosta';
+          }
+          this.startQrDetectionLoop();
+        } catch (err) {
+          console.warn('Camera access denied or unavailable:', err);
+          if (this.statusText) {
+            this.statusText.textContent = 'ℹ️ Kamera nije dostupna. Unesite kod vaučera ručno ispod.';
+          }
+        }
+      }
+
+      async startQrDetectionLoop() {
+        if ('BarcodeDetector' in window) {
+          try {
+            const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+            
+            const scanFrame = async () => {
+              if (this.isScanning && this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+                try {
+                  const barcodes = await barcodeDetector.detect(this.video);
+                  if (barcodes.length > 0) {
+                    const rawValue = barcodes[0].rawValue;
+                    if (rawValue) {
+                      this.handleDetectedQr(rawValue);
+                    }
+                  }
+                } catch (e) {}
+              }
+              requestAnimationFrame(scanFrame);
+            };
+            requestAnimationFrame(scanFrame);
+            return;
+          } catch (e) {
+            console.warn('BarcodeDetector initialization fallback:', e);
+          }
+        }
+
+        // Fallback: Poll video on canvas if needed
+      }
+
+      handleDetectedQr(rawText) {
+        if (!this.isScanning) return;
+        this.isScanning = false;
+
+        // Play beep
+        this.playTone(800, 'sine', 0.1);
+
+        let code = rawText.trim();
+        // If QR contains JSON: { "code": "GSC-..." } or URL: "...?code=GSC-..."
+        if (code.includes('code=')) {
+          try {
+            const u = new URL(code);
+            code = u.searchParams.get('code') || code;
+          } catch (e) {}
+        } else if (code.startsWith('{')) {
+          try {
+            const parsed = JSON.parse(code);
+            code = parsed.voucher_code || parsed.code || code;
+          } catch (e) {}
+        }
+
+        this.inspectVoucherCode(code);
+      }
+
+      async inspectVoucherCode(code) {
+        this.verifCard.style.display = 'block';
+        this.verifCard.className = 'verification-card';
+        document.getElementById('verif-badge').textContent = '⏳ PROVERA U BAZI...';
+        document.getElementById('verif-player-name').textContent = 'Učitavanje...';
+        document.getElementById('verif-vip-badge').style.display = 'none';
+        document.getElementById('verif-error-msg').style.display = 'none';
+        document.getElementById('btn-confirm-redeem').style.display = 'none';
+
+        try {
+          const res = await fetch('/api/vouchers/redeem', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              voucherCode: code,
+              operatorName: this.operatorName,
+              location: this.location,
+              confirm: false
+            })
+          });
+
+          const data = await res.json();
+
+          if (data.success && data.valid) {
+            this.playSuccessSound();
+            this.currentInspectedVoucher = data.voucher;
+
+            this.verifCard.className = 'verification-card valid';
+            document.getElementById('verif-badge').textContent = '🟢 VAŽEĆI VAUČER';
+            document.getElementById('verif-player-name').textContent = data.player?.nickname || 'Gost';
+            
+            const isVip = (data.player?.vip_tier === 'VIP');
+            const vipBadge = document.getElementById('verif-vip-badge');
+            vipBadge.style.display = isVip ? 'inline-block' : 'none';
+
+            document.getElementById('verif-reward-value').textContent = Number(data.voucher.reward_value).toLocaleString() + ' RSD';
+            document.getElementById('verif-reward-title').textContent = data.voucher.title || 'Promo Tiket';
+            document.getElementById('verif-location').textContent = data.voucher.location || this.location;
+            
+            const expDate = new Date(data.voucher.expires_at).toLocaleString('sr-RS');
+            document.getElementById('verif-expires').textContent = expDate;
+            document.getElementById('verif-code').textContent = data.voucher.voucher_code;
+
+            const btnConfirm = document.getElementById('btn-confirm-redeem');
+            btnConfirm.style.display = 'block';
+            btnConfirm.textContent = `✅ POTVRDI IZDAVANJE (${Number(data.voucher.reward_value).toLocaleString()} RSD)`;
+
+          } else {
+            // Error case (expired, already redeemed, invalid code)
+            this.playErrorSound();
+            this.currentInspectedVoucher = null;
+
+            this.verifCard.className = 'verification-card error';
+            document.getElementById('verif-badge').textContent = '🔴 ODBIJENO / NEVAŽEĆI';
+            document.getElementById('verif-player-name').textContent = 'Nevažeći Vaučer';
+            document.getElementById('verif-reward-value').textContent = '0 RSD';
+            document.getElementById('verif-reward-title').textContent = 'Vaučer nije moguće iskoristiti';
+            
+            const errMsg = document.getElementById('verif-error-msg');
+            errMsg.style.display = 'block';
+            errMsg.textContent = data.error || 'Došlo je do greške pri proveri vaučera.';
+          }
+
+        } catch (err) {
+          console.error(err);
+          this.playErrorSound();
+          this.verifCard.className = 'verification-card error';
+          document.getElementById('verif-badge').textContent = '⚠️ GREŠKA KONEKCIJE';
+          const errMsg = document.getElementById('verif-error-msg');
+          errMsg.style.display = 'block';
+          errMsg.textContent = 'Nije uspelo povezivanje sa serverom. Pokušajte ponovo.';
+        }
+      }
+
+      async executeRedeem(code) {
+        const btnConfirm = document.getElementById('btn-confirm-redeem');
+        btnConfirm.disabled = true;
+        btnConfirm.textContent = '⏳ Evidentiranje...';
+
+        try {
+          const res = await fetch('/api/vouchers/redeem', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              voucherCode: code,
+              operatorName: this.operatorName,
+              location: this.location,
+              confirm: true
+            })
+          });
+
+          const data = await res.json();
+
+          if (data.success && data.redeemed) {
+            this.playSuccessSound();
+
+            document.getElementById('verif-badge').textContent = '✅ USPEŠNO IZDAT VAUČER';
+            btnConfirm.style.display = 'none';
+
+            const errMsg = document.getElementById('verif-error-msg');
+            errMsg.style.display = 'block';
+            errMsg.style.color = 'var(--color-success)';
+            errMsg.textContent = `🎉 Izdat fizički vaučer igraču! Evidentirao: ${this.operatorName}`;
+
+            // Add to shift history
+            this.recordShiftScan({
+              code: code,
+              player: data.player?.nickname || this.currentInspectedVoucher?.player_id || 'Gost',
+              value: this.currentInspectedVoucher?.reward_value || 1000,
+              time: new Date().toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })
+            });
+
+            setTimeout(() => {
+              this.verifCard.style.display = 'none';
+              this.isScanning = true;
+              this.currentInspectedVoucher = null;
+              btnConfirm.disabled = false;
+            }, 3500);
+
+          } else {
+            this.playErrorSound();
+            btnConfirm.disabled = false;
+            btnConfirm.textContent = 'Pokušaj ponovo';
+            alert(data.error || 'Greška pri potvrdi izdavanja.');
+          }
+
+        } catch (e) {
+          btnConfirm.disabled = false;
+          btnConfirm.textContent = 'Pokušaj ponovo';
+          alert('Greška u komunikaciji sa serverom.');
+        }
+      }
+
+      recordShiftScan(item) {
+        this.shiftScans.unshift(item);
+        const list = document.getElementById('shift-scans-list');
+        const badge = document.getElementById('shift-count-badge');
+        
+        if (badge) badge.textContent = `Ukupno: ${this.shiftScans.length}`;
+
+        // Also sync to local demo audit log for admin panel
+        try {
+          const raw = localStorage.getItem('gsc_redeemed_scans_demo') || '[]';
+          const listArr = JSON.parse(raw);
+          listArr.unshift({
+            voucher_code: item.code,
+            player_nickname: item.player,
+            player_id: item.player_id || 'gsc_player',
+            title: item.title || 'VIP Promo Tiket',
+            reward_value: item.value,
+            reward_type: 'cash',
+            redeemed_by_operator: this.operatorName,
+            redeemed_location: this.location,
+            redeemed_at: new Date().toISOString()
+          });
+          localStorage.setItem('gsc_redeemed_scans_demo', JSON.stringify(listArr.slice(0, 50)));
+        } catch (e) {}
+
+        if (list) {
+          list.innerHTML = this.shiftScans.map(s => `
+            <li class="scans-log-item">
+              <div>
+                <span class="scans-item-name">${s.player}</span>
+                <span style="color: var(--accent-gold); font-weight: bold; margin-left: 6px;">+${Number(s.value).toLocaleString()} RSD</span>
+                <div class="scans-item-meta">Kod: <code>${s.code}</code></div>
+              </div>
+              <div class="scans-item-meta">🕒 ${s.time}</div>
+            </li>
+          `).join('');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.staffScanner = new StaffVoucherScanner();
+    });
+  </script>
+</body>
+</html>
