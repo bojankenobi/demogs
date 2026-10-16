@@ -208,7 +208,7 @@ class AdminDashboard {
         card.classList.add('active');
 
         this.renderWeights();
-        this.showToast(`⚡ Aktiviran matematički profil: ${presetId.toUpperCase()}`);
+        this.showToast(`Aktiviran matematički profil: ${presetId.toUpperCase()}`);
       });
     });
 
@@ -220,7 +220,7 @@ class AdminDashboard {
         this.mathManager.setPreset(curPreset);
         this.sendCommand({ action: 'SET_PRESET', presetId: curPreset });
         this.renderWeights();
-        this.showToast('🔄 Težine simbola vraćene na fabričke vrednosti');
+        this.showToast('Težine simbola vraćene na fabričke vrednosti');
       });
     }
 
@@ -264,7 +264,7 @@ class AdminDashboard {
 
         // Unhighlight presets since custom values are active
         document.querySelectorAll('.preset-dash-card').forEach(c => c.classList.remove('active'));
-        this.showToast(`⚖️ Težina simbola [${symId}] ažurirana na ${val}`);
+        this.showToast(`Težina simbola [${symId}] ažurirana na ${val}`);
       });
     });
   }
@@ -300,7 +300,7 @@ class AdminDashboard {
       const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
 
       if (statusBox) {
-        statusBox.textContent = `✅ Simulacija završena za ${elapsed}s (${spins.toLocaleString()} spinova na ${res.gameType === 'royal3x3' ? 'Royal 3x3' : 'Classic 1-Line'}).`;
+        statusBox.textContent = `Simulacija završena za ${elapsed}s (${spins.toLocaleString()} spinova na ${res.gameType === 'royal3x3' ? 'Royal 3x3' : 'Classic 1-Line'}).`;
       }
 
       if (resultsGrid) {
@@ -322,57 +322,57 @@ class AdminDashboard {
     const btnSilver = document.getElementById('btn-cmd-silver');
     if (btnSilver) btnSilver.addEventListener('click', () => {
       this.sendCommand({ action: 'TRIGGER_JACKPOT', tier: 'silver' });
-      this.showToast('🥈 Poslata komanda: Okini SILVER Džekpot!');
+      this.showToast('Poslata komanda: Okini SILVER Džekpot');
     });
 
     const btnGold = document.getElementById('btn-cmd-gold');
     if (btnGold) btnGold.addEventListener('click', () => {
       this.sendCommand({ action: 'TRIGGER_JACKPOT', tier: 'gold' });
-      this.showToast('🏆 Poslata komanda: Okini GOLD Džekpot!');
+      this.showToast('Poslata komanda: Okini GOLD Džekpot');
     });
 
     const btnDiamond = document.getElementById('btn-cmd-diamond');
     if (btnDiamond) btnDiamond.addEventListener('click', () => {
       this.sendCommand({ action: 'TRIGGER_JACKPOT', tier: 'diamond' });
-      this.showToast('💎 Poslata komanda: Okini DIAMOND Džekpot!');
+      this.showToast('Poslata komanda: Okini DIAMOND Džekpot');
     });
 
     // 2. Bonuses
     const btnWheel = document.getElementById('btn-cmd-wheel');
     if (btnWheel) btnWheel.addEventListener('click', () => {
       this.sendCommand({ action: 'TRIGGER_BONUS', bonusType: 'wheel' });
-      this.showToast('🎡 Poslata komanda: Pokreni Točak Sreće!');
+      this.showToast('Poslata komanda: Pokreni Točak Sreće');
     });
 
     const btnMines = document.getElementById('btn-cmd-mines');
     if (btnMines) btnMines.addEventListener('click', () => {
       this.sendCommand({ action: 'TRIGGER_BONUS', bonusType: 'mines' });
-      this.showToast('💣 Poslata komanda: Pokreni Mines Bonus!');
+      this.showToast('Poslata komanda: Pokreni Mines Bonus');
     });
 
     const btnCards = document.getElementById('btn-cmd-cards');
     if (btnCards) btnCards.addEventListener('click', () => {
       this.sendCommand({ action: 'TRIGGER_BONUS', bonusType: 'cards' });
-      this.showToast('🃏 Poslata komanda: Napuni Cards Bonus!');
+      this.showToast('Poslata komanda: Napuni Cards Bonus');
     });
 
     const btnRush = document.getElementById('btn-cmd-doublerush');
     if (btnRush) btnRush.addEventListener('click', () => {
       this.sendCommand({ action: 'TRIGGER_BONUS', bonusType: 'doublerush' });
-      this.showToast('🔥 Poslata komanda: DOUBLE BONUS RUSH!');
+      this.showToast('Poslata komanda: DOUBLE BONUS RUSH');
     });
 
     // 3. Wallet
     const btnAdd10k = document.getElementById('btn-cmd-add10k');
     if (btnAdd10k) btnAdd10k.addEventListener('click', () => {
       this.sendCommand({ action: 'WALLET_ADD', amount: 10000 });
-      this.showToast('💰 Poslato: +10.000 ZLT na račun igrača!');
+      this.showToast('Poslato: +10.000 ZLT na račun igrača');
     });
 
     const btnReset1k = document.getElementById('btn-cmd-reset1k');
     if (btnReset1k) btnReset1k.addEventListener('click', () => {
       this.sendCommand({ action: 'WALLET_SET', amount: 1000 });
-      this.showToast('🔄 Poslato: Stanje postavljeno na 1.000 ZLT');
+      this.showToast('Poslato: Stanje postavljeno na 1.000 ZLT');
     });
 
     const btnCustomDeposit = document.getElementById('btn-cmd-custom-deposit');
@@ -380,7 +380,7 @@ class AdminDashboard {
       const val = parseInt(document.getElementById('input-custom-deposit-amount').value, 10);
       if (val > 0) {
         this.sendCommand({ action: 'WALLET_SET', amount: val });
-        this.showToast(`💵 Poslato: Stanje postavljeno na ${val.toLocaleString()} ZLT`);
+        this.showToast(`Poslato: Stanje postavljeno na ${val.toLocaleString()} ZLT`);
       }
     });
 
@@ -389,7 +389,7 @@ class AdminDashboard {
       btn.addEventListener('click', () => {
         const gameId = btn.getAttribute('data-game');
         this.sendCommand({ action: 'SWITCH_GAME', gameId });
-        this.showToast(`🎰 Poslata komanda za promenu igre: [${gameId.toUpperCase()}]`);
+        this.showToast(`Poslata komanda za promenu igre: [${gameId.toUpperCase()}]`);
       });
     });
 
@@ -398,7 +398,7 @@ class AdminDashboard {
     if (btnResetSession) btnResetSession.addEventListener('click', () => {
       if (confirm('Da li ste sigurni da želite da resetujete celu sesiju slota i osvežite igru?')) {
         this.sendCommand({ action: 'RESET_SESSION' });
-        this.showToast('🧹 Poslat zahtev za reset sesije slota');
+        this.showToast('Poslat zahtev za reset sesije slota');
       }
     });
   }
@@ -425,35 +425,35 @@ class AdminDashboard {
 
         const templates = {
           voucher_1000: {
-            title: '🎁 VIP PROMO TIKET 1.000 ZLT',
+            title: 'VIP PROMO TIKET 1.000 ZLT',
             body: 'Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu!',
             image: 'assets/promotions/promo_voucher_bg.png',
             location: 'Grand Slot Club - Glavna Filijala',
             promo: 'voucher:1000'
           },
           voucher_drink: {
-            title: '🍸 VIP WELCOME DRINK NA ŠANKU',
+            title: 'VIP WELCOME DRINK NA ŠANKU',
             body: 'Preuzmite svoj ekskluzivni koktel dobrodošlice prilikom posete klubu!',
             image: 'assets/promotions/promo_drink_bg.png',
             location: 'Grand Slot Club - VIP Bar',
             promo: 'voucher_drink:1'
           },
           voucher_tournament: {
-            title: '🏆 VIP ULAZNICA ZA KAZINO TURNIR',
+            title: 'VIP ULAZNICA ZA KAZINO TURNIR',
             body: 'Obezbedite besplatan ulaz na ekskluzivni 120s slot turnir u klubu!',
             image: 'assets/promotions/promo_tournament_bg.png',
             location: 'Grand Slot Club - Arena 1',
             promo: 'voucher_tour:1'
           },
           voucher_birthday: {
-            title: '🎂 SREĆAN ROĐENDAN OD GRAND SLOTA!',
+            title: 'SREĆAN ROĐENDAN OD GRAND SLOTA',
             body: 'Čeka vas rođendanski keš poklon od 2.000 ZLT na blagajni kluba!',
             image: 'assets/promotions/promo_birthday_bg.png',
             location: 'Grand Slot Club - VIP Blagajna',
             promo: 'voucher:2000'
           },
           free_spins_25: {
-            title: '🎰 VIP POKLON: 25 BESPLATNIH SPINOVA',
+            title: 'VIP POKLON: 25 BESPLATNIH SPINOVA',
             body: 'Zavrtite slot odmah uz 25 gratis spinova i duplirane dobitke!',
             image: 'assets/promotions/promo_spins_bg.png',
             location: 'Grand Slot Online',
@@ -509,7 +509,7 @@ class AdminDashboard {
     if (refreshBtn) {
       refreshBtn.addEventListener('click', () => {
         this.fetchCrmPlayers();
-        this.showToast('🔄 Lista igrača osvežena');
+        this.showToast('Lista igrača osvežena');
       });
     }
 
@@ -518,7 +518,7 @@ class AdminDashboard {
     if (scansRefreshBtn) {
       scansRefreshBtn.addEventListener('click', () => {
         this.fetchVoucherScans();
-        this.showToast('🔄 Dnevnik overenih vaučera osvežen');
+        this.showToast('Dnevnik overenih vaučera osvežen');
       });
     }
 
@@ -528,12 +528,12 @@ class AdminDashboard {
       btnPushJackpot.addEventListener('click', async () => {
         this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'jackpot' });
         await this.dispatchPushApi({
-          title: '⚡ GRANDSLOT DŽEKPOT ALARM!',
+          title: 'GRANDSLOT DŽEKPOT ALARM',
           body: 'Džekpot fond je prešao 180.000 ZLT! Zavrtite dobitni spin!',
           targetType: 'all',
           promoAction: 'none'
         });
-        this.showToast('🔔 Poslata notifikacija: Džekpot Alarm');
+        this.showToast('Poslata notifikacija: Džekpot Alarm');
       });
     }
 
@@ -542,12 +542,12 @@ class AdminDashboard {
       btnPushTour.addEventListener('click', async () => {
         this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'tournament' });
         await this.dispatchPushApi({
-          title: '🏆 120s GRAND TURNIR JE OTVOREN!',
+          title: '120s GRAND TURNIR JE OTVOREN',
           body: 'Uđite u brzi turnir sa 5.000 startnih poena i osvojite prvo mesto!',
           targetType: 'all',
           promoAction: 'none'
         });
-        this.showToast('🔔 Poslata notifikacija: Turnir Poziv');
+        this.showToast('Poslata notifikacija: Turnir Poziv');
       });
     }
 
@@ -556,12 +556,12 @@ class AdminDashboard {
       btnPushBonus.addEventListener('click', async () => {
         this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'bonus' });
         await this.dispatchPushApi({
-          title: '🎁 VAŠ TOČAK SREĆE JE SPREMAN!',
+          title: 'VAŠ TOČAK SREĆE JE SPREMAN',
           body: 'Čeka vas okretanje Točka Sreće sa množiteljima do 200x!',
           targetType: 'all',
           promoAction: 'none'
         });
-        this.showToast('🔔 Poslata notifikacija: Točak Sreće');
+        this.showToast('Poslata notifikacija: Točak Sreće');
       });
     }
 
@@ -623,11 +623,11 @@ class AdminDashboard {
         if (statusEl) {
           if (res && res.success) {
             statusEl.style.color = '#4ade80';
-            statusEl.textContent = `✅ ${res.message || `Uspešno poslato (poslato: ${res.sentCount || 1})`}`;
-            this.showToast(`🚀 Smart Push Kampanja uspešno poslata!`);
+            statusEl.textContent = res.message || `Uspešno poslato (poslato: ${res.sentCount || 1})`;
+            this.showToast('Smart Push Kampanja uspešno poslata');
           } else {
             statusEl.style.color = '#f87171';
-            statusEl.textContent = `⚠️ ${res?.error || 'Došlo je do greške pri slanju.'}`;
+            statusEl.textContent = `Greška: ${res?.error || 'Došlo je do greške pri slanju.'}`;
           }
         }
       });
@@ -706,16 +706,16 @@ class AdminDashboard {
                     data-player-id="${p.id}" 
                     data-vip="${p.vip_tier || 'STANDARD'}" 
                     title="Kliknite za promenu VIP statusa">
-                ${isVip ? '👑 VIP' : 'STANDARD'}
+                ${isVip ? 'VIP' : 'STANDARD'}
               </span>
             </td>
             <td>${turnover} ZLT</td>
             <td>${spins}</td>
             <td style="font-size: 0.75rem; color: #a8a29e;">${formattedDate}</td>
-            <td>${isPush ? '🔔 <span style="color:#4ade80;">Da</span>' : '🔕 <span style="color:#78716c;">Ne</span>'}</td>
+            <td>${isPush ? '<span style="color:#4ade80;">Aktivno</span>' : '<span style="color:#78716c;">Neaktivno</span>'}</td>
             <td>
               <button type="button" class="btn-crm-target" data-target-id="${p.id}" data-nickname="${p.nickname || ''}">
-                🎯 Ciljaj
+                Ciljaj
               </button>
             </td>
           </tr>
@@ -796,7 +796,7 @@ class AdminDashboard {
     tableBody.innerHTML = scans.map(s => {
       const dateStr = s.redeemed_at ? new Date(s.redeemed_at).toLocaleString('sr-RS') : 'Upravo';
       const isDrink = s.reward_type === 'drink';
-      const displayVal = isDrink ? '🍸 VIP Drink' : `${Number(s.reward_value || 0).toLocaleString()} ZLT`;
+      const displayVal = isDrink ? 'VIP Drink' : `${Number(s.reward_value || 0).toLocaleString()} ZLT`;
       return `
         <tr>
           <td style="font-size: 0.76rem; color: #a8a29e;">${dateStr}</td>
@@ -807,9 +807,9 @@ class AdminDashboard {
           <td><code style="color: var(--accent-gold); font-weight: 700;">${s.voucher_code || ''}</code></td>
           <td>${s.title || 'VIP Promo Tiket'}</td>
           <td style="color: #4ade80; font-weight: 700;">${displayVal}</td>
-          <td><span style="color: #ffd700;">👤 ${s.redeemed_by_operator || 'Operater'}</span></td>
-          <td style="font-size: 0.78rem; color: #d1c7b7;">📍 ${s.redeemed_location || 'Glavna Filijala'}</td>
-          <td><span class="badge-vip-pill vip" style="background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #4ade80;">✅ Overen</span></td>
+          <td><span style="color: #ffd700;">${s.redeemed_by_operator || 'Operater'}</span></td>
+          <td style="font-size: 0.78rem; color: #d1c7b7;">${s.redeemed_location || 'Glavna Filijala'}</td>
+          <td><span class="badge-vip-pill vip" style="background: rgba(34, 197, 94, 0.2); border-color: #22c55e; color: #4ade80;">Overen</span></td>
         </tr>
       `;
     }).join('');
@@ -829,7 +829,7 @@ class AdminDashboard {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ playerId, vipTier: newTier })
           });
-          this.showToast(`👑 Status za ${playerId} promenjen u ${newTier}`);
+          this.showToast(`Status za ${playerId} promenjen u ${newTier}`);
           this.fetchCrmPlayers();
         } catch (e) {
           console.error(e);
@@ -852,7 +852,7 @@ class AdminDashboard {
         if (selectTarget) selectTarget.value = 'single';
         if (groupTarget) groupTarget.style.display = 'flex';
         if (inputId) inputId.value = id;
-        if (inputTitle) inputTitle.value = `🌟 Specijalna ponuda za ${nick || id}!`;
+        if (inputTitle) inputTitle.value = `Specijalna ponuda za ${nick || id}`;
         if (inputBody) inputBody.value = `Zdravo ${nick || 'igraču'}, čeka vas 25 besplatnih spinova kao našem vernom članu!`;
 
         const composer = document.getElementById('input-push-title');
@@ -861,7 +861,7 @@ class AdminDashboard {
           composer.focus();
         }
 
-        this.showToast(`🎯 Izabran igrač [${id}] u kreatoru kampanja`);
+        this.showToast(`Izabran igrač [${id}] u kreatoru kampanja`);
       });
     });
   }
@@ -897,6 +897,12 @@ class AdminDashboard {
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
         const pane = document.getElementById(`pane-${target}`);
         if (pane) pane.classList.add('active');
+
+        if (target === 'crm') {
+          this.fetchCrmPlayers();
+        } else if (target === 'vouchers') {
+          this.fetchVoucherScans();
+        }
       });
     });
   }
@@ -1006,7 +1012,7 @@ class AdminDashboard {
     if (lockBtn) {
       lockBtn.addEventListener('click', () => {
         this.lockSession(true);
-        this.showToast('🔒 Sesija operatera je zaključana.');
+        this.showToast('Sesija operatera je zaključana.');
       });
     }
 
@@ -1059,7 +1065,7 @@ class AdminDashboard {
     if (this.verifyPin(this.currentPinInput)) {
       // Success!
       localStorage.setItem('grandslot_pin_failed_attempts', '0');
-      this.setFeedback('✓ AUTORIZOVAN PRISTUP', 'success');
+      this.setFeedback('AUTORIZOVAN PRISTUP', 'success');
       setTimeout(() => {
         this.unlockSession(true);
       }, 250);
@@ -1113,7 +1119,7 @@ class AdminDashboard {
         localStorage.removeItem('grandslot_pin_lockout_until');
         this.setFeedback('Pokušajte ponovo.', '');
       } else {
-        this.setFeedback(`⚠️ Previše neuspešnih pokušaja! Sačekajte: ${remainingSec}s`, 'lockout');
+        this.setFeedback(`Previše neuspešnih pokušaja! Sačekajte: ${remainingSec}s`, 'lockout');
       }
     };
 
@@ -1159,7 +1165,7 @@ class AdminDashboard {
     // 5 minutes = 300,000 ms
     this.inactivityTimer = setTimeout(() => {
       this.lockSession(true);
-      this.showToast('🔒 Sesija je automatski zaključana zbog neaktivnosti.');
+      this.showToast('Sesija je automatski zaključana zbog neaktivnosti.');
     }, 300000);
   }
 
@@ -1178,19 +1184,19 @@ class AdminDashboard {
       const confirmVal = (confirmInput.value || '').trim();
 
       if (!this.verifyPin(oldVal)) {
-        msgEl.textContent = '❌ Trenutni PIN nije ispravan.';
+        msgEl.textContent = 'Trenutni PIN nije ispravan.';
         msgEl.style.color = '#ef4444';
         return;
       }
 
       if (!/^\d{4}$/.test(newVal)) {
-        msgEl.textContent = '❌ Novi PIN mora sadržati tačno 4 cifre (0-9).';
+        msgEl.textContent = 'Novi PIN mora sadržati tačno 4 cifre (0-9).';
         msgEl.style.color = '#ef4444';
         return;
       }
 
       if (newVal !== confirmVal) {
-        msgEl.textContent = '❌ Novi PIN i potvrda se ne poklapaju.';
+        msgEl.textContent = 'Novi PIN i potvrda se ne poklapaju.';
         msgEl.style.color = '#ef4444';
         return;
       }
@@ -1202,9 +1208,9 @@ class AdminDashboard {
       newInput.value = '';
       confirmInput.value = '';
 
-      msgEl.textContent = '✓ PIN je uspešno promenjen!';
+      msgEl.textContent = 'PIN je uspešno promenjen.';
       msgEl.style.color = '#00e676';
-      this.showToast('🔐 Operaterski PIN je uspešno ažuriran!');
+      this.showToast('Operaterski PIN je uspešno ažuriran.');
 
       setTimeout(() => {
         msgEl.textContent = '';
@@ -1285,8 +1291,8 @@ class AdminDashboard {
         this.remoteConn.on('open', () => {
           this.isRemoteConnected = true;
           this.setConnected(true, `WEBRTC (${this.targetRoomId})`);
-          this.setWebRTCFeedback(`🟢 Povezan sa aparatom [${this.targetRoomId}] u realnom vremenu!`, 'success');
-          this.showToast(`🟢 Uspešno povezan sa aparatom [${this.targetRoomId}]!`);
+          this.setWebRTCFeedback(`Povezan sa aparatom [${this.targetRoomId}] u realnom vremenu.`, 'success');
+          this.showToast(`Uspešno povezan sa aparatom [${this.targetRoomId}]`);
 
           const connectBtn = document.getElementById('btn-connect-webrtc');
           const disconnectBtn = document.getElementById('btn-disconnect-webrtc');
@@ -1303,7 +1309,7 @@ class AdminDashboard {
         this.remoteConn.on('close', () => {
           this.isRemoteConnected = false;
           this.setConnected(false);
-          this.setWebRTCFeedback(`⚠️ Veza sa aparatom [${this.targetRoomId}] je prekinuta.`, 'error');
+          this.setWebRTCFeedback(`Veza sa aparatom [${this.targetRoomId}] je prekinuta.`, 'error');
 
           const connectBtn = document.getElementById('btn-connect-webrtc');
           const disconnectBtn = document.getElementById('btn-disconnect-webrtc');
@@ -1314,11 +1320,11 @@ class AdminDashboard {
 
       this.peer.on('error', (err) => {
         console.warn('Admin WebRTC peer error:', err);
-        this.setWebRTCFeedback(`❌ Greška pri povezivanju: proverite da li je aparat uključen.`, 'error');
+        this.setWebRTCFeedback('Greška pri povezivanju: proverite da li je aparat uključen.', 'error');
       });
     } catch (e) {
       console.warn('WebRTC connection failed:', e);
-      this.setWebRTCFeedback(`❌ Neuspešna inicijalizacija WebRTC veze.`, 'error');
+      this.setWebRTCFeedback('Neuspešna inicijalizacija WebRTC veze.', 'error');
     }
   }
 
