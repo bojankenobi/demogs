@@ -1553,11 +1553,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!res.success) {
           showAuthAlert(res.error || 'Greška pri registraciji.');
           if (btnRegisterSubmit) btnRegisterSubmit.disabled = false;
-          if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 RSD';
+          if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 ZLATNIKA';
           return;
         }
 
-        showAuthAlert('🎁 Čestitamo! Dobili ste 1.000 RSD bonusa dobrodošlice!', 'success');
+        showAuthAlert('🎁 Čestitamo! Dobili ste 1.000 Zlatnika dobrodošlice!', 'success');
         if (window.slotAudio) window.slotAudio.playCoinDrop();
 
         if (app.wallet && res.player.balance_rsd != null) {
@@ -1568,15 +1568,15 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
           if (loginModal) loginModal.classList.remove('active');
           if (btnRegisterSubmit) btnRegisterSubmit.disabled = false;
-          if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 RSD';
+          if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 ZLATNIKA';
           if (app.lobby) app.lobby.openModal();
-          app.showMessage(`🎁 Čestitamo ${res.player.username}! 1.000 RSD bonusa je spremno!`, 'jackpot');
+          app.showMessage(`🎁 Čestitamo ${res.player.username}! 1.000 Zlatnika je spremno!`, 'jackpot');
         }, 800);
 
       } catch (err) {
         showAuthAlert('Greška pri komunikaciji sa serverom.');
         if (btnRegisterSubmit) btnRegisterSubmit.disabled = false;
-        if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 RSD';
+        if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 ZLATNIKA';
       }
     });
   }
@@ -1596,13 +1596,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (statRtp) statRtp.textContent = `${app.playerTracker.getCalculatedRTP()}%`;
 
     const statBet = document.getElementById('profile-stat-bet');
-    if (statBet) statBet.textContent = `${s.totalBet.toLocaleString()} RSD`;
+    if (statBet) statBet.textContent = `${s.totalBet.toLocaleString()} ZLT`;
 
     const statWin = document.getElementById('profile-stat-win');
-    if (statWin) statWin.textContent = `${s.totalWin.toLocaleString()} RSD`;
+    if (statWin) statWin.textContent = `${s.totalWin.toLocaleString()} ZLT`;
 
     const statBiggest = document.getElementById('profile-stat-biggest-win');
-    if (statBiggest) statBiggest.textContent = `${s.biggestWin.toLocaleString()} RSD`;
+    if (statBiggest) statBiggest.textContent = `${s.biggestWin.toLocaleString()} ZLT`;
 
     const bdClassic = document.getElementById('profile-breakdown-classic');
     if (bdClassic) bdClassic.textContent = `${(s.spinsByGame.classic || 0).toLocaleString()} spinova`;
@@ -1675,19 +1675,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Fictional RSD Deposit chips in Profile
+  // Promo Zlatnici Dopuna chips in Profile
   document.querySelectorAll('.btn-deposit-chip').forEach(btn => {
     btn.addEventListener('click', () => {
       const amount = parseInt(btn.getAttribute('data-amount'), 10) || 500;
       if (app && app.wallet) {
         const addedCredits = app.wallet.addFictionalRsd(amount);
         renderProfileStats();
-        app.showMessage(`💰 USPEŠNO UPLAĆENO +${amount.toLocaleString()} RSD (+${addedCredits.toLocaleString()} KR)!`, 'jackpot');
+        app.showMessage(`💰 USPEŠNO PREUZETO +${amount.toLocaleString()} ZLATNIKA (+${addedCredits.toLocaleString()} KR)!`, 'jackpot');
       }
     });
   });
 
-  // Custom RSD Deposit in Profile
+  // Custom Promo Dopuna in Profile
   const customDepositInput = document.getElementById('custom-deposit-input');
   const btnSubmitCustomDeposit = document.getElementById('btn-submit-custom-deposit');
   if (btnSubmitCustomDeposit) {
@@ -1698,7 +1698,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const addedCredits = app.wallet.addFictionalRsd(val);
           if (customDepositInput) customDepositInput.value = '';
           renderProfileStats();
-          app.showMessage(`💰 USPEŠNO UPLAĆENO +${val.toLocaleString()} RSD (+${addedCredits.toLocaleString()} KR)!`, 'jackpot');
+          app.showMessage(`💰 USPEŠNO PREUZETO +${val.toLocaleString()} ZLATNIKA (+${addedCredits.toLocaleString()} KR)!`, 'jackpot');
         }
       } else {
         if (window.slotAudio) window.slotAudio.playClick();
@@ -1714,7 +1714,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (app && app.wallet && denomVal) {
         app.wallet.setDenomination(denomVal);
         renderProfileStats();
-        app.showMessage(`🎰 DENOMINACIJA: 1 KR = ${denomVal} RSD`, 'info');
+        app.showMessage(`🎰 DENOMINACIJA: 1 KR = ${denomVal} ZLT`, 'info');
       }
     });
   });

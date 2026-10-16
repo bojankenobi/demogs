@@ -98,7 +98,7 @@ class CasinoTournament {
         <div class="tournament-lead-row ${idx === 0 ? 'first-place' : ''}">
           <span class="lead-rank">${medal}</span>
           <span class="lead-name">${item.name}</span>
-          <span class="lead-score">${item.score.toLocaleString()} RSD</span>
+          <span class="lead-score">${item.score.toLocaleString()} ZLT</span>
         </div>
       `;
     }).join('');
@@ -183,7 +183,7 @@ class CasinoTournament {
     const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
     if (this.hudTimeEl) this.hudTimeEl.textContent = timeStr;
-    if (this.hudScoreEl) this.hudScoreEl.textContent = `${this.tournamentScore.toLocaleString()} RSD`;
+    if (this.hudScoreEl) this.hudScoreEl.textContent = `${this.tournamentScore.toLocaleString()} ZLT`;
 
     // Estimate rank
     let rank = 1;
@@ -233,7 +233,7 @@ class CasinoTournament {
       ? (window.i18n ? window.i18n.t('tourRankPlace', { rank: userRank }) : `#${userRank}. MESTO`)
       : 'TOP 10';
 
-    if (this.resultScoreEl) this.resultScoreEl.textContent = `${Math.round(this.tournamentScore).toLocaleString()} RSD`;
+    if (this.resultScoreEl) this.resultScoreEl.textContent = `${Math.round(this.tournamentScore).toLocaleString()} ZLT`;
     if (this.resultRankEl) this.resultRankEl.textContent = rankLabel;
 
     if (this.resultsModal) this.resultsModal.classList.add('active');
@@ -244,7 +244,7 @@ class CasinoTournament {
     if (window.slotApp) {
       const msg = window.i18n 
         ? window.i18n.t('tourFinishedMsg', { rank: rankLabel, score: Math.round(this.tournamentScore).toLocaleString() })
-        : `🎉 ZAVRŠEN TURNIR! RANG: ${rankLabel} (${Math.round(this.tournamentScore)} RSD)!`;
+        : `🎉 ZAVRŠEN TURNIR! RANG: ${rankLabel} (${Math.round(this.tournamentScore)} ZLT)!`;
       window.slotApp.showMessage(msg, 'jackpot');
     }
   }

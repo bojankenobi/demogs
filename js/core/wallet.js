@@ -230,17 +230,17 @@ class CasinoWallet {
 
     const actualBetRsd = +(this.currentSpinCostCredits * this.activeDenom).toFixed(2);
     if (this.balanceRsdEl) {
-      this.balanceRsdEl.textContent = `≈ ${this.rsdBalance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} RSD`;
+      this.balanceRsdEl.textContent = `≈ ${this.rsdBalance.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ZLT`;
     }
     if (this.betRsdEl) {
-      this.betRsdEl.textContent = `≈ ${actualBetRsd.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} RSD`;
+      this.betRsdEl.textContent = `≈ ${actualBetRsd.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ZLT`;
     }
 
     if (this.denomValEl) {
-      this.denomValEl.textContent = `${this.activeDenom} RSD`;
+      this.denomValEl.textContent = `${this.activeDenom} ZLT`;
     }
     if (this.denomSubEl) {
-      this.denomSubEl.textContent = `1 KR = ${this.activeDenom} RSD`;
+      this.denomSubEl.textContent = `1 KR = ${this.activeDenom} ZLT`;
     }
 
     // Golden Bet button sync

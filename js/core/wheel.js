@@ -548,7 +548,7 @@ class IGTWheelBonus {
 
     if (winningSeg.type === 'bust') {
       winCredits = 0;
-      displayAmountText = '💥 BANKRUPT! 0 RSD (POKUŠAJTE PONOVO)';
+      displayAmountText = '💥 BANKRUPT! 0 ZLT (POKUŠAJTE PONOVO)';
       if (window.slotAudio && typeof window.slotAudio.playMineExplode === 'function') {
         window.slotAudio.playMineExplode();
       } else if (window.slotAudio && typeof window.slotAudio.playClick === 'function') {
@@ -563,7 +563,7 @@ class IGTWheelBonus {
           winCredits = bet * winningSeg.val;
           const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
           const rsdAmount = (winCredits * denom).toLocaleString();
-          displayAmountText = `+${winCredits.toLocaleString()} KREDITA (${rsdAmount} RSD)`;
+          displayAmountText = `+${winCredits.toLocaleString()} KREDITA (${rsdAmount} ZLT)`;
           if (this.wallet) this.wallet.addWin(winCredits);
           if (window.slotApp && window.slotApp.playerTracker) {
             window.slotApp.playerTracker.recordBonus('wheel');
@@ -580,7 +580,7 @@ class IGTWheelBonus {
             }
             winCredits = (claimRes && claimRes.creditsWon) ? claimRes.creditsWon : (bet * 60);
             const prizeRsd = (claimRes && claimRes.prize) ? claimRes.prize.toFixed(2) : (winCredits).toLocaleString();
-            displayAmountText = `JACKPOT ${winningSeg.tier.toUpperCase()} (${prizeRsd} RSD)!`;
+            displayAmountText = `JACKPOT ${winningSeg.tier.toUpperCase()} (${prizeRsd} ZLT)!`;
           }
         }
       } catch (err) {

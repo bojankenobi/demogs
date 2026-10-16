@@ -64,7 +64,7 @@ export default async function handler(req, res) {
         balance_rsd: 1000.00,
         vip_tier: 'STANDARD'
       },
-      message: 'Uspešna registracija (demo mod)! Dobili ste 1.000 RSD bonusa.'
+      message: 'Uspešna registracija (demo mod)! Dobili ste 1.000 Zlatnika bonusa.'
     });
   }
 
@@ -117,7 +117,7 @@ export default async function handler(req, res) {
         vip_tier: newPlayer.vip_tier,
         created_at: newPlayer.created_at
       },
-      message: `Dobrodošli u Grand Slot Club! Vaš nalog je otvoren uz 1.000 RSD bonusa dobrodošlice.`
+      message: `Dobrodošli u Grand Slot Club! Vaš nalog je otvoren uz 1.000 Zlatnika bonusa dobrodošlice.`
     });
 
   } catch (error) {

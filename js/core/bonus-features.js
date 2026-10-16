@@ -311,11 +311,11 @@ class BuyBonusManager {
       const priceValEl = document.getElementById(`buy-price-val-${key}`);
       const priceBtnEl = document.getElementById(`buy-btn-val-${key}`);
 
-      if (priceValEl) priceValEl.textContent = `${costCredits.toLocaleString()} KR (${costRsd.toLocaleString()} RSD)`;
+      if (priceValEl) priceValEl.textContent = `${costCredits.toLocaleString()} KR (${costRsd.toLocaleString()} ZLT)`;
       if (priceBtnEl) {
         priceBtnEl.textContent = window.i18n 
           ? window.i18n.t('buyBtnPrefix', { amount: costRsd.toLocaleString() })
-          : `KUPI ZA ${costRsd.toLocaleString()} RSD`;
+          : `KUPI ZA ${costRsd.toLocaleString()} ZLT`;
       }
     });
   }
@@ -361,7 +361,7 @@ class BuyBonusManager {
       }
       const msg = window.i18n 
         ? window.i18n.t('buyBonusPurchased', { name: featName.toUpperCase(), cost: costRsd })
-        : `⚡ KUPLJEN BONUS: ${feat.name.toUpperCase()} (-${costRsd} RSD)!`;
+        : `⚡ KUPLJEN BONUS: ${feat.name.toUpperCase()} (-${costRsd} ZLT)!`;
       window.slotApp.showMessage(msg, 'jackpot');
     }
 
