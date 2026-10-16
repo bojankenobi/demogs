@@ -83,7 +83,7 @@
     </div>
     <div class="stat-telemetry-box">
       <span class="stat-box-lbl">STANJE IGRAČA</span>
-      <span class="stat-box-val val-green" id="tel-player-balance">0 RSD</span>
+      <span class="stat-box-val val-green" id="tel-player-balance">0 ZLT</span>
     </div>
     <div class="stat-telemetry-box">
       <span class="stat-box-lbl">MATEMATIKA</span>
@@ -91,15 +91,15 @@
     </div>
     <div class="stat-telemetry-box">
       <span class="stat-box-lbl">🥈 SILVER DŽEKPOT</span>
-      <span class="stat-box-val val-silver" id="tel-jackpot-silver">80 RSD</span>
+      <span class="stat-box-val val-silver" id="tel-jackpot-silver">80 ZLT</span>
     </div>
     <div class="stat-telemetry-box">
       <span class="stat-box-lbl">🏆 GOLD DŽEKPOT</span>
-      <span class="stat-box-val val-gold" id="tel-jackpot-gold">250 RSD</span>
+      <span class="stat-box-val val-gold" id="tel-jackpot-gold">250 ZLT</span>
     </div>
     <div class="stat-telemetry-box">
       <span class="stat-box-lbl">💎 DIAMOND DŽEKPOT</span>
-      <span class="stat-box-val val-diamond" id="tel-jackpot-diamond">600 RSD</span>
+      <span class="stat-box-val val-diamond" id="tel-jackpot-diamond">600 ZLT</span>
     </div>
   </section>
 
@@ -215,7 +215,7 @@
           </div>
           <div class="sim-res-card">
             <span class="sim-res-lbl">UKUPAN ULOG / DOBITAK</span>
-            <span class="sim-res-val" id="sim-res-betwin">0 / 0 RSD</span>
+            <span class="sim-res-val" id="sim-res-betwin">0 / 0 ZLT</span>
           </div>
         </div>
       </div>
@@ -254,11 +254,11 @@
         <div class="trigger-panel-card">
           <h3 class="trigger-panel-title">💰 Novčanik & Krediti Igrača</h3>
           <div class="trigger-buttons-grid" style="margin-bottom: 12px;">
-            <button type="button" class="btn-trigger-action" id="btn-cmd-add10k">➕ Dodaj +10.000 RSD</button>
-            <button type="button" class="btn-trigger-action" id="btn-cmd-reset1k">🔄 Postavi na 1.000 RSD</button>
+            <button type="button" class="btn-trigger-action" id="btn-cmd-add10k">➕ Dodaj +10.000 ZLT</button>
+            <button type="button" class="btn-trigger-action" id="btn-cmd-reset1k">🔄 Postavi na 1.000 ZLT</button>
           </div>
           <div style="display: flex; gap: 8px;">
-            <input type="number" id="input-custom-deposit-amount" placeholder="Prilagođeni RSD iznos..." class="push-input-text" style="flex: 1;" min="100" max="100000" step="500">
+            <input type="number" id="input-custom-deposit-amount" placeholder="Prilagođeni ZLT iznos..." class="push-input-text" style="flex: 1;" min="100" max="100000" step="500">
             <button type="button" class="btn-trigger-action gold" id="btn-cmd-custom-deposit">Postavi</button>
           </div>
         </div>
@@ -334,7 +334,7 @@
               <th>ID Igrača</th>
               <th>Nadimak / Alias</th>
               <th>Status</th>
-              <th>Obrt (RSD)</th>
+              <th>Obrt (ZLT)</th>
               <th>Spinovi</th>
               <th>Poslednja Aktivnost</th>
               <th>Push</th>
@@ -357,7 +357,7 @@
           <p style="font-size: 0.78rem; color: #b5a995; margin-bottom: 14px;">Instant notifikacije za buđenje aktivnosti u celoj bazi aktivnih igrača.</p>
           <div style="display: flex; flex-direction: column; gap: 10px;">
             <button type="button" class="btn-trigger-action gold" id="btn-push-jackpot-alert" style="justify-content: flex-start; padding: 12px 14px;">
-              🏆 Pošalji Džekpot Alarm (Preko 180.000 RSD)
+              🏆 Pošalji Džekpot Alarm (Preko 180.000 ZLT)
             </button>
             <button type="button" class="btn-trigger-action" id="btn-push-tour-alert" style="justify-content: flex-start; padding: 12px 14px;">
               ⚡ Pošalji Poziv na 120s Turnir
@@ -376,10 +376,10 @@
             <label for="select-push-template">⚡ Izaberi VIP Šablon Promocije / Vaučera:</label>
             <select id="select-push-template" class="push-select-dropdown">
               <option value="custom">🎨 Prilagođena kampanja (Ručni unos)</option>
-              <option value="voucher_1000" selected>🎁 VIP Promo Tiket 1.000 RSD za aparate u klubu</option>
+              <option value="voucher_1000" selected>🎁 VIP Promo Tiket 1.000 ZLT za aparate u klubu</option>
               <option value="voucher_drink">🍸 VIP Welcome Drink & Koktel na šanku</option>
               <option value="voucher_tournament">🏆 VIP Ulaznica za 120s Kazino Turnir</option>
-              <option value="voucher_birthday">🎂 Rođendanski Keš Poklon u Kazinu (2.000 RSD)</option>
+              <option value="voucher_birthday">🎂 Rođendanski Keš Poklon u Kazinu (2.000 ZLT)</option>
               <option value="free_spins_25">🎰 VIP Online Poklon: 25 Besplatnih Spinova</option>
             </select>
           </div>
@@ -401,7 +401,7 @@
 
           <div class="push-form-group">
             <label for="input-push-title">Naslov Notifikacije:</label>
-            <input type="text" id="input-push-title" class="push-input-text" placeholder="npr. 🌟 SPECIJALNI POKLON ZA VAS!" value="🎁 VIP PROMO TIKET 1.000 RSD">
+            <input type="text" id="input-push-title" class="push-input-text" placeholder="npr. 🌟 SPECIJALNI POKLON ZA VAS!" value="🎁 VIP PROMO TIKET 1.000 ZLT">
           </div>
 
           <div class="push-form-group">
@@ -423,15 +423,15 @@
             <label for="select-push-promo">Smart Promotivna Nagrada (Klik aktivira bonus / vaučer):</label>
             <select id="select-push-promo" class="push-select-dropdown">
               <option value="none:0">Bez Promocije (Samo tekstualno obaveštenje)</option>
-              <option value="voucher:1000" selected>🎫 Fizički Vaučer: 1.000 RSD za Slot Aparate u Klubu</option>
+              <option value="voucher:1000" selected>🎫 Fizički Vaučer: 1.000 ZLT za Slot Aparate u Klubu</option>
               <option value="voucher_drink:1">🍸 Fizički Vaučer: VIP Welcome Drink na Šanku</option>
               <option value="voucher_tour:1">🏆 Fizički Vaučer: VIP Besplatan Ulaz na Turnir</option>
-              <option value="voucher:2000">💎 Fizički Vaučer: 2.000 RSD Rođendanski Bonus</option>
+              <option value="voucher:2000">💎 Fizički Vaučer: 2.000 ZLT Rođendanski Bonus</option>
               <option value="free_spins:10">🎰 Online: 10 Besplatnih Spinova (2x Množilac)</option>
               <option value="free_spins:25">🎰 Online: 25 Besplatnih Spinova (VIP Bonus)</option>
-              <option value="credit_bonus:200">🎁 Online: +200 RSD Kreditni Bonus</option>
-              <option value="credit_bonus:500">🎁 Online: +500 RSD Kreditni Bonus</option>
-              <option value="credit_bonus:1000">💎 Online: +1.000 RSD VIP Keš Bonus</option>
+              <option value="credit_bonus:200">🎁 Online: +200 ZLT Kreditni Bonus</option>
+              <option value="credit_bonus:500">🎁 Online: +500 ZLT Kreditni Bonus</option>
+              <option value="credit_bonus:1000">💎 Online: +1.000 ZLT VIP Keš Bonus</option>
             </select>
           </div>
 

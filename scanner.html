@@ -73,7 +73,7 @@
       </div>
 
       <div class="verif-reward-box">
-        <div class="verif-reward-val" id="verif-reward-value">1.000 RSD</div>
+        <div class="verif-reward-val" id="verif-reward-value">1.000 ZLT</div>
         <div class="verif-reward-desc" id="verif-reward-title">Promo Tiket za Slot Aparate u Klubu</div>
       </div>
 
@@ -331,7 +331,7 @@
             const vipBadge = document.getElementById('verif-vip-badge');
             vipBadge.style.display = isVip ? 'inline-block' : 'none';
 
-            document.getElementById('verif-reward-value').textContent = Number(data.voucher.reward_value).toLocaleString() + ' RSD';
+            document.getElementById('verif-reward-value').textContent = Number(data.voucher.reward_value).toLocaleString() + ' ZLT';
             document.getElementById('verif-reward-title').textContent = data.voucher.title || 'Promo Tiket';
             document.getElementById('verif-location').textContent = data.voucher.location || this.location;
             
@@ -341,7 +341,7 @@
 
             const btnConfirm = document.getElementById('btn-confirm-redeem');
             btnConfirm.style.display = 'block';
-            btnConfirm.textContent = `✅ POTVRDI IZDAVANJE (${Number(data.voucher.reward_value).toLocaleString()} RSD)`;
+            btnConfirm.textContent = `✅ POTVRDI IZDAVANJE (${Number(data.voucher.reward_value).toLocaleString()} ZLT)`;
 
           } else {
             // Error case (expired, already redeemed, invalid code)
@@ -351,7 +351,7 @@
             this.verifCard.className = 'verification-card error';
             document.getElementById('verif-badge').textContent = '🔴 ODBIJENO / NEVAŽEĆI';
             document.getElementById('verif-player-name').textContent = 'Nevažeći Vaučer';
-            document.getElementById('verif-reward-value').textContent = '0 RSD';
+            document.getElementById('verif-reward-value').textContent = '0 ZLT';
             document.getElementById('verif-reward-title').textContent = 'Vaučer nije moguće iskoristiti';
             
             const errMsg = document.getElementById('verif-error-msg');
@@ -459,7 +459,7 @@
             <li class="scans-log-item">
               <div>
                 <span class="scans-item-name">${s.player}</span>
-                <span style="color: var(--accent-gold); font-weight: bold; margin-left: 6px;">+${Number(s.value).toLocaleString()} RSD</span>
+                <span style="color: var(--accent-gold); font-weight: bold; margin-left: 6px;">+${Number(s.value).toLocaleString()} ZLT</span>
                 <div class="scans-item-meta">Kod: <code>${s.code}</code></div>
               </div>
               <div class="scans-item-meta">🕒 ${s.time}</div>

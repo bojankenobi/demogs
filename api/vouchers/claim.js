@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     playerId,
     campaignId = 'vip_welcome',
     title = 'Grand Slot VIP Vaučer',
-    description = '1.000 RSD Promo Tiket za igru na slot aparatima u klubu',
+    description = '1.000 ZLT Promo Tiket za igru na slot aparatima u klubu',
     imageUrl = 'assets/symbols/crystal-spade-clean.png',
     rewardType = 'club_ticket',
     rewardValue = 1000,

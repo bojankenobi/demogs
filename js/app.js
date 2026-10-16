@@ -251,7 +251,7 @@ class IGTApp {
       if (window.particleEngine && window.particleEngine.burst) {
         window.particleEngine.burst(300, 250);
       }
-      this.showMessage(`🎁 POKLON BONUS: Čestitamo! Vaš račun je dopunjen sa +${credits.toLocaleString()} RSD!`, 'win');
+      this.showMessage(`🎁 POKLON BONUS: Čestitamo! Vaš račun je dopunjen sa +${credits.toLocaleString()} ZLT!`, 'win');
     } else if (promo.promoAction === 'club_voucher' || promo.promoAction === 'interactive_promo' || promo.promoAction === 'voucher') {
       this.openVoucherModal({
         title: promo.title || 'VIP Promo Vaučer',
@@ -428,8 +428,8 @@ class IGTApp {
     const payload = {
       playerId,
       campaignId: pData.campaignId || 'vip_promo',
-      title: pData.title || 'VIP Promo Tiket 1.000 RSD',
-      description: pData.description || '1.000 RSD Promo Tiket za slot aparate u klubu',
+      title: pData.title || 'VIP Promo Tiket 1.000 ZLT',
+      description: pData.description || '1.000 ZLT Promo Tiket za slot aparate u klubu',
       imageUrl: pData.imageUrl || 'assets/symbols/crystal-spade-clean.png',
       rewardType: pData.rewardType || 'club_ticket',
       rewardValue: Number(pData.rewardValue || pData.promoValue || 1000),
@@ -482,8 +482,9 @@ class IGTApp {
   }
 
   renderVoucherCard(voucher) {
-    const playerNick = (this.playerTracker && this.playerTracker.profile.username) ? this.playerTracker.profile.username : 'Gost';
-    const isVip = (this.playerTracker && this.playerTracker.profile.vipTier === 'VIP');
+    const p = this.playerTracker ? this.playerTracker.profile : null;
+    const playerNick = (p && (p.nickname || p.username)) ? (p.nickname || p.username) : 'VIP Član';
+    const isVip = Boolean(p && (p.vipTier === 'VIP' || p.isLoggedIn));
 
     const nameEl = document.getElementById('ticket-player-name');
     const vipEl = document.getElementById('ticket-vip-tag');
@@ -494,7 +495,7 @@ class IGTApp {
 
     if (nameEl) nameEl.textContent = playerNick;
     if (vipEl) vipEl.style.display = isVip ? 'inline-block' : 'none';
-    if (amtEl) amtEl.textContent = Number(voucher.reward_value || 1000).toLocaleString() + ' RSD';
+    if (amtEl) amtEl.textContent = Number(voucher.reward_value || 1000).toLocaleString() + ' ZLT';
     if (titleEl) titleEl.textContent = voucher.title || 'Fizički Promo Tiket za Slot Aparate';
     if (codeEl) codeEl.textContent = voucher.voucher_code || 'GSC-VIP';
 

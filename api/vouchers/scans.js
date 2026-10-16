@@ -20,7 +20,7 @@ export default async function handler(req, res) {
         {
           id: 'vch_sc_1',
           voucher_code: 'GSC-8819-VIP',
-          title: 'VIP Promo Tiket 1.000 RSD',
+          title: 'VIP Promo Tiket 1.000 ZLT',
           reward_value: '1000.00',
           player_id: 'gsc_usr_7891',
           nickname: 'Bojan K.',

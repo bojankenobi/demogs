@@ -155,7 +155,7 @@ class AdminDashboard {
 
     const balEl = document.getElementById('tel-player-balance');
     if (balEl && state.balance !== undefined) {
-      balEl.textContent = `${state.balance.toLocaleString()} RSD`;
+      balEl.textContent = `${state.balance.toLocaleString()} ZLT`;
     }
 
     const profEl = document.getElementById('tel-active-preset');
@@ -168,9 +168,9 @@ class AdminDashboard {
       const sEl = document.getElementById('tel-jackpot-silver');
       const gEl = document.getElementById('tel-jackpot-gold');
       const dEl = document.getElementById('tel-jackpot-diamond');
-      if (sEl) sEl.textContent = `${state.jackpots.silver.toLocaleString()} RSD`;
-      if (gEl) gEl.textContent = `${state.jackpots.gold.toLocaleString()} RSD`;
-      if (dEl) dEl.textContent = `${state.jackpots.diamond.toLocaleString()} RSD`;
+      if (sEl) sEl.textContent = `${state.jackpots.silver.toLocaleString()} ZLT`;
+      if (gEl) gEl.textContent = `${state.jackpots.gold.toLocaleString()} ZLT`;
+      if (dEl) dEl.textContent = `${state.jackpots.diamond.toLocaleString()} ZLT`;
     }
 
     // 2. Sync active preset highlight
@@ -308,7 +308,7 @@ class AdminDashboard {
         document.getElementById('sim-res-rtp').textContent = `${res.rtp}%`;
         document.getElementById('sim-res-hitrate').textContent = `${res.hitRate}%`;
         document.getElementById('sim-res-maxwin').textContent = `${res.maxWinMult}x`;
-        document.getElementById('sim-res-betwin').textContent = `${res.totalBet.toLocaleString()} / ${res.totalWon.toLocaleString()} RSD`;
+        document.getElementById('sim-res-betwin').textContent = `${res.totalBet.toLocaleString()} / ${res.totalWon.toLocaleString()} ZLT`;
       }
     }, 40);
   }
@@ -366,13 +366,13 @@ class AdminDashboard {
     const btnAdd10k = document.getElementById('btn-cmd-add10k');
     if (btnAdd10k) btnAdd10k.addEventListener('click', () => {
       this.sendCommand({ action: 'WALLET_ADD', amount: 10000 });
-      this.showToast('💰 Poslato: +10.000 RSD na račun igrača!');
+      this.showToast('💰 Poslato: +10.000 ZLT na račun igrača!');
     });
 
     const btnReset1k = document.getElementById('btn-cmd-reset1k');
     if (btnReset1k) btnReset1k.addEventListener('click', () => {
       this.sendCommand({ action: 'WALLET_SET', amount: 1000 });
-      this.showToast('🔄 Poslato: Stanje postavljeno na 1.000 RSD');
+      this.showToast('🔄 Poslato: Stanje postavljeno na 1.000 ZLT');
     });
 
     const btnCustomDeposit = document.getElementById('btn-cmd-custom-deposit');
@@ -380,7 +380,7 @@ class AdminDashboard {
       const val = parseInt(document.getElementById('input-custom-deposit-amount').value, 10);
       if (val > 0) {
         this.sendCommand({ action: 'WALLET_SET', amount: val });
-        this.showToast(`💵 Poslato: Stanje postavljeno na ${val.toLocaleString()} RSD`);
+        this.showToast(`💵 Poslato: Stanje postavljeno na ${val.toLocaleString()} ZLT`);
       }
     });
 
@@ -425,7 +425,7 @@ class AdminDashboard {
 
         const templates = {
           voucher_1000: {
-            title: '🎁 VIP PROMO TIKET 1.000 RSD',
+            title: '🎁 VIP PROMO TIKET 1.000 ZLT',
             body: 'Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu!',
             image: 'assets/promotions/promo_voucher_bg.png',
             location: 'Grand Slot Club - Glavna Filijala',
@@ -447,7 +447,7 @@ class AdminDashboard {
           },
           voucher_birthday: {
             title: '🎂 SREĆAN ROĐENDAN OD GRAND SLOTA!',
-            body: 'Čeka vas rođendanski keš poklon od 2.000 RSD na blagajni kluba!',
+            body: 'Čeka vas rođendanski keš poklon od 2.000 ZLT na blagajni kluba!',
             image: 'assets/promotions/promo_birthday_bg.png',
             location: 'Grand Slot Club - VIP Blagajna',
             promo: 'voucher:2000'
@@ -529,7 +529,7 @@ class AdminDashboard {
         this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'jackpot' });
         await this.dispatchPushApi({
           title: '⚡ GRANDSLOT DŽEKPOT ALARM!',
-          body: 'Džekpot fond je prešao 180.000 RSD! Zavrtite dobitni spin!',
+          body: 'Džekpot fond je prešao 180.000 ZLT! Zavrtite dobitni spin!',
           targetType: 'all',
           promoAction: 'none'
         });
@@ -709,7 +709,7 @@ class AdminDashboard {
                 ${isVip ? '👑 VIP' : 'STANDARD'}
               </span>
             </td>
-            <td>${turnover} RSD</td>
+            <td>${turnover} ZLT</td>
             <td>${spins}</td>
             <td style="font-size: 0.75rem; color: #a8a29e;">${formattedDate}</td>
             <td>${isPush ? '🔔 <span style="color:#4ade80;">Da</span>' : '🔕 <span style="color:#78716c;">Ne</span>'}</td>
@@ -796,7 +796,7 @@ class AdminDashboard {
     tableBody.innerHTML = scans.map(s => {
       const dateStr = s.redeemed_at ? new Date(s.redeemed_at).toLocaleString('sr-RS') : 'Upravo';
       const isDrink = s.reward_type === 'drink';
-      const displayVal = isDrink ? '🍸 VIP Drink' : `${Number(s.reward_value || 0).toLocaleString()} RSD`;
+      const displayVal = isDrink ? '🍸 VIP Drink' : `${Number(s.reward_value || 0).toLocaleString()} ZLT`;
       return `
         <tr>
           <td style="font-size: 0.76rem; color: #a8a29e;">${dateStr}</td>

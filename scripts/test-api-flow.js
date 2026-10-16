@@ -1,6 +1,27 @@
+import fs from 'fs';
 import { neon } from '@neondatabase/serverless';
 
+// Load .env manually if not already populated
+if (!process.env.DATABASE_URL && fs.existsSync('.env')) {
+  const envContent = fs.readFileSync('.env', 'utf-8');
+  for (const line of envContent.split('\n')) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#')) {
+      const idx = trimmed.indexOf('=');
+      if (idx !== -1) {
+        const key = trimmed.substring(0, idx).trim();
+        let val = trimmed.substring(idx + 1).trim();
+        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+          val = val.substring(1, val.length - 1);
+        }
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
 async function testFlow() {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   const sql = neon(process.env.DATABASE_URL);
 
   console.log('🧪 Testing Player Sync in Neon DB...');
@@ -30,7 +51,7 @@ async function testFlow() {
       image_url, reward_type, reward_value, location, expires_at, status
     ) VALUES (
       'vouch_test_1', ${testPlayerId}, 'camp_neon_test', ${voucherCode},
-      '🎁 VIP Promo Tiket 1.000 RSD', 'VIP vaučer za igru na slot aparatima',
+      '🎁 VIP Promo Tiket 1.000 ZLT', 'VIP vaučer za igru na slot aparatima',
       'assets/promotions/promo_voucher_bg.png', 'club_ticket', 1000.00,
       'Grand Slot Club - Glavna Filijala', ${expiresAt.toISOString()}, 'ACTIVE'
     )
@@ -65,7 +86,7 @@ async function testFlow() {
   `;
   console.log('📊 Verified Club Scans in Neon:');
   scans.forEach(s => {
-    console.log(`  - 🎟️ [${s.voucher_code}] ${s.nickname || 'Gost'}: ${s.title} (${Number(s.reward_value).toLocaleString()} RSD) -> Overio: ${s.redeemed_by_operator}`);
+    console.log(`  - 🎟️ [${s.voucher_code}] ${s.nickname || 'Gost'}: ${s.title} (${Number(s.reward_value).toLocaleString()} ZLT) -> Overio: ${s.redeemed_by_operator}`);
   });
 
   console.log('\n🎉 ALL LIVE DATABASE OPERATIONS PASSED WITH FLYING COLORS! 🎉');

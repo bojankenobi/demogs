@@ -63,8 +63,8 @@ export default async function handler(req, res) {
         voucher: {
           id: 'vch_demo_1',
           voucher_code: cleanCode,
-          title: 'VIP Promo Tiket 1.000 RSD',
-          description: '1.000 RSD Promo Tiket za aparate u klubu',
+          title: 'VIP Promo Tiket 1.000 ZLT',
+          description: '1.000 ZLT Promo Tiket za aparate u klubu',
           reward_type: 'club_ticket',
           reward_value: 1000,
           location: 'Grand Slot Club - Kralja Milana 12, Beograd',
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
       simulated: true,
       voucher: {
         voucher_code: cleanCode,
-        title: 'VIP Promo Tiket 1.000 RSD',
+        title: 'VIP Promo Tiket 1.000 ZLT',
         reward_value: 1000,
         status: 'REDEEMED',
         redeemed_at: new Date().toISOString(),
