@@ -178,6 +178,51 @@ class IGTApp {
     this.initPromoBonusListener();
     this.initVoucherHub();
     this.checkPromoBonusFromUrl();
+
+    // 8. The Vault Crawler & Slot-Battle Royale Engines
+    if (window.VaultCrawler) {
+      this.vaultCrawler = new window.VaultCrawler(this.wallet, this.lobby);
+      window.vaultCrawler = this.vaultCrawler;
+    }
+    if (window.SlotBattleRoyale) {
+      this.battleRoyale = new window.SlotBattleRoyale(this.wallet, this.lobby);
+      window.battleRoyale = this.battleRoyale;
+    }
+    this.initGrandModeHub();
+  }
+
+  /* ==========================================================================
+     Grand Mode Hub Navigation (Casino Salon, Vault Crawler, Battle Royale)
+     ========================================================================== */
+
+  initGrandModeHub() {
+    const tabs = document.querySelectorAll('.hub-mode-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const mode = tab.getAttribute('data-mode');
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        this.switchGrandMode(mode);
+      });
+    });
+  }
+
+  switchGrandMode(mode) {
+    if (window.slotAudio) window.slotAudio.playClick();
+
+    if (mode === 'vault') {
+      if (this.battleRoyale) this.battleRoyale.unmount();
+      if (this.vaultCrawler) this.vaultCrawler.mount();
+    } else if (mode === 'royale') {
+      if (this.vaultCrawler) this.vaultCrawler.unmount();
+      if (this.battleRoyale) this.battleRoyale.mount();
+    } else {
+      // Regular Casino Salon
+      if (this.vaultCrawler) this.vaultCrawler.unmount();
+      if (this.battleRoyale) this.battleRoyale.unmount();
+      const stage = document.querySelector('.slot-stage-scaler');
+      if (stage) stage.style.display = 'block';
+    }
   }
 
   /* ==========================================================================
@@ -350,6 +395,18 @@ class IGTApp {
         this.updateVoucherBadge();
       }
     } catch (e) {}
+  }
+
+  showVoucherTicket(voucher) {
+    this.activeVoucher = voucher;
+    try {
+      localStorage.setItem('gsc_active_voucher', JSON.stringify(voucher));
+    } catch (e) {}
+    this.renderVoucherCard(voucher);
+    this.switchVoucherView('card');
+    const modal = document.getElementById('vip-voucher-modal');
+    if (modal) modal.classList.add('active');
+    this.updateVoucherBadge();
   }
 
   openVoucherModal(promoPayload = null) {
@@ -667,6 +724,16 @@ class IGTApp {
 
     if (this.tournament && this.tournament.isActive && winAmount > 0) {
       this.tournament.onSpinWin(winAmount);
+    }
+
+    // Forward spin result to The Vault Crawler if active
+    if (this.vaultCrawler && this.vaultCrawler.isActive) {
+      this.vaultCrawler.handleSpinResult(winAmount, result.symbols || []);
+    }
+
+    // Forward spin result to Slot-Battle Royale if active
+    if (this.battleRoyale && this.battleRoyale.isActive) {
+      this.battleRoyale.handleSpinResult(winAmount, result.symbols || []);
     }
 
     if (winAmount > 0) {

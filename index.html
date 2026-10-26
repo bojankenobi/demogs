@@ -24,6 +24,7 @@
   
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.css?v=71">
+  <link rel="stylesheet" href="css/grand-hub.css?v=1">
 </head>
 <body>
   <!-- Ambient Gold Rays Background -->
@@ -38,6 +39,24 @@
       <div class="brand-logo-wrap">
         <img src="assets/logo.svg" alt="grandslot" class="main-brand-logo">
       </div>
+
+      <!-- Grand Mode Hub Navigation (3 Central Experience Modes) -->
+      <nav class="grand-mode-hub" id="grand-mode-hub" aria-label="Izbor Glavnog Moda">
+        <button class="hub-mode-tab active" data-mode="casino" id="tab-mode-casino">
+          <span class="hub-tab-icon">🎰</span>
+          <span class="hub-tab-text">KAZINO SALON</span>
+        </button>
+        <button class="hub-mode-tab" data-mode="vault" id="tab-mode-vault">
+          <span class="hub-tab-badge">ROGUE</span>
+          <span class="hub-tab-icon">🏛️</span>
+          <span class="hub-tab-text">TREZOR PROVALA</span>
+        </button>
+        <button class="hub-mode-tab" data-mode="royale" id="tab-mode-royale">
+          <span class="hub-tab-badge live-pulse">LIVE</span>
+          <span class="hub-tab-icon">⚔️</span>
+          <span class="hub-tab-text">BATTLE ROYALE</span>
+        </button>
+      </nav>
       <!-- Live Casino Jackpots Bar: SILVER, GOLD & DIAMOND (Thin Metallic Frames) -->
       <div class="jackpots-ticker-bar" id="jackpots-ticker-bar">
         <!-- Silver Jackpot (Thin Silver Frame) -->
@@ -157,6 +176,134 @@
           <span class="tour-score-val" id="tournament-hud-score">0 ZLT</span>
         </div>
         <button class="tour-exit-btn" id="tour-exit-btn" title="Napusti turnir" data-i18n-title="tourExitTitle">✕</button>
+      </div>
+
+      <!-- The Vault Crawler (Solo Roguelike Stage HUD) -->
+      <div class="vault-crawler-stage" id="vault-crawler-view" style="display: none;">
+        <div class="vault-header-card">
+          <div class="vault-floor-badge">
+            <span class="vault-floor-title" id="vault-floor-title">Sprat 1: Predvorje & Straža</span>
+            <span class="vault-floor-sub" id="vault-floor-sub">Soba 1/5 • Prizemlje kazina sa laserskim senzorima</span>
+          </div>
+          <div class="vault-keys-display" id="vault-keys-display">
+            <span>🗝️</span>
+            <span id="vault-keys-val">0 Ključeva</span>
+          </div>
+        </div>
+
+        <!-- Floor Map Nodes (Slay the Spire Style) -->
+        <div class="vault-map-strip">
+          <div class="vault-map-line"></div>
+          <div class="vault-map-nodes" id="vault-map-nodes" style="display: flex; justify-content: space-between; width: 100%; position: relative; z-index: 2;">
+            <!-- Generated dynamically -->
+          </div>
+        </div>
+
+        <!-- Combat HUD: Player HP / Shield vs Enemy HP -->
+        <div class="vault-combat-hud">
+          <!-- Player Character Card -->
+          <div class="combat-char-card">
+            <div class="combat-char-header">
+              <span class="combat-char-name">🕵️ Ti (Provalnik)</span>
+              <span class="combat-char-val" id="vault-player-hp-val">100/100</span>
+            </div>
+            <div class="combat-bar-track">
+              <div class="combat-bar-fill fill-player-hp" id="vault-player-hp-fill" style="width: 100%;"></div>
+            </div>
+            <div class="combat-char-header" style="margin-top: 2px;">
+              <span style="font-size: 0.65rem; color: #38bdf8; font-weight: 800;">ŠTIT</span>
+              <span class="combat-char-val" id="vault-player-shield-val" style="color: #38bdf8;">+0</span>
+            </div>
+            <div class="combat-bar-track" style="height: 5px;">
+              <div class="combat-bar-fill fill-player-shield" id="vault-player-shield-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Enemy Character Card -->
+          <div class="combat-char-card enemy">
+            <div class="combat-char-header">
+              <span class="combat-char-name" id="vault-enemy-name">👮 Stražar Predvorja</span>
+              <span class="combat-char-val" id="vault-enemy-hp-val">300/300</span>
+            </div>
+            <div class="combat-bar-track">
+              <div class="combat-bar-fill fill-enemy-hp" id="vault-enemy-hp-fill" style="width: 100%;"></div>
+            </div>
+            <div style="font-size: 0.65rem; color: #f87171; font-weight: 700; margin-top: 4px; text-align: right;">
+              Rotira napad nakon svakog spina!
+            </div>
+          </div>
+        </div>
+
+        <!-- Combat Feed / Log -->
+        <div class="vault-combat-log" id="vault-combat-log">
+          🚨 Zavrti slot za napad na čuvara trezora!
+        </div>
+
+        <!-- Actions Deck -->
+        <div class="vault-bottom-actions">
+          <button type="button" class="btn-vault-action" id="btn-vault-talents">
+            🏛️ Talent Drvo & Nadogradnje
+          </button>
+          <button type="button" class="btn-vault-action" id="btn-vault-reset-run" style="flex: 0.6;">
+            Nova Provala
+          </button>
+        </div>
+      </div>
+
+      <!-- Slot-Battle Royale (Multiplayer 120s Arena HUD) -->
+      <div class="battle-royale-stage" id="battle-royale-view" style="display: none;">
+        <div class="royale-status-bar">
+          <div class="royale-timer-box">
+            <span style="font-size: 1.1rem;">⏱️</span>
+            <span class="royale-timer-val" id="royale-timer-val">02:00</span>
+          </div>
+          <div class="royale-rank-badge">
+            <span>RANG:</span>
+            <span id="royale-rank-val" style="font-size: 1.1rem; color: #fbbf24;">#1</span>
+          </div>
+          <div class="royale-score-box" style="text-align: right;">
+            <div style="font-size: 0.65rem; color: #94a3b8; font-weight: 800;">POENI</div>
+            <div id="royale-score-val" style="font-size: 1.1rem; font-weight: 900; color: #38bdf8;">0 ZLT</div>
+          </div>
+        </div>
+
+        <!-- Safe Zone Shrinking Warning Banner -->
+        <div class="royale-zone-banner" id="royale-zone-banner">
+          ⚠️ SIGURNA ZONA JE OTVORENA • SVI IGRAČI SU AKTIVNI
+        </div>
+
+        <!-- PvP Attack Cards Deck -->
+        <div class="royale-attacks-deck">
+          <button type="button" class="btn-pvp-attack" id="btn-pvp-freeze" disabled>
+            <span class="pvp-card-icon">❄️</span>
+            <span class="pvp-card-title">ZALEDI (3s)</span>
+            <span class="pvp-card-ready">LOCKED</span>
+          </button>
+          <button type="button" class="btn-pvp-attack" id="btn-pvp-smoke" disabled>
+            <span class="pvp-card-icon">💨</span>
+            <span class="pvp-card-title">DIMNA BOMBA</span>
+            <span class="pvp-card-ready">LOCKED</span>
+          </button>
+          <button type="button" class="btn-pvp-attack" id="btn-pvp-siphon" disabled>
+            <span class="pvp-card-icon">⚡</span>
+            <span class="pvp-card-title">UKRADI POENE</span>
+            <span class="pvp-card-ready">LOCKED</span>
+          </button>
+        </div>
+
+        <!-- Live Competitors Ranking Ticker -->
+        <div class="royale-leaderboard-strip" id="royale-leaderboard-strip">
+          <!-- Populated dynamically -->
+        </div>
+
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-vault-action" id="btn-start-royale-round">
+            ⚔️ Započni Novu 120s Rundu
+          </button>
+          <button type="button" class="btn-vault-action" id="btn-exit-royale-round" style="flex: 0.5;">
+            Izlaz
+          </button>
+        </div>
       </div>
 
       <!-- Universal Responsive Scaler: Guarantees full visibility of cylinder & lever on all devices -->
@@ -1587,6 +1734,8 @@
   <script src="js/games/royal3x3/royal3x3.js?v=70"></script>
   <script src="js/games/mines/mines.js?v=70"></script>
   <script src="js/games/mines/mini-mines.js?v=70"></script>
+  <script src="js/games/vault-crawler/vault-crawler.js?v=1"></script>
+  <script src="js/games/battle-royale/battle-royale.js?v=1"></script>
 
   <!-- Application Controller -->
   <script src="js/app.js?v=71"></script>

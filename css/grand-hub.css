@@ -1,0 +1,540 @@
+/* ==============================================================================
+   Grand Slot Club - Grand Hub, Vault Crawler & Battle Royale Styling
+   ============================================================================== */
+
+/* 1. Grand Mode Hub Navigation (Top Center Tabs) */
+.grand-mode-hub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 520px;
+  margin: 6px auto 10px auto;
+  padding: 4px 6px;
+  background: rgba(14, 18, 28, 0.88);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 30px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  z-index: 25;
+}
+
+.hub-mode-tab {
+  flex: 1;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  min-height: 42px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 24px;
+  color: #94a3b8;
+  font-family: var(--font-title, 'Montserrat', sans-serif);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.hub-mode-tab:hover {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hub-mode-tab.active {
+  color: #0b0f19;
+  background: linear-gradient(135deg, #fce07a 0%, #d4af37 60%, #aa820a 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.45);
+}
+
+.hub-tab-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.hub-tab-badge {
+  position: absolute;
+  top: -6px;
+  right: 6px;
+  padding: 1px 5px;
+  font-size: 0.58rem;
+  font-weight: 900;
+  border-radius: 10px;
+  background: #dc2626;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.05em;
+}
+
+.hub-tab-badge.live-pulse {
+  background: #ef4444;
+  animation: pulse-live 1.6s infinite;
+}
+
+.hub-mode-tab.active .hub-tab-badge {
+  color: #fff;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.08); }
+}
+
+/* ==============================================================================
+   2. The Vault Crawler (Solo Roguelike) Stage View
+   ============================================================================== */
+.vault-crawler-stage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 514px;
+  margin: 0 auto;
+  gap: 10px;
+  padding: 0 6px 12px 6px;
+  z-index: 10;
+}
+
+.vault-header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(22, 28, 45, 0.95) 0%, rgba(12, 16, 26, 0.98) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.vault-floor-badge {
+  display: flex;
+  flex-direction: column;
+}
+
+.vault-floor-title {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #f8fafc;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.vault-floor-sub {
+  font-size: 0.72rem;
+  color: #d4af37;
+  font-weight: 700;
+}
+
+.vault-keys-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fbbf24;
+}
+
+/* Floor Path Map (Slay the Spire Style Nodes) */
+.vault-map-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 12px 14px;
+  background: rgba(10, 14, 22, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.vault-map-line {
+  position: absolute;
+  top: 50%;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  z-index: 1;
+  transform: translateY(-50%);
+}
+
+.vault-node {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #111726;
+  border: 2px solid #334155;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vault-node.active {
+  border-color: #d4af37;
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.8);
+  transform: scale(1.12);
+  background: #1e293b;
+}
+
+.vault-node.cleared {
+  border-color: #22c55e;
+  background: #064e3b;
+  opacity: 0.85;
+}
+
+.vault-node-icon {
+  font-size: 1.15rem;
+}
+
+.vault-node-lbl {
+  position: absolute;
+  bottom: -16px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* Combat HUD (Player HP / Shield vs Guard / Boss HP) */
+.vault-combat-hud {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.combat-char-card {
+  flex: 1;
+  padding: 8px 10px;
+  background: rgba(14, 18, 30, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.combat-char-card.enemy {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: linear-gradient(180deg, rgba(30, 16, 20, 0.9) 0%, rgba(14, 18, 30, 0.92) 100%);
+}
+
+.combat-char-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.combat-char-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.combat-char-val {
+  font-size: 0.76rem;
+  font-weight: 800;
+  font-family: monospace;
+  color: #cbd5e1;
+}
+
+.combat-bar-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.combat-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.fill-player-hp {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.fill-player-shield {
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+}
+
+.fill-enemy-hp {
+  background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+/* Combat Log / Feedback Banner */
+.vault-combat-log {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f8fafc;
+  text-align: center;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Talent Tree & Loadout Modal / Panel */
+.vault-bottom-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-vault-action {
+  flex: 1;
+  padding: 10px;
+  min-height: 44px;
+  background: rgba(22, 28, 44, 0.95);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 10px;
+  color: #f8fafc;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-vault-action:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #d4af37;
+}
+
+/* ==============================================================================
+   3. Slot-Battle Royale (Multiplayer 120s) Stage View
+   ============================================================================== */
+.battle-royale-stage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 514px;
+  margin: 0 auto;
+  gap: 10px;
+  padding: 0 6px 12px 6px;
+  z-index: 10;
+}
+
+.royale-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, rgba(35, 14, 20, 0.95) 0%, rgba(16, 12, 18, 0.98) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 4px 18px rgba(220, 38, 38, 0.25);
+}
+
+.royale-timer-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.royale-timer-val {
+  font-size: 1.3rem;
+  font-weight: 900;
+  font-family: monospace;
+  color: #f87171;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+}
+
+.royale-rank-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #fbbf24;
+}
+
+.royale-zone-banner {
+  padding: 6px 12px;
+  background: rgba(220, 38, 38, 0.2);
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #fca5a5;
+  text-align: center;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.royale-zone-banner.shrinking {
+  animation: pulse-red-zone 1s infinite alternate;
+}
+
+@keyframes pulse-red-zone {
+  from { background: rgba(220, 38, 38, 0.2); }
+  to { background: rgba(220, 38, 38, 0.5); }
+}
+
+/* PvP Attacks Deck (Cards that can be triggered against rivals) */
+.royale-attacks-deck {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-pvp-attack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  min-height: 54px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #475569;
+  border-radius: 10px;
+  color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-pvp-attack:hover:not(:disabled) {
+  border-color: #38bdf8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+}
+
+.btn-pvp-attack:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.pvp-card-icon {
+  font-size: 1.25rem;
+}
+
+.pvp-card-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.pvp-card-ready {
+  font-size: 0.58rem;
+  font-weight: 900;
+  color: #4ade80;
+}
+
+/* Live Competitors Ticker (Avatars & Points) */
+.royale-leaderboard-strip {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 2px;
+  scrollbar-width: none;
+}
+
+.royale-leaderboard-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.competitor-pill {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+}
+
+.competitor-pill.you {
+  border-color: #d4af37;
+  background: rgba(212, 175, 55, 0.18);
+  color: #fef08a;
+  font-weight: 800;
+}
+
+.competitor-pill.eliminated {
+  opacity: 0.3;
+  text-decoration: line-through;
+  filter: grayscale(1);
+}
+
+/* Frozen Reel Overlay (Disruption Effect) */
+.reel-frozen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(147, 197, 253, 0.45);
+  border: 2px solid #60a5fa;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+  animation: freeze-shiver 0.2s infinite alternate;
+}
+
+@keyframes freeze-shiver {
+  from { transform: translateX(-1px); }
+  to { transform: translateX(1px); }
+}
+
+/* Smoke Screen Overlay */
+.smoke-screen-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(100, 116, 139, 0.95) 0%, rgba(30, 41, 59, 0.98) 100%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: 12px;
+}
+
+.smoke-screen-hint {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  text-shadow: 0 2px 4px #000;
+}
