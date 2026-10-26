@@ -1,13 +1,15 @@
 /**
  * IGT 3D Casino Slot - PWA Service Worker
  */
-const CACHE_NAME = 'grandslot-v4';
+const CACHE_NAME = 'grandslot-v5';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './admin.html',
+  './scanner.html',
   './css/style.css',
   './css/admin.css',
+  './css/grand-hub.css',
   './js/lib/peerjs.min.js',
   './js/lib/qrcode.min.js',
   './js/audio.js',
@@ -29,6 +31,8 @@ const ASSETS_TO_CACHE = [
   './js/games/royal3x3/royal3x3.js',
   './js/games/mines/mines.js',
   './js/games/mines/mini-mines.js',
+  './js/games/vault-crawler/vault-crawler.js',
+  './js/games/battle-royale/battle-royale.js',
   './js/app.js',
   './manifest.webmanifest',
   './assets/logo.svg',
@@ -71,11 +75,17 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
   const isHtml = event.request.mode === 'navigate' || 
                  event.request.headers.get('accept')?.includes('text/html');
+  const isCode = isHtml || 
+                 event.request.destination === 'script' || 
+                 event.request.destination === 'style' ||
+                 url.pathname.endsWith('.js') || 
+                 url.pathname.endsWith('.css');
 
-  // Network-First for HTML to guarantee immediate updates on reload
-  if (isHtml) {
+  // Network-First for HTML, Scripts, and CSS (ensures zero-latency deployment updates)
+  if (isCode) {
     event.respondWith(
       fetch(event.request)
         .then((networkResponse) => {
@@ -85,12 +95,19 @@ self.addEventListener('fetch', (event) => {
           }
           return networkResponse;
         })
-        .catch(() => caches.match('./index.html', { ignoreSearch: true }))
+        .catch(() => {
+          // Offline fallback
+          return caches.match(event.request).then((res) => {
+            if (res) return res;
+            if (isHtml) return caches.match('./index.html', { ignoreSearch: true });
+            return caches.match(event.request, { ignoreSearch: true });
+          });
+        })
     );
     return;
   }
 
-  // Cache-First for static assets with background refresh
+  // Cache-First for static media assets (images, fonts, sounds)
   event.respondWith(
     caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
       if (cachedResponse) {

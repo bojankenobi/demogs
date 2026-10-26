@@ -168,9 +168,9 @@ class AdminDashboard {
       const sEl = document.getElementById('tel-jackpot-silver');
       const gEl = document.getElementById('tel-jackpot-gold');
       const dEl = document.getElementById('tel-jackpot-diamond');
-      if (sEl) sEl.textContent = `${state.jackpots.silver.toLocaleString()} ZLT`;
-      if (gEl) gEl.textContent = `${state.jackpots.gold.toLocaleString()} ZLT`;
-      if (dEl) dEl.textContent = `${state.jackpots.diamond.toLocaleString()} ZLT`;
+      if (sEl && state.jackpots.silver !== undefined) sEl.textContent = `${Number(state.jackpots.silver).toLocaleString()} ZLT`;
+      if (gEl && state.jackpots.gold !== undefined) gEl.textContent = `${Number(state.jackpots.gold).toLocaleString()} ZLT`;
+      if (dEl && state.jackpots.diamond !== undefined) dEl.textContent = `${Number(state.jackpots.diamond).toLocaleString()} ZLT`;
     }
 
     // 2. Sync active preset highlight

@@ -240,47 +240,67 @@ class AdminBridge {
   }
 
   getTelemetryState() {
-    if (!this.app) return {};
+    try {
+      if (!this.app) return {};
 
-    const jp = this.app.jackpots;
-    let silverVal = 80;
-    let goldVal = 250;
-    let diamondVal = 600;
+      const jp = this.app.jackpots;
+      let silverVal = 80;
+      let goldVal = 250;
+      let diamondVal = 600;
 
-    if (jp) {
-      if (typeof jp.jackpotSilver === 'number') silverVal = jp.jackpotSilver;
-      else if (jp.pots && jp.pots.silver && typeof jp.pots.silver.current === 'number') silverVal = jp.pots.silver.current;
+      if (jp) {
+        if (typeof jp.jackpotSilver === 'number') silverVal = jp.jackpotSilver;
+        else if (jp.pots && jp.pots.silver && typeof jp.pots.silver.current === 'number') silverVal = jp.pots.silver.current;
 
-      if (typeof jp.jackpotGold === 'number') goldVal = jp.jackpotGold;
-      else if (jp.pots && jp.pots.gold && typeof jp.pots.gold.current === 'number') goldVal = jp.pots.gold.current;
+        if (typeof jp.jackpotGold === 'number') goldVal = jp.jackpotGold;
+        else if (jp.pots && jp.pots.gold && typeof jp.pots.gold.current === 'number') goldVal = jp.pots.gold.current;
 
-      if (typeof jp.jackpotDiamond === 'number') diamondVal = jp.jackpotDiamond;
-      else if (jp.pots && jp.pots.diamond && typeof jp.pots.diamond.current === 'number') diamondVal = jp.pots.diamond.current;
-    }
-
-    return {
-      timestamp: Date.now(),
-      roomId: this.roomId,
-      balance: this.app.wallet ? this.app.wallet.rsdBalance : 0,
-      credits: this.app.wallet ? this.app.wallet.credits : 0,
-      bet: this.app.wallet ? this.app.wallet.bet : 20,
-      activeDenom: this.app.wallet ? this.app.wallet.activeDenom : 1,
-      activeGame: this.app.lobby ? this.app.lobby.activeGameId : 'royal3x3',
-      activePreset: this.app.mathManager ? this.app.mathManager.activePreset : 'standard',
-      customWeights: (this.app.mathManager && typeof this.app.mathManager.getActiveWeights === 'function') 
-        ? this.app.mathManager.getActiveWeights() 
-        : {},
-      jackpots: {
-        silver: Math.floor(silverVal),
-        gold: Math.floor(goldVal),
-        diamond: Math.floor(diamondVal)
+        if (typeof jp.jackpotDiamond === 'number') diamondVal = jp.jackpotDiamond;
+        else if (jp.pots && jp.pots.diamond && typeof jp.pots.diamond.current === 'number') diamondVal = jp.pots.diamond.current;
       }
-    };
+
+      return {
+        timestamp: Date.now(),
+        roomId: this.roomId,
+        balance: this.app.wallet ? this.app.wallet.rsdBalance : 0,
+        credits: this.app.wallet ? this.app.wallet.credits : 0,
+        bet: this.app.wallet ? this.app.wallet.bet : 20,
+        activeDenom: this.app.wallet ? this.app.wallet.activeDenom : 1,
+        activeGame: this.app.lobby ? this.app.lobby.activeGameId : 'royal3x3',
+        activePreset: this.app.mathManager ? this.app.mathManager.activePreset : 'standard',
+        customWeights: (this.app.mathManager && typeof this.app.mathManager.getActiveWeights === 'function') 
+          ? this.app.mathManager.getActiveWeights() 
+          : {},
+        jackpots: {
+          silver: Math.floor(silverVal),
+          gold: Math.floor(goldVal),
+          diamond: Math.floor(diamondVal)
+        }
+      };
+    } catch (err) {
+      console.warn('[AdminBridge] getTelemetryState fail-safe triggered:', err);
+      return {
+        timestamp: Date.now(),
+        roomId: this.roomId,
+        balance: 0,
+        credits: 0,
+        bet: 20,
+        activeDenom: 1,
+        activeGame: 'royal3x3',
+        activePreset: 'standard',
+        customWeights: {},
+        jackpots: { silver: 80, gold: 250, diamond: 600 }
+      };
+    }
   }
 
   broadcastState() {
-    const state = this.getTelemetryState();
-    this.postMessage({ action: 'STATE_UPDATE', state });
+    try {
+      const state = this.getTelemetryState();
+      this.postMessage({ action: 'STATE_UPDATE', state });
+    } catch (err) {
+      console.warn('[AdminBridge] broadcastState ignored error:', err);
+    }
   }
 
   attachTelemetryHooks() {

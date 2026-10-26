@@ -23,8 +23,19 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=71">
-  <link rel="stylesheet" href="css/grand-hub.css?v=1">
+  <link rel="stylesheet" href="css/style.css?v=75">
+  <link rel="stylesheet" href="css/grand-hub.css?v=75">
+
+  <!-- Service Worker / Cache Eviction Helper -->
+  <script>
+    if (typeof caches !== 'undefined') {
+      caches.keys().then(function(keys) {
+        keys.forEach(function(k) {
+          if (k !== 'grandslot-v5') caches.delete(k);
+        });
+      });
+    }
+  </script>
 </head>
 <body>
   <!-- Ambient Gold Rays Background -->
@@ -1712,32 +1723,32 @@
   <script src="js/particles.js?v=70"></script>
   
   <!-- Core Platform Modules -->
-  <script src="js/core/player-tracker.js?v=70"></script>
-  <script src="js/core/wallet.js?v=70"></script>
-  <script src="js/core/jackpots.js?v=71"></script>
-  <script src="js/core/meters.js?v=70"></script>
-  <script src="js/core/wheel.js?v=70"></script>
-  <script src="js/core/bonus-features.js?v=70"></script>
-  <script src="js/core/tournament.js?v=70"></script>
-  <script src="js/core/gamble.js?v=70"></script>
-  <script src="js/core/math-manager.js?v=70"></script>
-  <script src="js/core/notifications.js?v=70"></script>
+  <script src="js/core/player-tracker.js?v=75"></script>
+  <script src="js/core/wallet.js?v=75"></script>
+  <script src="js/core/jackpots.js?v=75"></script>
+  <script src="js/core/meters.js?v=75"></script>
+  <script src="js/core/wheel.js?v=75"></script>
+  <script src="js/core/bonus-features.js?v=75"></script>
+  <script src="js/core/tournament.js?v=75"></script>
+  <script src="js/core/gamble.js?v=75"></script>
+  <script src="js/core/math-manager.js?v=75"></script>
+  <script src="js/core/notifications.js?v=75"></script>
   <script src="js/lib/peerjs.min.js"></script>
   <script src="js/lib/qrcode.min.js"></script>
-  <script src="js/core/admin-bridge.js?v=73"></script>
-  <script src="js/core/lobby.js?v=70"></script>
+  <script src="js/core/admin-bridge.js?v=75"></script>
+  <script src="js/core/lobby.js?v=75"></script>
 
   <!-- Game Modules -->
-  <script src="js/games/classic/symbols.js?v=70"></script>
-  <script src="js/games/classic/classic.js?v=70"></script>
-  <script src="js/games/royal3x3/symbols.js?v=70"></script>
-  <script src="js/games/royal3x3/royal3x3.js?v=70"></script>
-  <script src="js/games/mines/mines.js?v=70"></script>
-  <script src="js/games/mines/mini-mines.js?v=70"></script>
-  <script src="js/games/vault-crawler/vault-crawler.js?v=1"></script>
-  <script src="js/games/battle-royale/battle-royale.js?v=1"></script>
+  <script src="js/games/classic/symbols.js?v=75"></script>
+  <script src="js/games/classic/classic.js?v=75"></script>
+  <script src="js/games/royal3x3/symbols.js?v=75"></script>
+  <script src="js/games/royal3x3/royal3x3.js?v=75"></script>
+  <script src="js/games/mines/mines.js?v=75"></script>
+  <script src="js/games/mines/mini-mines.js?v=75"></script>
+  <script src="js/games/vault-crawler/vault-crawler.js?v=75"></script>
+  <script src="js/games/battle-royale/battle-royale.js?v=75"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=71"></script>
+  <script src="js/app.js?v=75"></script>
 </body>
 </html>
