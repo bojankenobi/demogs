@@ -31,7 +31,14 @@
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v5') caches.delete(k);
+          if (k !== 'grandslot-v6') caches.delete(k);
+        });
+      });
+    }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        registrations.forEach(function(reg) {
+          reg.update();
         });
       });
     }
@@ -1725,7 +1732,7 @@
   <!-- Core Platform Modules -->
   <script src="js/core/player-tracker.js?v=75"></script>
   <script src="js/core/wallet.js?v=75"></script>
-  <script src="js/core/jackpots.js?v=75"></script>
+  <script src="js/core/jackpots-v2.js?v=80"></script>
   <script src="js/core/meters.js?v=75"></script>
   <script src="js/core/wheel.js?v=75"></script>
   <script src="js/core/bonus-features.js?v=75"></script>
@@ -1735,7 +1742,7 @@
   <script src="js/core/notifications.js?v=75"></script>
   <script src="js/lib/peerjs.min.js"></script>
   <script src="js/lib/qrcode.min.js"></script>
-  <script src="js/core/admin-bridge.js?v=75"></script>
+  <script src="js/core/admin-bridge-v2.js?v=80"></script>
   <script src="js/core/lobby.js?v=75"></script>
 
   <!-- Game Modules -->
