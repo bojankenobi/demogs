@@ -242,6 +242,22 @@ class AdminBridge {
   getTelemetryState() {
     if (!this.app) return {};
 
+    const jp = this.app.jackpots;
+    let silverVal = 80;
+    let goldVal = 250;
+    let diamondVal = 600;
+
+    if (jp) {
+      if (typeof jp.jackpotSilver === 'number') silverVal = jp.jackpotSilver;
+      else if (jp.pots && jp.pots.silver && typeof jp.pots.silver.current === 'number') silverVal = jp.pots.silver.current;
+
+      if (typeof jp.jackpotGold === 'number') goldVal = jp.jackpotGold;
+      else if (jp.pots && jp.pots.gold && typeof jp.pots.gold.current === 'number') goldVal = jp.pots.gold.current;
+
+      if (typeof jp.jackpotDiamond === 'number') diamondVal = jp.jackpotDiamond;
+      else if (jp.pots && jp.pots.diamond && typeof jp.pots.diamond.current === 'number') diamondVal = jp.pots.diamond.current;
+    }
+
     return {
       timestamp: Date.now(),
       roomId: this.roomId,
@@ -251,11 +267,13 @@ class AdminBridge {
       activeDenom: this.app.wallet ? this.app.wallet.activeDenom : 1,
       activeGame: this.app.lobby ? this.app.lobby.activeGameId : 'royal3x3',
       activePreset: this.app.mathManager ? this.app.mathManager.activePreset : 'standard',
-      customWeights: this.app.mathManager ? this.app.mathManager.getActiveWeights() : {},
+      customWeights: (this.app.mathManager && typeof this.app.mathManager.getActiveWeights === 'function') 
+        ? this.app.mathManager.getActiveWeights() 
+        : {},
       jackpots: {
-        silver: this.app.jackpots ? Math.floor(this.app.jackpots.pots.silver.current) : 80,
-        gold: this.app.jackpots ? Math.floor(this.app.jackpots.pots.gold.current) : 250,
-        diamond: this.app.jackpots ? Math.floor(this.app.jackpots.pots.diamond.current) : 600
+        silver: Math.floor(silverVal),
+        gold: Math.floor(goldVal),
+        diamond: Math.floor(diamondVal)
       }
     };
   }

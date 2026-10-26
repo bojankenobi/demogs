@@ -47,6 +47,15 @@ class CasinoJackpots {
     this.startRollingAnimationLoop();
   }
 
+  // Backward compatibility getter for telemetry/admin bridge
+  get pots() {
+    return {
+      silver: { current: this.jackpotSilver || 80 },
+      gold: { current: this.jackpotGold || 250 },
+      diamond: { current: this.jackpotDiamond || 600 }
+    };
+  }
+
   // Format decimal values: e.g. 84.35 -> "<span class='jp-int'>84</span><span class='jp-dot'>.</span><span class='jp-cents'>35</span>"
   formatDisplay(val) {
     const fixed = Math.max(0, val).toFixed(2);
