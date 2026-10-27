@@ -5147,16 +5147,25 @@ body {
   gap: 6px;
 }
 
-/* History Bar */
+/* History Bar & Live Multiplayer Counter */
 .crash-top-bar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   padding: 4px 8px;
   background: rgba(6, 9, 15, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   overflow: hidden;
+}
+
+.crash-history-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  flex: 1;
 }
 
 .crash-history-lbl {
@@ -5178,6 +5187,43 @@ body {
 
 .crash-history-strip::-webkit-scrollbar {
   display: none;
+}
+
+.crash-live-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 6px;
+  font-family: var(--font-title);
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #34d399;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mp-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  display: inline-block;
+  animation: liveDotPulse 1.4s infinite ease-in-out;
+}
+
+@keyframes liveDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.crash-live-lbl {
+  font-size: 0.55rem;
+  opacity: 0.8;
+  text-transform: uppercase;
 }
 
 .crash-pill {
@@ -5588,6 +5634,220 @@ body {
   color: #fca5a5;
   border: 1px solid #ef4444;
   cursor: not-allowed;
+}
+
+/* Floating Live Cashout Toasts on Radar */
+.crash-live-toasts {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+  z-index: 12;
+  max-width: 190px;
+}
+
+.crash-toast-pill {
+  padding: 3px 8px;
+  background: rgba(6, 15, 25, 0.88);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-size: 0.62rem;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1), toastFadeOut 0.4s ease 2.2s forwards;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastFadeOut {
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Multiplayer Live Feed Deck */
+.crash-multiplayer-deck {
+  width: 100%;
+  background: rgba(5, 8, 14, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 4px;
+  transition: all 0.25s ease;
+}
+
+.crash-mp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.crash-mp-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.crash-mp-tab {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-family: var(--font-title);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.crash-mp-tab:hover,
+.crash-mp-tab.active {
+  background: rgba(212, 175, 55, 0.15);
+  color: #ffd700;
+}
+
+.crash-mp-pot {
+  font-family: var(--font-title);
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.3px;
+}
+
+.crash-mp-toggle-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: transform 0.2s ease;
+}
+
+.crash-multiplayer-deck.collapsed .crash-mp-toggle-btn {
+  transform: rotate(180deg);
+}
+
+.crash-multiplayer-deck.collapsed .crash-mp-body {
+  display: none;
+}
+
+.crash-mp-body {
+  padding: 4px 6px;
+  max-height: 120px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+}
+
+.crash-mp-table-head {
+  display: grid;
+  grid-template-columns: 1fr 65px 75px;
+  padding: 2px 6px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  margin-bottom: 3px;
+}
+
+.crash-mp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.crash-mp-row {
+  display: grid;
+  grid-template-columns: 1fr 65px 75px;
+  align-items: center;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  font-size: 0.65rem;
+  font-family: var(--font-title);
+  transition: all 0.2s ease;
+}
+
+.crash-mp-row.you {
+  background: rgba(212, 175, 55, 0.12);
+  border-color: rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.15);
+}
+
+.crash-mp-row.cashed {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.crash-mp-row.crashed {
+  opacity: 0.65;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.mp-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 800;
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mp-user-cell .avatar {
+  font-size: 0.72rem;
+}
+
+.mp-bet-cell {
+  font-weight: 700;
+  color: #cbd5e1;
+  text-align: right;
+  padding-right: 6px;
+}
+
+.mp-cashout-cell {
+  text-align: right;
+  font-weight: 800;
+}
+
+.mp-cashout-cell.waiting {
+  color: #64748b;
+  font-size: 0.58rem;
+}
+
+.mp-cashout-cell.flying {
+  color: #38bdf8;
+  font-size: 0.6rem;
+  animation: liveDotPulse 0.8s infinite alternate;
+}
+
+.mp-cashout-cell.won {
+  color: #34d399;
+}
+
+.mp-cashout-cell.lost {
+  color: #ef4444;
 }
 
 /* Poster Artwork for Grand Crash in Lobby */

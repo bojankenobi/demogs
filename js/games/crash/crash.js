@@ -32,6 +32,36 @@ class GrandCrashGame {
     this.lastWonAmount = 0;
     this.lastCashMultiplier = 1.0;
 
+    // Multiplayer State & Competitors Pool
+    this.roundPlayers = [];
+    this.activeTab = 'all-bets';
+    this.topWins = [
+      { id: 'tw_1', name: 'VipGost_Nbgd', avatar: '👑', bet: 500, mult: 42.50, win: 21250 },
+      { id: 'tw_2', name: 'ZlatniLav', avatar: '🦁', bet: 1000, mult: 28.10, win: 28100 },
+      { id: 'tw_3', name: 'Stefan_011', avatar: '💎', bet: 200, mult: 18.60, win: 3720 },
+      { id: 'tw_4', name: 'Marko_Dorćol', avatar: '🔥', bet: 100, mult: 15.40, win: 1540 },
+      { id: 'tw_5', name: 'Saša_KG', avatar: '🚀', bet: 250, mult: 12.80, win: 3200 }
+    ];
+
+    this.playerPool = [
+      { id: 'p_1', name: 'VipGost_Nbgd', avatar: '👑', minBet: 100, maxBet: 500, risk: 'high' },
+      { id: 'p_2', name: 'Stefan_011', avatar: '💎', minBet: 50, maxBet: 200, risk: 'med' },
+      { id: 'p_3', name: 'Marko_Dorćol', avatar: '🔥', minBet: 20, maxBet: 100, risk: 'low' },
+      { id: 'p_4', name: 'Jelena_NS', avatar: '⚡', minBet: 20, maxBet: 80, risk: 'low' },
+      { id: 'p_5', name: 'Miloš_Niš', avatar: '🎯', minBet: 10, maxBet: 50, risk: 'med' },
+      { id: 'p_6', name: 'Dragan_Čačak', avatar: '🎲', minBet: 25, maxBet: 150, risk: 'med' },
+      { id: 'p_7', name: 'ZlatniLav', avatar: '🦁', minBet: 200, maxBet: 1000, risk: 'high' },
+      { id: 'p_8', name: 'Saša_KG', avatar: '🚀', minBet: 50, maxBet: 300, risk: 'med' },
+      { id: 'p_9', name: 'Nikola_Zemun', avatar: '⭐', minBet: 20, maxBet: 100, risk: 'low' },
+      { id: 'p_10', name: 'Bojan_Vračar', avatar: '🦅', minBet: 100, maxBet: 400, risk: 'high' },
+      { id: 'p_11', name: 'Ana_Kruševac', avatar: '🌸', minBet: 20, maxBet: 60, risk: 'low' },
+      { id: 'p_12', name: 'Igor_Subotica', avatar: '🃏', minBet: 50, maxBet: 250, risk: 'med' }
+    ];
+
+    this.broadcastChannel = (typeof window !== 'undefined' && typeof window.BroadcastChannel !== 'undefined') 
+      ? new BroadcastChannel('gsc_crash_network') 
+      : null;
+
     // History of past crashes
     this.history = [1.85, 3.40, 1.15, 12.80, 2.10, 1.04, 5.25, 1.95];
 
@@ -62,8 +92,20 @@ class GrandCrashGame {
     this.quickChipButtons = document.querySelectorAll('.crash-chip-btn');
     this.presetButtons = document.querySelectorAll('.crash-preset-btn');
 
+    // Multiplayer DOM references
+    this.badgeCountEl = document.getElementById('crash-live-badge-count');
+    this.toastsContainer = document.getElementById('crash-live-toasts');
+    this.tabAllBets = document.getElementById('crash-tab-all-bets');
+    this.tabTopWins = document.getElementById('crash-tab-top-wins');
+    this.mpCountEl = document.getElementById('crash-mp-count');
+    this.mpPotEl = document.getElementById('crash-mp-pot');
+    this.mpToggleBtn = document.getElementById('crash-mp-toggle-btn');
+    this.mpDeckEl = document.querySelector('.crash-multiplayer-deck');
+    this.mpListEl = document.getElementById('crash-mp-list');
+
     this.initDOM();
     this.initCanvas();
+    this.initMultiplayer();
   }
 
   /* ==========================================================================
@@ -195,6 +237,235 @@ class GrandCrashGame {
     }
   }
 
+  /* ==========================================================================
+     Multiplayer System & Live Competitors Engine
+     ========================================================================== */
+  initMultiplayer() {
+    if (this.tabAllBets) {
+      this.tabAllBets.addEventListener('click', () => {
+        this.activeTab = 'all-bets';
+        this.tabAllBets.classList.add('active');
+        if (this.tabTopWins) this.tabTopWins.classList.remove('active');
+        this.renderMultiplayerList();
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+      });
+    }
+
+    if (this.tabTopWins) {
+      this.tabTopWins.addEventListener('click', () => {
+        this.activeTab = 'top-wins';
+        this.tabTopWins.classList.add('active');
+        if (this.tabAllBets) this.tabAllBets.classList.remove('active');
+        this.renderMultiplayerList();
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+      });
+    }
+
+    if (this.mpToggleBtn && this.mpDeckEl) {
+      this.mpToggleBtn.addEventListener('click', () => {
+        this.mpDeckEl.classList.toggle('collapsed');
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+      });
+    }
+
+    if (this.broadcastChannel) {
+      this.broadcastChannel.onmessage = (ev) => {
+        const msg = ev.data;
+        if (!msg || !this.isActive) return;
+        if (msg.type === 'PEER_BET') {
+          this.handlePeerBet(msg);
+        } else if (msg.type === 'PEER_CASHOUT') {
+          this.handlePeerCashout(msg);
+        }
+      };
+    }
+  }
+
+  broadcast(msg) {
+    if (this.broadcastChannel) {
+      try {
+        this.broadcastChannel.postMessage(msg);
+      } catch (e) {}
+    }
+  }
+
+  handlePeerBet(msg) {
+    const peerPlayer = {
+      id: 'peer_' + Math.random().toString(36).substr(2, 6),
+      name: msg.user || 'Gost_Online',
+      avatar: msg.avatar || '👤',
+      bet: msg.bet || 50,
+      targetMult: 0,
+      state: 'waiting',
+      isYou: false
+    };
+    this.roundPlayers.push(peerPlayer);
+    this.updateMultiplayerPot();
+    this.renderMultiplayerList();
+  }
+
+  handlePeerCashout(msg) {
+    const p = this.roundPlayers.find(x => x.name === msg.user);
+    if (p) {
+      p.state = 'won';
+      p.cashedAt = msg.mult;
+      p.winAmt = msg.win;
+      this.updateMultiplayerRow(p);
+      this.spawnLiveToast(p);
+    }
+  }
+
+  generateRoundPlayers() {
+    // Pick 7 to 10 random players from pool
+    const shuffled = [...this.playerPool].sort(() => Math.random() - 0.5);
+    const count = Math.floor(Math.random() * 4) + 7;
+    const chosen = shuffled.slice(0, count);
+
+    this.roundPlayers = chosen.map(p => {
+      const step = 10;
+      const betSpread = Math.floor((p.maxBet - p.minBet) / step);
+      const bet = p.minBet + Math.floor(Math.random() * (betSpread + 1)) * step;
+
+      let targetMult;
+      if (p.risk === 'low') {
+        targetMult = +(Math.random() * 0.35 + 1.12).toFixed(2);
+      } else if (p.risk === 'med') {
+        targetMult = +(Math.random() * 1.5 + 1.35).toFixed(2);
+      } else {
+        targetMult = +(Math.random() * 7.5 + 2.5).toFixed(2);
+      }
+
+      return {
+        id: p.id,
+        name: p.name,
+        avatar: p.avatar,
+        bet: bet,
+        targetMult: targetMult,
+        state: 'waiting',
+        isYou: false
+      };
+    });
+
+    if (this.hasActiveBet) {
+      this.roundPlayers.unshift({
+        id: 'you',
+        name: 'VI (Igrač)',
+        avatar: '👤',
+        bet: this.currentBet,
+        targetMult: this.isAutoCashout ? this.autoCashoutMult : 0,
+        state: 'waiting',
+        isYou: true
+      });
+    }
+
+    this.updateMultiplayerPot();
+    this.renderMultiplayerList();
+  }
+
+  updateMultiplayerPot() {
+    let totalPot = 0;
+    this.roundPlayers.forEach(p => { totalPot += p.bet; });
+    const count = this.roundPlayers.length;
+
+    if (this.mpCountEl) this.mpCountEl.textContent = count;
+    if (this.badgeCountEl) this.badgeCountEl.textContent = count + 12;
+    if (this.mpPotEl) this.mpPotEl.textContent = `POT: ${totalPot.toLocaleString()} ZLT`;
+  }
+
+  renderMultiplayerList() {
+    if (!this.mpListEl) return;
+
+    if (this.activeTab === 'all-bets') {
+      if (this.roundPlayers.length === 0) {
+        this.mpListEl.innerHTML = '<div style="text-align:center;color:#64748b;font-size:0.65rem;padding:8px;">Čeka se nova runda...</div>';
+        return;
+      }
+
+      this.mpListEl.innerHTML = this.roundPlayers.map(p => {
+        const isYouClass = p.isYou ? 'you' : '';
+        let stateClass = '';
+        let cashoutHtml = '';
+
+        if (p.state === 'waiting') {
+          cashoutHtml = '<span class="mp-cashout-cell waiting">ČEKA...</span>';
+        } else if (p.state === 'flying') {
+          stateClass = 'flying';
+          cashoutHtml = '<span class="mp-cashout-cell flying">U LETU...</span>';
+        } else if (p.state === 'won') {
+          stateClass = 'cashed';
+          cashoutHtml = `<span class="mp-cashout-cell won">+${p.winAmt.toLocaleString()} (${p.cashedAt.toFixed(2)}x)</span>`;
+        } else if (p.state === 'lost') {
+          stateClass = 'crashed';
+          cashoutHtml = `<span class="mp-cashout-cell lost">💥 ${p.lostAt.toFixed(2)}x</span>`;
+        }
+
+        return `
+          <div class="crash-mp-row ${isYouClass} ${stateClass}" id="mp-row-${p.id}">
+            <div class="mp-user-cell"><span class="avatar">${p.avatar}</span> <span>${p.name}</span></div>
+            <div class="mp-bet-cell">${p.bet.toLocaleString()}</div>
+            ${cashoutHtml}
+          </div>
+        `;
+      }).join('');
+    } else if (this.activeTab === 'top-wins') {
+      this.mpListEl.innerHTML = this.topWins.map((tw, idx) => `
+        <div class="crash-mp-row">
+          <div class="mp-user-cell"><span class="avatar">${tw.avatar}</span> <span>#${idx + 1} ${tw.name}</span></div>
+          <div class="mp-bet-cell">${tw.bet.toLocaleString()}</div>
+          <span class="mp-cashout-cell won" style="color:#fbbf24;font-weight:900;">+${tw.win.toLocaleString()} (${tw.mult.toFixed(2)}x)</span>
+        </div>
+      `).join('');
+    }
+  }
+
+  updateMultiplayerRow(p) {
+    if (!this.mpListEl || this.activeTab !== 'all-bets') return;
+    const row = document.getElementById(`mp-row-${p.id}`);
+    if (!row) return;
+
+    row.className = `crash-mp-row ${p.isYou ? 'you' : ''} ${p.state === 'won' ? 'cashed' : (p.state === 'lost' ? 'crashed' : '')}`;
+    const cashoutCell = row.querySelector('.mp-cashout-cell');
+    if (cashoutCell) {
+      if (p.state === 'won') {
+        cashoutCell.className = 'mp-cashout-cell won';
+        cashoutCell.textContent = `+${p.winAmt.toLocaleString()} (${p.cashedAt.toFixed(2)}x)`;
+      } else if (p.state === 'lost') {
+        cashoutCell.className = 'mp-cashout-cell lost';
+        cashoutCell.textContent = `💥 ${p.lostAt.toFixed(2)}x`;
+      }
+    }
+  }
+
+  checkMultiplayerCashouts() {
+    this.roundPlayers.forEach(p => {
+      if (!p.isYou && p.state === 'flying' && p.targetMult > 0) {
+        if (this.currentMultiplier >= p.targetMult) {
+          p.state = 'won';
+          p.cashedAt = p.targetMult;
+          p.winAmt = Math.round(p.bet * p.targetMult);
+          this.updateMultiplayerRow(p);
+          this.spawnLiveToast(p);
+        }
+      }
+    });
+  }
+
+  spawnLiveToast(p) {
+    if (!this.toastsContainer) return;
+    const toast = document.createElement('div');
+    toast.className = 'crash-toast-pill';
+    toast.innerHTML = `<span>🟢</span> <strong>${p.name}</strong> <span>+${p.winAmt.toLocaleString()} ZLT</span> <span style="color:#ffd700;">(${p.cashedAt.toFixed(2)}x)</span>`;
+    this.toastsContainer.appendChild(toast);
+
+    while (this.toastsContainer.children.length > 3) {
+      this.toastsContainer.removeChild(this.toastsContainer.children[0]);
+    }
+
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 2600);
+  }
+
   initCanvas() {
     if (!this.canvasEl) return;
     this.canvas = this.canvasEl;
@@ -308,6 +579,7 @@ class GrandCrashGame {
       this.multDisplay.className = 'crash-multiplier-val waiting';
     }
 
+    this.generateRoundPlayers();
     this.updateActionUI();
 
     if (this.countdownTimer) clearInterval(this.countdownTimer);
@@ -354,6 +626,11 @@ class GrandCrashGame {
       window.slotAudio.playClick();
     }
 
+    this.roundPlayers.forEach(p => {
+      if (p.state === 'waiting') p.state = 'flying';
+    });
+    this.renderMultiplayerList();
+
     this.updateActionUI();
   }
 
@@ -393,6 +670,28 @@ class GrandCrashGame {
       }
     }
 
+    // Update multiplayer participants who didn't cash out
+    this.roundPlayers.forEach(p => {
+      if (p.state === 'flying') {
+        p.state = 'lost';
+        p.lostAt = this.targetCrashPoint;
+        this.updateMultiplayerRow(p);
+      }
+    });
+
+    // Check if player's win belongs in Top Wins
+    if (this.hasCashedOut && this.lastCashMultiplier >= 5.0) {
+      this.topWins.unshift({
+        id: 'tw_' + Date.now(),
+        name: 'VI (Igrač)',
+        avatar: '👤',
+        bet: this.currentBet,
+        mult: this.lastCashMultiplier,
+        win: this.lastWonAmount
+      });
+      if (this.topWins.length > 5) this.topWins.pop();
+    }
+
     // Reset active bet state for round end
     this.hasActiveBet = false;
     this.updateActionUI();
@@ -416,6 +715,14 @@ class GrandCrashGame {
           this.wallet.addWin(this.currentBet);
         }
         this.hasActiveBet = false;
+
+        const youIdx = this.roundPlayers.findIndex(p => p.isYou);
+        if (youIdx !== -1) {
+          this.roundPlayers.splice(youIdx, 1);
+          this.updateMultiplayerPot();
+          this.renderMultiplayerList();
+        }
+
         if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
       } else {
         // Place bet for next round
@@ -446,6 +753,26 @@ class GrandCrashGame {
           this.hasCashedOut = false;
           this.lastWonAmount = 0;
           if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+
+          // Sync with multiplayer list
+          const youIdx = this.roundPlayers.findIndex(p => p.isYou);
+          const youObj = {
+            id: 'you',
+            name: 'VI (Igrač)',
+            avatar: '👤',
+            bet: this.currentBet,
+            targetMult: this.isAutoCashout ? this.autoCashoutMult : 0,
+            state: 'waiting',
+            isYou: true
+          };
+          if (youIdx !== -1) {
+            this.roundPlayers[youIdx] = youObj;
+          } else {
+            this.roundPlayers.unshift(youObj);
+          }
+          this.updateMultiplayerPot();
+          this.renderMultiplayerList();
+          this.broadcast({ type: 'PEER_BET', user: 'Igrač #' + Math.floor(Math.random() * 899 + 100), avatar: '👤', bet: this.currentBet });
         }
       }
       this.updateActionUI();
@@ -480,6 +807,17 @@ class GrandCrashGame {
 
     if (finalMult >= 2.5 && window.particleEngine) {
       window.particleEngine.spawnCelebration(true);
+    }
+
+    // Update player in multiplayer table & toast
+    const you = this.roundPlayers.find(p => p.isYou);
+    if (you) {
+      you.state = 'won';
+      you.cashedAt = finalMult;
+      you.winAmt = winAmt;
+      this.updateMultiplayerRow(you);
+      this.spawnLiveToast(you);
+      this.broadcast({ type: 'PEER_CASHOUT', user: 'VI (Igrač)', mult: finalMult, win: winAmt });
     }
 
     this.updateActionUI();
@@ -602,6 +940,9 @@ class GrandCrashGame {
       // Exponential curve formula: e^(0.065 * t)
       const calculatedMult = Math.pow(Math.E, 0.065 * elapsedSec * 1.6);
       this.currentMultiplier = Math.max(1.0, Math.round(calculatedMult * 100) / 100);
+
+      // Check multiplayer competitors cashouts
+      this.checkMultiplayerCashouts();
 
       // Check auto cashout
       if (this.isAutoCashout && this.hasActiveBet && !this.hasCashedOut) {

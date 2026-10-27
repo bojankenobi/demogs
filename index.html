@@ -23,15 +23,15 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=89">
-  <link rel="stylesheet" href="css/grand-hub.css?v=89">
+  <link rel="stylesheet" href="css/style.css?v=90">
+  <link rel="stylesheet" href="css/grand-hub.css?v=90">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v11') caches.delete(k);
+          if (k !== 'grandslot-v12') caches.delete(k);
         });
       });
     }
@@ -480,17 +480,27 @@
       <!-- Standalone Grand Crash (Aviator) Game View -->
       <div class="crash-stage-view" id="crash-game-view" style="display: none;">
         <div class="crash-cabinet-panel">
-          <!-- Top Multiplier History Bar -->
+          <!-- Top Multiplier History Bar & Live Multiplayer Counter -->
           <div class="crash-top-bar">
-            <span class="crash-history-lbl">ISTORIJA:</span>
-            <div class="crash-history-strip" id="crash-history-strip">
-              <!-- Populated dynamically -->
+            <div class="crash-history-left">
+              <span class="crash-history-lbl">ISTORIJA:</span>
+              <div class="crash-history-strip" id="crash-history-strip">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+            <div class="crash-live-badge" title="Aktivni igrači u sobi">
+              <span class="mp-live-dot"></span>
+              <span class="crash-live-count" id="crash-live-badge-count">18</span>
+              <span class="crash-live-lbl">online</span>
             </div>
           </div>
 
           <!-- Radar & Flight Canvas Container -->
           <div class="crash-canvas-wrap">
             <canvas id="crash-canvas" width="480" height="250"></canvas>
+
+            <!-- Floating live cashout toast feed -->
+            <div class="crash-live-toasts" id="crash-live-toasts"></div>
 
             <!-- Dynamic Flight HUD Overlay -->
             <div class="crash-hud-overlay" id="crash-hud-overlay">
@@ -551,6 +561,33 @@
               <span class="crash-action-title" id="crash-action-title">ULOŽI ZA SLEDEĆI LET</span>
               <span class="crash-action-sub" id="crash-action-sub">20 ZLT</span>
             </button>
+
+            <!-- Multiplayer Live Feed Deck -->
+            <div class="crash-multiplayer-deck">
+              <div class="crash-mp-header">
+                <div class="crash-mp-tabs">
+                  <button type="button" class="crash-mp-tab active" id="crash-tab-all-bets">
+                    <span class="mp-live-dot"></span> OPKLADE (<span id="crash-mp-count">0</span>)
+                  </button>
+                  <button type="button" class="crash-mp-tab" id="crash-tab-top-wins">
+                    🏆 TOP DOBICI
+                  </button>
+                </div>
+                <div class="crash-mp-pot" id="crash-mp-pot">POT: 0 ZLT</div>
+                <button type="button" class="crash-mp-toggle-btn" id="crash-mp-toggle-btn" title="Prikaži/Sakrij igrače">▲</button>
+              </div>
+
+              <div class="crash-mp-body" id="crash-mp-body">
+                <div class="crash-mp-table-head">
+                  <span class="mp-col-user">IGRAČ</span>
+                  <span class="mp-col-bet">ULOG</span>
+                  <span class="mp-col-cashout">ISPLATA</span>
+                </div>
+                <div class="crash-mp-list" id="crash-mp-list">
+                  <!-- Populated dynamically with active players -->
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -2009,9 +2046,9 @@
   <script src="js/games/mines/mini-mines.js?v=75"></script>
   <script src="js/games/vault-crawler/vault-crawler.js?v=88"></script>
   <script src="js/games/battle-royale/battle-royale.js?v=88"></script>
-  <script src="js/games/crash/crash.js?v=89"></script>
+  <script src="js/games/crash/crash.js?v=90"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=89"></script>
+  <script src="js/app.js?v=90"></script>
 </body>
 </html>

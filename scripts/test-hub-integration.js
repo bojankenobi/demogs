@@ -280,6 +280,16 @@ if (crash.gameState !== 'crashed') {
 }
 console.log('   Handled crash event. History count:', crash.history.length, 'Latest:', crash.history[0]);
 
+// Verify multiplayer state
+if (!crash.roundPlayers || crash.roundPlayers.length === 0) {
+  throw new Error('Multiplayer round players not generated!');
+}
+const you = crash.roundPlayers.find(p => p.isYou);
+if (!you || you.state !== 'won') {
+  throw new Error('Multiplayer player state tracking failed!');
+}
+console.log(`   Multiplayer active round players: ${crash.roundPlayers.length}, You state: ${you.state}`);
+
 crash.unmount();
 console.log('   Unmounted GrandCrashGame.');
 
