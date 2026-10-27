@@ -1142,3 +1142,434 @@
 .btn-vault-victory-next:hover {
   transform: translateY(-2px);
 }
+
+/* ==============================================================================
+   MOBILE & TABLET RESPONSIVENESS FOR GRAND HUB, VAULT & BATTLE ROYALE
+   ============================================================================== */
+@media (max-width: 480px) {
+  /* Grand Mode Hub */
+  .grand-mode-hub {
+    gap: 4px;
+    padding: 3px 4px;
+    margin: 3px auto 5px auto;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hub-mode-tab {
+    padding: 6px 3px;
+    min-height: 35px;
+    border-radius: 16px;
+    gap: 3px;
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+  }
+
+  .hub-tab-icon {
+    font-size: 0.95rem;
+  }
+
+  .hub-tab-badge {
+    top: -5px;
+    right: 2px;
+    font-size: 0.5rem;
+    padding: 1px 3px;
+  }
+
+  /* The Vault Crawler Stage */
+  .vault-crawler-stage {
+    gap: 5px;
+    padding: 0 2px 6px 2px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .vault-header-card {
+    padding: 5px 8px;
+    border-radius: 9px;
+  }
+
+  .vault-floor-title {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+
+  .vault-floor-sub {
+    font-size: 0.58rem;
+  }
+
+  .vault-keys-display {
+    padding: 2px 7px;
+    font-size: 0.7rem;
+    gap: 3px;
+  }
+
+  /* Heist Tower Building Progression */
+  .vault-tower-strip {
+    padding: 5px 6px;
+    gap: 5px;
+    border-radius: 9px;
+    width: 100%;
+  }
+
+  .tower-progress-header {
+    padding: 0 2px;
+  }
+
+  .tower-progress-title {
+    font-size: 0.62rem;
+  }
+
+  .tower-progress-pct {
+    font-size: 0.68rem;
+  }
+
+  .tower-floors-grid {
+    gap: 3px;
+    width: 100%;
+  }
+
+  .tower-floor-item {
+    padding: 3px 1px;
+    gap: 1px;
+    border-radius: 5px;
+    min-width: 0;
+  }
+
+  .tower-fl-num {
+    font-size: 0.52rem;
+  }
+
+  .tower-fl-icon {
+    font-size: 0.82rem;
+  }
+
+  .tower-fl-badge {
+    font-size: 0.44rem;
+    padding: 1px 2px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Soba Map Strip */
+  .vault-map-strip {
+    padding: 6px 8px;
+    border-radius: 9px;
+    width: 100%;
+  }
+
+  .vault-node {
+    width: 32px;
+    height: 32px;
+    border-width: 1.5px;
+  }
+
+  .vault-node-icon {
+    font-size: 0.88rem;
+  }
+
+  .vault-node-lbl {
+    font-size: 0.5rem;
+    bottom: -12px;
+  }
+
+  /* Combat HUD */
+  .vault-combat-hud {
+    gap: 5px;
+    width: 100%;
+  }
+
+  .combat-char-card {
+    padding: 5px 6px;
+    border-radius: 8px;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .combat-char-name {
+    font-size: 0.68rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .combat-char-val {
+    font-size: 0.66rem;
+  }
+
+  .combat-bar-track {
+    height: 5px;
+    border-radius: 3px;
+  }
+
+  .vault-combat-log {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+    min-height: 26px;
+    border-radius: 6px;
+  }
+
+  /* Bottom Actions */
+  .vault-bottom-actions {
+    gap: 4px;
+    width: 100%;
+  }
+
+  .btn-vault-action {
+    padding: 6px 4px;
+    min-height: 36px;
+    font-size: 0.64rem;
+    border-radius: 7px;
+    letter-spacing: 0.01em;
+  }
+
+  /* Slot-Battle Royale Stage */
+  .battle-royale-stage {
+    gap: 5px;
+    padding: 0 2px 6px 2px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .royale-status-bar {
+    padding: 5px 8px;
+    border-radius: 9px;
+  }
+
+  .royale-timer-val {
+    font-size: 1.05rem;
+  }
+
+  .royale-rank-badge {
+    padding: 2px 8px;
+    font-size: 0.7rem;
+  }
+
+  .royale-zone-banner {
+    padding: 3px 6px;
+    font-size: 0.62rem;
+    border-radius: 5px;
+  }
+
+  .royale-attacks-deck {
+    gap: 4px;
+    width: 100%;
+  }
+
+  .btn-pvp-attack {
+    padding: 5px 1px;
+    min-height: 42px;
+    border-radius: 7px;
+    min-width: 0;
+  }
+
+  .pvp-card-icon {
+    font-size: 0.95rem;
+  }
+
+  .pvp-card-title {
+    font-size: 0.54rem;
+    margin-top: 1px;
+  }
+
+  .pvp-card-ready {
+    font-size: 0.48rem;
+  }
+
+  .royale-leaderboard-strip {
+    padding: 3px 0;
+    gap: 4px;
+  }
+
+  .competitor-pill {
+    padding: 2px 6px;
+    font-size: 0.62rem;
+  }
+
+  .royale-bottom-actions {
+    gap: 4px;
+    width: 100%;
+  }
+
+  /* Modals */
+  .vault-leaderboard-card {
+    padding: 12px 10px;
+    width: 96%;
+    max-width: 96%;
+    border-radius: 12px;
+  }
+
+  .vault-player-rank-card {
+    padding: 6px 8px;
+    gap: 6px;
+    border-radius: 9px;
+    margin-bottom: 8px;
+  }
+
+  .my-rank-badge {
+    font-size: 0.9rem;
+    padding: 2px 6px;
+  }
+
+  .my-rank-name {
+    font-size: 0.78rem;
+  }
+
+  .my-rank-stats {
+    font-size: 0.64rem;
+  }
+
+  .vault-table-header-row,
+  .vault-raider-row {
+    grid-template-columns: 2fr 1fr 0.9fr 1.2fr;
+    padding: 5px 4px;
+    font-size: 0.65rem;
+  }
+
+  .raider-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .raider-fl {
+    font-size: 0.6rem;
+  }
+
+  .raider-keys {
+    font-size: 0.62rem;
+  }
+
+  .raider-prize {
+    font-size: 0.58rem;
+  }
+
+  .weekly-rewards-grid {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .reward-pill {
+    font-size: 0.62rem;
+    padding: 3px 6px;
+  }
+
+  /* Talent Tree Modal */
+  .vault-talents-card {
+    padding: 12px 10px;
+    width: 96%;
+    max-width: 96%;
+    border-radius: 12px;
+  }
+
+  .talents-cards-grid {
+    gap: 6px;
+  }
+
+  .talent-card {
+    padding: 6px 8px;
+    gap: 8px;
+    border-radius: 8px;
+  }
+
+  .talent-card-icon {
+    font-size: 1.25rem;
+  }
+
+  .talent-name {
+    font-size: 0.75rem;
+  }
+
+  .talent-desc {
+    font-size: 0.6rem;
+  }
+
+  .talent-level-stars {
+    font-size: 0.75rem;
+  }
+
+  .btn-upgrade-talent {
+    min-width: 58px;
+    padding: 5px 4px;
+    border-radius: 6px;
+  }
+
+  .btn-up-lbl {
+    font-size: 0.55rem;
+  }
+
+  .btn-up-cost {
+    font-size: 0.62rem;
+  }
+
+  /* Victory Modal */
+  .vault-victory-card {
+    padding: 14px 10px;
+    width: 94%;
+    max-width: 94%;
+    border-radius: 14px;
+  }
+
+  .vault-victory-safe-icon {
+    font-size: 2.6rem;
+  }
+
+  .vault-victory-title {
+    font-size: 1.15rem;
+  }
+
+  .vault-victory-sub {
+    font-size: 0.7rem;
+  }
+
+  .btn-vault-victory-next {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    min-height: 42px;
+  }
+}
+
+@media (max-width: 370px) {
+  .grand-mode-hub {
+    gap: 2px;
+    padding: 2px 2px;
+  }
+
+  .hub-mode-tab {
+    padding: 4px 2px;
+    font-size: 0.6rem;
+    gap: 2px;
+    min-height: 30px;
+  }
+
+  .hub-tab-icon {
+    font-size: 0.82rem;
+  }
+
+  .vault-node {
+    width: 28px;
+    height: 28px;
+  }
+
+  .vault-node-icon {
+    font-size: 0.78rem;
+  }
+
+  .vault-node-lbl {
+    font-size: 0.46rem;
+    bottom: -11px;
+  }
+
+  .btn-vault-action {
+    font-size: 0.58rem;
+    padding: 5px 2px;
+  }
+
+  .vault-table-header-row,
+  .vault-raider-row {
+    grid-template-columns: 1.8fr 0.9fr 0.9fr 1.1fr;
+    font-size: 0.6rem;
+  }
+}

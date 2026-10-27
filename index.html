@@ -23,15 +23,15 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=75">
-  <link rel="stylesheet" href="css/grand-hub.css?v=85">
+  <link rel="stylesheet" href="css/style.css?v=86">
+  <link rel="stylesheet" href="css/grand-hub.css?v=86">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v8') caches.delete(k);
+          if (k !== 'grandslot-v9') caches.delete(k);
         });
       });
     }
@@ -62,17 +62,17 @@
       <nav class="grand-mode-hub" id="grand-mode-hub" aria-label="Izbor Glavnog Moda">
         <button class="hub-mode-tab active" data-mode="casino" id="tab-mode-casino">
           <span class="hub-tab-icon">🎰</span>
-          <span class="hub-tab-text">KAZINO SALON</span>
+          <span class="hub-tab-text"><span class="tab-txt-full">KAZINO SALON</span><span class="tab-txt-short">KAZINO</span></span>
         </button>
         <button class="hub-mode-tab" data-mode="vault" id="tab-mode-vault">
           <span class="hub-tab-badge">ROGUE</span>
           <span class="hub-tab-icon">🏛️</span>
-          <span class="hub-tab-text">TREZOR PROVALA</span>
+          <span class="hub-tab-text"><span class="tab-txt-full">TREZOR PROVALA</span><span class="tab-txt-short">TREZOR</span></span>
         </button>
         <button class="hub-mode-tab" data-mode="royale" id="tab-mode-royale">
           <span class="hub-tab-badge live-pulse">LIVE</span>
           <span class="hub-tab-icon">⚔️</span>
-          <span class="hub-tab-text">BATTLE ROYALE</span>
+          <span class="hub-tab-text"><span class="tab-txt-full">BATTLE ROYALE</span><span class="tab-txt-short">ROYALE</span></span>
         </button>
       </nav>
       <!-- Live Casino Jackpots Bar: SILVER, GOLD & DIAMOND (Thin Metallic Frames) -->
@@ -277,13 +277,16 @@
         <!-- Actions Deck -->
         <div class="vault-bottom-actions">
           <button type="button" class="btn-vault-action gold-glow" id="btn-vault-leaderboard">
-            🏆 Rang Lista Provalnika
+            <span class="vbtn-txt-full">🏆 Rang Lista Provalnika</span>
+            <span class="vbtn-txt-short">🏆 Rang Lista</span>
           </button>
           <button type="button" class="btn-vault-action" id="btn-vault-talents">
-            🏛️ Talent Drvo
+            <span class="vbtn-txt-full">🏛️ Talent Drvo</span>
+            <span class="vbtn-txt-short">🏛️ Talenti</span>
           </button>
           <button type="button" class="btn-vault-action secondary" id="btn-vault-reset-run" style="flex: 0.6;">
-            🔄 Nova Provala
+            <span class="vbtn-txt-full">🔄 Nova Provala</span>
+            <span class="vbtn-txt-short">🔄 Nova</span>
           </button>
         </div>
       </div>
@@ -334,9 +337,10 @@
           <!-- Populated dynamically -->
         </div>
 
-        <div style="display: flex; gap: 8px;">
+        <div class="royale-bottom-actions" style="display: flex; gap: 8px;">
           <button type="button" class="btn-vault-action" id="btn-start-royale-round">
-            ⚔️ Započni Novu 120s Rundu
+            <span class="rbtn-txt-full">⚔️ Započni Novu 120s Rundu</span>
+            <span class="rbtn-txt-short">⚔️ Nova Runda</span>
           </button>
           <button type="button" class="btn-vault-action" id="btn-exit-royale-round" style="flex: 0.5;">
             Izlaz
@@ -1902,10 +1906,10 @@
   <script src="js/games/royal3x3/royal3x3.js?v=75"></script>
   <script src="js/games/mines/mines.js?v=75"></script>
   <script src="js/games/mines/mini-mines.js?v=75"></script>
-  <script src="js/games/vault-crawler/vault-crawler.js?v=85"></script>
-  <script src="js/games/battle-royale/battle-royale.js?v=75"></script>
+  <script src="js/games/vault-crawler/vault-crawler.js?v=86"></script>
+  <script src="js/games/battle-royale/battle-royale.js?v=86"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=81"></script>
+  <script src="js/app.js?v=86"></script>
 </body>
 </html>

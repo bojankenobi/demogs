@@ -209,6 +209,11 @@ class IGTApp {
 
   switchGrandMode(mode) {
     if (window.slotAudio) window.slotAudio.playClick();
+    const container = document.querySelector('.game-container');
+    if (container) {
+      container.classList.toggle('in-vault-mode', mode === 'vault');
+      container.classList.toggle('in-royale-mode', mode === 'royale');
+    }
 
     if (mode === 'vault') {
       if (this.battleRoyale) this.battleRoyale.unmount();
@@ -222,6 +227,10 @@ class IGTApp {
       if (this.battleRoyale) this.battleRoyale.unmount();
       const stage = document.querySelector('.slot-stage-scaler');
       if (stage) stage.style.display = 'block';
+    }
+
+    if (typeof window.updateSlotScale === 'function') {
+      window.updateSlotScale();
     }
   }
 
@@ -1119,15 +1128,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const vh = window.innerHeight;
     const isFullFocus = (app.lobby && app.lobby.activeGameId === 'fullfocus');
     const is3x3 = (app.lobby && (app.lobby.activeGameId === 'royal3x3' || isFullFocus));
+    const vaultView = document.getElementById('vault-crawler-view');
+    const royaleView = document.getElementById('battle-royale-view');
+    const isVaultOpen = vaultView && vaultView.style.display !== 'none';
+    const isRoyaleOpen = royaleView && royaleView.style.display !== 'none';
+    const hasActiveSubgame = (isVaultOpen || isRoyaleOpen);
 
     const baseW = isFullFocus ? 416 : 514;
-    const availW = Math.max(260, vw - (isFullFocus ? 16 : 24));
-    const scaleW = Math.min(1.22, availW / baseW);
+    const padW = vw <= 370 ? 12 : (vw <= 480 ? 16 : 28);
+    const availW = Math.max(220, vw - padW);
+    const scaleW = Math.min(1.15, availW / baseW);
 
-    const baseH = is3x3 ? 250 : 165;
-    const availH = Math.max(100, vh - 320);
-    const scaleH = Math.min(1.22, availH / baseH);
-    const finalScale = Math.max(0.48, Math.min(scaleW, scaleH));
+    const baseH = is3x3 ? 246 : 160;
+    let uiOverhead = 330;
+    if (vw <= 480) {
+      uiOverhead = hasActiveSubgame ? 460 : 320;
+    } else if (hasActiveSubgame) {
+      uiOverhead = 500;
+    }
+
+    const availH = Math.max(80, vh - uiOverhead);
+    const scaleH = Math.min(1.15, availH / baseH);
+    const minAllowed = vw <= 370 ? 0.42 : 0.46;
+    const finalScale = Math.max(minAllowed, Math.min(scaleW, scaleH));
     document.documentElement.style.setProperty('--slot-scale', finalScale.toFixed(4));
   }
   window.updateSlotScale = updateSlotScale;

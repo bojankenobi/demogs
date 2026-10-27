@@ -24,25 +24,29 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html {
   width: 100%;
-  height: 100%;
-  overscroll-behavior: none; /* Prevents browser pull-to-refresh & bounce */
+  min-height: 100%;
   overscroll-behavior-y: none;
-  touch-action: manipulation; /* Instant touch feedback without delay */
+  touch-action: manipulation;
+  overflow-x: hidden;
 }
 
 body {
+  width: 100%;
+  min-height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg-dark);
   color: var(--text-main);
   font-family: var(--font-title);
-  min-height: 100vh;
-  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   position: relative;
 }
 
@@ -2743,17 +2747,140 @@ body {
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
 }
 
+/* Helper Visibility Classes for Responsive Text */
+.tab-txt-short,
+.vbtn-txt-short,
+.rbtn-txt-short {
+  display: none;
+}
+
 /* Responsiveness for mobile screens */
 @media (max-width: 480px) {
+  .tab-txt-full,
+  .vbtn-txt-full,
+  .rbtn-txt-full {
+    display: none !important;
+  }
+  .tab-txt-short,
+  .vbtn-txt-short,
+  .rbtn-txt-short {
+    display: inline !important;
+  }
+
+  .game-container {
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+    padding-top: max(4px, env(safe-area-inset-top));
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    justify-content: flex-start;
+    gap: 3px;
+  }
+
+  /* Header & Logo */
   .brand-logo-wrap {
-    max-width: 270px;
+    max-width: 220px;
     padding: 0 4px;
+    margin-bottom: 2px;
   }
   .main-brand-logo {
-    max-height: 52px;
+    max-height: 42px;
   }
+
+  /* Mode Hub Top Navigation */
+  .grand-mode-hub {
+    gap: 4px;
+    padding: 3px 4px;
+    margin: 3px auto 5px auto;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 100%;
+  }
+  .hub-mode-tab {
+    padding: 6px 4px;
+    min-height: 36px;
+    border-radius: 16px;
+    gap: 4px;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+  }
+  .hub-tab-icon {
+    font-size: 0.95rem;
+  }
+  .hub-tab-badge {
+    top: -5px;
+    right: 2px;
+    font-size: 0.5rem;
+    padding: 1px 4px;
+  }
+
+  /* Live Casino Jackpots Bar */
+  .jackpots-ticker-bar {
+    gap: 4px;
+    margin: 2px auto 4px auto;
+    padding: 0 2px;
+    width: 100%;
+  }
+  .jackpot-pod {
+    padding: 3px 2px;
+    border-radius: 6px;
+  }
+  .jp-pod-badge {
+    gap: 2px;
+    margin-bottom: 1px;
+  }
+  .jp-icon {
+    font-size: 0.65rem;
+  }
+  .jp-name {
+    font-size: 0.54rem;
+    letter-spacing: 0.5px;
+  }
+  .jp-val {
+    font-size: 0.84rem;
+    letter-spacing: 0.2px;
+  }
+  .jp-currency {
+    font-size: 0.48rem;
+  }
+
+  /* Bonus Meters Bar */
+  .bonus-meters-bar {
+    gap: 4px;
+    margin: 2px auto 4px auto;
+    padding: 0 2px;
+    width: 100%;
+  }
+  .meter-pod {
+    padding: 2px 4px 3px;
+    border-radius: 6px;
+    gap: 2px;
+  }
+  .meter-icon {
+    font-size: 0.7rem;
+  }
+  .meter-name {
+    font-size: 0.54rem;
+  }
+  .meter-val {
+    font-size: 0.62rem;
+  }
+  .meter-track {
+    height: 4px;
+  }
+
+  /* When playing Vault Crawler or Battle Royale on mobile, condense general casino meters */
+  .game-container.in-vault-mode .bonus-meters-bar,
+  .game-container.in-royale-mode .bonus-meters-bar {
+    display: none !important;
+  }
+  .game-container.in-vault-mode .jackpots-ticker-bar,
+  .game-container.in-royale-mode .jackpots-ticker-bar {
+    margin-bottom: 2px !important;
+  }
+
+  /* Stage Area */
   .stage-area {
-    padding: 4px 0 8px;
+    padding: 2px 0 4px;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -2767,194 +2894,411 @@ body {
     margin-left: auto;
     margin-right: auto;
   }
-  .status-banner-wrap {
-    margin: 4px auto 2px auto;
-  }
-  .status-banner {
-    font-size: 0.88rem;
-    padding: 4px 14px;
-    min-height: 32px;
-  }
-  .hud-panel {
-    grid-template-columns: 1.15fr 0.9fr 1fr 0.95fr;
-    gap: 4px;
-    margin: 3px auto 4px auto;
-    padding: 0 2px;
-  }
-  .hud-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.8px;
-  }
-  .hud-val {
-    font-size: 1.1rem;
-  }
-  .hud-val-denom {
-    font-size: 1rem !important;
-  }
-  .hud-sub-rsd {
-    font-size: 0.52rem;
-  }
-  .main-action-cluster {
-    gap: 8px;
-    align-items: center;
-  }
-  .bet-side-controls {
-    gap: 6px;
-    min-width: 0;
-  }
-  .bet-stepper-row {
-    gap: 6px;
-    width: 100%;
-    min-width: 0;
-  }
-  .bet-stepper {
-    border-radius: 10px;
-  }
-  .btn-step {
-    width: 34px;
-    height: 34px;
-    font-size: 1.15rem;
-  }
-  .bet-display {
-    padding: 0 6px;
-    font-size: 0.8rem;
-    letter-spacing: 0.8px;
-  }
-  .btn-auto {
-    height: 34px;
-    padding: 0 10px;
-    font-size: 0.72rem;
-    letter-spacing: 0.6px;
-    border-radius: 9px;
-    flex-shrink: 0;
-  }
-  .bet-quick-row {
-    gap: 5px;
-    width: 100%;
-    min-width: 0;
-  }
-  .btn-secondary {
-    padding: 6px 3px;
-    font-size: 0.68rem;
-    letter-spacing: 0.2px;
-    font-weight: 800;
-    border-radius: 8px;
-    min-width: 0;
-  }
-  .btn-gamble-card-suit {
-    width: 36px;
-    height: 36px;
-    flex: 0 0 36px;
-    margin: 0;
-    flex-shrink: 0;
-  }
-  .crystal-spade-img {
-    width: 26px;
-    height: 30px;
-  }
-  .spin-side-wrap {
-    flex-shrink: 0;
-  }
-  .btn-spin-round {
-    width: 86px;
-    height: 86px;
-    flex-shrink: 0;
-  }
-  .btn-spin-round::before {
-    inset: -3px;
-  }
-  .spin-face {
-    width: 72px;
-    height: 72px;
-  }
-  .spin-flower-logo {
-    width: 38px;
-    height: 38px;
-  }
-  .spin-text-mini {
-    font-size: 0.68rem;
-  }
-  .aux-row {
-    margin-top: 8px;
-    gap: 10px;
-  }
-  .btn-icon-mini {
-    width: 38px;
-    height: 38px;
-  }
-  .gold-icon {
-    width: 18px;
-    height: 18px;
-  }
-}
 
-@media (max-width: 370px) {
-  .game-container {
-    padding-left: max(8px, env(safe-area-inset-left));
-    padding-right: max(8px, env(safe-area-inset-right));
-  }
-  .brand-logo-wrap {
-    max-width: 210px;
-  }
-  .main-brand-logo {
-    max-height: 42px;
+  /* Status Banner */
+  .status-banner-wrap {
+    margin: 3px auto 1px auto;
+    width: 100%;
   }
   .status-banner {
     font-size: 0.82rem;
     padding: 3px 10px;
     min-height: 28px;
   }
-  .hud-val {
-    font-size: 1.02rem;
+
+  /* HUD Dashboard */
+  .hud-panel {
+    grid-template-columns: 1.15fr 0.9fr 1fr 0.95fr;
+    gap: 3px;
+    margin: 2px auto 4px auto;
+    padding: 0 1px;
+    width: 100%;
   }
-  .hud-val-denom {
-    font-size: 0.92rem !important;
+  .hud-item {
+    padding: 2px 1px;
+    min-width: 0;
+    overflow: hidden;
   }
   .hud-label {
-    font-size: 0.56rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.6px;
+  }
+  .hud-val {
+    font-size: 1.05rem;
+    letter-spacing: 0;
+  }
+  .hud-val-denom {
+    font-size: 0.95rem !important;
+  }
+  .hud-sub-rsd {
+    font-size: 0.5rem;
+  }
+
+  /* Controls Panel */
+  .controls-panel {
+    width: 100%;
+    margin-top: 4px;
   }
   .main-action-cluster {
-    gap: 6px;
+    gap: 8px;
     align-items: center;
+    width: 100%;
   }
   .bet-side-controls {
     gap: 5px;
     min-width: 0;
+    flex: 1;
   }
   .bet-stepper-row {
-    gap: 4px;
+    gap: 5px;
     width: 100%;
     min-width: 0;
   }
+  .bet-stepper {
+    border-radius: 9px;
+  }
   .btn-step {
-    width: 30px;
-    height: 30px;
-    font-size: 1.05rem;
+    width: 32px;
+    height: 32px;
+    font-size: 1.15rem;
   }
   .bet-display {
     padding: 0 4px;
-    font-size: 0.74rem;
-    letter-spacing: 0.4px;
+    font-size: 0.78rem;
+    letter-spacing: 0.6px;
   }
   .btn-auto {
-    height: 30px;
+    height: 32px;
     padding: 0 8px;
-    font-size: 0.66rem;
-    letter-spacing: 0.4px;
-    border-radius: 8px;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    border-radius: 9px;
     flex-shrink: 0;
   }
+
+  /* Quick Actions Row */
   .bet-quick-row {
     gap: 4px;
     width: 100%;
     min-width: 0;
   }
   .btn-secondary {
+    padding: 6px 2px;
+    font-size: 0.65rem;
+    letter-spacing: 0;
+    font-weight: 800;
+    border-radius: 8px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .btn-gamble-card-suit {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .crystal-spade-img {
+    width: 24px;
+    height: 28px;
+  }
+
+  /* Features Row (Golden Bet & Buy Bonus) */
+  .bet-features-row {
+    gap: 4px;
+    width: 100%;
+    min-width: 0;
+  }
+  .btn-golden-bet {
+    padding: 5px 6px;
+    border-radius: 8px;
+    gap: 3px;
+  }
+  .btn-golden-bet .gb-badge {
+    font-size: 0.62rem;
+    letter-spacing: 0.2px;
+  }
+  .btn-golden-bet .gb-status {
+    font-size: 0.55rem;
+    padding: 1px 4px;
+    border-radius: 4px;
+  }
+  .btn-buy-bonus {
+    padding: 5px 6px;
+    border-radius: 8px;
+    gap: 3px;
+  }
+  .btn-buy-bonus .bb-icon {
+    font-size: 0.75rem;
+  }
+  .btn-buy-bonus .bb-text {
+    font-size: 0.62rem;
+    letter-spacing: 0.2px;
+  }
+
+  /* Spin Button */
+  .spin-side-wrap {
+    flex-shrink: 0;
+  }
+  .btn-spin-round {
+    width: 82px;
+    height: 82px;
+    flex-shrink: 0;
+  }
+  .btn-spin-round::before {
+    inset: -3px;
+  }
+  .spin-face {
+    width: 68px;
+    height: 68px;
+  }
+  .spin-flower-logo {
+    width: 34px;
+    height: 34px;
+  }
+  .spin-text-mini {
+    font-size: 0.64rem;
+  }
+
+  /* Aux Row */
+  .aux-row {
+    margin-top: 6px;
+    gap: 6px;
+    width: 100%;
+  }
+  .btn-icon-mini {
+    width: 36px;
+    height: 36px;
+  }
+  .gold-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Mines Panel Mobile Adjustments */
+  .mines-cabinet-panel {
+    padding: 8px 6px 12px;
+    border-radius: 14px;
+    gap: 6px;
+  }
+  .mines-top-bar {
+    padding: 4px;
+  }
+  .mines-control-deck {
+    gap: 6px;
+  }
+}
+
+@media (max-width: 370px) {
+  .game-container {
+    padding-left: max(5px, env(safe-area-inset-left));
+    padding-right: max(5px, env(safe-area-inset-right));
+    padding-top: max(3px, env(safe-area-inset-top));
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+  }
+  .brand-logo-wrap {
+    max-width: 180px;
+  }
+  .main-brand-logo {
+    max-height: 34px;
+  }
+
+  /* Mode Hub ultra-compact */
+  .grand-mode-hub {
+    gap: 2px;
+    padding: 2px 2px;
+  }
+  .hub-mode-tab {
     padding: 5px 2px;
     font-size: 0.62rem;
-    letter-spacing: 0;
+    gap: 2px;
+    min-height: 32px;
+  }
+  .hub-tab-icon {
+    font-size: 0.85rem;
+  }
+  .hub-tab-badge {
+    display: none; /* Hide badge on extra small screen */
+  }
+
+  .status-banner {
+    font-size: 0.78rem;
+    padding: 2px 8px;
+    min-height: 26px;
+  }
+  .hud-val {
+    font-size: 0.95rem;
+  }
+  .hud-val-denom {
+    font-size: 0.85rem !important;
+  }
+  .hud-label {
+    font-size: 0.52rem;
+  }
+  .hud-sub-rsd {
+    font-size: 0.45rem;
+  }
+  .main-action-cluster {
+    gap: 5px;
+  }
+  .bet-side-controls {
+    gap: 4px;
+  }
+  .btn-step {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+  .bet-display {
+    padding: 0 2px;
+    font-size: 0.7rem;
+    letter-spacing: 0.2px;
+  }
+  .btn-auto {
+    height: 28px;
+    padding: 0 6px;
+    font-size: 0.64rem;
+  }
+  .bet-quick-row {
+    gap: 3px;
+  }
+  .btn-secondary {
+    padding: 5px 1px;
+    font-size: 0.58rem;
+  }
+  .btn-gamble-card-suit {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+  }
+  .crystal-spade-img {
+    width: 20px;
+    height: 24px;
+  }
+  .bet-features-row {
+    gap: 3px;
+  }
+  .btn-golden-bet,
+  .btn-buy-bonus {
+    padding: 4px 3px;
+  }
+  .btn-golden-bet .gb-badge,
+  .btn-buy-bonus .bb-text {
+    font-size: 0.55rem;
+  }
+  .btn-spin-round {
+    width: 72px;
+    height: 72px;
+  }
+  .spin-face {
+    width: 58px;
+    height: 58px;
+  }
+  .spin-flower-logo {
+    width: 28px;
+    height: 28px;
+  }
+  .spin-text-mini {
+    font-size: 0.6rem;
+  }
+  .aux-row {
+    margin-top: 4px;
+    gap: 4px;
+  }
+  .btn-grand-game-select {
+    padding: 3px 6px;
+    font-size: 0.6rem;
+    gap: 3px;
+  }
+  .btn-icon-mini {
+    width: 30px;
+    height: 30px;
+  }
+  .gold-icon {
+    width: 14px;
+    height: 14px;
+  }
+  .paytable-grid {
+    grid-template-columns: 1fr;
+  }
+  .pay-card {
+    padding: 6px 8px;
+  }
+}
+
+/* Short viewports & Mobile Vertical Fit */
+@media (max-height: 760px) {
+  .game-container {
+    padding-top: max(3px, env(safe-area-inset-top));
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    justify-content: flex-start;
+    gap: 2px;
+  }
+  .brand-logo-wrap {
+    max-width: 170px;
+    margin-bottom: 0;
+  }
+  .main-brand-logo {
+    max-height: 32px;
+  }
+
+  .grand-mode-hub {
+    margin: 2px auto 4px auto;
+    padding: 2px 3px;
+  }
+  .hub-mode-tab {
+    min-height: 32px;
+    padding: 4px 3px;
+    font-size: 0.66rem;
+  }
+  .jackpots-ticker-bar {
+    margin: 1px auto 3px auto;
+  }
+  .bonus-meters-bar {
+    margin: 1px auto 3px auto;
+  }
+
+  .stage-area {
+    margin: 0 auto;
+    padding: 1px 0 2px;
+  }
+  .status-banner-wrap {
+    margin: 1px auto;
+  }
+  .status-banner {
+    min-height: 24px;
+    font-size: 0.78rem;
+    padding: 2px 8px;
+  }
+  .hud-panel {
+    margin: 1px auto 2px auto;
+    gap: 3px;
+    padding: 0 2px;
+  }
+  .hud-label {
+    font-size: 0.52rem;
+    margin-bottom: 0;
+  }
+  .hud-val {
+    font-size: 0.98rem;
+  }
+  .controls-panel {
+    margin-top: 2px;
+  }
+  .main-action-cluster {
+    gap: 6px;
+    align-items: center;
+  }
+  .bet-side-controls {
     min-width: 0;
-    border-radius: 7px;
+    gap: 4px;
+  }
+  .bet-quick-row {
+    gap: 4px;
+    width: 100%;
+    min-width: 0;
   }
   .btn-gamble-card-suit {
     width: 30px;
@@ -2965,161 +3309,55 @@ body {
   }
   .crystal-spade-img {
     width: 22px;
-    height: 25px;
+    height: 24px;
   }
   .spin-side-wrap {
     flex-shrink: 0;
   }
   .btn-spin-round {
-    width: 76px;
-    height: 76px;
-    flex-shrink: 0;
-  }
-  .btn-spin-round::before {
-    inset: -3px;
-  }
-  .spin-face {
-    width: 62px;
-    height: 62px;
-  }
-  .spin-flower-logo {
-    width: 32px;
-    height: 32px;
-  }
-  .spin-text-mini {
-    font-size: 0.62rem;
-  }
-  .aux-row {
-    margin-top: 6px;
-    gap: 6px;
-  }
-  .btn-grand-game-select {
-    padding: 4px 8px;
-    font-size: 0.65rem;
-    gap: 4px;
-  }
-  .btn-icon-mini {
-    width: 32px;
-    height: 32px;
-  }
-  .gold-icon {
-    width: 15px;
-    height: 15px;
-  }
-  .paytable-grid {
-    grid-template-columns: 1fr;
-  }
-  .pay-card {
-    padding: 6px 10px;
-  }
-}
-
-/* Short viewports & Mobile Landscape Orientation */
-@media (max-height: 650px) {
-  .game-container {
-    padding-top: max(4px, env(safe-area-inset-top));
-    padding-bottom: max(6px, env(safe-area-inset-bottom));
-    justify-content: space-around;
-  }
-  .brand-logo-wrap {
-    max-width: 180px;
-    margin-bottom: 0;
-  }
-  .main-brand-logo {
-    max-height: 36px;
-  }
-  .stage-area {
-    margin: 0 auto;
-    padding: 2px 0 4px;
-  }
-  .status-banner-wrap {
-    margin: 2px auto 1px auto;
-  }
-  .status-banner {
-    min-height: 26px;
-    font-size: 0.8rem;
-    padding: 2px 10px;
-  }
-  .hud-panel {
-    margin: 2px auto 3px auto;
-    gap: 4px;
-    padding: 0 4px;
-  }
-  .hud-label {
-    font-size: 0.55rem;
-    margin-bottom: 0;
-  }
-  .hud-val {
-    font-size: 1.02rem;
-  }
-  .controls-panel {
-    margin-top: 3px;
-  }
-  .main-action-cluster {
-    gap: 8px;
-    align-items: center;
-  }
-  .bet-side-controls {
-    min-width: 0;
-    gap: 5px;
-  }
-  .bet-quick-row {
-    gap: 5px;
-    width: 100%;
-    min-width: 0;
-  }
-  .btn-gamble-card-suit {
-    width: 32px;
-    height: 32px;
-    flex: 0 0 32px;
-    margin: 0;
-    flex-shrink: 0;
-  }
-  .crystal-spade-img {
-    width: 24px;
-    height: 26px;
-  }
-  .spin-side-wrap {
-    flex-shrink: 0;
-  }
-  .btn-spin-round {
-    width: 78px;
-    height: 78px;
+    width: 74px;
+    height: 74px;
     flex-shrink: 0;
   }
   .spin-face {
-    width: 65px;
-    height: 65px;
+    width: 60px;
+    height: 60px;
   }
   .spin-flower-logo {
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
   }
   .spin-text-mini {
-    font-size: 0.64rem;
+    font-size: 0.6rem;
   }
   .btn-step {
-    width: 30px;
-    height: 30px;
-    font-size: 1.05rem;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
   }
   .btn-auto {
-    height: 32px;
-    padding: 0 8px;
-    font-size: 0.7rem;
+    height: 28px;
+    padding: 0 6px;
+    font-size: 0.65rem;
   }
   .btn-secondary {
-    padding: 5px 6px;
-    font-size: 0.68rem;
+    padding: 4px 4px;
+    font-size: 0.62rem;
     min-width: 0;
+  }
+  .btn-golden-bet, .btn-buy-bonus {
+    padding: 4px 5px;
+  }
+  .btn-golden-bet .gb-badge, .btn-buy-bonus .bb-text {
+    font-size: 0.58rem;
   }
   .aux-row {
     margin-top: 3px;
-    gap: 8px;
+    gap: 6px;
   }
   .btn-icon-mini {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
   }
   .gold-icon {
     width: 15px;
@@ -8528,27 +8766,29 @@ body.free-spins-active .slot-cylinder-replica {
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
-    max-width: 460px !important;
-    gap: 12px !important;
-    margin-top: 8px !important;
-    padding: 0 6px !important;
+    max-width: 100% !important;
+    gap: 6px !important;
+    margin-top: 6px !important;
+    padding: 0 4px !important;
   }
 
   .aux-row .btn-grand-game-select {
     flex: 1 1 auto !important;
     min-width: 0 !important;
-    max-width: 220px !important;
+    max-width: 170px !important;
     justify-content: center !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+    padding: 6px 8px !important;
+    font-size: 0.68rem !important;
   }
 
   .aux-row .btn-icon-mini {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    min-height: 40px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
     aspect-ratio: 1 / 1 !important;
     flex-shrink: 0 !important;
     border-radius: 50% !important;
@@ -8556,26 +8796,35 @@ body.free-spins-active .slot-cylinder-replica {
 
   .aux-row .btn-casino-menu {
     flex-shrink: 0 !important;
-    padding: 0 16px !important;
+    padding: 0 10px !important;
+    height: 36px !important;
+    font-size: 0.7rem !important;
   }
 }
 
 @media (max-width: 380px) {
   .aux-row {
-    gap: 8px !important;
+    gap: 4px !important;
     padding: 0 2px !important;
   }
 
+  .aux-row .btn-grand-game-select {
+    max-width: 130px !important;
+    padding: 4px 6px !important;
+    font-size: 0.62rem !important;
+  }
+
   .aux-row .btn-icon-mini {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    min-height: 38px !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
   }
 
   .aux-row .btn-casino-menu {
-    padding: 0 12px !important;
-    font-size: 0.74rem !important;
+    padding: 0 8px !important;
+    font-size: 0.64rem !important;
+    height: 30px !important;
   }
 }
 
