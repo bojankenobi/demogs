@@ -78,6 +78,9 @@ class IGTApp {
     );
 
     this.minesGame = new window.MinesGame(this.wallet, this.jackpots);
+    if (window.GrandCrashGame) {
+      this.crashGame = new window.GrandCrashGame(this.wallet, this.jackpots);
+    }
 
     // 4. Lobby
     this.lobby = new window.CasinoLobby(this.wallet, this.jackpots);
@@ -155,6 +158,46 @@ class IGTApp {
       get isSpinning() { return false; },
       gameInstance: this.minesGame
     });
+
+    if (this.crashGame) {
+      this.lobby.registerGame('crash', {
+        mount: () => {
+          const stage = document.querySelector('.slot-stage-scaler');
+          if (stage) stage.style.display = 'none';
+
+          const controlsPanel = document.querySelector('.controls-panel');
+          if (controlsPanel) controlsPanel.style.display = 'none';
+
+          const bannerWrap = document.querySelector('.status-banner-wrap');
+          if (bannerWrap) bannerWrap.style.display = 'none';
+
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.add('in-crash-mode');
+
+          if (this.isAutoSpin) this.toggleAutoSpin(false);
+
+          this.crashGame.mount();
+        },
+        unmount: () => {
+          this.crashGame.unmount();
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.remove('in-crash-mode');
+          this.restoreSlotUI();
+        },
+        forceExit: () => {
+          if (this.crashGame && typeof this.crashGame.forceExit === 'function') {
+            this.crashGame.forceExit();
+          }
+        },
+        spin: () => {
+          if (this.crashGame) {
+            this.crashGame.handleMainAction();
+          }
+        },
+        get isSpinning() { return false; },
+        gameInstance: this.crashGame
+      });
+    }
 
     // Default Game: Classic
     this.lobby.switchGame('classic');
@@ -635,7 +678,10 @@ class IGTApp {
     if (bannerWrap) bannerWrap.style.display = 'block';
 
     const container = document.querySelector('.game-container');
-    if (container) container.classList.remove('in-mines-mode');
+    if (container) {
+      container.classList.remove('in-mines-mode');
+      container.classList.remove('in-crash-mode');
+    }
 
     this.updateSpinButtonState();
   }

@@ -5096,6 +5096,480 @@ body {
 }
 
 /* ============================================================
+   STANDALONE GRAND CRASH / AVIATOR GAME VIEW
+   ============================================================ */
+.game-container.in-crash-mode {
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+.game-container.in-crash-mode .stage-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 4px 0 6px;
+}
+
+.crash-stage-view {
+  width: 100%;
+  max-width: 470px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  animation: fadeInCrash 0.25s ease-out;
+}
+
+@keyframes fadeInCrash {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.crash-cabinet-panel {
+  width: 100%;
+  background: linear-gradient(180deg, #111728 0%, #090d16 100%);
+  border: 1.5px solid rgba(212, 175, 55, 0.5);
+  border-radius: 16px;
+  padding: 10px 12px 14px;
+  box-shadow: 
+    0 0 25px rgba(212, 149, 20, 0.2),
+    0 16px 45px rgba(0, 0, 0, 0.95),
+    inset 0 1px 2px rgba(255, 215, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* History Bar */
+.crash-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: rgba(6, 9, 15, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.crash-history-lbl {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.crash-history-strip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  width: 100%;
+}
+
+.crash-history-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.crash-pill {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-family: var(--font-title);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.crash-pill.blue {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.crash-pill.purple {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.crash-pill.gold {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(212, 175, 55, 0.35) 100%);
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+}
+
+/* Canvas Area */
+.crash-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  background: #060912;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+#crash-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Multiplier & Status Overlay */
+.crash-hud-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+  width: 90%;
+  text-align: center;
+}
+
+.crash-multiplier-val {
+  font-family: var(--font-title);
+  font-size: 3.2rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  line-height: 1;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.95);
+  transition: transform 0.1s ease;
+}
+
+.crash-multiplier-val.waiting {
+  color: #94a3b8;
+  font-size: 2.2rem;
+  opacity: 0.7;
+}
+
+.crash-multiplier-val.flying {
+  color: #ffffff;
+  text-shadow: 
+    0 0 16px rgba(255, 215, 0, 0.8),
+    0 0 30px rgba(245, 158, 11, 0.6),
+    0 4px 10px #000;
+}
+
+.crash-multiplier-val.crashed {
+  color: #ef4444;
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.9), 0 3px 8px #000;
+  animation: crashShake 0.4s ease-in-out;
+}
+
+@keyframes crashShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-4px, 2px); }
+  50% { transform: translate(4px, -2px); }
+  75% { transform: translate(-2px, 1px); }
+}
+
+.crash-status-sub {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 0.6px;
+  margin-top: 6px;
+  text-shadow: 0 2px 4px #000;
+}
+
+.crash-countdown-wrap {
+  width: 140px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.crash-countdown-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #ffd700);
+  transition: width 0.05s linear;
+}
+
+/* Control Deck */
+.crash-control-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.crash-bet-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.crash-bet-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #090d16;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 9px;
+  padding: 2px 4px;
+}
+
+.crash-step-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffd700;
+  font-size: 1.15rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.crash-step-btn:hover {
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.crash-bet-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.crash-bet-tag {
+  font-size: 0.52rem;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.crash-bet-amount {
+  font-family: var(--font-title);
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #ffd700;
+}
+
+.crash-quick-chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.crash-chip-btn {
+  padding: 6px 8px;
+  min-height: 34px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  color: #cbd5e1;
+  font-family: var(--font-title);
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.crash-chip-btn:hover {
+  border-color: #ffd700;
+  color: #fff;
+  background: rgba(255, 215, 0, 0.15);
+}
+
+.crash-chip-btn.max {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+/* Auto Cashout Row */
+.crash-auto-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.crash-auto-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.crash-auto-toggle-wrap input {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  accent-color: #10b981;
+}
+
+.crash-toggle-lbl {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.crash-auto-val-box {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.crash-auto-val-box input {
+  width: 58px;
+  padding: 2px 4px;
+  background: #0f1422;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 6px;
+  color: #fbbf24;
+  font-family: var(--font-title);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+}
+
+.crash-auto-unit {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+/* Main Action Button */
+.btn-crash-action {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  font-family: var(--font-title);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+}
+
+.crash-action-title {
+  font-size: 0.92rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.crash-action-sub {
+  font-size: 0.72rem;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+.btn-crash-bet {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: 1px solid #34d399;
+}
+
+.btn-crash-bet:hover {
+  box-shadow: 0 0 16px rgba(16, 185, 129, 0.6);
+  transform: translateY(-1px);
+}
+
+.btn-crash-cancel {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: #ffffff;
+  border: 1px solid #f87171;
+}
+
+.btn-crash-cashout {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+  color: #ffffff;
+  border: 1px solid #fde68a;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.7);
+  animation: cashoutButtonPulse 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes cashoutButtonPulse {
+  0% { transform: scale(1); filter: brightness(1); }
+  100% { transform: scale(1.02); filter: brightness(1.15) drop-shadow(0 0 10px #fbbf24); }
+}
+
+.btn-crash-cashed {
+  background: #1e293b;
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  cursor: not-allowed;
+}
+
+.btn-crash-waiting {
+  background: #1e293b;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  cursor: not-allowed;
+}
+
+.btn-crash-crashed {
+  background: #450a0a;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  cursor: not-allowed;
+}
+
+/* Poster Artwork for Grand Crash in Lobby */
+.poster-crash {
+  background: radial-gradient(circle at 50% 40%, #1e1b4b 0%, #070714 100%);
+}
+
+.poster-crash-rocket {
+  font-size: 2.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px #38bdf8) drop-shadow(0 0 20px #fbbf24);
+  animation: heroSymFloat 2.4s infinite ease-in-out alternate;
+}
+
+@media (max-width: 480px) {
+  .crash-canvas-wrap {
+    height: 190px;
+  }
+  .crash-multiplier-val {
+    font-size: 2.6rem;
+  }
+  .crash-cabinet-panel {
+    padding: 8px 8px 10px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 370px) {
+  .crash-canvas-wrap {
+    height: 165px;
+  }
+  .crash-multiplier-val {
+    font-size: 2.1rem;
+  }
+}
+
+/* ============================================================
    MINI-MINES SLOT BONUS OVERLAY (TRIGGERED BY 3+ COINS)
    ============================================================ */
 .mini-mines-overlay {

@@ -37,6 +37,30 @@ function createMockEl(id = '', tag = 'div') {
     getAttribute(k) { return this[k]; },
     querySelectorAll() { return []; },
     querySelector() { return null; },
+    getBoundingClientRect() { return { width: 480, height: 260 }; },
+    getContext(type) {
+      if (type === '2d') {
+        return {
+          clearRect() {},
+          fillRect() {},
+          beginPath() {},
+          moveTo() {},
+          lineTo() {},
+          stroke() {},
+          arc() {},
+          fill() {},
+          ellipse() {},
+          closePath() {},
+          save() {},
+          restore() {},
+          translate() {},
+          rotate() {},
+          createLinearGradient() { return { addColorStop() {} }; },
+          setTransform() {}
+        };
+      }
+      return null;
+    },
     disabled: false
   };
 }
@@ -88,26 +112,43 @@ global.document = {
   body: createMockEl('body')
 };
 
+global.window.requestAnimationFrame = (cb) => setTimeout(() => cb(Date.now()), 16);
+global.window.cancelAnimationFrame = (id) => clearTimeout(id);
+global.window.addEventListener = () => {};
+global.requestAnimationFrame = global.window.requestAnimationFrame;
+global.cancelAnimationFrame = global.window.cancelAnimationFrame;
+
 global.window.slotAudio = {
   playClick() {},
   playWin() {},
   playBigWin() {},
-  playLever() {}
+  playLever() {},
+  playCashout() {},
+  playMineExplode() {}
 };
 
 // Load classes via vm
 const vaultCode = fs.readFileSync(path.join(__dirname, '../js/games/vault-crawler/vault-crawler.js'), 'utf-8');
 const royaleCode = fs.readFileSync(path.join(__dirname, '../js/games/battle-royale/battle-royale.js'), 'utf-8');
+const crashCode = fs.readFileSync(path.join(__dirname, '../js/games/crash/crash.js'), 'utf-8');
 
 vm.runInThisContext(vaultCode);
 vm.runInThisContext(royaleCode);
+vm.runInThisContext(crashCode);
 
-console.log('✅ Loaded VaultCrawler and SlotBattleRoyale classes into execution context.');
+console.log('✅ Loaded VaultCrawler, SlotBattleRoyale, and GrandCrashGame classes into execution context.');
 
 // Mock wallet & lobby
 const mockWallet = {
   balance: 5000,
-  addCredits(amt) { this.balance += amt; }
+  bet: 20,
+  addCredits(amt) { this.balance += amt; },
+  deductBet(amt) {
+    if (this.balance < amt) return false;
+    this.balance -= amt;
+    return true;
+  },
+  addWin(amt) { this.balance += amt; }
 };
 const mockLobby = {
   currentGameId: 'royal3x3'
@@ -200,4 +241,46 @@ if (royale.attacks.freeze) {
 // Clean up
 crawler.unmount();
 royale.unmount();
-console.log('✅ All Vault Crawler and Battle Royale unit & flow tests PASSED successfully!');
+
+// 3. Test Grand Crash (Aviator)
+console.log('3. Instantiating GrandCrashGame...');
+const crash = new window.GrandCrashGame(mockWallet, null);
+crash.mount();
+console.log('   Mounted GrandCrashGame: state =', crash.gameState, 'bet =', crash.currentBet);
+
+// Place a bet during waiting phase
+const balBeforeBet = mockWallet.balance;
+crash.handleMainAction();
+if (!crash.hasActiveBet || mockWallet.balance !== balBeforeBet - crash.currentBet) {
+  throw new Error(`Crash bet placement failed! Active: ${crash.hasActiveBet}, Balance: ${mockWallet.balance}`);
+}
+console.log('   Bet placed successfully. Active bet =', crash.hasActiveBet, 'Balance:', mockWallet.balance);
+
+// Launch flight
+crash.launchFlight();
+if (crash.gameState !== 'flying') {
+  throw new Error(`Crash flight launch failed! State: ${crash.gameState}`);
+}
+console.log('   Flight launched. Target crash point =', crash.targetCrashPoint, 'x');
+
+// Simulate multiplier growth & manual cashout
+crash.currentMultiplier = 2.50;
+const balBeforeCashout = mockWallet.balance;
+crash.cashout();
+const expectedWin = Math.round(crash.currentBet * 2.50);
+if (!crash.hasCashedOut || mockWallet.balance !== balBeforeCashout + expectedWin) {
+  throw new Error(`Crash cashout failed! HasCashedOut: ${crash.hasCashedOut}, Balance: ${mockWallet.balance}`);
+}
+console.log(`   Cashed out at 2.50x. Win: +${expectedWin} ZLT, New Balance: ${mockWallet.balance}`);
+
+// Simulate crash
+crash.handleCrash();
+if (crash.gameState !== 'crashed') {
+  throw new Error(`Crash handling failed! State: ${crash.gameState}`);
+}
+console.log('   Handled crash event. History count:', crash.history.length, 'Latest:', crash.history[0]);
+
+crash.unmount();
+console.log('   Unmounted GrandCrashGame.');
+
+console.log('✅ All Vault Crawler, Battle Royale, and Grand Crash tests PASSED successfully!');

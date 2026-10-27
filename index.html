@@ -23,15 +23,15 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=86">
-  <link rel="stylesheet" href="css/grand-hub.css?v=86">
+  <link rel="stylesheet" href="css/style.css?v=88">
+  <link rel="stylesheet" href="css/grand-hub.css?v=88">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v9') caches.delete(k);
+          if (k !== 'grandslot-v10') caches.delete(k);
         });
       });
     }
@@ -477,6 +477,78 @@
         </div>
       </div>
 
+      <!-- Standalone Grand Crash (Aviator) Game View -->
+      <div class="crash-stage-view" id="crash-game-view" style="display: none;">
+        <div class="crash-cabinet-panel">
+          <!-- Top Multiplier History Bar -->
+          <div class="crash-top-bar">
+            <span class="crash-history-lbl">ISTORIJA:</span>
+            <div class="crash-history-strip" id="crash-history-strip">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Radar & Flight Canvas Container -->
+          <div class="crash-canvas-wrap">
+            <canvas id="crash-canvas" width="480" height="250"></canvas>
+
+            <!-- Dynamic Flight HUD Overlay -->
+            <div class="crash-hud-overlay" id="crash-hud-overlay">
+              <div class="crash-multiplier-val waiting" id="crash-mult-display">1.00x</div>
+              <div class="crash-status-sub" id="crash-status-sub">ČEKA SE SLEDEĆI LET...</div>
+
+              <!-- Countdown progress bar -->
+              <div class="crash-countdown-wrap" id="crash-countdown-wrap" style="display: none;">
+                <div class="crash-countdown-fill" id="crash-countdown-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Crash Bottom Control Deck -->
+          <div class="crash-control-deck">
+            <!-- Bet Stepper & Quick Chips -->
+            <div class="crash-bet-strip">
+              <div class="crash-bet-box">
+                <button type="button" class="crash-step-btn" id="crash-bet-minus">−</button>
+                <div class="crash-bet-center">
+                  <span class="crash-bet-tag">ULOG</span>
+                  <span class="crash-bet-amount" id="crash-bet-val">20</span>
+                </div>
+                <button type="button" class="crash-step-btn" id="crash-bet-plus">+</button>
+              </div>
+
+              <!-- Quick Chips -->
+              <div class="crash-quick-chips">
+                <button type="button" class="crash-chip-btn" data-amt="10">10</button>
+                <button type="button" class="crash-chip-btn" data-amt="20">20</button>
+                <button type="button" class="crash-chip-btn" data-amt="50">50</button>
+                <button type="button" class="crash-chip-btn" data-amt="100">100</button>
+                <button type="button" class="crash-chip-btn max">MAX</button>
+              </div>
+            </div>
+
+            <!-- Auto Cashout Row -->
+            <div class="crash-auto-row">
+              <label class="crash-auto-toggle-wrap">
+                <input type="checkbox" id="crash-auto-toggle" />
+                <span class="crash-toggle-slider"></span>
+                <span class="crash-toggle-lbl">AUTO ISPLATA:</span>
+              </label>
+              <div class="crash-auto-val-box">
+                <input type="number" id="crash-auto-mult" value="2.00" min="1.10" max="100" step="0.10" />
+                <span class="crash-auto-unit">x</span>
+              </div>
+            </div>
+
+            <!-- Big Main Action Button -->
+            <button type="button" class="btn-crash-action btn-crash-bet" id="crash-action-btn">
+              <span class="crash-action-title" id="crash-action-title">ULOŽI ZA SLEDEĆI LET</span>
+              <span class="crash-action-sub" id="crash-action-sub">20 ZLT</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- Status Message Banner: Situated cleanly between slot machine and bet controls -->
@@ -762,6 +834,29 @@
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status" data-i18n="egtSelectTag">IGRAJ SADA</span>
+          </div>
+        </div>
+
+        <!-- Game 5: Grand Crash (Aviator) -->
+        <div class="egt-game-card" id="egt-opt-crash" data-game="crash">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-red">AVIATOR HOT</div>
+          
+          <div class="grand-card-poster poster-crash">
+            <div class="poster-symbols-cluster">
+              <span class="poster-crash-rocket">🚀</span>
+              <div class="poster-crash-curve"></div>
+            </div>
+            <div class="poster-specs-tag">CRASH • REAL-TIME • 1000x</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">GRAND CRASH</h3>
+            <p class="egt-card-sub">Aviator Kriva • Multiplier do 1000x • Isplata Pre Pada</p>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">IGRAJ SADA</span>
           </div>
         </div>
       </div>
@@ -1897,7 +1992,7 @@
   <script src="js/lib/peerjs.min.js"></script>
   <script src="js/lib/qrcode.min.js"></script>
   <script src="js/core/admin-bridge-v2.js?v=80"></script>
-  <script src="js/core/lobby.js?v=75"></script>
+  <script src="js/core/lobby.js?v=88"></script>
 
   <!-- Game Modules -->
   <script src="js/games/classic/symbols.js?v=75"></script>
@@ -1906,10 +2001,11 @@
   <script src="js/games/royal3x3/royal3x3.js?v=75"></script>
   <script src="js/games/mines/mines.js?v=75"></script>
   <script src="js/games/mines/mini-mines.js?v=75"></script>
-  <script src="js/games/vault-crawler/vault-crawler.js?v=86"></script>
-  <script src="js/games/battle-royale/battle-royale.js?v=86"></script>
+  <script src="js/games/vault-crawler/vault-crawler.js?v=88"></script>
+  <script src="js/games/battle-royale/battle-royale.js?v=88"></script>
+  <script src="js/games/crash/crash.js?v=88"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=86"></script>
+  <script src="js/app.js?v=88"></script>
 </body>
 </html>

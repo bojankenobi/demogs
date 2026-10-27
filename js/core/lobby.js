@@ -47,7 +47,8 @@ class CasinoLobby {
       { id: 'classic', el: document.getElementById('egt-opt-classic') },
       { id: 'royal3x3', el: document.getElementById('egt-opt-royal') },
       { id: 'fullfocus', el: document.getElementById('egt-opt-fullfocus') },
-      { id: 'mines', el: document.getElementById('egt-opt-mines') }
+      { id: 'mines', el: document.getElementById('egt-opt-mines') },
+      { id: 'crash', el: document.getElementById('egt-opt-crash') }
     ];
 
     opts.forEach(({ id, el }) => {
@@ -118,6 +119,8 @@ class CasinoLobby {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameRoyal3x3') : 'ROYAL 3x3';
       } else if (gameId === 'mines') {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameMines') : 'GRAND MINES X';
+      } else if (gameId === 'crash') {
+        this.currentLabel.textContent = 'GRAND CRASH';
       } else {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameClassic') : '1-LINE CLASSIC';
       }
@@ -127,7 +130,8 @@ class CasinoLobby {
       classic: document.getElementById('egt-opt-classic'),
       royal3x3: document.getElementById('egt-opt-royal'),
       fullfocus: document.getElementById('egt-opt-fullfocus'),
-      mines: document.getElementById('egt-opt-mines')
+      mines: document.getElementById('egt-opt-mines'),
+      crash: document.getElementById('egt-opt-crash')
     };
 
     const activeText = window.i18n ? window.i18n.t('egtActiveTag') : 'AKTIVNA IGRA';
