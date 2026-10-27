@@ -127,6 +127,21 @@ class CasinoWallet {
     return null;
   }
 
+  deductBet(creditsAmount) {
+    if (creditsAmount > 0) {
+      const betInRsd = +(creditsAmount * this.activeDenom).toFixed(2);
+      if (this.rsdBalance >= betInRsd) {
+        this.rsdBalance = +(this.rsdBalance - betInRsd).toFixed(2);
+        this.lastWinCredits = 0;
+        this.lastWinRsd = 0;
+        this.saveState();
+        this.updateUI();
+        return true;
+      }
+    }
+    return false;
+  }
+
   addWin(creditsAmount) {
     if (creditsAmount > 0) {
       const winInRsd = +(creditsAmount * this.activeDenom).toFixed(2);

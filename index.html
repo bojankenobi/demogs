@@ -23,15 +23,15 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=88">
-  <link rel="stylesheet" href="css/grand-hub.css?v=88">
+  <link rel="stylesheet" href="css/style.css?v=89">
+  <link rel="stylesheet" href="css/grand-hub.css?v=89">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v10') caches.delete(k);
+          if (k !== 'grandslot-v11') caches.delete(k);
         });
       });
     }
@@ -527,16 +527,22 @@
               </div>
             </div>
 
-            <!-- Auto Cashout Row -->
+            <!-- Auto Cashout Row with Quick Multiplier Buttons -->
             <div class="crash-auto-row">
-              <label class="crash-auto-toggle-wrap">
+              <label class="crash-auto-toggle-wrap" for="crash-auto-toggle">
                 <input type="checkbox" id="crash-auto-toggle" />
-                <span class="crash-toggle-slider"></span>
                 <span class="crash-toggle-lbl">AUTO ISPLATA:</span>
+                <span class="crash-auto-badge off" id="crash-auto-badge">ISKLJ</span>
               </label>
               <div class="crash-auto-val-box">
-                <input type="number" id="crash-auto-mult" value="2.00" min="1.10" max="100" step="0.10" />
+                <input type="number" id="crash-auto-mult" value="1.50" min="1.05" max="100" step="0.05" />
                 <span class="crash-auto-unit">x</span>
+              </div>
+              <div class="crash-auto-presets">
+                <button type="button" class="crash-preset-btn" data-preset="1.20">1.2x</button>
+                <button type="button" class="crash-preset-btn" data-preset="1.30">1.3x</button>
+                <button type="button" class="crash-preset-btn" data-preset="1.50">1.5x</button>
+                <button type="button" class="crash-preset-btn" data-preset="2.00">2.0x</button>
               </div>
             </div>
 
@@ -1980,7 +1986,7 @@
   
   <!-- Core Platform Modules -->
   <script src="js/core/player-tracker.js?v=82"></script>
-  <script src="js/core/wallet.js?v=75"></script>
+  <script src="js/core/wallet.js?v=89"></script>
   <script src="js/core/jackpots-v2.js?v=80"></script>
   <script src="js/core/meters.js?v=75"></script>
   <script src="js/core/wheel.js?v=75"></script>
@@ -2003,9 +2009,9 @@
   <script src="js/games/mines/mini-mines.js?v=75"></script>
   <script src="js/games/vault-crawler/vault-crawler.js?v=88"></script>
   <script src="js/games/battle-royale/battle-royale.js?v=88"></script>
-  <script src="js/games/crash/crash.js?v=88"></script>
+  <script src="js/games/crash/crash.js?v=89"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=88"></script>
+  <script src="js/app.js?v=89"></script>
 </body>
 </html>

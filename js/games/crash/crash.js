@@ -28,7 +28,9 @@ class GrandCrashGame {
 
     // Auto cashout setting
     this.isAutoCashout = false;
-    this.autoCashoutMult = 2.0;
+    this.autoCashoutMult = 1.50;
+    this.lastWonAmount = 0;
+    this.lastCashMultiplier = 1.0;
 
     // History of past crashes
     this.history = [1.85, 3.40, 1.15, 12.80, 2.10, 1.04, 5.25, 1.95];
@@ -56,7 +58,9 @@ class GrandCrashGame {
     this.actionSub = document.getElementById('crash-action-sub');
     this.autoToggle = document.getElementById('crash-auto-toggle');
     this.autoMultInput = document.getElementById('crash-auto-mult');
+    this.autoBadge = document.getElementById('crash-auto-badge');
     this.quickChipButtons = document.querySelectorAll('.crash-chip-btn');
+    this.presetButtons = document.querySelectorAll('.crash-preset-btn');
 
     this.initDOM();
     this.initCanvas();
@@ -117,22 +121,76 @@ class GrandCrashGame {
     if (this.autoToggle) {
       this.autoToggle.addEventListener('change', (e) => {
         this.isAutoCashout = e.target.checked;
+        this.updateAutoCashoutUI();
         if (window.slotAudio) window.slotAudio.playClick();
       });
     }
 
+    const handleAutoMultChange = (valStr) => {
+      let val = parseFloat(valStr);
+      if (isNaN(val) || val < 1.05) val = 1.05;
+      this.autoCashoutMult = Math.min(100.0, Math.round(val * 100) / 100);
+      this.isAutoCashout = true;
+      this.updateAutoCashoutUI();
+    };
+
     if (this.autoMultInput) {
+      this.autoMultInput.addEventListener('input', (e) => {
+        handleAutoMultChange(e.target.value);
+      });
       this.autoMultInput.addEventListener('change', (e) => {
-        let val = parseFloat(e.target.value);
-        if (isNaN(val) || val < 1.1) val = 1.1;
-        this.autoCashoutMult = Math.min(100.0, Math.round(val * 100) / 100);
-        this.autoMultInput.value = this.autoCashoutMult.toFixed(2);
+        handleAutoMultChange(e.target.value);
+        if (window.slotAudio) window.slotAudio.playClick();
+      });
+    }
+
+    if (this.presetButtons) {
+      this.presetButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const preset = parseFloat(btn.getAttribute('data-preset'));
+          if (!isNaN(preset)) {
+            this.autoCashoutMult = preset;
+            this.isAutoCashout = true;
+            this.updateAutoCashoutUI();
+            if (window.slotAudio) window.slotAudio.playClick();
+          }
+        });
       });
     }
 
     if (this.btnMainAction) {
       this.btnMainAction.addEventListener('click', () => {
         this.handleMainAction();
+      });
+    }
+
+    this.updateAutoCashoutUI();
+  }
+
+  updateAutoCashoutUI() {
+    if (this.autoBadge) {
+      if (this.isAutoCashout) {
+        this.autoBadge.className = 'crash-auto-badge on';
+        this.autoBadge.textContent = `${this.autoCashoutMult.toFixed(2)}x UKLJ`;
+      } else {
+        this.autoBadge.className = 'crash-auto-badge off';
+        this.autoBadge.textContent = 'ISKLJ';
+      }
+    }
+    if (this.autoToggle) {
+      this.autoToggle.checked = this.isAutoCashout;
+    }
+    if (this.autoMultInput && document.activeElement !== this.autoMultInput) {
+      this.autoMultInput.value = this.autoCashoutMult.toFixed(2);
+    }
+    if (this.presetButtons) {
+      this.presetButtons.forEach(btn => {
+        const val = parseFloat(btn.getAttribute('data-preset'));
+        if (this.isAutoCashout && Math.abs(val - this.autoCashoutMult) < 0.01) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
       });
     }
   }
@@ -310,9 +368,6 @@ class GrandCrashGame {
       this.multDisplay.textContent = `${this.targetCrashPoint.toFixed(2)}x`;
       this.multDisplay.className = 'crash-multiplier-val crashed';
     }
-    if (this.statusSub) {
-      this.statusSub.textContent = `💥 RAKETA JE EKSPLODIRALA NA ${this.targetCrashPoint.toFixed(2)}x!`;
-    }
 
     // Audio explosion
     if (window.slotAudio && window.slotAudio.playMineExplode) {
@@ -324,9 +379,22 @@ class GrandCrashGame {
     if (this.history.length > 10) this.history.pop();
     this.renderHistory();
 
-    // Reset active bet state
+    if (this.hasCashedOut) {
+      if (this.statusSub) {
+        this.statusSub.innerHTML = `<span style="color:#4ade80;font-weight:900;">✅ DOBITAK SAČUVAN: +${this.lastWonAmount.toLocaleString()} ZLT (${this.lastCashMultiplier.toFixed(2)}x)!</span> <span style="opacity:0.8;font-size:0.85em;">(Raketa pala na ${this.targetCrashPoint.toFixed(2)}x)</span>`;
+      }
+    } else if (this.hasActiveBet) {
+      if (this.statusSub) {
+        this.statusSub.innerHTML = `<span style="color:#ef4444;font-weight:900;">💥 RAKETA JE PALA NA ${this.targetCrashPoint.toFixed(2)}x!</span> <span style="opacity:0.8;font-size:0.85em;">(Niste isplatili pre pada)</span>`;
+      }
+    } else {
+      if (this.statusSub) {
+        this.statusSub.textContent = `💥 RAKETA JE EKSPLODIRALA NA ${this.targetCrashPoint.toFixed(2)}x!`;
+      }
+    }
+
+    // Reset active bet state for round end
     this.hasActiveBet = false;
-    this.hasCashedOut = false;
     this.updateActionUI();
 
     // Wait 2.8s and start next countdown
@@ -363,29 +431,46 @@ class GrandCrashGame {
           return;
         }
 
-        const success = this.wallet.deductBet(this.currentBet);
+        let success = false;
+        if (typeof this.wallet.deductBet === 'function') {
+          success = this.wallet.deductBet(this.currentBet);
+        } else if (this.wallet.balance >= this.currentBet) {
+          this.wallet.balance -= this.currentBet;
+          if (typeof this.wallet.setLastWin === 'function') this.wallet.setLastWin(0);
+          this.wallet.updateUI();
+          success = true;
+        }
+
         if (success) {
           this.hasActiveBet = true;
           this.hasCashedOut = false;
+          this.lastWonAmount = 0;
           if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
         }
       }
       this.updateActionUI();
     } else if (this.gameState === 'flying') {
       if (this.hasActiveBet && !this.hasCashedOut) {
-        this.cashout();
+        this.cashout(false);
       }
     }
   }
 
-  cashout() {
+  cashout(isAuto = false) {
     if (!this.hasActiveBet || this.hasCashedOut || this.gameState !== 'flying') return;
 
     this.hasCashedOut = true;
-    const winAmt = Math.round(this.currentBet * this.currentMultiplier);
+    const finalMult = isAuto ? this.autoCashoutMult : this.currentMultiplier;
+    const winAmt = Math.round(this.currentBet * finalMult);
+    this.lastWonAmount = winAmt;
+    this.lastCashMultiplier = finalMult;
 
     if (this.wallet) {
       this.wallet.addWin(winAmt);
+    }
+
+    if (window.slotApp && window.slotApp.playerTracker) {
+      window.slotApp.playerTracker.recordSpin('crash', this.currentBet, winAmt);
     }
 
     // Audio & visual celebration
@@ -393,14 +478,14 @@ class GrandCrashGame {
       window.slotAudio.playCashout();
     }
 
-    if (this.currentMultiplier >= 3.0 && window.particleEngine) {
+    if (finalMult >= 2.5 && window.particleEngine) {
       window.particleEngine.spawnCelebration(true);
     }
 
     this.updateActionUI();
 
     if (this.statusSub) {
-      this.statusSub.textContent = `🎉 ISPLAĆENO: +${winAmt.toLocaleString()} ZLT (${this.currentMultiplier.toFixed(2)}x)!`;
+      this.statusSub.innerHTML = `<span style="color:#4ade80;font-weight:900;">🎉 ISPLAĆENO: +${winAmt.toLocaleString()} ZLT (${finalMult.toFixed(2)}x)!</span>`;
     }
   }
 
@@ -448,9 +533,15 @@ class GrandCrashGame {
       }
     } else if (this.gameState === 'crashed') {
       this.btnMainAction.disabled = true;
-      this.btnMainAction.className = 'btn-crash-action btn-crash-crashed';
-      this.actionTitle.textContent = 'PAD RAKETE';
-      this.actionSub.textContent = `${this.targetCrashPoint.toFixed(2)}x`;
+      if (this.hasCashedOut) {
+        this.btnMainAction.className = 'btn-crash-action btn-crash-cashed';
+        this.actionTitle.textContent = 'DOBITAK PREUZET!';
+        this.actionSub.textContent = `+${this.lastWonAmount.toLocaleString()} ZLT (${this.lastCashMultiplier.toFixed(2)}x)`;
+      } else {
+        this.btnMainAction.className = 'btn-crash-action btn-crash-crashed';
+        this.actionTitle.textContent = 'PAD RAKETE';
+        this.actionSub.textContent = `${this.targetCrashPoint.toFixed(2)}x`;
+      }
     }
   }
 
@@ -515,7 +606,7 @@ class GrandCrashGame {
       // Check auto cashout
       if (this.isAutoCashout && this.hasActiveBet && !this.hasCashedOut) {
         if (this.currentMultiplier >= this.autoCashoutMult) {
-          this.cashout();
+          this.cashout(true);
         }
       }
 
@@ -663,52 +754,68 @@ class GrandCrashGame {
         ctx.globalAlpha = 1.0;
       }
 
-      // Draw stylized rocket icon
+      // Draw stylized rocket icon (Enlarged & high-contrast)
       ctx.save();
       ctx.translate(rocketX, rocketY);
       // Angle tangent to flight path
       const angle = -Math.PI / 4 + Math.sin(performance.now() * 0.008) * 0.06;
       ctx.rotate(angle);
 
-      // Rocket body (Gold chrome shuttle)
-      ctx.shadowBlur = 12;
+      // Rocket body glow (Gold chrome space shuttle)
+      ctx.shadowBlur = 16;
       ctx.shadowColor = '#ffd700';
 
       // Fuselage
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.ellipse(0, 0, 16, 6, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 0, 24, 9, 0, 0, Math.PI * 2);
       ctx.fill();
 
+      // Gold chrome accent band
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(-6, -8, 4, 16);
+
       // Cockpit dome (cyan glow)
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = '#38bdf8';
       ctx.fillStyle = '#38bdf8';
       ctx.beginPath();
-      ctx.arc(4, -1, 3, 0, Math.PI * 2);
+      ctx.ellipse(7, -2, 6, 4, 0, 0, Math.PI * 2);
       ctx.fill();
 
       // Red fins
+      ctx.shadowBlur = 0;
       ctx.fillStyle = '#dc2626';
       ctx.beginPath();
-      ctx.moveTo(-10, -4);
-      ctx.lineTo(-18, -10);
-      ctx.lineTo(-14, 0);
+      ctx.moveTo(-12, -5);
+      ctx.lineTo(-24, -14);
+      ctx.lineTo(-18, 0);
       ctx.closePath();
       ctx.fill();
 
       ctx.beginPath();
-      ctx.moveTo(-10, 4);
-      ctx.lineTo(-18, 10);
-      ctx.lineTo(-14, 0);
+      ctx.moveTo(-12, 5);
+      ctx.lineTo(-24, 14);
+      ctx.lineTo(-18, 0);
       ctx.closePath();
       ctx.fill();
 
-      // Tail flame
-      const flameLength = 12 + Math.random() * 8;
+      // Tail flame (dual inner white/cyan and outer gold/orange)
+      const flameLength = 18 + Math.random() * 12;
       ctx.fillStyle = '#f59e0b';
       ctx.beginPath();
-      ctx.moveTo(-14, -3);
-      ctx.lineTo(-14 - flameLength, 0);
-      ctx.lineTo(-14, 3);
+      ctx.moveTo(-18, -4);
+      ctx.lineTo(-18 - flameLength, 0);
+      ctx.lineTo(-18, 4);
+      ctx.closePath();
+      ctx.fill();
+
+      // Inner white-hot flame core
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.moveTo(-18, -2);
+      ctx.lineTo(-18 - (flameLength * 0.55), 0);
+      ctx.lineTo(-18, 2);
       ctx.closePath();
       ctx.fill();
 

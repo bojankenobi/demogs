@@ -5100,7 +5100,12 @@ body {
    ============================================================ */
 .game-container.in-crash-mode {
   justify-content: flex-start;
-  gap: 4px;
+  gap: 2px;
+}
+
+.game-container.in-crash-mode .jackpots-ticker-bar,
+.game-container.in-crash-mode .bonus-meters-bar {
+  display: none !important;
 }
 
 .game-container.in-crash-mode .stage-area {
@@ -5109,7 +5114,7 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 4px 0 6px;
+  margin: 2px 0 4px;
 }
 
 .crash-stage-view {
@@ -5131,16 +5136,15 @@ body {
 .crash-cabinet-panel {
   width: 100%;
   background: linear-gradient(180deg, #111728 0%, #090d16 100%);
-  border: 1.5px solid rgba(212, 175, 55, 0.5);
-  border-radius: 16px;
-  padding: 10px 12px 14px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 14px;
+  padding: 6px 8px 10px;
   box-shadow: 
-    0 0 25px rgba(212, 149, 20, 0.2),
-    0 16px 45px rgba(0, 0, 0, 0.95),
-    inset 0 1px 2px rgba(255, 215, 0, 0.25);
+    0 0 20px rgba(212, 149, 20, 0.15),
+    0 12px 35px rgba(0, 0, 0, 0.95);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* History Bar */
@@ -5209,10 +5213,10 @@ body {
 .crash-canvas-wrap {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 250px;
   background: #060912;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
 }
@@ -5403,17 +5407,20 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
   padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
 }
 
 .crash-auto-toggle-wrap {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
+  user-select: none;
 }
 
 .crash-auto-toggle-wrap input {
@@ -5429,6 +5436,27 @@ body {
   color: #94a3b8;
 }
 
+.crash-auto-badge {
+  font-size: 0.58rem;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.2px;
+}
+
+.crash-auto-badge.off {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.crash-auto-badge.on {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
 .crash-auto-val-box {
   display: flex;
   align-items: center;
@@ -5436,17 +5464,44 @@ body {
 }
 
 .crash-auto-val-box input {
-  width: 58px;
+  width: 52px;
   padding: 2px 4px;
   background: #0f1422;
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 6px;
   color: #fbbf24;
   font-family: var(--font-title);
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 800;
   text-align: center;
   outline: none;
+}
+
+.crash-auto-presets {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.crash-preset-btn {
+  padding: 3px 6px;
+  min-height: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  color: #94a3b8;
+  font-family: var(--font-title);
+  font-size: 0.62rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.crash-preset-btn:hover,
+.crash-preset-btn.active {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: #10b981;
 }
 
 .crash-auto-unit {
@@ -5549,23 +5604,23 @@ body {
 
 @media (max-width: 480px) {
   .crash-canvas-wrap {
-    height: 190px;
+    height: 220px;
   }
   .crash-multiplier-val {
-    font-size: 2.6rem;
+    font-size: 2.7rem;
   }
   .crash-cabinet-panel {
-    padding: 8px 8px 10px;
-    gap: 6px;
+    padding: 5px 6px 8px;
+    gap: 5px;
   }
 }
 
 @media (max-width: 370px) {
   .crash-canvas-wrap {
-    height: 165px;
+    height: 195px;
   }
   .crash-multiplier-val {
-    font-size: 2.1rem;
+    font-size: 2.3rem;
   }
 }
 
