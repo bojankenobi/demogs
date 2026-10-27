@@ -538,3 +538,607 @@
   color: #f1f5f9;
   text-shadow: 0 2px 4px #000;
 }
+
+/* ==============================================================================
+   4. Vault Crawler Visual Heist Tower & Floating FX
+   ============================================================================== */
+.vault-tower-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(16, 22, 34, 0.95) 0%, rgba(10, 14, 22, 0.98) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.tower-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tower-progress-title {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tower-progress-pct {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #fbbf24;
+}
+
+.tower-floors-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.tower-floor-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 6px 3px;
+  background: rgba(18, 24, 38, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.tower-floor-item.cleared {
+  border-color: #22c55e;
+  background: rgba(6, 78, 59, 0.6);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.35);
+}
+
+.tower-floor-item.active {
+  border-color: #fbbf24;
+  background: rgba(245, 158, 11, 0.22);
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.6);
+  transform: translateY(-2px);
+}
+
+.tower-floor-item.locked {
+  opacity: 0.55;
+}
+
+.tower-fl-num {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+}
+
+.tower-floor-item.active .tower-fl-num {
+  color: #fbbf24;
+}
+
+.tower-floor-item.cleared .tower-fl-num {
+  color: #4ade80;
+}
+
+.tower-fl-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.tower-fl-badge {
+  font-size: 0.55rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.tower-floor-item.active .tower-fl-badge {
+  background: #d97706;
+  color: #fff;
+}
+
+.tower-floor-item.cleared .tower-fl-badge {
+  background: #15803d;
+  color: #fff;
+}
+
+.tower-progress-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tower-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37, #fbbf24, #f59e0b);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.7);
+}
+
+/* Floating Combat Numbers */
+.vault-fx-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 99;
+  overflow: hidden;
+}
+
+.vault-floating-num {
+  position: absolute;
+  font-family: var(--font-title, 'Montserrat', sans-serif);
+  font-weight: 900;
+  font-size: 1.15rem;
+  text-shadow: 0 2px 6px #000, 0 0 10px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  animation: vault-float-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  white-space: nowrap;
+}
+
+.vault-floating-num.dmg {
+  color: #f87171;
+  text-shadow: 0 0 12px rgba(239, 68, 68, 0.8), 0 2px 4px #000;
+}
+
+.vault-floating-num.crit {
+  color: #facc15;
+  font-size: 1.4rem;
+  text-shadow: 0 0 16px rgba(250, 204, 21, 0.9), 0 2px 4px #000;
+}
+
+.vault-floating-num.shield {
+  color: #38bdf8;
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.8), 0 2px 4px #000;
+}
+
+.vault-floating-num.emp {
+  color: #a855f7;
+  text-shadow: 0 0 14px rgba(168, 85, 247, 0.85), 0 2px 4px #000;
+}
+
+@keyframes vault-float-up {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.7); }
+  20% { opacity: 1; transform: translate(-50%, -12px) scale(1.2); }
+  80% { opacity: 1; transform: translate(-50%, -38px) scale(1.05); }
+  100% { opacity: 0; transform: translate(-50%, -55px) scale(0.9); }
+}
+
+/* Combat Hit Shake Animation */
+.combat-hit-shake {
+  animation: combat-shake 0.38s ease-in-out;
+}
+
+@keyframes combat-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-5px, 2px); filter: brightness(1.7) drop-shadow(0 0 10px #ef4444); }
+  40% { transform: translate(5px, -3px); }
+  60% { transform: translate(-3px, 1px); }
+  80% { transform: translate(3px, -1px); }
+}
+
+/* Gold glow button accent */
+.btn-vault-action.gold-glow {
+  background: linear-gradient(135deg, #fce07a 0%, #d4af37 60%, #b8860b 100%);
+  color: #0b0f19;
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.45);
+}
+
+.btn-vault-action.secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ==============================================================================
+   5. Vault Heist Leaderboard Modal Styling
+   ============================================================================== */
+.vault-leaderboard-card {
+  max-width: 520px;
+  width: 95%;
+  background: linear-gradient(180deg, #111726 0%, #0a0e18 100%);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.vault-player-rank-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.my-rank-badge {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #fbbf24;
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 20px;
+}
+
+.my-rank-info {
+  flex: 1;
+}
+
+.my-rank-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.my-rank-stats {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.my-rank-status {
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #16a34a;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.vault-raiders-table-wrap {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.vault-table-header-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1.2fr 1fr 1.4fr;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.vault-raider-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1.2fr 1fr 1.4fr;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.75rem;
+  transition: background 0.15s ease;
+}
+
+.vault-raider-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.vault-raider-row.you {
+  background: rgba(212, 175, 55, 0.12);
+  border-left: 3px solid #d4af37;
+  font-weight: 800;
+}
+
+.raider-rank-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #f1f5f9;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.raider-fl {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.raider-keys {
+  color: #fbbf24;
+  font-weight: 800;
+}
+
+.raider-prize {
+  font-size: 0.65rem;
+  color: #38bdf8;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vault-weekly-rewards-box {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: rgba(18, 24, 38, 0.7);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 8px;
+}
+
+.weekly-box-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #fbbf24;
+  margin-bottom: 6px;
+}
+
+.weekly-rewards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reward-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.reward-pill.gold { color: #fde047; }
+.reward-pill.silver { color: #e2e8f0; }
+.reward-pill.bronze { color: #fed7aa; }
+
+/* ==============================================================================
+   6. Vault Talent Tree Modal Styling
+   ============================================================================== */
+.vault-talents-card {
+  max-width: 500px;
+  width: 95%;
+  background: linear-gradient(180deg, #111726 0%, #0a0e18 100%);
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.talents-keys-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 20px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #fbbf24;
+  margin-bottom: 8px;
+}
+
+.talents-keys-num {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #fff;
+}
+
+.talents-sub-desc {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.talents-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.talent-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(18, 24, 38, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.talent-card:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  background: rgba(24, 32, 50, 0.95);
+}
+
+.talent-card-icon {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.talent-card-body {
+  flex: 1;
+}
+
+.talent-name {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.talent-desc {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  margin-top: 1px;
+}
+
+.talent-level-stars {
+  font-size: 0.85rem;
+  color: #fbbf24;
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+.btn-upgrade-talent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 44px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #fce07a 0%, #d4af37 100%);
+  color: #0b0f19;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+
+.btn-upgrade-talent:disabled {
+  opacity: 0.45;
+  background: #334155;
+  color: #94a3b8;
+  border-color: transparent;
+  cursor: not-allowed;
+}
+
+.btn-up-lbl {
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.btn-up-cost {
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+/* ==============================================================================
+   7. Vault Room / Floor Victory Modal Styling
+   ============================================================================== */
+.vault-victory-card {
+  max-width: 440px;
+  width: 92%;
+  background: linear-gradient(180deg, #141c2e 0%, #0b0f19 100%);
+  border: 2px solid #d4af37;
+  border-radius: 20px;
+  box-shadow: 0 10px 45px rgba(212, 175, 55, 0.4), 0 0 30px rgba(0, 0, 0, 0.9);
+  padding: 24px 18px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.vault-victory-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.vault-victory-safe-icon {
+  font-size: 3.2rem;
+  line-height: 1;
+  margin: 4px 0;
+  animation: safe-pulse 1.6s infinite ease-in-out;
+}
+
+@keyframes safe-pulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5)); }
+  50% { transform: scale(1.12); filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.9)); }
+}
+
+.vault-victory-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #f8fafc;
+  letter-spacing: 0.04em;
+}
+
+.vault-victory-sub {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.vault-loot-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 10px;
+}
+
+.loot-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.loot-voucher-alert {
+  padding: 8px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(245, 158, 11, 0.3) 100%);
+  border: 1px solid #d4af37;
+  color: #fbbf24;
+  font-size: 0.78rem;
+  font-weight: 900;
+  margin-top: 4px;
+}
+
+.btn-vault-victory-next {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 18px;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #fce07a 0%, #d4af37 60%, #b8860b 100%);
+  color: #0b0f19;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  font-family: var(--font-title, 'Montserrat', sans-serif);
+  font-size: 0.88rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.5);
+  transition: transform 0.15s ease;
+}
+
+.btn-vault-victory-next:hover {
+  transform: translateY(-2px);
+}

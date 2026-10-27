@@ -24,14 +24,14 @@
   
   <!-- Styles -->
   <link rel="stylesheet" href="css/style.css?v=75">
-  <link rel="stylesheet" href="css/grand-hub.css?v=75">
+  <link rel="stylesheet" href="css/grand-hub.css?v=85">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v7') caches.delete(k);
+          if (k !== 'grandslot-v8') caches.delete(k);
         });
       });
     }
@@ -198,6 +198,9 @@
 
       <!-- The Vault Crawler (Solo Roguelike Stage HUD) -->
       <div class="vault-crawler-stage" id="vault-crawler-view" style="display: none;">
+        <!-- Floating Combat Numbers & Effects Container -->
+        <div class="vault-fx-overlay" id="vault-fx-overlay"></div>
+
         <div class="vault-header-card">
           <div class="vault-floor-badge">
             <span class="vault-floor-title" id="vault-floor-title">Sprat 1: Predvorje & Straža</span>
@@ -209,9 +212,23 @@
           </div>
         </div>
 
-        <!-- Floor Map Nodes (Slay the Spire Style) -->
+        <!-- Visual Heist Tower Progression (Building Cross-Section with 5 Floors) -->
+        <div class="vault-tower-strip">
+          <div class="tower-progress-header">
+            <span class="tower-progress-title">🏢 MAPA PROVALE TREZORA</span>
+            <span class="tower-progress-pct" id="vault-heist-pct">0% Trezora</span>
+          </div>
+          <div class="tower-floors-grid" id="vault-tower-floors">
+            <!-- 5 Floors rendered dynamically -->
+          </div>
+          <div class="tower-progress-track">
+            <div class="tower-progress-fill" id="vault-heist-progress-fill" style="width: 10%;"></div>
+          </div>
+        </div>
+
+        <!-- Floor Map Nodes (Slay the Spire Style Soba 1-5) -->
         <div class="vault-map-strip">
-          <div class="vault-map-line"></div>
+          <div class="vault-map-line" id="vault-map-laser-line"></div>
           <div class="vault-map-nodes" id="vault-map-nodes" style="display: flex; justify-content: space-between; width: 100%; position: relative; z-index: 2;">
             <!-- Generated dynamically -->
           </div>
@@ -220,7 +237,7 @@
         <!-- Combat HUD: Player HP / Shield vs Enemy HP -->
         <div class="vault-combat-hud">
           <!-- Player Character Card -->
-          <div class="combat-char-card">
+          <div class="combat-char-card" id="vault-player-card">
             <div class="combat-char-header">
               <span class="combat-char-name">🕵️ Ti (Provalnik)</span>
               <span class="combat-char-val" id="vault-player-hp-val">100/100</span>
@@ -238,7 +255,7 @@
           </div>
 
           <!-- Enemy Character Card -->
-          <div class="combat-char-card enemy">
+          <div class="combat-char-card enemy" id="vault-enemy-card">
             <div class="combat-char-header">
               <span class="combat-char-name" id="vault-enemy-name">👮 Stražar Predvorja</span>
               <span class="combat-char-val" id="vault-enemy-hp-val">300/300</span>
@@ -246,7 +263,7 @@
             <div class="combat-bar-track">
               <div class="combat-bar-fill fill-enemy-hp" id="vault-enemy-hp-fill" style="width: 100%;"></div>
             </div>
-            <div style="font-size: 0.65rem; color: #f87171; font-weight: 700; margin-top: 4px; text-align: right;">
+            <div style="font-size: 0.65rem; color: #f87171; font-weight: 700; margin-top: 4px; text-align: right;" id="vault-enemy-status-tip">
               Rotira napad nakon svakog spina!
             </div>
           </div>
@@ -259,11 +276,14 @@
 
         <!-- Actions Deck -->
         <div class="vault-bottom-actions">
-          <button type="button" class="btn-vault-action" id="btn-vault-talents">
-            🏛️ Talent Drvo & Nadogradnje
+          <button type="button" class="btn-vault-action gold-glow" id="btn-vault-leaderboard">
+            🏆 Rang Lista Provalnika
           </button>
-          <button type="button" class="btn-vault-action" id="btn-vault-reset-run" style="flex: 0.6;">
-            Nova Provala
+          <button type="button" class="btn-vault-action" id="btn-vault-talents">
+            🏛️ Talent Drvo
+          </button>
+          <button type="button" class="btn-vault-action secondary" id="btn-vault-reset-run" style="flex: 0.6;">
+            🔄 Nova Provala
           </button>
         </div>
       </div>
@@ -1724,6 +1744,136 @@
     </div>
   </div>
 
+  <!-- Modal: Vault Heist Leaderboard (Rang Lista Provalnika) -->
+  <div class="modal-overlay vault-leaderboard-overlay" id="vault-leaderboard-modal">
+    <div class="modal-card vault-leaderboard-card">
+      <div class="modal-header">
+        <h2 class="modal-title">🏆 RANG LISTA PROVALNIKA TREZORA</h2>
+        <button type="button" class="modal-close-btn" id="btn-close-vault-leaderboard">✕</button>
+      </div>
+      <div class="vault-leaderboard-content">
+        <!-- Player Personal Position Banner -->
+        <div class="vault-player-rank-card" id="vault-my-rank-card">
+          <div class="my-rank-badge" id="vault-my-rank-pill">#--</div>
+          <div class="my-rank-info">
+            <div class="my-rank-name" id="vault-my-rank-name">Ti (Provalnik)</div>
+            <div class="my-rank-stats" id="vault-my-rank-stats">Sprat 1 • 0 Ključeva • 0 ZLT Plen</div>
+          </div>
+          <div class="my-rank-status" id="vault-my-rank-status">U PROVALI</div>
+        </div>
+
+        <!-- Top Raiders Table -->
+        <div class="vault-raiders-table-wrap">
+          <div class="vault-table-header-row">
+            <span>RANG / PROVALNIK</span>
+            <span>SPRAT</span>
+            <span>KLJUČEVI</span>
+            <span>STATUS</span>
+          </div>
+          <div class="vault-raiders-list" id="vault-raiders-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Weekly Prize Pool Info -->
+        <div class="vault-weekly-rewards-box">
+          <div class="weekly-box-title">🎁 NEDELJNI NAGRADNI FOND ZA TOP 3 PROVALNIKA:</div>
+          <div class="weekly-rewards-grid">
+            <div class="reward-pill gold">🥇 1. Mesto: 5.000 ZLT VIP Tiket + Piće</div>
+            <div class="reward-pill silver">🥈 2. Mesto: 2.500 ZLT VIP Tiket</div>
+            <div class="reward-pill bronze">🥉 3. Mesto: 1.000 ZLT Promo Kredit</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button type="button" class="btn-vault-action gold-glow" id="btn-done-vault-leaderboard">U redu, nastavi provalu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Vault Talent Tree (Trajna RPG Progresija) -->
+  <div class="modal-overlay" id="vault-talents-modal">
+    <div class="modal-card vault-talents-card">
+      <div class="modal-header">
+        <h2 class="modal-title">🏛️ TALENT DRVO TREZORA</h2>
+        <button type="button" class="modal-close-btn" id="btn-close-vault-talents">✕</button>
+      </div>
+      <div class="vault-talents-content">
+        <div class="talents-keys-counter">
+          <span>Raspoloživo:</span>
+          <span class="talents-keys-num" id="vault-modal-keys-val">0</span>
+          <span>🗝️ Ključeva Trezora</span>
+        </div>
+        <p class="talents-sub-desc">Ključevi su trajna valuta! Ne gube se pri porazu i daju stalne bonuse za svaku sledeću provalu.</p>
+
+        <div class="talents-cards-grid">
+          <!-- Talent 1: Hakerski Prsti -->
+          <div class="talent-card" id="talent-card-wild">
+            <div class="talent-card-icon">🕵️</div>
+            <div class="talent-card-body">
+              <div class="talent-name">Hakerski Prsti</div>
+              <div class="talent-desc">Veća šansa za Wild simbole na slotu (+5% po nivou)</div>
+              <div class="talent-level-stars" id="talent-stars-wild">☆☆☆☆☆</div>
+            </div>
+            <button type="button" class="btn-upgrade-talent" id="btn-up-talent-wild">
+              <span class="btn-up-lbl">NADOGRADI</span>
+              <span class="btn-up-cost" id="talent-cost-wild">5 🗝️</span>
+            </button>
+          </div>
+
+          <!-- Talent 2: Kevlar Pancir -->
+          <div class="talent-card" id="talent-card-armor">
+            <div class="talent-card-icon">🛡️</div>
+            <div class="talent-card-body">
+              <div class="talent-name">Kevlar Pancir</div>
+              <div class="talent-desc">Započni svaku borbu sa dodatnim štitom (+15 štita po nivou)</div>
+              <div class="talent-level-stars" id="talent-stars-armor">☆☆☆☆☆</div>
+            </div>
+            <button type="button" class="btn-upgrade-talent" id="btn-up-talent-armor">
+              <span class="btn-up-lbl">NADOGRADI</span>
+              <span class="btn-up-cost" id="talent-cost-armor">4 🗝️</span>
+            </button>
+          </div>
+
+          <!-- Talent 3: Zlatni Magnet -->
+          <div class="talent-card" id="talent-card-magnet">
+            <div class="talent-card-icon">🧲</div>
+            <div class="talent-card-body">
+              <div class="talent-name">Zlatni Magnet</div>
+              <div class="talent-desc">Povećava količinu osvojenih ključeva i ZLT plena (+10% po nivou)</div>
+              <div class="talent-level-stars" id="talent-stars-magnet">☆☆☆☆☆</div>
+            </div>
+            <button type="button" class="btn-upgrade-talent" id="btn-up-talent-magnet">
+              <span class="btn-up-lbl">NADOGRADI</span>
+              <span class="btn-up-cost" id="talent-cost-magnet">3 🗝️</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button type="button" class="btn-vault-action" id="btn-done-vault-talents">Zatvori</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Vault Room / Floor Victory Banner -->
+  <div class="modal-overlay vault-victory-overlay" id="vault-victory-modal">
+    <div class="modal-card vault-victory-card">
+      <div class="vault-victory-badge">🔓 PROBIJENO!</div>
+      <div class="vault-victory-safe-icon" id="vault-victory-icon">💎</div>
+      <h2 class="vault-victory-title" id="vault-victory-title">SOBA OBIJENA!</h2>
+      <p class="vault-victory-sub" id="vault-victory-sub">Čuvar je savladan, sef je otključan!</p>
+
+      <div class="vault-loot-box" id="vault-victory-loot">
+        <!-- Populated dynamically with keys, loot, vouchers -->
+      </div>
+
+      <button type="button" class="btn-vault-victory-next" id="btn-vault-victory-continue">
+        OTVORI SLEDEĆU SOBU ➡️
+      </button>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/audio.js?v=70"></script>
   <script src="js/i18n.js?v=70"></script>
@@ -1752,7 +1902,7 @@
   <script src="js/games/royal3x3/royal3x3.js?v=75"></script>
   <script src="js/games/mines/mines.js?v=75"></script>
   <script src="js/games/mines/mini-mines.js?v=75"></script>
-  <script src="js/games/vault-crawler/vault-crawler.js?v=75"></script>
+  <script src="js/games/vault-crawler/vault-crawler.js?v=85"></script>
   <script src="js/games/battle-royale/battle-royale.js?v=75"></script>
 
   <!-- Application Controller -->
