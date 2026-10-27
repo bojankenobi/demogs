@@ -10,7 +10,17 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      success: true,
+      service: 'Grand Slot Club Player Login API',
+      status: 'online',
+      usage: 'Pošaljite POST zahtev sa parametrima { username, password }.'
+    });
+  }
+
   if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST, GET, OPTIONS');
     return res.status(405).json({ success: false, error: 'Method not allowed. Use POST.' });
   }
 
