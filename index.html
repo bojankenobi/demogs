@@ -31,7 +31,7 @@
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v6') caches.delete(k);
+          if (k !== 'grandslot-v7') caches.delete(k);
         });
       });
     }
@@ -1730,7 +1730,7 @@
   <script src="js/particles.js?v=70"></script>
   
   <!-- Core Platform Modules -->
-  <script src="js/core/player-tracker.js?v=75"></script>
+  <script src="js/core/player-tracker.js?v=81"></script>
   <script src="js/core/wallet.js?v=75"></script>
   <script src="js/core/jackpots-v2.js?v=80"></script>
   <script src="js/core/meters.js?v=75"></script>
@@ -1756,6 +1756,6 @@
   <script src="js/games/battle-royale/battle-royale.js?v=75"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=75"></script>
+  <script src="js/app.js?v=81"></script>
 </body>
 </html>

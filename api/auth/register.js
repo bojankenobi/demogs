@@ -35,10 +35,10 @@ export default async function handler(req, res) {
     });
   }
 
-  if (!/^[a-zA-Z0-9_-]+$/.test(cleanUser)) {
+  if (!/^[\p{L}0-9_.\-@ ]+$/u.test(cleanUser)) {
     return res.status(400).json({
       success: false,
-      error: 'Korisničko ime sme sadržati samo slova, brojeve, crticu i donju crtu.'
+      error: 'Korisničko ime sme sadržati samo slova, brojeve, tačku i crticu.'
     });
   }
 

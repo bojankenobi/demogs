@@ -181,7 +181,15 @@ class PlayerTracker {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, phone, nickname })
       });
-      const data = await res.json();
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error('Non-JSON response from /api/auth/register:', jsonErr);
+        return { success: false, error: `Greška servera (${res.status}). Pokušajte ponovo.` };
+      }
+
       if (!res.ok || !data.success) {
         return { success: false, error: data.error || 'Greška pri registraciji.' };
       }
@@ -204,7 +212,8 @@ class PlayerTracker {
 
       return { success: true, player: data.player, token: data.token, message: data.message };
     } catch (e) {
-      return { success: false, error: 'Mrežna greška pri povezivanju sa serverom.' };
+      console.error('Registration fetch network error:', e);
+      return { success: false, error: 'Mrežna greška pri povezivanju sa serverom. Proverite internet vezu.' };
     }
   }
 
@@ -215,7 +224,15 @@ class PlayerTracker {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
-      const data = await res.json();
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error('Non-JSON response from /api/auth/login:', jsonErr);
+        return { success: false, error: `Greška servera (${res.status}). Pokušajte ponovo.` };
+      }
+
       if (!res.ok || !data.success) {
         return { success: false, error: data.error || 'Pogrešno korisničko ime ili lozinka.' };
       }
@@ -238,7 +255,8 @@ class PlayerTracker {
 
       return { success: true, player: data.player, token: data.token, message: data.message };
     } catch (e) {
-      return { success: false, error: 'Mrežna greška pri povezivanju sa serverom.' };
+      console.error('Login fetch network error:', e);
+      return { success: false, error: 'Mrežna greška pri povezivanju sa serverom. Proverite internet vezu.' };
     }
   }
 
