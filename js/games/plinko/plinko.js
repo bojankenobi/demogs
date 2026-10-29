@@ -92,8 +92,8 @@ class PlinkoDeluxeGame {
     // Calculate peg radius based on row count
     const pegRadius = this.rows === 16 ? 3.0 : (this.rows === 12 ? 3.6 : 4.2);
 
-    // Generate Pegs in an Equilateral Triangular Grid
-    for (let r = 0; r <= this.rows; r++) {
+    // Generate Pegs in an Equilateral Triangular Grid (this.rows rows: 0 to this.rows - 1)
+    for (let r = 0; r < this.rows; r++) {
       const pinsInRow = r + 3;
       const rowY = topY + r * verticalGap;
       const rowWidth = (pinsInRow - 1) * (w / (this.rows + 3.2));
@@ -103,6 +103,8 @@ class PlinkoDeluxeGame {
       for (let c = 0; c < pinsInRow; c++) {
         const x = startX + c * spacingX;
         this.pegs.push({
+          row: r,
+          col: c,
           x: x,
           y: rowY,
           radius: pegRadius,
@@ -111,10 +113,10 @@ class PlinkoDeluxeGame {
       }
     }
 
-    // Generate Multiplier Bins at the Bottom
+    // Generate Multiplier Bins at the Bottom (aligned with the gaps of the last row)
     const currentPayouts = PLINKO_PAYOUTS[this.rows][this.risk];
     const binCount = currentPayouts.length;
-    const lastRow = this.pegs.filter(p => p.y >= topY + this.rows * verticalGap - 2);
+    const lastRow = this.pegs.filter(p => p.row === this.rows - 1);
     
     // Sort bottom pegs by X coordinate to align bins precisely under slots
     lastRow.sort((a, b) => a.x - b.x);
@@ -151,6 +153,69 @@ class PlinkoDeluxeGame {
     }
 
     this.renderHistory();
+  }
+
+  getPegPos(r, c) {
+    const w = this.canvasWidth || 460;
+    const h = this.canvasHeight || 420;
+    const topY = 40;
+    const bottomY = h - 55;
+    const verticalGap = (bottomY - topY) / (this.rows + 1);
+
+    const pinsInRow = r + 3;
+    const rowY = topY + r * verticalGap;
+    const rowWidth = (pinsInRow - 1) * (w / (this.rows + 3.2));
+    const startX = (w - rowWidth) / 2;
+    const spacingX = rowWidth / (pinsInRow - 1);
+
+    return {
+      x: startX + c * spacingX,
+      y: rowY
+    };
+  }
+
+  generateGaltonPath() {
+    const decisions = [];
+    let k = 0;
+    for (let r = 0; r < this.rows; r++) {
+      const d = Math.random() < 0.5 ? 0 : 1;
+      decisions.push(d);
+      k += d;
+    }
+
+    const apexPos = this.getPegPos(0, 1);
+    const waypoints = [
+      { x: apexPos.x + (Math.random() * 2 - 1), y: 15, isApexSpawn: true },
+      { x: apexPos.x, y: apexPos.y, pegR: 0, pegC: 1, dir: decisions[0] }
+    ];
+
+    let currentC = 1;
+    for (let r = 0; r < this.rows - 1; r++) {
+      const d = decisions[r];
+      currentC = currentC + d;
+      const pegPos = this.getPegPos(r + 1, currentC);
+      waypoints.push({
+        x: pegPos.x,
+        y: pegPos.y,
+        pegR: r + 1,
+        pegC: currentC,
+        dir: decisions[r + 1]
+      });
+    }
+
+    // Target bin waypoint
+    const targetBin = this.bins[k] || this.bins[Math.floor(this.bins.length / 2)];
+    const binX = targetBin ? targetBin.x : (this.canvasWidth || 460) / 2;
+    const binY = targetBin ? targetBin.y : (this.canvasHeight || 420) - 40;
+
+    waypoints.push({
+      x: binX,
+      y: binY,
+      isBin: true,
+      binIndex: k
+    });
+
+    return { k, waypoints, decisions };
   }
 
   getBinColor(mult, idx, total) {
@@ -380,22 +445,22 @@ class PlinkoDeluxeGame {
       window.slotAudio.playClick();
     }
 
-    // Spawn ball at top center with slight randomized horizontal offset
-    const w = this.canvasWidth || 460;
-    const startX = (w / 2) + (Math.random() * 4 - 2);
-    const startY = 15;
-    const ballRadius = this.rows === 16 ? 4.0 : 4.8;
+    const pathData = this.generateGaltonPath();
+    const ballRadius = this.rows === 16 ? 4.0 : (this.rows === 12 ? 4.6 : 5.2);
 
     this.balls.push({
       id: 'ball_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-      x: startX,
-      y: startY,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: 0.8,
-      radius: ballRadius,
       bet: this.currentBet,
+      radius: ballRadius,
       trail: [],
-      hue: Math.floor(Math.random() * 45) + 35 // Golden-orange hue
+      hue: Math.floor(Math.random() * 45) + 35, // Golden-orange hue
+      waypoints: pathData.waypoints,
+      targetBinIndex: pathData.k,
+      currSegment: 0,
+      t: 0,
+      speed: 0.10, // ~10 frames per hop => ~2s drop
+      x: pathData.waypoints[0].x,
+      y: pathData.waypoints[0].y
     });
 
     if (this.statusSub) {
@@ -439,15 +504,9 @@ class PlinkoDeluxeGame {
   }
 
   /* ==========================================================================
-     Physics Engine: Collisions, Restitution & Bin Landing
+     Physics Engine: Galton Board Kinematics & Bin Landing
      ========================================================================== */
   updatePhysics() {
-    const gravity = 0.26;
-    const friction = 0.994;
-    const restitution = 0.65;
-    const w = this.canvasWidth || 460;
-    const h = this.canvasHeight || 420;
-
     // 1. Decay peg hit flashes
     this.pegs.forEach(peg => {
       if (peg.hitIntensity > 0) {
@@ -465,86 +524,66 @@ class PlinkoDeluxeGame {
       }
     });
 
-    // 3. Update Balls
+    // 3. Update Balls along their Galton Waypoints
     for (let b = this.balls.length - 1; b >= 0; b--) {
       const ball = this.balls[b];
+      const wp = ball.waypoints;
+      const seg = ball.currSegment;
 
-      // Gravity & friction
-      ball.vy += gravity;
-      ball.vx *= friction;
-      ball.vy *= friction;
+      if (!wp || seg >= wp.length - 1) {
+        this.balls.splice(b, 1);
+        continue;
+      }
 
-      ball.x += ball.vx;
-      ball.y += ball.vy;
+      const A = wp[seg];
+      const B = wp[seg + 1];
 
-      // Keep trail of last 5 positions
+      ball.t += ball.speed;
+
+      // Kinematic interpolation with smooth horizontal step and parabolic hop
+      const t = Math.min(1.0, ball.t);
+      const st = t * t * (3 - 2 * t); // Smoothstep for X
+      ball.x = A.x + (B.x - A.x) * st;
+
+      if (seg === 0) {
+        // Initial fall onto apex peg
+        ball.y = A.y + (B.y - A.y) * (t * t);
+      } else if (B.isBin) {
+        // Final drop into bottom bin
+        ball.y = A.y + (B.y - A.y) * (t * t);
+      } else {
+        // Parabolic arc bounce over peg A towards peg B
+        const bounceHeight = 5.2;
+        ball.y = A.y + (B.y - A.y) * t - (4 * bounceHeight * t * (1 - t));
+      }
+
+      // Trail
       ball.trail.push({ x: ball.x, y: ball.y });
       if (ball.trail.length > 6) ball.trail.shift();
 
-      // Screen boundary bounce
-      if (ball.x < ball.radius + 6) {
-        ball.x = ball.radius + 6;
-        ball.vx = Math.abs(ball.vx) * 0.7;
-      } else if (ball.x > w - ball.radius - 6) {
-        ball.x = w - ball.radius - 6;
-        ball.vx = -Math.abs(ball.vx) * 0.7;
-      }
+      // Check waypoint completion
+      if (ball.t >= 1.0) {
+        ball.currSegment++;
+        ball.t = 0;
 
-      // Check Peg Collisions
-      for (let i = 0; i < this.pegs.length; i++) {
-        const peg = this.pegs[i];
-        const dx = ball.x - peg.x;
-        const dy = ball.y - peg.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const minDist = ball.radius + peg.radius;
-
-        if (dist < minDist) {
-          // Normal vector
-          const nx = dx / (dist || 1);
-          const ny = dy / (dist || 1);
-
-          // Position separation to prevent sticking
-          const overlap = minDist - dist;
-          ball.x += nx * overlap;
-          ball.y += ny * overlap;
-
-          // Velocity reflection
-          const dot = ball.vx * nx + ball.vy * ny;
-          ball.vx = (ball.vx - 2 * dot * nx) * restitution + (Math.random() - 0.5) * 0.22;
-          ball.vy = (ball.vy - 2 * dot * ny) * restitution;
-
-          // Light up peg
-          peg.hitIntensity = 1.0;
-          this.playPegPing(peg.y > h * 0.65);
-          break;
-        }
-      }
-
-      // Check Bin Landing (Bottom of Canvas)
-      const binBottomThreshold = h - 65;
-      if (ball.y >= binBottomThreshold) {
-        // Find closest bin
-        let targetBin = null;
-        let minDist = Infinity;
-        for (let i = 0; i < this.bins.length; i++) {
-          const bin = this.bins[i];
-          const d = Math.abs(ball.x - bin.x);
-          if (d < minDist) {
-            minDist = d;
-            targetBin = bin;
+        if (B.isBin) {
+          // Ball arrived in target bin!
+          const bin = this.bins[B.binIndex] || this.bins[Math.floor(this.bins.length / 2)];
+          this.handleBallLanding(ball, bin);
+          this.balls.splice(b, 1);
+        } else if (B.pegR !== undefined) {
+          // Ball collided with peg B!
+          const targetPeg = this.pegs.find(p => p.row === B.pegR && p.col === B.pegC);
+          if (targetPeg) {
+            targetPeg.hitIntensity = 1.0;
           }
+          this.playPegPing(B.pegR > this.rows * 0.65);
+          this.spawnPegSparks(B.x, B.y, 4);
         }
-
-        if (targetBin) {
-          this.handleBallLanding(ball, targetBin);
-        }
-
-        // Remove ball from active list
-        this.balls.splice(b, 1);
       }
     }
 
-    // 4. Update splash particles
+    // 4. Update splash and spark particles
     for (let p = this.particles.length - 1; p >= 0; p--) {
       const pt = this.particles[p];
       pt.x += pt.vx;
@@ -559,6 +598,7 @@ class PlinkoDeluxeGame {
   handleBallLanding(ball, bin) {
     const mult = bin.mult;
     const winAmt = Math.round(ball.bet * mult);
+    const netProfit = winAmt - ball.bet;
 
     // Credit win
     if (this.wallet && winAmt > 0) {
@@ -581,23 +621,48 @@ class PlinkoDeluxeGame {
     if (this.history.length > 8) this.history.pop();
     this.renderHistory();
 
-    // Sound effect
+    // Sound effect based on REAL net outcome
     if (mult >= 10.0) {
       if (window.slotAudio && window.slotAudio.playBigWin) window.slotAudio.playBigWin();
       if (window.particleEngine) window.particleEngine.spawnCelebration(true);
-    } else if (mult >= 1.5) {
+    } else if (mult >= 2.0) {
       if (window.slotAudio && window.slotAudio.playCashout) window.slotAudio.playCashout();
-    } else if (mult >= 1.0) {
+    } else if (mult > 1.0) {
       if (window.slotAudio && window.slotAudio.playWin) window.slotAudio.playWin();
+    } else if (mult === 1.0) {
+      if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
     }
 
-    // Status announcement
+    // Status announcement that CLEARLY communicates Win vs Loss
     if (this.statusSub) {
       if (mult >= 2.0) {
-        this.statusSub.innerHTML = `<span style="color:#4ade80;font-weight:900;">🎉 DOBITAK: +${winAmt.toLocaleString()} ZLT (${mult.toFixed(1)}x)!</span>`;
+        this.statusSub.innerHTML = `<span style="color:#4ade80;font-weight:900;">🎉 DOBITAK: +${winAmt.toLocaleString()} ZLT (${mult >= 100 ? Math.round(mult) : mult.toFixed(1)}x) • NETO: +${netProfit.toLocaleString()} ZLT</span>`;
+      } else if (mult > 1.0) {
+        this.statusSub.innerHTML = `<span style="color:#22c55e;font-weight:700;">DOBITAK: +${winAmt.toLocaleString()} ZLT (${mult.toFixed(1)}x)</span>`;
+      } else if (mult === 1.0) {
+        this.statusSub.innerHTML = `<span style="color:#94a3b8;">POVRATAK ULOGA: ${winAmt.toLocaleString()} ZLT (1.0x)</span>`;
       } else {
-        this.statusSub.innerHTML = `DOBITAK: +${winAmt.toLocaleString()} ZLT (${mult.toFixed(1)}x)`;
+        // Net loss (mult < 1.0, npr. 0.2x, 0.3x, 0.5x, 0.6x)
+        const lossAmt = ball.bet - winAmt;
+        this.statusSub.innerHTML = `<span style="color:#f87171;font-weight:700;">GUBITAK: -${lossAmt.toLocaleString()} ZLT • POVRAĆAJ: ${winAmt.toLocaleString()} ZLT (${mult.toFixed(1)}x)</span>`;
       }
+    }
+  }
+
+  spawnPegSparks(x, y, count = 4) {
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 2 + 0.8;
+      this.particles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        radius: Math.random() * 2 + 1,
+        color: '#fbbf24',
+        alpha: 1.0,
+        decay: Math.random() * 0.08 + 0.04
+      });
     }
   }
 
