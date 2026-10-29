@@ -23,15 +23,15 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=90">
-  <link rel="stylesheet" href="css/grand-hub.css?v=90">
+  <link rel="stylesheet" href="css/style.css?v=91">
+  <link rel="stylesheet" href="css/grand-hub.css?v=91">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v12') caches.delete(k);
+          if (k !== 'grandslot-v13') caches.delete(k);
         });
       });
     }
@@ -592,6 +592,83 @@
         </div>
       </div>
 
+      <!-- Standalone Plinko Deluxe Game View -->
+      <div class="plinko-stage-view" id="plinko-game-view" style="display: none;">
+        <div class="plinko-cabinet-panel">
+          <!-- Top Multiplier History Bar -->
+          <div class="plinko-top-bar">
+            <span class="plinko-history-lbl">ISTORIJA:</span>
+            <div class="plinko-history-strip" id="plinko-history-strip">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Plinko Canvas Container -->
+          <div class="plinko-canvas-wrap">
+            <canvas id="plinko-canvas" width="460" height="420"></canvas>
+            <div class="plinko-hud-overlay">
+              <div class="plinko-status-sub" id="plinko-status-sub">IZABERITE ULOG I SPUSTITE KUGLICU</div>
+            </div>
+          </div>
+
+          <!-- Plinko Controls Deck -->
+          <div class="plinko-control-deck">
+            <!-- Settings Strip: Risk & Rows -->
+            <div class="plinko-settings-strip">
+              <div class="plinko-setting-group">
+                <span class="plinko-setting-label">RIZIK:</span>
+                <div class="plinko-segmented-ctrl">
+                  <button type="button" class="plinko-risk-btn" data-risk="low">NIZAK</button>
+                  <button type="button" class="plinko-risk-btn active" data-risk="med">SREDNJI</button>
+                  <button type="button" class="plinko-risk-btn" data-risk="high">VISOK (1000x)</button>
+                </div>
+              </div>
+
+              <div class="plinko-setting-group">
+                <span class="plinko-setting-label">REDOVI:</span>
+                <div class="plinko-segmented-ctrl">
+                  <button type="button" class="plinko-rows-btn" data-rows="8">8</button>
+                  <button type="button" class="plinko-rows-btn active" data-rows="12">12</button>
+                  <button type="button" class="plinko-rows-btn" data-rows="16">16</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bet Stepper & Quick Chips -->
+            <div class="plinko-bet-strip">
+              <div class="plinko-bet-box">
+                <button type="button" class="plinko-step-btn" id="plinko-bet-minus">−</button>
+                <div class="plinko-bet-center">
+                  <span class="plinko-bet-tag">ULOG</span>
+                  <span class="plinko-bet-amount" id="plinko-bet-val">20</span>
+                </div>
+                <button type="button" class="plinko-step-btn" id="plinko-bet-plus">+</button>
+              </div>
+
+              <!-- Quick Chips -->
+              <div class="plinko-quick-chips">
+                <button type="button" class="plinko-chip-btn" data-amt="10">10</button>
+                <button type="button" class="plinko-chip-btn" data-amt="20">20</button>
+                <button type="button" class="plinko-chip-btn" data-amt="50">50</button>
+                <button type="button" class="plinko-chip-btn" data-amt="100">100</button>
+                <button type="button" class="plinko-chip-btn max">MAX</button>
+              </div>
+            </div>
+
+            <!-- Actions Row: Drop & Auto Drop -->
+            <div class="plinko-actions-row">
+              <button type="button" class="btn-plinko-action btn-plinko-drop" id="plinko-drop-btn">
+                <span class="plinko-action-icon">🔴</span>
+                <span class="plinko-action-title">SPUSTI KUGLICU</span>
+              </button>
+              <button type="button" class="btn-plinko-action btn-plinko-auto" id="plinko-auto-btn">
+                AUTO SPUŠTANJE
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- Status Message Banner: Situated cleanly between slot machine and bet controls -->
@@ -897,6 +974,29 @@
           <div class="egt-card-details">
             <h3 class="egt-card-title">GRAND CRASH</h3>
             <p class="egt-card-sub">Aviator Kriva • Multiplier do 1000x • Isplata Pre Pada</p>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">IGRAJ SADA</span>
+          </div>
+        </div>
+
+        <!-- Game 6: Plinko Deluxe -->
+        <div class="egt-game-card" id="egt-opt-plinko" data-game="plinko">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-gold">1000x JACKPOT</div>
+          
+          <div class="grand-card-poster poster-plinko">
+            <div class="poster-symbols-cluster">
+              <span class="poster-plinko-pyramid">🔴</span>
+              <div class="poster-plinko-pegs"></div>
+            </div>
+            <div class="poster-specs-tag">PLINKO • 1000x • MULTI-BALL</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">PLINKO DELUXE</h3>
+            <p class="egt-card-sub">Piramida Klinova • Podesiv Rizik • Multiplikator do 1000x</p>
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
@@ -2046,9 +2146,10 @@
   <script src="js/games/mines/mini-mines.js?v=75"></script>
   <script src="js/games/vault-crawler/vault-crawler.js?v=88"></script>
   <script src="js/games/battle-royale/battle-royale.js?v=88"></script>
-  <script src="js/games/crash/crash.js?v=90"></script>
+  <script src="js/games/crash/crash.js?v=91"></script>
+  <script src="js/games/plinko/plinko.js?v=91"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=90"></script>
+  <script src="js/app.js?v=91"></script>
 </body>
 </html>

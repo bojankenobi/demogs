@@ -54,8 +54,12 @@ function createMockEl(id = '', tag = 'div') {
           save() {},
           restore() {},
           translate() {},
+          scale() {},
           rotate() {},
           createLinearGradient() { return { addColorStop() {} }; },
+          createRadialGradient() { return { addColorStop() {} }; },
+          roundRect() {},
+          fillText() {},
           setTransform() {}
         };
       }
@@ -131,12 +135,14 @@ global.window.slotAudio = {
 const vaultCode = fs.readFileSync(path.join(__dirname, '../js/games/vault-crawler/vault-crawler.js'), 'utf-8');
 const royaleCode = fs.readFileSync(path.join(__dirname, '../js/games/battle-royale/battle-royale.js'), 'utf-8');
 const crashCode = fs.readFileSync(path.join(__dirname, '../js/games/crash/crash.js'), 'utf-8');
+const plinkoCode = fs.readFileSync(path.join(__dirname, '../js/games/plinko/plinko.js'), 'utf-8');
 
 vm.runInThisContext(vaultCode);
 vm.runInThisContext(royaleCode);
 vm.runInThisContext(crashCode);
+vm.runInThisContext(plinkoCode);
 
-console.log('✅ Loaded VaultCrawler, SlotBattleRoyale, and GrandCrashGame classes into execution context.');
+console.log('✅ Loaded VaultCrawler, SlotBattleRoyale, GrandCrashGame, and PlinkoDeluxeGame classes into execution context.');
 
 // Mock wallet & lobby
 const mockWallet = {
@@ -293,4 +299,56 @@ console.log(`   Multiplayer active round players: ${crash.roundPlayers.length}, 
 crash.unmount();
 console.log('   Unmounted GrandCrashGame.');
 
-console.log('✅ All Vault Crawler, Battle Royale, and Grand Crash tests PASSED successfully!');
+// 4. Test Plinko Deluxe
+console.log('4. Instantiating PlinkoDeluxeGame...');
+const plinko = new window.PlinkoDeluxeGame(mockWallet, null);
+plinko.mount();
+console.log('   Mounted PlinkoDeluxeGame: rows =', plinko.rows, 'risk =', plinko.risk, 'bins =', plinko.bins.length);
+
+if (plinko.rows !== 12 || plinko.bins.length !== 13) {
+  throw new Error(`Plinko initial layout failed! Rows: ${plinko.rows}, Bins: ${plinko.bins.length}`);
+}
+
+// Test dropping a ball
+const balBeforeDrop = mockWallet.balance;
+const dropSuccess = plinko.dropBall();
+if (!dropSuccess || plinko.balls.length !== 1 || mockWallet.balance !== balBeforeDrop - plinko.currentBet) {
+  throw new Error(`Plinko dropBall failed! Drop: ${dropSuccess}, Balls: ${plinko.balls.length}, Balance: ${mockWallet.balance}`);
+}
+console.log('   Ball dropped successfully. Active balls =', plinko.balls.length, 'Balance:', mockWallet.balance);
+
+// Test landing ball in bin
+const testBall = plinko.balls[0];
+const testBin = plinko.bins[0]; // Outermost high multiplier bin
+const balBeforeLand = mockWallet.balance;
+const expectedPlinkoWin = Math.round(testBall.bet * testBin.mult);
+plinko.handleBallLanding(testBall, testBin);
+
+if (mockWallet.balance !== balBeforeLand + expectedPlinkoWin || plinko.history[0] !== testBin.mult) {
+  throw new Error(`Plinko bin landing failed! Balance: ${mockWallet.balance}, History top: ${plinko.history[0]}`);
+}
+console.log(`   Ball landed in bin (${testBin.mult}x). Win: +${expectedPlinkoWin} ZLT, History updated.`);
+
+// Test changing pyramid rows & risk
+plinko.rows = 16;
+plinko.risk = 'high';
+plinko.buildPyramid();
+
+if (plinko.bins.length !== 17 || plinko.bins[0].mult !== 1000) {
+  throw new Error(`Plinko 16-row high-risk layout failed! Bins: ${plinko.bins.length}, Max multiplier: ${plinko.bins[0].mult}`);
+}
+console.log(`   16-row High-Risk pyramid built: ${plinko.bins.length} bins, Max multiplier = ${plinko.bins[0].mult}x 💥`);
+
+// Test 8-row pyramid
+plinko.rows = 8;
+plinko.risk = 'low';
+plinko.buildPyramid();
+if (plinko.bins.length !== 9 || plinko.bins[0].mult !== 5.6) {
+  throw new Error(`Plinko 8-row low-risk layout failed! Bins: ${plinko.bins.length}, Outer: ${plinko.bins[0].mult}`);
+}
+console.log(`   8-row Low-Risk pyramid built: ${plinko.bins.length} bins, Outer multiplier = ${plinko.bins[0].mult}x`);
+
+plinko.unmount();
+console.log('   Unmounted PlinkoDeluxeGame.');
+
+console.log('✅ All Vault Crawler, Battle Royale, Grand Crash, and Plinko Deluxe tests PASSED successfully!');

@@ -1,7 +1,7 @@
 /**
  * IGT 3D Casino Slot - PWA Service Worker
  */
-const CACHE_NAME = 'grandslot-v12';
+const CACHE_NAME = 'grandslot-v13';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -34,6 +34,7 @@ const ASSETS_TO_CACHE = [
   './js/games/vault-crawler/vault-crawler.js',
   './js/games/battle-royale/battle-royale.js',
   './js/games/crash/crash.js',
+  './js/games/plinko/plinko.js',
   './js/app.js',
   './manifest.webmanifest',
   './assets/logo.svg',

@@ -5885,6 +5885,387 @@ body {
 }
 
 /* ============================================================
+   STANDALONE PLINKO DELUXE GAME VIEW
+   ============================================================ */
+.game-container.in-plinko-mode {
+  justify-content: flex-start;
+  gap: 2px;
+}
+
+.game-container.in-plinko-mode .jackpots-ticker-bar,
+.game-container.in-plinko-mode .bonus-meters-bar {
+  display: none !important;
+}
+
+.game-container.in-plinko-mode .stage-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 2px 0 4px;
+}
+
+.plinko-stage-view {
+  width: 100%;
+  max-width: 470px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  animation: fadeInPlinko 0.25s ease-out;
+}
+
+@keyframes fadeInPlinko {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.plinko-cabinet-panel {
+  width: 100%;
+  background: linear-gradient(180deg, #111728 0%, #090d16 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 14px;
+  padding: 6px 8px 10px;
+  box-shadow: 
+    0 0 20px rgba(212, 149, 20, 0.15),
+    0 12px 35px rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* History Bar */
+.plinko-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: rgba(6, 9, 15, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.plinko-history-lbl {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.plinko-history-strip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  width: 100%;
+}
+
+.plinko-history-strip::-webkit-scrollbar {
+  display: none;
+}
+
+/* Canvas Area */
+.plinko-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  background: #060912;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+#plinko-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.plinko-hud-overlay {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.plinko-status-sub {
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 0.5px;
+  background: rgba(5, 8, 14, 0.75);
+  padding: 3px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-shadow: 0 1px 3px #000;
+}
+
+/* Plinko Control Deck */
+.plinko-control-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+/* Settings: Risk & Rows */
+.plinko-settings-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 4px 6px;
+}
+
+.plinko-setting-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.plinko-setting-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.4px;
+}
+
+.plinko-segmented-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #090d16;
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.plinko-risk-btn,
+.plinko-rows-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-family: var(--font-title);
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 3px 6px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.plinko-risk-btn:hover,
+.plinko-rows-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.plinko-risk-btn.active {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.4) 100%);
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+.plinko-rows-btn.active {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(245, 158, 11, 0.3) 100%);
+  color: #ffd700;
+  border: 1px solid #fbbf24;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.3);
+}
+
+/* Bet Stepper & Quick Chips */
+.plinko-bet-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.plinko-bet-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #090d16;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 9px;
+  padding: 2px 4px;
+}
+
+.plinko-step-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffd700;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.plinko-step-btn:hover {
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.plinko-bet-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.plinko-bet-tag {
+  font-size: 0.52rem;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.plinko-bet-amount {
+  font-family: var(--font-title);
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #ffd700;
+}
+
+.plinko-quick-chips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.plinko-chip-btn {
+  padding: 5px 8px;
+  min-height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  color: #cbd5e1;
+  font-family: var(--font-title);
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.plinko-chip-btn:hover {
+  border-color: #ffd700;
+  color: #fff;
+  background: rgba(255, 215, 0, 0.15);
+}
+
+.plinko-chip-btn.max {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+/* Actions Row: Drop & Auto Drop */
+.plinko-actions-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 6px;
+  width: 100%;
+}
+
+.btn-plinko-action {
+  min-height: 46px;
+  border-radius: 10px;
+  border: none;
+  font-family: var(--font-title);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-plinko-drop {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: 1px solid #34d399;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+.btn-plinko-drop:hover {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.7);
+  transform: translateY(-1px);
+}
+
+.btn-plinko-drop:active {
+  transform: scale(0.98);
+}
+
+.btn-plinko-auto {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.btn-plinko-auto:hover {
+  border-color: #ffd700;
+  color: #fff;
+}
+
+.btn-plinko-auto.active {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: #fff;
+  border: 1px solid #f87171;
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.6);
+}
+
+/* Poster Artwork for Plinko in Lobby */
+.poster-plinko {
+  background: radial-gradient(circle at 50% 40%, #1c1917 0%, #09090b 100%);
+}
+
+.poster-plinko-pyramid {
+  font-size: 2.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px #ef4444) drop-shadow(0 0 20px #fbbf24);
+  animation: heroSymFloat 2.4s infinite ease-in-out alternate;
+}
+
+@media (max-width: 480px) {
+  .plinko-canvas-wrap {
+    height: 330px;
+  }
+  .plinko-cabinet-panel {
+    padding: 5px 6px 8px;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 370px) {
+  .plinko-canvas-wrap {
+    height: 290px;
+  }
+}
+
+/* ============================================================
    MINI-MINES SLOT BONUS OVERLAY (TRIGGERED BY 3+ COINS)
    ============================================================ */
 .mini-mines-overlay {

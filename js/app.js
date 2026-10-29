@@ -81,6 +81,9 @@ class IGTApp {
     if (window.GrandCrashGame) {
       this.crashGame = new window.GrandCrashGame(this.wallet, this.jackpots);
     }
+    if (window.PlinkoDeluxeGame) {
+      this.plinkoGame = new window.PlinkoDeluxeGame(this.wallet, this.jackpots);
+    }
 
     // 4. Lobby
     this.lobby = new window.CasinoLobby(this.wallet, this.jackpots);
@@ -196,6 +199,46 @@ class IGTApp {
         },
         get isSpinning() { return false; },
         gameInstance: this.crashGame
+      });
+    }
+
+    if (this.plinkoGame) {
+      this.lobby.registerGame('plinko', {
+        mount: () => {
+          const stage = document.querySelector('.slot-stage-scaler');
+          if (stage) stage.style.display = 'none';
+
+          const controlsPanel = document.querySelector('.controls-panel');
+          if (controlsPanel) controlsPanel.style.display = 'none';
+
+          const bannerWrap = document.querySelector('.status-banner-wrap');
+          if (bannerWrap) bannerWrap.style.display = 'none';
+
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.add('in-plinko-mode');
+
+          if (this.isAutoSpin) this.toggleAutoSpin(false);
+
+          this.plinkoGame.mount();
+        },
+        unmount: () => {
+          this.plinkoGame.unmount();
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.remove('in-plinko-mode');
+          this.restoreSlotUI();
+        },
+        forceExit: () => {
+          if (this.plinkoGame && typeof this.plinkoGame.forceExit === 'function') {
+            this.plinkoGame.forceExit();
+          }
+        },
+        spin: () => {
+          if (this.plinkoGame) {
+            this.plinkoGame.dropBall();
+          }
+        },
+        get isSpinning() { return false; },
+        gameInstance: this.plinkoGame
       });
     }
 
@@ -681,6 +724,7 @@ class IGTApp {
     if (container) {
       container.classList.remove('in-mines-mode');
       container.classList.remove('in-crash-mode');
+      container.classList.remove('in-plinko-mode');
     }
 
     this.updateSpinButtonState();
