@@ -85,12 +85,14 @@ class PlinkoDeluxeGame {
     this.pegs = [];
     this.bins = [];
 
-    const topY = 40;
-    const bottomY = h - 55;
+    const topY = Math.round(40 * Math.min(1.4, Math.max(1.0, h / 420)));
+    const bottomY = h - Math.round(55 * Math.min(1.4, Math.max(1.0, h / 420)));
     const verticalGap = (bottomY - topY) / (this.rows + 1);
 
-    // Calculate peg radius based on row count
-    const pegRadius = this.rows === 16 ? 3.0 : (this.rows === 12 ? 3.6 : 4.2);
+    // Calculate peg radius based on row count and canvas scale
+    const scaleFactor = Math.min(1.5, Math.max(1.0, w / 460));
+    const basePegR = this.rows === 16 ? 3.0 : (this.rows === 12 ? 3.6 : 4.4);
+    const pegRadius = +(basePegR * scaleFactor).toFixed(1);
 
     // Generate Pegs in an Equilateral Triangular Grid (this.rows rows: 0 to this.rows - 1)
     for (let r = 0; r < this.rows; r++) {
@@ -121,8 +123,8 @@ class PlinkoDeluxeGame {
     // Sort bottom pegs by X coordinate to align bins precisely under slots
     lastRow.sort((a, b) => a.x - b.x);
 
-    const binY = bottomY + 12;
-    const binHeight = 32;
+    const binY = bottomY + Math.round(12 * Math.min(1.5, Math.max(1.0, h / 420)));
+    const binHeight = Math.round(32 * Math.min(1.5, Math.max(1.0, h / 420)));
 
     for (let i = 0; i < binCount; i++) {
       let x, binWidth;
@@ -158,8 +160,8 @@ class PlinkoDeluxeGame {
   getPegPos(r, c) {
     const w = this.canvasWidth || 460;
     const h = this.canvasHeight || 420;
-    const topY = 40;
-    const bottomY = h - 55;
+    const topY = Math.round(40 * Math.min(1.4, Math.max(1.0, h / 420)));
+    const bottomY = h - Math.round(55 * Math.min(1.4, Math.max(1.0, h / 420)));
     const verticalGap = (bottomY - topY) / (this.rows + 1);
 
     const pinsInRow = r + 3;
@@ -446,7 +448,9 @@ class PlinkoDeluxeGame {
     }
 
     const pathData = this.generateGaltonPath();
-    const ballRadius = this.rows === 16 ? 4.0 : (this.rows === 12 ? 4.6 : 5.2);
+    const scaleFactor = Math.min(1.5, Math.max(1.0, (this.canvasWidth || 460) / 460));
+    const baseBallR = this.rows === 16 ? 4.0 : (this.rows === 12 ? 4.8 : 5.6);
+    const ballRadius = +(baseBallR * scaleFactor).toFixed(1);
 
     this.balls.push({
       id: 'ball_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -750,7 +754,9 @@ class PlinkoDeluxeGame {
       // Bin multiplier text
       ctx.shadowBlur = 0;
       ctx.fillStyle = bin.textColor;
-      ctx.font = `800 ${this.rows === 16 ? '0.58rem' : '0.68rem'} 'Cinzel', 'Trajan Pro', sans-serif`;
+      const binScale = Math.min(1.4, Math.max(1.0, (this.canvasWidth || 460) / 460));
+      const fontRem = (this.rows === 16 ? 0.58 : 0.68) * binScale;
+      ctx.font = `800 ${fontRem.toFixed(2)}rem 'Cinzel', 'Trajan Pro', sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       

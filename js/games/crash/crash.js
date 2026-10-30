@@ -1102,6 +1102,9 @@ class GrandCrashGame {
       const angle = -Math.PI / 4 + Math.sin(performance.now() * 0.008) * 0.06;
       ctx.rotate(angle);
 
+      const rocketScale = Math.min(1.4, Math.max(1.0, (w || 480) / 540));
+      ctx.scale(rocketScale, rocketScale);
+
       // Rocket body glow (Gold chrome space shuttle)
       ctx.shadowBlur = 16;
       ctx.shadowColor = '#ffd700';

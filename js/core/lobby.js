@@ -117,6 +117,14 @@ class CasinoLobby {
 
     if (this.activeGame && typeof this.activeGame.mount === 'function') {
       this.activeGame.mount();
+      setTimeout(() => {
+        if (this.activeGame && typeof this.activeGame.resizeCanvas === 'function') {
+          this.activeGame.resizeCanvas();
+        }
+        if (this.activeGame && typeof this.activeGame.buildPyramid === 'function') {
+          this.activeGame.buildPyramid();
+        }
+      }, 50);
     }
 
     this.updateSelectorUI(gameId);

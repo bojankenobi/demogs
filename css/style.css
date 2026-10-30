@@ -6643,7 +6643,7 @@ body {
   pointer-events: none;
 }
 
-/* Card Back with Official GrandSlot Brand Emblem */
+/* Card Back with Official GrandSlot Sun/Flower Emblem */
 .bj-card-back {
   background: radial-gradient(circle at 50% 50%, #151d2f 0%, #060911 100%);
   border: 1.5px solid #d4af37;
@@ -6667,41 +6667,24 @@ body {
   overflow: hidden;
 }
 
-.bj-card-back-brand-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  width: 100%;
-}
-
 .bj-card-back-flower {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
-  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.85));
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.9)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
   pointer-events: none;
+  animation: bjFlowerGlow 3s ease-in-out infinite alternate;
 }
 
-.bj-card-back-logo-img {
-  width: 42px;
-  height: auto;
-  max-height: 12px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.8));
-  pointer-events: none;
-}
-
-.bj-card-back-title {
-  font-family: 'Cinzel', 'Trajan Pro', serif;
-  font-size: 0.38rem;
-  font-weight: 900;
-  color: #ffd700;
-  letter-spacing: 1.2px;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
-  line-height: 1;
-  pointer-events: none;
+@keyframes bjFlowerGlow {
+  0% {
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.75)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+    transform: scale(0.96);
+  }
+  100% {
+    filter: drop-shadow(0 0 12px rgba(251, 191, 36, 0.98)) drop-shadow(0 0 18px rgba(245, 158, 11, 0.6));
+    transform: scale(1.04);
+  }
 }
 
 /* Control Deck */
@@ -11930,6 +11913,484 @@ body.free-spins-active .slot-cylinder-replica {
   color: #a8a29e;
   line-height: 1.4;
   text-align: center;
+}
+
+/* ==========================================================================
+   DESKTOP & TABLET ADAPTIVE LAYOUT ARCHITECTURE (RESPONSIVE SEPARATION)
+   Optimized for Monitors (1080p, 1440p, 4K) & Tablets
+   ========================================================================== */
+
+/* Tablet & Medium Screens (768px - 1023px) */
+@media (min-width: 768px) {
+  /* Expand Container for rich, wide view instead of narrow mobile column */
+  .game-container {
+    max-width: 780px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 14px;
+    padding-bottom: 24px;
+    gap: 8px;
+  }
+
+  .game-container.in-blackjack-mode {
+    max-width: 880px;
+  }
+
+  .game-container.in-crash-mode {
+    max-width: 900px;
+  }
+
+  .game-container.in-plinko-mode {
+    max-width: 860px;
+  }
+
+  .game-container.in-mines-mode {
+    max-width: 760px;
+  }
+
+  /* Desktop Header & Nav */
+  .header-section {
+    margin-bottom: 8px;
+  }
+  .brand-logo-wrap {
+    max-width: 280px;
+  }
+  .main-brand-logo {
+    max-height: 60px;
+  }
+  .hub-mode-nav {
+    max-width: 580px;
+    margin: 0 auto 10px;
+  }
+  .hub-mode-tab {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+  .hub-tab-icon {
+    font-size: 1.25rem;
+  }
+
+  /* --------------------------------------------------------------------------
+     1. BLACKJACK DESKTOP TABLE & CARDS
+     -------------------------------------------------------------------------- */
+  .blackjack-cabinet-panel {
+    padding: 18px 22px;
+    gap: 14px;
+    border-radius: 20px;
+  }
+
+  .blackjack-table {
+    min-height: 480px;
+    padding: 18px 24px;
+    border-radius: 20px;
+    border-width: 3px;
+  }
+
+  .blackjack-felt-ring {
+    border-width: 3px;
+  }
+
+  .blackjack-rules-inscription {
+    top: 34%;
+  }
+
+  .bj-felt-logo {
+    width: 26px;
+    height: 26px;
+  }
+
+  .bj-felt-brand-name {
+    font-size: 1.05rem;
+    letter-spacing: 3px;
+  }
+
+  .bj-rule-gold {
+    font-size: 0.92rem;
+    letter-spacing: 2.2px;
+  }
+
+  .bj-rule-silver {
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+  }
+
+  .bj-hand-section {
+    min-height: 140px;
+  }
+
+  .bj-hand-label {
+    font-size: 0.88rem;
+    letter-spacing: 1.5px;
+  }
+
+  .bj-score-badge {
+    font-size: 1.05rem;
+    padding: 4px 14px;
+    border-radius: 14px;
+  }
+
+  /* Enlarged Authentic Desktop Playing Cards */
+  .bj-card {
+    width: 82px;
+    height: 120px;
+    margin-left: -28px;
+    perspective: 900px;
+  }
+
+  .bj-card-inner {
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.75);
+  }
+
+  .bj-card-front,
+  .bj-card-back {
+    border-radius: 8px;
+  }
+
+  .bj-card-front {
+    padding: 5px 6px;
+    border-width: 1.5px;
+  }
+
+  .bj-card-rank {
+    font-size: 1.15rem;
+  }
+
+  .bj-card-suit-mini {
+    font-size: 0.85rem;
+  }
+
+  .bj-card-emblem {
+    font-size: 1.9rem;
+  }
+
+  .bj-card-back {
+    border-width: 2px;
+    box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.9);
+  }
+
+  .bj-card-back-flower {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Status Message */
+  .bj-center-message {
+    padding: 10px 24px;
+    border-radius: 24px;
+  }
+
+  .bj-msg-text {
+    font-size: 0.92rem;
+    letter-spacing: 1.2px;
+  }
+
+  .bj-bet-chip-badge {
+    padding: 4px 14px;
+    font-size: 0.95rem;
+  }
+
+  /* Desktop Chips */
+  .bj-chips-deck {
+    gap: 8px;
+  }
+
+  .bj-chip-btn {
+    height: 48px;
+    max-width: 62px;
+    font-size: 0.95rem;
+    border-width: 3.5px;
+    border-radius: 12px;
+  }
+
+  .bj-chip-btn.clear,
+  .bj-chip-btn.double {
+    height: 48px;
+    min-width: 72px;
+    font-size: 0.88rem;
+  }
+
+  /* Action Buttons (Hit, Stand, Double, Split) */
+  .bj-actions-deck {
+    gap: 10px;
+  }
+
+  .bj-act-btn {
+    padding: 14px 12px;
+    font-size: 0.98rem;
+    border-radius: 12px;
+    gap: 6px;
+  }
+
+  .bj-act-icon {
+    font-size: 1.3rem;
+  }
+
+  .bj-act-label {
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+  }
+
+  .bj-btn-deal {
+    padding: 16px 20px;
+    font-size: 1.15rem;
+    border-radius: 14px;
+    letter-spacing: 1.5px;
+  }
+
+  /* --------------------------------------------------------------------------
+     2. PLINKO DELUXE DESKTOP ARENA
+     -------------------------------------------------------------------------- */
+  .plinko-cabinet-panel {
+    padding: 18px 22px;
+    gap: 14px;
+    border-radius: 20px;
+  }
+
+  .plinko-canvas-wrap {
+    height: 500px;
+    border-radius: 16px;
+  }
+
+  .plinko-status-sub {
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+  }
+
+  .plinko-setting-group {
+    gap: 8px;
+  }
+
+  .plinko-setting-label {
+    font-size: 0.85rem;
+  }
+
+  .plinko-risk-btn,
+  .plinko-rows-btn {
+    padding: 9px 18px;
+    font-size: 0.88rem;
+  }
+
+  .plinko-bet-box {
+    height: 48px;
+    min-width: 180px;
+  }
+
+  .plinko-bet-amount {
+    font-size: 1.2rem;
+  }
+
+  .plinko-step-btn {
+    width: 46px;
+    font-size: 1.35rem;
+  }
+
+  .plinko-chip-btn {
+    height: 42px;
+    min-width: 48px;
+    font-size: 0.88rem;
+  }
+
+  .btn-plinko-drop {
+    height: 54px;
+    font-size: 1.15rem;
+    border-radius: 14px;
+  }
+
+  .btn-plinko-auto {
+    height: 54px;
+    font-size: 0.95rem;
+    border-radius: 14px;
+  }
+
+  /* --------------------------------------------------------------------------
+     3. GRAND CRASH (RAKETA) DESKTOP FLIGHT ARENA
+     -------------------------------------------------------------------------- */
+  .crash-cabinet-panel {
+    padding: 18px 22px;
+    gap: 14px;
+    border-radius: 20px;
+  }
+
+  .crash-canvas-wrap {
+    height: 420px;
+    border-radius: 16px;
+  }
+
+  .crash-multiplier-val {
+    font-size: 5rem;
+  }
+
+  .crash-status-sub {
+    font-size: 1.15rem;
+    letter-spacing: 1.5px;
+  }
+
+  .crash-bet-box {
+    height: 48px;
+    min-width: 180px;
+  }
+
+  .crash-bet-amount {
+    font-size: 1.2rem;
+  }
+
+  .crash-step-btn {
+    width: 46px;
+    font-size: 1.35rem;
+  }
+
+  .crash-chip-btn {
+    height: 42px;
+    min-width: 48px;
+    font-size: 0.9rem;
+  }
+
+  .btn-crash-action {
+    padding: 18px 24px;
+    font-size: 1.25rem;
+    border-radius: 14px;
+  }
+
+  .crash-action-title {
+    font-size: 1.15rem;
+  }
+
+  .crash-action-sub {
+    font-size: 0.95rem;
+  }
+
+  .crash-auto-row {
+    padding: 10px 16px;
+    border-radius: 12px;
+  }
+
+  .crash-preset-btn {
+    padding: 6px 14px;
+    font-size: 0.88rem;
+  }
+}
+
+/* Large Desktop Monitors (1024px and up: 1080p, 1440p, 4K) */
+@media (min-width: 1024px) {
+  .game-container {
+    max-width: 860px;
+  }
+
+  .game-container.in-blackjack-mode {
+    max-width: 1080px;
+  }
+
+  .game-container.in-crash-mode {
+    max-width: 1040px;
+  }
+
+  .game-container.in-plinko-mode {
+    max-width: 940px;
+  }
+
+  .brand-logo-wrap {
+    max-width: 320px;
+  }
+  .main-brand-logo {
+    max-height: 68px;
+  }
+
+  /* 1. Blackjack Large Desktop */
+  .blackjack-table {
+    min-height: 540px;
+    padding: 24px 32px;
+    border-radius: 24px;
+  }
+
+  .bj-card {
+    width: 90px;
+    height: 132px;
+    margin-left: -32px;
+  }
+
+  .bj-card-rank {
+    font-size: 1.25rem;
+  }
+
+  .bj-card-suit-mini {
+    font-size: 0.95rem;
+  }
+
+  .bj-card-emblem {
+    font-size: 2.1rem;
+  }
+
+  .bj-card-back-flower {
+    width: 52px;
+    height: 52px;
+  }
+
+  .bj-chip-btn {
+    height: 54px;
+    max-width: 70px;
+    font-size: 1.05rem;
+  }
+
+  .bj-chip-btn.clear,
+  .bj-chip-btn.double {
+    height: 54px;
+    min-width: 82px;
+    font-size: 0.95rem;
+  }
+
+  .bj-act-btn {
+    padding: 16px 18px;
+    font-size: 1.08rem;
+  }
+
+  .bj-act-icon {
+    font-size: 1.45rem;
+  }
+
+  .bj-act-label {
+    font-size: 0.82rem;
+  }
+
+  .bj-btn-deal {
+    padding: 18px 28px;
+    font-size: 1.25rem;
+  }
+
+  /* 2. Plinko Large Desktop */
+  .plinko-canvas-wrap {
+    height: 580px;
+    border-radius: 18px;
+  }
+
+  .plinko-risk-btn,
+  .plinko-rows-btn {
+    padding: 11px 22px;
+    font-size: 0.92rem;
+  }
+
+  .btn-plinko-drop {
+    height: 60px;
+    font-size: 1.25rem;
+  }
+
+  /* 3. Crash Large Desktop */
+  .crash-canvas-wrap {
+    height: 480px;
+    border-radius: 18px;
+  }
+
+  .crash-multiplier-val {
+    font-size: 6.2rem;
+  }
+
+  .btn-crash-action {
+    padding: 22px 30px;
+  }
+
+  .crash-action-title {
+    font-size: 1.3rem;
+  }
 }
 
 
