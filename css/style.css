@@ -6672,15 +6672,24 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   width: 100%;
 }
 
-.bj-card-back-logo {
-  width: 26px;
-  height: 26px;
+.bj-card-back-flower {
+  width: 24px;
+  height: 24px;
   object-fit: contain;
-  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.75));
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.85));
+  pointer-events: none;
+}
+
+.bj-card-back-logo-img {
+  width: 42px;
+  height: auto;
+  max-height: 12px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.8));
   pointer-events: none;
 }
 
@@ -7037,6 +7046,17 @@ body {
   }
   .bj-card-emblem {
     font-size: 1.1rem;
+  }
+  .bj-card-back-flower {
+    width: 20px;
+    height: 20px;
+  }
+  .bj-card-back-logo-img {
+    width: 36px;
+    max-height: 10px;
+  }
+  .bj-card-back-title {
+    font-size: 0.32rem;
   }
   .bj-act-label {
     font-size: 0.55rem;

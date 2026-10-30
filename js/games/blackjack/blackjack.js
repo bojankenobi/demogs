@@ -505,8 +505,9 @@ class RoyalBlackjackGame {
         <div class="bj-card-back">
           <div class="bj-card-back-pattern">
             <div class="bj-card-back-brand-wrap">
-              <img src="assets/symbols/logo-flower.svg" alt="GrandSlot" class="bj-card-back-logo">
-              <span class="bj-card-back-title">GRANDSLOT</span>
+              <img src="assets/symbols/logo-flower.svg" alt="GrandSlot Emblem" class="bj-card-back-flower">
+              <img src="assets/logo.svg" alt="GrandSlot Logo" class="bj-card-back-logo-img">
+              <span class="bj-card-back-title">GRAND SLOT</span>
             </div>
           </div>
         </div>
