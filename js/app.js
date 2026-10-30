@@ -828,6 +828,12 @@ class IGTApp {
       container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode');
     }
 
+    // Ensure no residual multiplayer overlays bleed into Casino or Trezor
+    const freezeOverlay = document.getElementById('reel-frozen-overlay');
+    if (freezeOverlay && freezeOverlay.parentNode) freezeOverlay.parentNode.removeChild(freezeOverlay);
+    const smokeOverlay = document.getElementById('smoke-screen-overlay');
+    if (smokeOverlay && smokeOverlay.parentNode) smokeOverlay.parentNode.removeChild(smokeOverlay);
+
     this.updateSpinButtonState();
   }
 

@@ -252,6 +252,30 @@ if (royale.attacks.freeze) {
   console.log('   Executed PvP Freeze attack successfully.');
 }
 
+// Test Battle Royale Forfeit & Rollback + Effect Cleanup
+const startBal = mockWallet.balance;
+royale.mount();
+// Simulate player gaining coins during Royale match
+mockWallet.balance += 350;
+// Trigger freeze overlay
+royale.triggerFreezeEffect();
+if (!royale.isFrozen) {
+  throw new Error('Battle Royale freeze effect should be active!');
+}
+// Forfeit match
+royale.forfeitMatch();
+if (mockWallet.balance !== startBal) {
+  throw new Error(`Battle Royale forfeit rollback failed! Expected ${startBal} but got ${mockWallet.balance}`);
+}
+if (royale.isFrozen || royale.hasSmoke) {
+  throw new Error('Battle Royale effects were not cleaned up on forfeit!');
+}
+const lingeringFreeze = global.document.getElementById('reel-frozen-overlay');
+if (lingeringFreeze && lingeringFreeze.parentNode) {
+  throw new Error('Freeze overlay lingered in DOM after forfeit!');
+}
+console.log('   Battle Royale forfeit & rollback test PASSED: Balance restored to', mockWallet.balance, 'and all effects purged.');
+
 // Clean up
 crawler.unmount();
 royale.unmount();

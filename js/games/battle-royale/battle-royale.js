@@ -15,6 +15,11 @@ class SlotBattleRoyale {
     this.timeLeft = 120;
     this.timerInterval = null;
     this.botInterval = null;
+    this.activeTimeouts = [];
+
+    // Balance snapshot for forfeit / surrender protection
+    this.initialBalance = null;
+    this.isMatchCompleted = false;
 
     this.playerScore = 0;
     this.playerRank = 1;
@@ -80,7 +85,27 @@ class SlotBattleRoyale {
 
     const btnExitArena = document.getElementById('btn-exit-royale-round');
     if (btnExitArena) {
-      btnExitArena.addEventListener('click', () => this.endMatch(false));
+      btnExitArena.addEventListener('click', () => {
+        if (confirm('Da li ste sigurni da želite da odustanete od Battle Royale arene?\nSvi zlatnici osvojeni u ovom meču biće poništeni i biće vam vraćeno početno stanje.')) {
+          this.forfeitMatch();
+        }
+      });
+    }
+  }
+
+  scheduleTimeout(fn, delay) {
+    const tid = setTimeout(() => {
+      this.activeTimeouts = this.activeTimeouts.filter(id => id !== tid);
+      fn();
+    }, delay);
+    this.activeTimeouts.push(tid);
+    return tid;
+  }
+
+  clearTimeouts() {
+    if (this.activeTimeouts && this.activeTimeouts.length > 0) {
+      this.activeTimeouts.forEach(tid => clearTimeout(tid));
+      this.activeTimeouts = [];
     }
   }
 
@@ -89,6 +114,12 @@ class SlotBattleRoyale {
     if (this.stageView) this.stageView.style.display = 'flex';
     if (this.slotStage) this.slotStage.style.display = 'block';
 
+    // Snapshot player balance upon entering Battle Royale arena
+    if (this.wallet && typeof this.wallet.balance === 'number') {
+      this.initialBalance = this.wallet.balance;
+    }
+    this.isMatchCompleted = false;
+
     if (!this.timerInterval) {
       this.startMatch();
     }
@@ -96,12 +127,81 @@ class SlotBattleRoyale {
 
   unmount() {
     this.isActive = false;
-    if (this.stageView) this.stageView.style.display = 'none';
+
+    // If player leaves or navigates away before match completes legitimately, forfeit and rollback balance!
+    if (!this.isMatchCompleted && typeof this.initialBalance === 'number' && this.wallet) {
+      this.wallet.balance = this.initialBalance;
+      if (typeof this.wallet.updateUI === 'function') this.wallet.updateUI();
+      if (typeof this.wallet.save === 'function') this.wallet.save();
+      if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
+        window.slotNotifications.show(`🏳️ NAPUŠTENA ARENA: Zlatnici su vraćeni na pređašnje stanje (${this.initialBalance} ZLT).`, 'info');
+      }
+    }
+
+    this.cleanUpEffects();
+    this.initialBalance = null;
+  }
+
+  forfeitMatch() {
+    // 1. Rollback any coins gained or spent during Battle Royale to pre-match balance
+    if (this.wallet && typeof this.initialBalance === 'number') {
+      this.wallet.balance = this.initialBalance;
+      if (typeof this.wallet.updateUI === 'function') this.wallet.updateUI();
+      if (typeof this.wallet.save === 'function') this.wallet.save();
+    }
+
+    this.isMatchCompleted = true; // Mark as handled so unmount doesn't duplicate rollback
+    this.cleanUpEffects();
+
+    if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
+      window.slotNotifications.show(`🏳️ ODUSTALI STE OD ARENE: Vraćeno pređašnje stanje (${this.initialBalance} ZLT).`, 'info');
+    }
+
+    // 2. Return cleanly to Casino Salon mode
+    if (window.slotApp && typeof window.slotApp.switchGrandMode === 'function') {
+      const tabs = document.querySelectorAll('.hub-mode-tab');
+      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-mode') === 'casino'));
+      window.slotApp.switchGrandMode('casino');
+    }
+  }
+
+  cleanUpEffects() {
     this.clearTimers();
+    this.clearTimeouts();
+
+    this.isFrozen = false;
+    this.hasSmoke = false;
+    this.isEliminated = false;
+
+    // Purge any freeze overlay from slot stage so it NEVER bleeds into casino or vault
+    const freezeOverlay = document.getElementById('reel-frozen-overlay');
+    if (freezeOverlay && freezeOverlay.parentNode) {
+      freezeOverlay.parentNode.removeChild(freezeOverlay);
+    }
+
+    // Purge any smoke overlay from slot stage
+    const smokeOverlay = document.getElementById('smoke-screen-overlay');
+    if (smokeOverlay && smokeOverlay.parentNode) {
+      smokeOverlay.parentNode.removeChild(smokeOverlay);
+    }
+
+    // Reset zone banner
+    if (this.zoneBannerEl) {
+      this.zoneBannerEl.classList.remove('shrinking');
+      this.zoneBannerEl.textContent = '⚠️ SIGURNA ZONA JE OTVORENA • SVI IGRAČI SU AKTIVNI';
+    }
+
+    // Hide Battle Royale stage view
+    if (this.stageView) {
+      this.stageView.style.display = 'none';
+    }
+
+    this.resetAttacks();
   }
 
   startMatch() {
     this.clearTimers();
+    this.clearTimeouts();
 
     this.timeLeft = this.matchDuration;
     this.playerScore = 0;
@@ -109,6 +209,12 @@ class SlotBattleRoyale {
     this.isEliminated = false;
     this.isFrozen = false;
     this.hasSmoke = false;
+    this.isMatchCompleted = false;
+
+    // Snapshot initial balance for this round if not already set
+    if (this.initialBalance === null && this.wallet && typeof this.wallet.balance === 'number') {
+      this.initialBalance = this.wallet.balance;
+    }
 
     // Reset competitors
     this.competitors.forEach(c => {
@@ -227,7 +333,7 @@ class SlotBattleRoyale {
       this.slotStage.appendChild(overlay);
     }
 
-    setTimeout(() => {
+    this.scheduleTimeout(() => {
       this.isFrozen = false;
       if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }, 3000);
@@ -302,7 +408,7 @@ class SlotBattleRoyale {
     if (this.zoneBannerEl) {
       this.zoneBannerEl.textContent = msg;
       this.zoneBannerEl.classList.add('shrinking');
-      setTimeout(() => {
+      this.scheduleTimeout(() => {
         if (this.zoneBannerEl) this.zoneBannerEl.classList.remove('shrinking');
       }, 4000);
     }
@@ -415,8 +521,10 @@ class SlotBattleRoyale {
 
   endMatch(completed = true) {
     this.clearTimers();
+    this.clearTimeouts();
 
     if (completed && !this.isEliminated) {
+      this.isMatchCompleted = true;
       this.calculateRankings();
 
       if (this.playerRank === 1) {
@@ -440,6 +548,8 @@ class SlotBattleRoyale {
       } else {
         alert(`Kraj meča! Završili ste na #${this.playerRank} mestu sa ${this.playerScore} poena. Sledeća runda počinje uskoro!`);
       }
+    } else {
+      this.forfeitMatch();
     }
   }
 

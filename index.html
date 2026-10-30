@@ -23,15 +23,15 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=97">
-  <link rel="stylesheet" href="css/grand-hub.css?v=97">
+  <link rel="stylesheet" href="css/style.css?v=98">
+  <link rel="stylesheet" href="css/grand-hub.css?v=98">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v17') caches.delete(k);
+          if (k !== 'grandslot-v18') caches.delete(k);
         });
       });
     }
@@ -342,8 +342,9 @@
             <span class="rbtn-txt-full">⚔️ Započni Novu 120s Rundu</span>
             <span class="rbtn-txt-short">⚔️ Nova Runda</span>
           </button>
-          <button type="button" class="btn-vault-action" id="btn-exit-royale-round" style="flex: 0.5;">
-            Izlaz
+          <button type="button" class="btn-vault-action secondary" id="btn-exit-royale-round" style="flex: 0.5;">
+            <span class="rbtn-txt-full">🏳️ Odustani</span>
+            <span class="rbtn-txt-short">🏳️ Odustani</span>
           </button>
         </div>
       </div>
@@ -2300,7 +2301,7 @@
   <script src="js/lib/peerjs.min.js"></script>
   <script src="js/lib/qrcode.min.js"></script>
   <script src="js/core/admin-bridge-v2.js?v=80"></script>
-  <script src="js/core/lobby.js?v=97"></script>
+  <script src="js/core/lobby.js?v=98"></script>
 
   <!-- Game Modules -->
   <script src="js/games/classic/symbols.js?v=75"></script>
@@ -2310,12 +2311,12 @@
   <script src="js/games/mines/mines.js?v=75"></script>
   <script src="js/games/mines/mini-mines.js?v=75"></script>
   <script src="js/games/vault-crawler/vault-crawler.js?v=88"></script>
-  <script src="js/games/battle-royale/battle-royale.js?v=88"></script>
+  <script src="js/games/battle-royale/battle-royale.js?v=98"></script>
   <script src="js/games/crash/crash.js?v=97"></script>
   <script src="js/games/plinko/plinko.js?v=97"></script>
   <script src="js/games/blackjack/blackjack.js?v=97"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=97"></script>
+  <script src="js/app.js?v=98"></script>
 </body>
 </html>
