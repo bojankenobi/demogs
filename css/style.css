@@ -6337,7 +6337,7 @@ body {
 
 .blackjack-rules-inscription {
   position: absolute;
-  top: 36%;
+  top: 32%;
   left: 0;
   width: 100%;
   text-align: center;
@@ -6349,11 +6349,35 @@ body {
   z-index: 1;
 }
 
+.bj-felt-brand-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 2px;
+  opacity: 0.9;
+}
+
+.bj-felt-logo {
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.7));
+}
+
+.bj-felt-brand-name {
+  font-family: var(--font-title);
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #ffd700;
+  letter-spacing: 2px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
 .bj-rule-gold {
   font-family: var(--font-title);
   font-size: 0.72rem;
   font-weight: 800;
-  color: rgba(251, 191, 36, 0.8);
+  color: rgba(251, 191, 36, 0.85);
   letter-spacing: 1.5px;
   text-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
@@ -6619,30 +6643,56 @@ body {
   pointer-events: none;
 }
 
-/* Card Back */
+/* Card Back with Official GrandSlot Brand Emblem */
 .bj-card-back {
-  background: radial-gradient(circle at 50% 50%, #1e293b 0%, #090e1a 100%);
+  background: radial-gradient(circle at 50% 50%, #151d2f 0%, #060911 100%);
   border: 1.5px solid #d4af37;
   transform: rotateY(180deg);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.9);
 }
 
 .bj-card-back-pattern {
-  width: 84%;
+  width: 86%;
   height: 88%;
-  border: 1px dashed rgba(212, 175, 55, 0.45);
+  border: 1px dashed rgba(212, 175, 55, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 3px;
-  background: repeating-linear-gradient(45deg, rgba(212,175,55,0.06), rgba(212,175,55,0.06) 3px, transparent 3px, transparent 6px);
+  border-radius: 4px;
+  background: repeating-linear-gradient(45deg, rgba(212, 175, 55, 0.07), rgba(212, 175, 55, 0.07) 3px, transparent 3px, transparent 6px);
+  position: relative;
+  overflow: hidden;
 }
 
-.bj-card-back-crest {
-  font-size: 1.1rem;
-  filter: drop-shadow(0 0 4px #fbbf24);
+.bj-card-back-brand-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+}
+
+.bj-card-back-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.75));
+  pointer-events: none;
+}
+
+.bj-card-back-title {
+  font-family: 'Cinzel', 'Trajan Pro', serif;
+  font-size: 0.38rem;
+  font-weight: 900;
+  color: #ffd700;
+  letter-spacing: 1.2px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
+  line-height: 1;
+  pointer-events: none;
 }
 
 /* Control Deck */

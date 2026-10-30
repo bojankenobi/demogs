@@ -87,6 +87,19 @@ class CasinoLobby {
   switchGame(gameId) {
     if (this.activeGameId === gameId) return;
 
+    // If switching to a standalone non-slot game while in Trezor or Battle Royale, automatically return to Casino Salon!
+    if (['crash', 'plinko', 'blackjack', 'mines'].includes(gameId)) {
+      const container = document.querySelector('.game-container');
+      if (container && (container.classList.contains('in-vault-mode') || container.classList.contains('in-royale-mode'))) {
+        const tabs = document.querySelectorAll('.hub-mode-tab');
+        tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-mode') === 'casino'));
+        if (window.slotApp && typeof window.slotApp.switchGrandMode === 'function') {
+          window.slotApp.savedCasinoGameId = null;
+          window.slotApp.switchGrandMode('casino');
+        }
+      }
+    }
+
     if (this.activeGame && this.activeGame.isSpinning) {
       if (typeof this.activeGame.forceExit === 'function') {
         this.activeGame.forceExit();

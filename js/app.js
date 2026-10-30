@@ -339,23 +339,72 @@ class IGTApp {
   switchGrandMode(mode) {
     if (window.slotAudio) window.slotAudio.playClick();
     const container = document.querySelector('.game-container');
-    if (container) {
-      container.classList.toggle('in-vault-mode', mode === 'vault');
-      container.classList.toggle('in-royale-mode', mode === 'royale');
-    }
 
-    if (mode === 'vault') {
-      if (this.battleRoyale) this.battleRoyale.unmount();
-      if (this.vaultCrawler) this.vaultCrawler.mount();
-    } else if (mode === 'royale') {
-      if (this.vaultCrawler) this.vaultCrawler.unmount();
-      if (this.battleRoyale) this.battleRoyale.mount();
+    const standaloneGameIds = ['crash', 'plinko', 'blackjack', 'mines'];
+    const standaloneViews = [
+      'crash-game-view',
+      'plinko-game-view',
+      'blackjack-game-view',
+      'mines-game-view'
+    ];
+
+    if (mode === 'vault' || mode === 'royale') {
+      // If we are currently on a non-slot standalone game, unmount it & remember it
+      if (this.lobby && standaloneGameIds.includes(this.lobby.activeGameId)) {
+        this.savedCasinoGameId = this.lobby.activeGameId;
+        if (this.lobby.activeGame && typeof this.lobby.activeGame.unmount === 'function') {
+          this.lobby.activeGame.unmount();
+        }
+        // Switch lobby to royal3x3 slot so reel spins attack the vault boss / score points!
+        this.lobby.switchGame('royal3x3');
+      }
+
+      // Hide all standalone views
+      standaloneViews.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+
+      if (container) {
+        container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode');
+        container.classList.toggle('in-vault-mode', mode === 'vault');
+        container.classList.toggle('in-royale-mode', mode === 'royale');
+      }
+
+      // Ensure slot UI is visible and properly scaled for Trezor / Royale combat
+      const stage = document.querySelector('.slot-stage-scaler');
+      if (stage) stage.style.display = 'flex';
+      const controlsPanel = document.querySelector('.controls-panel');
+      if (controlsPanel) controlsPanel.style.display = 'flex';
+      const bannerWrap = document.querySelector('.status-banner-wrap');
+      if (bannerWrap) bannerWrap.style.display = 'block';
+
+      if (mode === 'vault') {
+        if (this.battleRoyale) this.battleRoyale.unmount();
+        if (this.vaultCrawler) this.vaultCrawler.mount();
+      } else {
+        if (this.vaultCrawler) this.vaultCrawler.unmount();
+        if (this.battleRoyale) this.battleRoyale.mount();
+      }
     } else {
       // Regular Casino Salon
       if (this.vaultCrawler) this.vaultCrawler.unmount();
       if (this.battleRoyale) this.battleRoyale.unmount();
-      const stage = document.querySelector('.slot-stage-scaler');
-      if (stage) stage.style.display = 'block';
+
+      if (container) {
+        container.classList.remove('in-vault-mode', 'in-royale-mode');
+      }
+
+      // If user came to Trezor from Crash, Plinko, Blackjack or Mines, restore that game!
+      if (this.savedCasinoGameId) {
+        const restoreId = this.savedCasinoGameId;
+        this.savedCasinoGameId = null;
+        this.lobby.switchGame(restoreId);
+      } else if (this.lobby && standaloneGameIds.includes(this.lobby.activeGameId)) {
+        this.lobby.activeGame.mount();
+      } else {
+        this.restoreSlotUI();
+      }
     }
 
     if (typeof window.updateSlotScale === 'function') {
@@ -763,12 +812,20 @@ class IGTApp {
     const bannerWrap = document.querySelector('.status-banner-wrap');
     if (bannerWrap) bannerWrap.style.display = 'block';
 
+    const standaloneViews = [
+      'crash-game-view',
+      'plinko-game-view',
+      'blackjack-game-view',
+      'mines-game-view'
+    ];
+    standaloneViews.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+
     const container = document.querySelector('.game-container');
     if (container) {
-      container.classList.remove('in-mines-mode');
-      container.classList.remove('in-crash-mode');
-      container.classList.remove('in-plinko-mode');
-      container.classList.remove('in-blackjack-mode');
+      container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode');
     }
 
     this.updateSpinButtonState();

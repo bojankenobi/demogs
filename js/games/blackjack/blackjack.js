@@ -1,10 +1,13 @@
 /**
- * Grand Royal Blackjack (21 Royale)
+ * Grand Royal Blackjack (21 Royale) - Official Brand Edition
  * Features:
- * - Luxury Dark Slate & Emerald Velvet Felt Casino Aesthetic
+ * - Luxury Dark Slate & Emerald Velvet Felt Table with GrandSlot Brand Crest
+ * - Custom Playing Cards with GrandSlot Golden Flower Emblem & Typography on Card Back
  * - 6-Deck Shoe with Real-Time Penetration & Automatic Reshuffle
  * - Casino Las Vegas Strip Rules: Dealer stands on 17, Blackjack pays 3:2
  * - Complete Action Deck: Hit, Stand, Double Down, Split, Insurance
+ * - Additive Chip Stacking (10, 20, 50, 100, 500, 2X, Clear)
+ * - Dealer Peek on 10 and Ace with Proper Natural Blackjack Protection
  * - 3D Card Dealing, Smooth Flipping & Hole Card Reveal Animations
  * - Real-Time Dynamic Hand Score Badges (Soft/Hard Totals)
  * - Acoustic Card Slide & Chip Sound Effects via Web Audio API
@@ -41,7 +44,7 @@ class RoyalBlackjackGame {
 
     // Player can have 1 or 2 hands (if Split)
     this.playerHands = [
-      { cards: [], bet: 20, isBust: false, isStand: false, isBlackjack: false, isDouble: false, result: null }
+      { cards: [], bet: 20, isBust: false, isStand: false, isBlackjack: false, isDouble: false, isFromSplit: false, result: null }
     ];
     this.activeHandIndex = 0;
 
@@ -49,7 +52,7 @@ class RoyalBlackjackGame {
     this.insuranceBet = 0;
     this.hasInsurance = false;
 
-    // Web Audio Synthesizer
+    // Web Audio Synthesizer & Timers
     this.audioCtx = null;
     this.activeTimers = [];
 
@@ -253,12 +256,14 @@ class RoyalBlackjackGame {
       });
     }
 
+    // Additive Chip Stacking
     if (this.chipBtns) {
       this.chipBtns.forEach(btn => {
         btn.addEventListener('click', () => {
           const amt = parseInt(btn.getAttribute('data-amt'), 10);
           if (!isNaN(amt)) {
-            this.currentBet = amt;
+            // Additive stacking up to max 2000
+            this.currentBet = Math.min(2000, this.currentBet + amt);
             this.updateBetDisplay();
             this.playChipSound();
           }
@@ -356,10 +361,11 @@ class RoyalBlackjackGame {
      Round Flow: Dealing, Turns & Payouts
      ========================================================================== */
   resetTable() {
+    this.clearAllTimers();
     this.dealerCards = [];
     this.dealerHoleCardRevealed = false;
     this.playerHands = [
-      { cards: [], bet: this.currentBet, isBust: false, isStand: false, isBlackjack: false, isDouble: false, result: null }
+      { cards: [], bet: this.currentBet, isBust: false, isStand: false, isBlackjack: false, isDouble: false, isFromSplit: false, result: null }
     ];
     this.activeHandIndex = 0;
     this.hasInsurance = false;
@@ -407,7 +413,10 @@ class RoyalBlackjackGame {
       success = true;
     }
 
-    if (!success) return;
+    if (!success) {
+      this.setMessage('NEDOVOLJNO KREDITA ZA OPKLADU!', 'error');
+      return;
+    }
 
     this.lastBet = this.currentBet;
     this.resetTable();
@@ -420,13 +429,7 @@ class RoyalBlackjackGame {
       this.handBetBadges[0].style.display = 'inline-flex';
     }
 
-    // Deal sequence with natural timing:
-    // 1. Player Card 1 (0ms)
-    // 2. Dealer Card 1 (300ms)
-    // 3. Player Card 2 (600ms)
-    // 4. Dealer Hole Card (900ms)
-    // 5. Check Initial State (1200ms)
-
+    // Deal sequence: Player 1 -> Dealer 1 -> Player 2 -> Dealer Hole
     this.schedule(() => {
       this.dealCardToPlayer(0);
       this.playCardDealSound();
@@ -443,7 +446,7 @@ class RoyalBlackjackGame {
     }, 800);
 
     this.schedule(() => {
-      this.dealCardToDealer(true); // Hole card face down
+      this.dealCardToDealer(true); // Hole card face down with GrandSlot brand back
       this.playCardDealSound();
     }, 1150);
 
@@ -467,6 +470,9 @@ class RoyalBlackjackGame {
     this.updateDealerScore();
   }
 
+  /* ==========================================================================
+     Card Rendering: Authentic GrandSlot Brand on Card Back
+     ========================================================================== */
   renderCard(card, containerEl, isHole = false) {
     if (!containerEl) return;
 
@@ -498,7 +504,10 @@ class RoyalBlackjackGame {
         </div>
         <div class="bj-card-back">
           <div class="bj-card-back-pattern">
-            <span class="bj-card-back-crest">👑</span>
+            <div class="bj-card-back-brand-wrap">
+              <img src="assets/symbols/logo-flower.svg" alt="GrandSlot" class="bj-card-back-logo">
+              <span class="bj-card-back-title">GRANDSLOT</span>
+            </div>
           </div>
         </div>
       </div>
@@ -509,12 +518,14 @@ class RoyalBlackjackGame {
 
   updatePlayerScore(handIndex) {
     const hand = this.playerHands[handIndex];
+    if (!hand) return;
+
     const score = this.calculateHandScore(hand.cards);
     const scoreEl = this.playerScoreEls[handIndex];
 
     if (scoreEl) {
       scoreEl.style.display = 'inline-block';
-      if (score.isBlackjack) {
+      if (score.isBlackjack && !hand.isFromSplit) {
         scoreEl.innerHTML = `<span style="color:#fbbf24;font-weight:900;">BJ 21</span>`;
       } else if (score.isSoft && score.total < 21) {
         scoreEl.textContent = `${score.total - 10}/${score.total}`;
@@ -549,20 +560,20 @@ class RoyalBlackjackGame {
     const playerScore = this.calculateHandScore(playerHand.cards);
     const dealerUpcard = this.dealerCards[0];
 
-    // Check for Insurance offer if dealer shows Ace
+    // 1. Check for Insurance offer if dealer shows Ace
     if (dealerUpcard.rank === 'A' && !playerScore.isBlackjack) {
       this.promptInsurance();
       return;
     }
 
-    // Natural Blackjack Check
+    // 2. Natural Blackjack Check for Player
     if (playerScore.isBlackjack) {
       playerHand.isBlackjack = true;
       this.revealDealerHoleCard();
       const dealerScore = this.calculateHandScore(this.dealerCards);
 
       if (dealerScore.isBlackjack) {
-        // Push
+        // Both natural Blackjack -> Push
         this.resolveRound();
       } else {
         // Player Natural Blackjack wins 3:2
@@ -571,7 +582,21 @@ class RoyalBlackjackGame {
       return;
     }
 
-    // Standard Player Turn Begins
+    // 3. Dealer Peek on 10 or Ace
+    if (['10', 'J', 'Q', 'K'].includes(dealerUpcard.rank)) {
+      const dealerScore = this.calculateHandScore(this.dealerCards);
+      if (dealerScore.isBlackjack) {
+        // Dealer has Blackjack immediately -> reveal and end round
+        this.revealDealerHoleCard();
+        this.setMessage('DILER IMA BLACKJACK! GUBITAK.', 'error');
+        this.schedule(() => {
+          this.resolveRound();
+        }, 1000);
+        return;
+      }
+    }
+
+    // 4. Standard Player Turn Begins
     this.startPlayerTurn();
   }
 
@@ -593,9 +618,24 @@ class RoyalBlackjackGame {
     });
   }
 
+  /* ==========================================================================
+     Action Buttons State Machine (Always Safe & Re-enabled)
+     ========================================================================== */
   updateActionButtons() {
     const hand = this.playerHands[this.activeHandIndex];
+    if (!hand) return;
+
     const canAfford = this.wallet && this.wallet.balance >= hand.bet;
+
+    // Hit & Stand: ALWAYS available during player turn
+    if (this.btnHit) {
+      this.btnHit.disabled = false;
+      this.btnHit.style.opacity = '1';
+    }
+    if (this.btnStand) {
+      this.btnStand.disabled = false;
+      this.btnStand.style.opacity = '1';
+    }
 
     // Double Down: available only on 2 initial cards of hand
     const canDouble = hand.cards.length === 2 && canAfford && !hand.isDouble;
@@ -617,6 +657,25 @@ class RoyalBlackjackGame {
     }
   }
 
+  disableActionButtons() {
+    if (this.btnHit) {
+      this.btnHit.disabled = true;
+      this.btnHit.style.opacity = '0.4';
+    }
+    if (this.btnStand) {
+      this.btnStand.disabled = true;
+      this.btnStand.style.opacity = '0.4';
+    }
+    if (this.btnDouble) {
+      this.btnDouble.disabled = true;
+      this.btnDouble.style.opacity = '0.4';
+    }
+    if (this.btnSplit) {
+      this.btnSplit.disabled = true;
+      this.btnSplit.style.opacity = '0.4';
+    }
+  }
+
   /* ==========================================================================
      Player Actions: Hit, Stand, Double, Split, Insurance
      ========================================================================== */
@@ -634,12 +693,12 @@ class RoyalBlackjackGame {
       this.playBustSound();
       this.setMessage(`RUKA PREBAČENA (${score.total})! GUBITAK.`, 'error');
 
-      // Disable actions temporarily
+      // Temporarily disable actions while transitioning
       this.disableActionButtons();
 
       this.schedule(() => {
         this.advanceToNextHand();
-      }, 1000);
+      }, 900);
     } else if (score.total === 21) {
       // Automatic stand on 21
       this.stand();
@@ -652,7 +711,7 @@ class RoyalBlackjackGame {
     if (this.gameState !== 'player_turn') return;
 
     const hand = this.playerHands[this.activeHandIndex];
-    hand.isStand = true;
+    if (hand) hand.isStand = true;
 
     this.playClickSound();
     this.advanceToNextHand();
@@ -662,14 +721,21 @@ class RoyalBlackjackGame {
     if (this.gameState !== 'player_turn') return;
 
     const hand = this.playerHands[this.activeHandIndex];
-    if (this.wallet.balance < hand.bet) return;
+    if (!hand || hand.cards.length !== 2) return;
 
     // Deduct additional bet
+    let success = false;
     if (typeof this.wallet.deductBet === 'function') {
-      this.wallet.deductBet(hand.bet);
-    } else {
+      success = this.wallet.deductBet(hand.bet);
+    } else if (this.wallet.balance >= hand.bet) {
       this.wallet.balance -= hand.bet;
       this.wallet.updateUI();
+      success = true;
+    }
+
+    if (!success) {
+      this.setMessage('NEDOVOLJNO KREDITA ZA DUPLIRANJE!', 'error');
+      return;
     }
 
     hand.bet *= 2;
@@ -683,7 +749,7 @@ class RoyalBlackjackGame {
     this.playChipSound();
     this.playCardDealSound();
 
-    // In Blackjack, Double Down deals exactly 1 card then forces stand
+    // Double Down deals exactly 1 card then forces stand
     this.dealCardToPlayer(this.activeHandIndex);
 
     const score = this.calculateHandScore(hand.cards);
@@ -699,27 +765,39 @@ class RoyalBlackjackGame {
 
     this.schedule(() => {
       this.advanceToNextHand();
-    }, 1100);
+    }, 1000);
   }
 
   split() {
     if (this.gameState !== 'player_turn' || this.playerHands.length > 1) return;
 
     const mainHand = this.playerHands[0];
-    if (this.wallet.balance < mainHand.bet) return;
+    if (!mainHand || mainHand.cards.length !== 2) return;
 
     // Deduct additional bet for split hand
+    let success = false;
     if (typeof this.wallet.deductBet === 'function') {
-      this.wallet.deductBet(mainHand.bet);
-    } else {
+      success = this.wallet.deductBet(mainHand.bet);
+    } else if (this.wallet.balance >= mainHand.bet) {
       this.wallet.balance -= mainHand.bet;
       this.wallet.updateUI();
+      success = true;
+    }
+
+    if (!success) {
+      this.setMessage('NEDOVOLJNO KREDITA ZA PODELU (SPLIT)!', 'error');
+      return;
     }
 
     this.playChipSound();
+    this.disableActionButtons(); // Disable during split animation
+
+    const isSplitAces = mainHand.cards[0].rank === 'A';
 
     // Create Hand 2
     const splitCard = mainHand.cards.pop();
+    mainHand.isFromSplit = true;
+
     this.playerHands.push({
       cards: [splitCard],
       bet: mainHand.bet,
@@ -727,6 +805,7 @@ class RoyalBlackjackGame {
       isStand: false,
       isBlackjack: false,
       isDouble: false,
+      isFromSplit: true,
       result: null
     });
 
@@ -743,6 +822,8 @@ class RoyalBlackjackGame {
 
     this.renderCard(mainHand.cards[0], this.playerCardsEls[0], false);
     this.renderCard(splitCard, this.playerCardsEls[1], false);
+    this.updatePlayerScore(0);
+    this.updatePlayerScore(1);
 
     // Deal 1 new card to Hand 1, then 1 new card to Hand 2
     this.schedule(() => {
@@ -753,9 +834,31 @@ class RoyalBlackjackGame {
     this.schedule(() => {
       this.dealCardToPlayer(1);
       this.playCardDealSound();
-      this.updateActiveHandHighlight();
-      this.updateActionButtons();
-      this.setMessage('RUKA JE PODELJENA (SPLIT). IGRATE PRVU RUKU.');
+
+      if (isSplitAces) {
+        // Split Aces: exactly 1 card to each, then dealer plays
+        this.playerHands[0].isStand = true;
+        this.playerHands[1].isStand = true;
+        this.setMessage('PODELJENI KECOVI: Dodeljena po jedna karta. Diler igra...');
+        this.schedule(() => {
+          this.startDealerTurn();
+        }, 900);
+      } else {
+        this.activeHandIndex = 0;
+        this.updateActiveHandHighlight();
+        this.updateActionButtons();
+
+        const h0Score = this.calculateHandScore(this.playerHands[0].cards);
+        if (h0Score.total === 21) {
+          this.playerHands[0].isStand = true;
+          this.setMessage('PRVA RUKA JE 21! Prelazak na drugu ruku...');
+          this.schedule(() => {
+            this.advanceToNextHand();
+          }, 800);
+        } else {
+          this.setMessage('RUKA JE PODELJENA (SPLIT). IGRATE PRVU RUKU.');
+        }
+      }
     }, 700);
   }
 
@@ -764,18 +867,21 @@ class RoyalBlackjackGame {
       this.activeHandIndex++;
       this.updateActiveHandHighlight();
       this.updateActionButtons();
-      this.setMessage('IGRANJE DRUGE (SPLIT) RUKE: VUCI ILI STANI');
+
+      const h1Score = this.calculateHandScore(this.playerHands[this.activeHandIndex].cards);
+      if (h1Score.total === 21) {
+        this.playerHands[this.activeHandIndex].isStand = true;
+        this.setMessage('DRUGA RUKA JE 21! Diler igra...');
+        this.schedule(() => {
+          this.startDealerTurn();
+        }, 800);
+      } else {
+        this.setMessage('IGRANJE DRUGE (SPLIT) RUKE: VUCI ILI STANI');
+      }
     } else {
       // All player hands resolved -> Dealer Turn
       this.startDealerTurn();
     }
-  }
-
-  disableActionButtons() {
-    if (this.btnHit) this.btnHit.disabled = true;
-    if (this.btnStand) this.btnStand.disabled = true;
-    if (this.btnDouble) this.btnDouble.disabled = true;
-    if (this.btnSplit) this.btnSplit.disabled = true;
   }
 
   /* ==========================================================================
@@ -793,7 +899,7 @@ class RoyalBlackjackGame {
     if (allBusted) {
       this.schedule(() => {
         this.resolveRound();
-      }, 800);
+      }, 700);
       return;
     }
 
@@ -851,7 +957,8 @@ class RoyalBlackjackGame {
       if (hand.isBust) {
         outcome = 'lose';
         handWin = 0;
-      } else if (hand.isBlackjack) {
+      } else if (hand.isBlackjack && !hand.isFromSplit) {
+        // Natural 3:2 Blackjack
         if (dealerBJ) {
           outcome = 'push';
           handWin = hand.bet; // return bet
@@ -944,15 +1051,19 @@ class RoyalBlackjackGame {
   acceptInsurance() {
     this.hideInsuranceModal();
     if (this.wallet && this.wallet.balance >= this.insuranceBet) {
+      let success = false;
       if (typeof this.wallet.deductBet === 'function') {
-        this.wallet.deductBet(this.insuranceBet);
-      } else {
+        success = this.wallet.deductBet(this.insuranceBet);
+      } else if (this.wallet.balance >= this.insuranceBet) {
         this.wallet.balance -= this.insuranceBet;
         this.wallet.updateUI();
+        success = true;
       }
-      this.hasInsurance = true;
-      this.playChipSound();
-      this.setMessage(`OSIGURANJE AKTIVIRANO (${this.insuranceBet} ZLT). PROVERA DILERA...`);
+      if (success) {
+        this.hasInsurance = true;
+        this.playChipSound();
+        this.setMessage(`OSIGURANJE AKTIVIRANO (${this.insuranceBet} ZLT). PROVERA DILERA...`);
+      }
     }
     this.evaluateDealerPeek();
   }
@@ -970,8 +1081,8 @@ class RoyalBlackjackGame {
       // Dealer has BJ!
       this.revealDealerHoleCard();
       if (this.hasInsurance) {
-        // Insurance pays 2:1
-        const insWin = this.insuranceBet * 3; // return stake + 2x
+        // Insurance pays 2:1 (return stake + 2x = 3x)
+        const insWin = this.insuranceBet * 3;
         if (this.wallet) this.wallet.addWin(insWin);
         this.setMessage(`DILER IMA BLACKJACK! OSIGURANJE ISPLAĆENO (+${insWin} ZLT).`, 'win');
       } else {
