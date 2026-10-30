@@ -25,7 +25,13 @@ function createMockEl(id = '', tag = 'div') {
       classes: new Set(),
       add(c) { this.classes.add(c); },
       remove(c) { this.classes.delete(c); },
-      contains(c) { return this.classes.has(c); }
+      contains(c) { return this.classes.has(c); },
+      toggle(c, force) {
+        const shouldAdd = force !== undefined ? Boolean(force) : !this.classes.has(c);
+        if (shouldAdd) this.classes.add(c);
+        else this.classes.delete(c);
+        return shouldAdd;
+      }
     },
     style: {},
     children: [],
@@ -136,13 +142,15 @@ const vaultCode = fs.readFileSync(path.join(__dirname, '../js/games/vault-crawle
 const royaleCode = fs.readFileSync(path.join(__dirname, '../js/games/battle-royale/battle-royale.js'), 'utf-8');
 const crashCode = fs.readFileSync(path.join(__dirname, '../js/games/crash/crash.js'), 'utf-8');
 const plinkoCode = fs.readFileSync(path.join(__dirname, '../js/games/plinko/plinko.js'), 'utf-8');
+const bjCode = fs.readFileSync(path.join(__dirname, '../js/games/blackjack/blackjack.js'), 'utf-8');
 
 vm.runInThisContext(vaultCode);
 vm.runInThisContext(royaleCode);
 vm.runInThisContext(crashCode);
 vm.runInThisContext(plinkoCode);
+vm.runInThisContext(bjCode);
 
-console.log('✅ Loaded VaultCrawler, SlotBattleRoyale, GrandCrashGame, and PlinkoDeluxeGame classes into execution context.');
+console.log('✅ Loaded VaultCrawler, SlotBattleRoyale, GrandCrashGame, PlinkoDeluxeGame, and RoyalBlackjackGame classes into execution context.');
 
 // Mock wallet & lobby
 const mockWallet = {
@@ -351,4 +359,84 @@ console.log(`   8-row Low-Risk pyramid built: ${plinko.bins.length} bins, Outer 
 plinko.unmount();
 console.log('   Unmounted PlinkoDeluxeGame.');
 
-console.log('✅ All Vault Crawler, Battle Royale, Grand Crash, and Plinko Deluxe tests PASSED successfully!');
+// 5. Test Grand Royal Blackjack (21 Royale)
+console.log('5. Instantiating RoyalBlackjackGame...');
+const bj = new window.RoyalBlackjackGame(mockWallet, null);
+bj.mount();
+console.log('   Mounted RoyalBlackjackGame: shoe length =', bj.shoe.length, 'state =', bj.gameState);
+
+if (bj.shoe.length !== 312) {
+  throw new Error(`Shoe initialization failed! Expected 312 cards, got ${bj.shoe.length}`);
+}
+
+// Test Hand Evaluation
+const testBJ = bj.calculateHandScore([{ rank: 'A' }, { rank: 'K' }]);
+if (testBJ.total !== 21 || !testBJ.isBlackjack) {
+  throw new Error(`Blackjack scoring failed! Total: ${testBJ.total}, isBJ: ${testBJ.isBlackjack}`);
+}
+
+const testSoftAces = bj.calculateHandScore([{ rank: 'A' }, { rank: '5' }, { rank: 'A' }]);
+if (testSoftAces.total !== 17 || !testSoftAces.isSoft) {
+  throw new Error(`Soft Ace scoring failed! Total: ${testSoftAces.total}, isSoft: ${testSoftAces.isSoft}`);
+}
+
+const testBust = bj.calculateHandScore([{ rank: '10' }, { rank: '8' }, { rank: '5' }]);
+if (testBust.total !== 23 || !testBust.isBust) {
+  throw new Error(`Bust evaluation failed! Total: ${testBust.total}, isBust: ${testBust.isBust}`);
+}
+console.log('   Hand score evaluation tests passed: BJ (21), Soft Ace (17), Bust (23).');
+
+// Test Round Deal & Bet Deduction
+bj.currentBet = 50;
+const balBeforeBJDeal = mockWallet.balance;
+bj.startDeal();
+
+if (mockWallet.balance !== balBeforeBJDeal - 50) {
+  throw new Error(`BJ bet deduction failed! Balance: ${mockWallet.balance}`);
+}
+console.log('   Blackjack deal initiated. Active bet = 50, Balance =', mockWallet.balance);
+
+// Test Round Resolution: Player 20 vs Dealer 18 (1:1 Win)
+bj.playerHands = [
+  { cards: [{ rank: '10' }, { rank: '10' }], bet: 50, isBust: false, isStand: true, isBlackjack: false, isDouble: false, result: null }
+];
+bj.dealerCards = [{ rank: '10' }, { rank: '8' }]; // 18
+const balBeforeResolve = mockWallet.balance;
+bj.resolveRound();
+
+if (mockWallet.balance !== balBeforeResolve + 100 || bj.playerHands[0].result !== 'win') {
+  throw new Error(`BJ 1:1 win resolution failed! Bal: ${mockWallet.balance}, Result: ${bj.playerHands[0].result}`);
+}
+console.log('   Round resolved (20 vs 18): Player WON 1:1 (+100 ZLT returned, +50 profit).');
+
+// Test Natural Blackjack 3:2 Resolution
+bj.playerHands = [
+  { cards: [{ rank: 'A' }, { rank: 'J' }], bet: 50, isBust: false, isStand: true, isBlackjack: true, isDouble: false, result: null }
+];
+bj.dealerCards = [{ rank: '10' }, { rank: '9' }]; // 19
+const balBeforeBJResolve = mockWallet.balance;
+bj.resolveRound();
+const expectedBJWin = Math.round(50 * 2.5); // 125
+
+if (mockWallet.balance !== balBeforeBJResolve + expectedBJWin || bj.playerHands[0].result !== 'bj') {
+  throw new Error(`Natural BJ 3:2 resolution failed! Bal: ${mockWallet.balance}, Result: ${bj.playerHands[0].result}`);
+}
+console.log(`   Natural Blackjack 3:2 payout resolved (+${expectedBJWin} ZLT returned, +75 profit).`);
+
+// Test Push (Nerešeno)
+bj.playerHands = [
+  { cards: [{ rank: '10' }, { rank: '7' }], bet: 50, isBust: false, isStand: true, isBlackjack: false, isDouble: false, result: null }
+];
+bj.dealerCards = [{ rank: '10' }, { rank: '7' }]; // 17
+const balBeforePush = mockWallet.balance;
+bj.resolveRound();
+
+if (mockWallet.balance !== balBeforePush + 50 || bj.playerHands[0].result !== 'push') {
+  throw new Error(`BJ push resolution failed! Bal: ${mockWallet.balance}`);
+}
+console.log('   Push resolution test passed: Ulog vraćen (50 ZLT).');
+
+bj.unmount();
+console.log('   Unmounted RoyalBlackjackGame.');
+
+console.log('✅ All Vault Crawler, Battle Royale, Grand Crash, Plinko Deluxe, and Royal Blackjack tests PASSED successfully!');

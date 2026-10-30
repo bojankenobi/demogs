@@ -84,6 +84,9 @@ class IGTApp {
     if (window.PlinkoDeluxeGame) {
       this.plinkoGame = new window.PlinkoDeluxeGame(this.wallet, this.jackpots);
     }
+    if (window.RoyalBlackjackGame) {
+      this.blackjackGame = new window.RoyalBlackjackGame(this.wallet, this.jackpots);
+    }
 
     // 4. Lobby
     this.lobby = new window.CasinoLobby(this.wallet, this.jackpots);
@@ -239,6 +242,46 @@ class IGTApp {
         },
         get isSpinning() { return false; },
         gameInstance: this.plinkoGame
+      });
+    }
+
+    if (this.blackjackGame) {
+      this.lobby.registerGame('blackjack', {
+        mount: () => {
+          const stage = document.querySelector('.slot-stage-scaler');
+          if (stage) stage.style.display = 'none';
+
+          const controlsPanel = document.querySelector('.controls-panel');
+          if (controlsPanel) controlsPanel.style.display = 'none';
+
+          const bannerWrap = document.querySelector('.status-banner-wrap');
+          if (bannerWrap) bannerWrap.style.display = 'none';
+
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.add('in-blackjack-mode');
+
+          if (this.isAutoSpin) this.toggleAutoSpin(false);
+
+          this.blackjackGame.mount();
+        },
+        unmount: () => {
+          this.blackjackGame.unmount();
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.remove('in-blackjack-mode');
+          this.restoreSlotUI();
+        },
+        forceExit: () => {
+          if (this.blackjackGame && typeof this.blackjackGame.forceExit === 'function') {
+            this.blackjackGame.forceExit();
+          }
+        },
+        spin: () => {
+          if (this.blackjackGame) {
+            this.blackjackGame.handleMainAction();
+          }
+        },
+        get isSpinning() { return false; },
+        gameInstance: this.blackjackGame
       });
     }
 
@@ -725,6 +768,7 @@ class IGTApp {
       container.classList.remove('in-mines-mode');
       container.classList.remove('in-crash-mode');
       container.classList.remove('in-plinko-mode');
+      container.classList.remove('in-blackjack-mode');
     }
 
     this.updateSpinButtonState();

@@ -23,15 +23,15 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=91">
-  <link rel="stylesheet" href="css/grand-hub.css?v=91">
+  <link rel="stylesheet" href="css/style.css?v=93">
+  <link rel="stylesheet" href="css/grand-hub.css?v=93">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v14') caches.delete(k);
+          if (k !== 'grandslot-v15') caches.delete(k);
         });
       });
     }
@@ -669,6 +669,144 @@
         </div>
       </div>
 
+      <!-- Standalone Grand Royal Blackjack (21 Royale) Game View -->
+      <div class="blackjack-stage-view" id="blackjack-game-view" style="display: none;">
+        <div class="blackjack-cabinet-panel">
+          <!-- Luxury Emerald Velvet Felt Table Surface -->
+          <div class="blackjack-table">
+            <!-- Felt Table Border & Inscription -->
+            <div class="blackjack-felt-ring"></div>
+            <div class="blackjack-rules-inscription">
+              <span class="bj-rule-gold">BLACKJACK PAYS 3 TO 2</span>
+              <span class="bj-rule-silver">Dealer must stand on 17 and must draw to 16 • Insurance pays 2 to 1</span>
+            </div>
+
+            <!-- Dealer Hand Area -->
+            <div class="bj-hand-section bj-dealer-section">
+              <div class="bj-hand-header">
+                <span class="bj-hand-label">DILER</span>
+                <span class="bj-score-badge" id="bj-dealer-score" style="display: none;">0</span>
+              </div>
+              <div class="bj-cards-container" id="bj-dealer-cards">
+                <!-- Cards rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Center Status / Outcome Pill Banner -->
+            <div class="bj-center-message" id="bj-center-message">
+              <span class="bj-msg-text" id="bj-msg-text">POSTAVITE OPKLADU I PRITISNITE PODELI KARTE</span>
+            </div>
+
+            <!-- Player Hand Area (Supports Hand 1 and Split Hand 2) -->
+            <div class="bj-hand-section bj-player-section">
+              <div class="bj-player-hands-wrap" id="bj-player-hands-wrap">
+                <!-- Hand 1 (Main Hand) -->
+                <div class="bj-player-hand active" id="bj-player-hand-0">
+                  <div class="bj-hand-header">
+                    <span class="bj-hand-label" id="bj-hand-0-label">VAŠA RUKA</span>
+                    <span class="bj-score-badge" id="bj-player-score-0" style="display: none;">0</span>
+                  </div>
+                  <div class="bj-cards-container" id="bj-player-cards-0">
+                    <!-- Cards rendered dynamically -->
+                  </div>
+                  <div class="bj-bet-chip-badge" id="bj-hand-0-bet-badge" style="display: none;">
+                    <span class="chip-icon">🟡</span> <span id="bj-hand-0-bet-val">20</span> ZLT
+                  </div>
+                </div>
+
+                <!-- Hand 2 (Visible only if Split) -->
+                <div class="bj-player-hand" id="bj-player-hand-1" style="display: none;">
+                  <div class="bj-hand-header">
+                    <span class="bj-hand-label" id="bj-hand-1-label">SPLIT RUKA</span>
+                    <span class="bj-score-badge" id="bj-player-score-1" style="display: none;">0</span>
+                  </div>
+                  <div class="bj-cards-container" id="bj-player-cards-1">
+                    <!-- Cards rendered dynamically -->
+                  </div>
+                  <div class="bj-bet-chip-badge" id="bj-hand-1-bet-badge" style="display: none;">
+                    <span class="chip-icon">🟡</span> <span id="bj-hand-1-bet-val">20</span> ZLT
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Insurance Dialog Overlay (Appears when dealer shows Ace) -->
+            <div class="bj-insurance-overlay" id="bj-insurance-overlay" style="display: none;">
+              <div class="bj-insurance-card">
+                <div class="bj-insurance-title">🛡️ OSIGURANJE OD BLACKJACK-A?</div>
+                <div class="bj-insurance-desc">Diler pokazuje Keca. Osiguranje košta <strong id="bj-ins-cost">10</strong> ZLT i plaća 2:1.</div>
+                <div class="bj-insurance-actions">
+                  <button type="button" class="btn-bj-ins btn-bj-ins-yes" id="btn-bj-ins-yes">UZMI OSIGURANJE</button>
+                  <button type="button" class="btn-bj-ins btn-bj-ins-no" id="btn-bj-ins-no">ODBIJ</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blackjack Control Deck -->
+          <div class="blackjack-control-deck">
+            <!-- Betting Phase: Stepper, Quick Chips, Clear & Double Bet -->
+            <div class="bj-betting-controls" id="bj-betting-controls">
+              <div class="bj-bet-stepper-wrap">
+                <button type="button" class="bj-step-btn" id="bj-bet-minus">−</button>
+                <div class="bj-bet-val-box">
+                  <span class="bj-bet-subtag">ULOG</span>
+                  <span class="bj-bet-amount" id="bj-bet-val">20</span>
+                </div>
+                <button type="button" class="bj-step-btn" id="bj-bet-plus">+</button>
+              </div>
+
+              <div class="bj-chips-strip">
+                <button type="button" class="bj-chip-btn chip-10" data-amt="10">10</button>
+                <button type="button" class="bj-chip-btn chip-20" data-amt="20">20</button>
+                <button type="button" class="bj-chip-btn chip-50" data-amt="50">50</button>
+                <button type="button" class="bj-chip-btn chip-100" data-amt="100">100</button>
+                <button type="button" class="bj-chip-btn chip-500" data-amt="500">500</button>
+                <button type="button" class="bj-chip-btn chip-2x" id="bj-chip-double">2X</button>
+                <button type="button" class="bj-chip-btn chip-clear" id="bj-chip-clear">C</button>
+              </div>
+
+              <button type="button" class="btn-bj-main btn-bj-deal" id="btn-bj-deal">
+                <span class="btn-bj-icon">🃏</span>
+                <span class="btn-bj-text">PODELI KARTE</span>
+              </button>
+            </div>
+
+            <!-- Action Phase: Hit, Stand, Double Down, Split -->
+            <div class="bj-action-controls" id="bj-action-controls" style="display: none;">
+              <button type="button" class="btn-bj-action btn-bj-hit" id="btn-bj-hit">
+                <span class="bj-act-icon">➕</span>
+                <span class="bj-act-label">VUCI (HIT)</span>
+              </button>
+              <button type="button" class="btn-bj-action btn-bj-stand" id="btn-bj-stand">
+                <span class="bj-act-icon">✋</span>
+                <span class="bj-act-label">STANI (STAND)</span>
+              </button>
+              <button type="button" class="btn-bj-action btn-bj-double" id="btn-bj-double">
+                <span class="bj-act-icon">✖️2</span>
+                <span class="bj-act-label">DUPLIRAJ</span>
+              </button>
+              <button type="button" class="btn-bj-action btn-bj-split" id="btn-bj-split" disabled>
+                <span class="bj-act-icon">✂️</span>
+                <span class="bj-act-label">PODELI (SPLIT)</span>
+              </button>
+            </div>
+
+            <!-- Game Over Phase: New Deal, Rebet -->
+            <div class="bj-round-over-controls" id="bj-round-over-controls" style="display: none;">
+              <button type="button" class="btn-bj-main btn-bj-rebet" id="btn-bj-rebet">
+                <span class="btn-bj-icon">🔄</span>
+                <span class="btn-bj-text">ISTI ULOG & DELI</span>
+              </button>
+              <button type="button" class="btn-bj-main btn-bj-new" id="btn-bj-new-round">
+                <span class="btn-bj-icon">✨</span>
+                <span class="btn-bj-text">NOVA OPKLADA</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- Status Message Banner: Situated cleanly between slot machine and bet controls -->
@@ -997,6 +1135,29 @@
           <div class="egt-card-details">
             <h3 class="egt-card-title">PLINKO DELUXE</h3>
             <p class="egt-card-sub">Piramida Klinova • Podesiv Rizik • Multiplikator do 1000x</p>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">IGRAJ SADA</span>
+          </div>
+        </div>
+
+        <!-- Game 7: Royal Blackjack (21 Royale) -->
+        <div class="egt-game-card" id="egt-opt-blackjack" data-game="blackjack">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-gold">3:2 BLACKJACK</div>
+          
+          <div class="grand-card-poster poster-blackjack">
+            <div class="poster-symbols-cluster">
+              <span class="poster-card-ace">🂡</span>
+              <span class="poster-card-jack">🂫</span>
+            </div>
+            <div class="poster-specs-tag">VEGAS RULES • 3:2 • SPLIT & DOUBLE</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">ROYAL BLACKJACK</h3>
+            <p class="egt-card-sub">Vegas Strip Pravila • 3D Karte • Split, Double Down & Osiguranje</p>
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
@@ -2146,8 +2307,9 @@
   <script src="js/games/mines/mini-mines.js?v=75"></script>
   <script src="js/games/vault-crawler/vault-crawler.js?v=88"></script>
   <script src="js/games/battle-royale/battle-royale.js?v=88"></script>
-  <script src="js/games/crash/crash.js?v=92"></script>
-  <script src="js/games/plinko/plinko.js?v=92"></script>
+  <script src="js/games/crash/crash.js?v=93"></script>
+  <script src="js/games/plinko/plinko.js?v=93"></script>
+  <script src="js/games/blackjack/blackjack.js?v=93"></script>
 
   <!-- Application Controller -->
   <script src="js/app.js?v=91"></script>
