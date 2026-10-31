@@ -199,6 +199,56 @@ class AdminBridge {
         }
         break;
 
+      case 'SWITCH_GRAND_MODE':
+        if (this.app && typeof this.app.switchGrandMode === 'function' && data.mode) {
+          this.app.switchGrandMode(data.mode);
+          this.broadcastState();
+        }
+        break;
+
+      case 'TRIGGER_VAULT_EVENT':
+        if (this.app && this.app.vaultCrawler) {
+          if (data.eventType === 'add_keys') {
+            this.app.vaultCrawler.vaultKeys = (this.app.vaultCrawler.vaultKeys || 0) + (data.count || 5);
+            if (typeof this.app.vaultCrawler.saveState === 'function') this.app.vaultCrawler.saveState();
+            if (typeof this.app.vaultCrawler.updateHUD === 'function') this.app.vaultCrawler.updateHUD();
+            if (this.app.showMessage) this.app.showMessage(`🗝️ OPERATER DODELIO +${data.count || 5} ZLATNIH KLJUČEVA!`, 'win');
+          } else if (data.eventType === 'boss_fight') {
+            this.app.switchGrandMode('vault');
+            if (typeof this.app.vaultCrawler.triggerBossFight === 'function') {
+              this.app.vaultCrawler.triggerBossFight();
+            }
+          } else if (data.eventType === 'unlock_room') {
+            if (typeof this.app.vaultCrawler.onVictoryContinue === 'function') {
+              this.app.vaultCrawler.onVictoryContinue();
+            }
+          }
+          this.broadcastState();
+        }
+        break;
+
+      case 'TRIGGER_ROYALE_EVENT':
+        if (this.app && this.app.battleRoyale) {
+          if (data.eventType === 'start_urgent_match') {
+            this.app.switchGrandMode('royale');
+            if (typeof this.app.battleRoyale.startMatch === 'function') {
+              this.app.battleRoyale.startMatch();
+            }
+            if (this.app.showMessage) this.app.showMessage('🔥 VANREDNI BATTLE ROYALE MEČ POKRENUT!', 'frenzy');
+          } else if (data.eventType === 'shrink_zone') {
+            if (typeof this.app.battleRoyale.forceShrinkZone === 'function') {
+              this.app.battleRoyale.forceShrinkZone();
+            }
+          } else if (data.eventType === 'award_prizes') {
+            if (this.app.wallet) {
+              this.app.wallet.addFictionalRsd(2500);
+              if (this.app.showMessage) this.app.showMessage('🏆 OSVOJENA TURNIRSKA NAGRADA: +2.500 ZLT!', 'jackpot');
+            }
+          }
+          this.broadcastState();
+        }
+        break;
+
       case 'SET_ACTIVE_PROMO':
         if (this.app) {
           if (this.app.setActivePromotion) {

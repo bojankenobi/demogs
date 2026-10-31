@@ -326,6 +326,10 @@ class IGTApp {
     }
     this.sessionStartTime = Date.now();
     this.currentGrandMode = 'casino';
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.remove('theme-casino', 'theme-vault', 'theme-royale');
+      document.body.classList.add('theme-casino');
+    }
 
     this.initGrandModeHub();
     this.initDailyGrantAndAudit();
@@ -487,6 +491,15 @@ class IGTApp {
     });
 
     this.currentGrandMode = mode;
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.remove('theme-casino', 'theme-vault', 'theme-royale');
+      document.body.classList.add(`theme-${mode}`);
+    }
+
+    if (window.slotAudio && typeof window.slotAudio.switchProfile === 'function') {
+      window.slotAudio.switchProfile(mode);
+    }
+
     const container = document.querySelector('.game-container');
 
     const standaloneGameIds = ['crash', 'plinko', 'blackjack', 'mines'];

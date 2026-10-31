@@ -849,6 +849,202 @@ class SlotAudio {
       return true;
     }
   }
+
+  /* ==========================================================================
+     Dynamic Audio Profiler (Casino, Vault Crawler, Battle Royale)
+     ========================================================================== */
+
+  switchProfile(profile = 'casino') {
+    this.currentProfile = profile;
+    this.ensureAudio();
+    if (this.isMuted || !this.ctx) return;
+
+    if (profile === 'vault') {
+      this.stopCasinoAmbient();
+      this.playVaultDoorClank();
+    } else if (profile === 'royale') {
+      this.stopCasinoAmbient();
+      this.playRoyaleWarHorn();
+    } else {
+      this.playGoldChime();
+    }
+  }
+
+  // Golden shimmer for Casino mode
+  playGoldChime() {
+    if (this.isMuted || !this.ctx) return;
+    const now = this.ctx.currentTime;
+    const freqs = [523.25, 659.25, 783.99, 1046.50];
+    freqs.forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+
+      gain.gain.setValueAtTime(0.18, now + idx * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.35);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now + idx * 0.06);
+      osc.stop(now + idx * 0.06 + 0.35);
+    });
+  }
+
+  // Vault hydraulic release & heavy steel latch
+  playVaultDoorClank() {
+    if (this.isMuted || !this.ctx) return;
+    const now = this.ctx.currentTime;
+
+    // 1. Low sub-bass thump
+    const subOsc = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
+    subOsc.type = 'sine';
+    subOsc.frequency.setValueAtTime(140, now);
+    subOsc.frequency.exponentialRampToValueAtTime(35, now + 0.3);
+
+    subGain.gain.setValueAtTime(0.4, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+    subOsc.connect(subGain);
+    subGain.connect(this.ctx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.35);
+
+    // 2. Metallic clank & ratchet
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        if (!this.ctx || this.isMuted) return;
+        const clank = this.ctx.createOscillator();
+        const clankGain = this.ctx.createGain();
+        const t = this.ctx.currentTime;
+        clank.type = 'square';
+        clank.frequency.setValueAtTime(420 + i * 110, t);
+        clank.frequency.exponentialRampToValueAtTime(180, t + 0.08);
+
+        clankGain.gain.setValueAtTime(0.2, t);
+        clankGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+
+        clank.connect(clankGain);
+        clankGain.connect(this.ctx.destination);
+        clank.start(t);
+        clank.stop(t + 0.08);
+      }, 70 + i * 45);
+    }
+  }
+
+  // Vault alarm siren sweep for Boss encounters
+  playVaultAlarm() {
+    if (this.isMuted || !this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.linearRampToValueAtTime(680, now + 0.18);
+    osc.frequency.linearRampToValueAtTime(320, now + 0.36);
+
+    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.4);
+  }
+
+  // Battle Royale War Horn announcement
+  playRoyaleWarHorn() {
+    if (this.isMuted || !this.ctx) return;
+    const now = this.ctx.currentTime;
+
+    const chords = [
+      [220, 330],
+      [277.18, 415.3],
+      [329.63, 493.88]
+    ];
+
+    chords.forEach((pair, idx) => {
+      const delay = idx * 0.12;
+      pair.forEach(f => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(f, now + delay);
+
+        gain.gain.setValueAtTime(0.14, now + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + delay + 0.35);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now + delay);
+        osc.stop(now + delay + 0.35);
+      });
+    });
+  }
+
+  // Battle Royale heartbeat sonar tick
+  playRoyaleZoneTick() {
+    if (this.isMuted || !this.ctx) return;
+    const now = this.ctx.currentTime;
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.exponentialRampToValueAtTime(110, now + 0.12);
+
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.12);
+  }
+
+  // Battle Royale heavy elimination gong
+  playRoyaleElimination() {
+    if (this.isMuted || !this.ctx) return;
+    const now = this.ctx.currentTime;
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(260, now);
+    osc.frequency.exponentialRampToValueAtTime(65, now + 0.8);
+
+    gain.gain.setValueAtTime(0.35, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
+
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.85);
+  }
+
+  // Battle Royale victory fanfare
+  playRoyaleVictory() {
+    if (this.isMuted || !this.ctx) return;
+    const now = this.ctx.currentTime;
+    const melody = [392, 523.25, 659.25, 783.99, 1046.50];
+
+    melody.forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+
+      gain.gain.setValueAtTime(0.25, now + idx * 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.45);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now + idx * 0.1);
+      osc.stop(now + idx * 0.1 + 0.45);
+    });
+  }
 }
 
 window.slotAudio = new SlotAudio();

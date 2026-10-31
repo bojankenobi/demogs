@@ -12850,6 +12850,130 @@ body.free-spins-active .slot-cylinder-replica {
   box-shadow: 0 4px 14px rgba(255, 215, 0, 0.25);
 }
 
+/* ==========================================================================
+   Grand Mode Dynamic Themes (Casino, Trezor Vault, Battle Royale)
+   ========================================================================== */
+
+/* 1. Casino Theme (Default VIP Gold & Midnight Velvet) */
+body.theme-casino, body:not(.theme-vault):not(.theme-royale) {
+  --mode-accent: #d4af37;
+  --mode-accent-rgb: 212, 175, 55;
+  --mode-glow: rgba(212, 175, 55, 0.4);
+}
+
+/* 2. Trezor / Vault Crawler Theme (Titanium Steel, Neon Sapphire Cyan, Red Alarm) */
+body.theme-vault {
+  --mode-accent: #00d2ff;
+  --mode-accent-rgb: 0, 210, 255;
+  --mode-glow: rgba(0, 210, 255, 0.5);
+  background-color: #070d14;
+}
+
+body.theme-vault .bg-rays {
+  background: 
+    radial-gradient(circle at 50% 35%, rgba(0, 210, 255, 0.16) 0%, rgba(10, 25, 38, 0.5) 35%, rgba(5, 12, 18, 0.98) 75%, #030609 100%),
+    repeating-conic-gradient(from 0deg at 50% 35%, rgba(0, 210, 255, 0.02) 0deg 12deg, transparent 12deg 24deg);
+}
+
+body.theme-vault .grand-mode-hub {
+  border-color: rgba(0, 210, 255, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 16px rgba(0, 210, 255, 0.2);
+}
+
+body.theme-vault .hub-mode-tab[data-mode="vault"].active {
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.25) 0%, rgba(0, 110, 255, 0.35) 100%);
+  border-color: #00d2ff;
+  box-shadow: 0 0 16px rgba(0, 210, 255, 0.5);
+  color: #fff;
+}
+
+body.theme-vault .cabinet-outer-frame,
+body.theme-vault .cabinet-bezel {
+  border-color: rgba(0, 210, 255, 0.45) !important;
+  box-shadow: 0 0 25px rgba(0, 210, 255, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.8) !important;
+}
+
+body.theme-vault .stage-bezel {
+  border-color: rgba(0, 210, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
+}
+
+/* 3. Battle Royale Theme (Carbon Composite, Crimson Flame Orange, Warzone Red) */
+body.theme-royale {
+  --mode-accent: #ff4500;
+  --mode-accent-rgb: 255, 69, 0;
+  --mode-glow: rgba(255, 69, 0, 0.55);
+  background-color: #0f0504;
+}
+
+body.theme-royale .bg-rays {
+  background: 
+    radial-gradient(circle at 50% 35%, rgba(255, 69, 0, 0.18) 0%, rgba(38, 14, 10, 0.55) 35%, rgba(18, 6, 5, 0.98) 75%, #080202 100%),
+    repeating-conic-gradient(from 0deg at 50% 35%, rgba(255, 85, 0, 0.025) 0deg 12deg, transparent 12deg 24deg);
+}
+
+body.theme-royale .grand-mode-hub {
+  border-color: rgba(255, 69, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 16px rgba(255, 69, 0, 0.25);
+}
+
+body.theme-royale .hub-mode-tab[data-mode="royale"].active {
+  background: linear-gradient(135deg, rgba(255, 69, 0, 0.3) 0%, rgba(230, 25, 75, 0.4) 100%);
+  border-color: #ff4500;
+  box-shadow: 0 0 18px rgba(255, 69, 0, 0.55);
+  color: #fff;
+}
+
+body.theme-royale .cabinet-outer-frame,
+body.theme-royale .cabinet-bezel {
+  border-color: rgba(255, 69, 0, 0.5) !important;
+  box-shadow: 0 0 30px rgba(255, 69, 0, 0.25), inset 0 0 20px rgba(0, 0, 0, 0.85) !important;
+}
+
+body.theme-royale .stage-bezel {
+  border-color: rgba(255, 69, 0, 0.45);
+  box-shadow: 0 0 24px rgba(255, 69, 0, 0.2);
+}
+
+/* ==========================================================================
+   Desktop Widescreen Console Expansion (min-width: 1024px)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .game-container {
+    max-width: 1200px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .slot-stage-scaler {
+    max-width: 760px;
+    width: 100%;
+  }
+
+  .reels-stage {
+    min-height: 440px;
+  }
+
+  .controls-panel {
+    max-width: 820px;
+    gap: 16px;
+    padding: 16px 24px;
+  }
+
+  .game-container.in-vault-mode {
+    max-width: 1140px;
+  }
+
+  .game-container.in-royale-mode {
+    max-width: 1180px;
+  }
+
+  .vault-hud-card {
+    max-width: 880px;
+  }
+}
+
 
 
 

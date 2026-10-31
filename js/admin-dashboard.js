@@ -410,6 +410,54 @@ class AdminDashboard {
       });
     });
 
+    // 4.5 Grand Mode Switcher
+    document.querySelectorAll('.btn-switch-grand-mode').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-mode');
+        this.sendCommand({ action: 'SWITCH_GRAND_MODE', mode });
+        const names = { casino: 'Kazino Salon', vault: 'Trezor (Vault Crawler)', royale: 'Battle Royale' };
+        this.showToast(`Prebačen mod terminala na: [${names[mode] || mode}]`);
+      });
+    });
+
+    // 5. Trezor (Vault Master) Controls
+    const btnVaultKeys = document.getElementById('btn-cmd-vault-keys');
+    if (btnVaultKeys) btnVaultKeys.addEventListener('click', () => {
+      this.sendCommand({ action: 'TRIGGER_VAULT_EVENT', eventType: 'add_keys', count: 5 });
+      this.showToast('Poslato: +5 Zlatnih Ključeva u Trezor');
+    });
+
+    const btnVaultBoss = document.getElementById('btn-cmd-vault-boss');
+    if (btnVaultBoss) btnVaultBoss.addEventListener('click', () => {
+      this.sendCommand({ action: 'TRIGGER_VAULT_EVENT', eventType: 'boss_fight' });
+      this.showToast('Pokrenuta Boss Borba u Trezoru');
+    });
+
+    const btnVaultNext = document.getElementById('btn-cmd-vault-next');
+    if (btnVaultNext) btnVaultNext.addEventListener('click', () => {
+      this.sendCommand({ action: 'TRIGGER_VAULT_EVENT', eventType: 'unlock_room' });
+      this.showToast('Poslata komanda: Otključaj sobu u Trezoru');
+    });
+
+    // 6. Battle Royale (Arena Commander) Controls
+    const btnRoyaleStart = document.getElementById('btn-cmd-royale-start');
+    if (btnRoyaleStart) btnRoyaleStart.addEventListener('click', () => {
+      this.sendCommand({ action: 'TRIGGER_ROYALE_EVENT', eventType: 'start_urgent_match' });
+      this.showToast('Pokrenut vanredni Battle Royale meč za igrače');
+    });
+
+    const btnRoyaleZone = document.getElementById('btn-cmd-royale-zone');
+    if (btnRoyaleZone) btnRoyaleZone.addEventListener('click', () => {
+      this.sendCommand({ action: 'TRIGGER_ROYALE_EVENT', eventType: 'shrink_zone' });
+      this.showToast('Aktivirano instant sužavanje sigurne zone');
+    });
+
+    const btnRoyalePrizes = document.getElementById('btn-cmd-royale-prizes');
+    if (btnRoyalePrizes) btnRoyalePrizes.addEventListener('click', () => {
+      this.sendCommand({ action: 'TRIGGER_ROYALE_EVENT', eventType: 'award_prizes' });
+      this.showToast('Dodeljen turnirski nagradni fond Battle Royale-a');
+    });
+
     // 5. Session Reset
     const btnResetSession = document.getElementById('btn-cmd-reset-session');
     if (btnResetSession) btnResetSession.addEventListener('click', () => {

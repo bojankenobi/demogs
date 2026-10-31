@@ -115,8 +115,9 @@ class SlotBattleRoyale {
     if (this.slotStage) this.slotStage.style.display = 'block';
 
     // Snapshot player balance upon entering Battle Royale arena
-    if (this.wallet && typeof this.wallet.balance === 'number') {
-      this.initialBalance = this.wallet.balance;
+    if (this.wallet) {
+      this.initialRsdBalance = typeof this.wallet.rsdBalance === 'number' ? this.wallet.rsdBalance : 0;
+      this.initialBalance = typeof this.wallet.balance === 'number' ? this.wallet.balance : 0;
     }
     this.isMatchCompleted = false;
 
@@ -129,32 +130,34 @@ class SlotBattleRoyale {
     this.isActive = false;
 
     // If player leaves or navigates away before match completes legitimately, forfeit and rollback balance!
-    if (!this.isMatchCompleted && typeof this.initialBalance === 'number' && this.wallet) {
-      this.wallet.balance = this.initialBalance;
+    if (!this.isMatchCompleted && typeof this.initialRsdBalance === 'number' && this.wallet) {
+      this.wallet.rsdBalance = this.initialRsdBalance;
+      if (typeof this.wallet.saveState === 'function') this.wallet.saveState();
       if (typeof this.wallet.updateUI === 'function') this.wallet.updateUI();
-      if (typeof this.wallet.save === 'function') this.wallet.save();
       if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
-        window.slotNotifications.show(`🏳️ NAPUŠTENA ARENA: Zlatnici su vraćeni na pređašnje stanje (${this.initialBalance} ZLT).`, 'info');
+        window.slotNotifications.show(`🏳️ NAPUŠTENA ARENA: Zlatnici su vraćeni na pređašnje stanje (${this.initialRsdBalance} ZLT).`, 'info');
       }
     }
 
     this.cleanUpEffects();
     this.initialBalance = null;
+    this.initialRsdBalance = null;
   }
 
   forfeitMatch() {
     // 1. Rollback any coins gained or spent during Battle Royale to pre-match balance
-    if (this.wallet && typeof this.initialBalance === 'number') {
-      this.wallet.balance = this.initialBalance;
+    if (this.wallet && typeof this.initialRsdBalance === 'number') {
+      this.wallet.rsdBalance = this.initialRsdBalance;
+      if (typeof this.wallet.saveState === 'function') this.wallet.saveState();
       if (typeof this.wallet.updateUI === 'function') this.wallet.updateUI();
-      if (typeof this.wallet.save === 'function') this.wallet.save();
     }
 
+    const restoredBal = this.initialRsdBalance;
     this.isMatchCompleted = true; // Mark as handled so unmount doesn't duplicate rollback
     this.cleanUpEffects();
 
     if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
-      window.slotNotifications.show(`🏳️ ODUSTALI STE OD ARENE: Vraćeno pređašnje stanje (${this.initialBalance} ZLT).`, 'info');
+      window.slotNotifications.show(`🏳️ ODUSTALI STE OD ARENE: Vraćeno pređašnje stanje (${restoredBal} ZLT).`, 'info');
     }
 
     // 2. Return cleanly to Casino Salon mode
