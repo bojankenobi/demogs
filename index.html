@@ -66,11 +66,13 @@
         </button>
         <button class="hub-mode-tab" data-mode="vault" id="tab-mode-vault">
           <span class="hub-tab-badge">ROGUE</span>
+          <span class="hub-quota-pill" id="vault-quota-pill" title="Dnevni preostali ulazi u Trezor">2/2</span>
           <span class="hub-tab-icon">🏛️</span>
           <span class="hub-tab-text"><span class="tab-txt-full">TREZOR PROVALA</span><span class="tab-txt-short">TREZOR</span></span>
         </button>
         <button class="hub-mode-tab" data-mode="royale" id="tab-mode-royale">
           <span class="hub-tab-badge live-pulse">LIVE</span>
+          <span class="hub-quota-pill" id="royale-quota-pill" title="Dnevni preostali ulazi u Battle Royale">1/1</span>
           <span class="hub-tab-icon">⚔️</span>
           <span class="hub-tab-text"><span class="tab-txt-full">BATTLE ROYALE</span><span class="tab-txt-short">ROYALE</span></span>
         </button>
@@ -2306,6 +2308,50 @@
     </div>
   </div>
 
+  <!-- Modal: Daily Login Grant (100 ZLT) -->
+  <div class="modal-overlay daily-grant-modal-overlay" id="daily-grant-modal" style="display: none;">
+    <div class="daily-grant-card">
+      <button type="button" class="daily-grant-close" id="btn-close-daily-grant" aria-label="Zatvori">✕</button>
+      <div class="daily-grant-hero">
+        <img src="assets/symbols/logo-flower.svg" alt="GrandSlot Logo" class="daily-grant-flower">
+        <div class="daily-grant-badge">🪙 DNEVNA PRIJAVA ZA ČLANOVE</div>
+      </div>
+      <div class="daily-grant-body">
+        <h2 class="daily-grant-title">DODELJENO +100 ZLATNIKA!</h2>
+        <div class="daily-grant-val">+100 ZLT U NOVČANIKU</div>
+        <p class="daily-grant-desc">
+          Dobrodošli u današnju sesiju! Svakog dana vas čeka 100 besplatnih zlatnika za igru na slotovima, u trezoru i turnirima. Svi osvojeni i preostali zlatnici ostaju trajno na vašem saldu!
+        </p>
+        <button type="button" class="btn-daily-grant-claim" id="btn-claim-daily-grant">
+          🪙 PREUZMI I NASTAVI IGRU
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Exclusive Daily Quota Lock (Trezor / Battle Royale) -->
+  <div class="modal-overlay exclusive-lock-modal-overlay" id="exclusive-lock-modal" style="display: none;">
+    <div class="exclusive-lock-card">
+      <button type="button" class="exclusive-lock-close" id="btn-close-exclusive-lock" aria-label="Zatvori">✕</button>
+      <div class="lock-icon-wrap">
+        <span class="lock-hero-icon">🔒</span>
+        <div class="lock-glow-ring"></div>
+      </div>
+      <h2 class="exclusive-lock-title" id="exclusive-lock-title">DNEVNI LIMIT DOSTIGNUT</h2>
+      <div class="exclusive-lock-quota-pill" id="exclusive-lock-quota-val">ISKORIŠĆENA DNEVNA KVOTA</div>
+      <p class="exclusive-lock-desc" id="exclusive-lock-desc">
+        U cilju očuvanja ekskluzivnosti i stabilnosti nagradnog fonda, dozvoljen je ograničen broj ulazaka u toku dana.
+      </p>
+      <div class="lock-countdown-box">
+        <span class="lock-countdown-lbl">⏳ Sledeći pristup se otključava za:</span>
+        <span class="lock-countdown-timer" id="exclusive-lock-timer">05h 38m 22s</span>
+      </div>
+      <button type="button" class="btn-exclusive-lock-ok" id="btn-exclusive-lock-ok">
+        POVRATAK U CASINO SALON
+      </button>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/audio.js?v=70"></script>
   <script src="js/i18n.js?v=70"></script>
@@ -2314,6 +2360,7 @@
   <!-- Core Platform Modules -->
   <script src="js/core/player-tracker.js?v=82"></script>
   <script src="js/core/wallet.js?v=89"></script>
+  <script src="js/core/daily-access-manager.js?v=99"></script>
   <script src="js/core/jackpots-v2.js?v=80"></script>
   <script src="js/core/meters.js?v=75"></script>
   <script src="js/core/wheel.js?v=75"></script>

@@ -318,7 +318,17 @@ class IGTApp {
       this.battleRoyale = new window.SlotBattleRoyale(this.wallet, this.lobby);
       window.battleRoyale = this.battleRoyale;
     }
+
+    // 8.5 Operator Daily Access & Exclusivity Controls
+    if (window.DailyAccessManager) {
+      this.dailyAccessManager = new window.DailyAccessManager();
+      window.dailyAccessManager = this.dailyAccessManager;
+    }
+    this.sessionStartTime = Date.now();
+    this.currentGrandMode = 'casino';
+
     this.initGrandModeHub();
+    this.initDailyGrantAndAudit();
   }
 
   /* ==========================================================================
@@ -330,15 +340,153 @@ class IGTApp {
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const mode = tab.getAttribute('data-mode');
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
         this.switchGrandMode(mode);
       });
     });
+    this.updateModeQuotaPills();
+  }
+
+  initDailyGrantAndAudit() {
+    if (!this.dailyAccessManager) return;
+    const playerId = this.playerTracker?.profile?.id || this.dailyAccessManager.getCurrentPlayerId();
+    const playerName = this.playerTracker?.profile?.name || playerId;
+
+    // Check and claim daily login grant (100 ZLT default)
+    const grantResult = this.dailyAccessManager.checkAndClaimDailyGrant(playerId, playerName);
+    if (grantResult.awarded) {
+      if (this.wallet && typeof this.wallet.addFictionalRsd === 'function') {
+        this.wallet.addFictionalRsd(grantResult.amount);
+      }
+      setTimeout(() => {
+        this.showDailyGrantModal(grantResult.amount, grantResult.totalLogins);
+      }, 700);
+    }
+
+    // Record login in operator audit trail
+    this.dailyAccessManager.recordLoginAudit({
+      playerId: playerId,
+      playerName: playerName,
+      bonusAwarded: grantResult.awarded ? grantResult.amount : 0,
+      isNewLogin: true
+    });
+
+    this.updateModeQuotaPills();
+  }
+
+  updateModeQuotaPills() {
+    if (!this.dailyAccessManager) return;
+    const playerId = this.playerTracker?.profile?.id || this.dailyAccessManager.getCurrentPlayerId();
+
+    const vaultPill = document.getElementById('vault-quota-pill');
+    if (vaultPill) {
+      const rem = this.dailyAccessManager.getRemaining(playerId, 'vault');
+      const lim = this.dailyAccessManager.getLimit('vault');
+      vaultPill.textContent = `${rem}/${lim}`;
+      vaultPill.classList.toggle('exhausted', rem <= 0);
+      vaultPill.title = `Preostalo ulazaka u Trezor danas: ${rem} od ${lim}`;
+    }
+
+    const royalePill = document.getElementById('royale-quota-pill');
+    if (royalePill) {
+      const rem = this.dailyAccessManager.getRemaining(playerId, 'royale');
+      const lim = this.dailyAccessManager.getLimit('royale');
+      royalePill.textContent = `${rem}/${lim}`;
+      royalePill.classList.toggle('exhausted', rem <= 0);
+      royalePill.title = `Preostalo učešća u Battle Royale danas: ${rem} od ${lim}`;
+    }
+  }
+
+  showDailyGrantModal(amount = 100, totalLogins = 1) {
+    const modal = document.getElementById('daily-grant-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    if (window.slotAudio && window.slotAudio.playWin) {
+      window.slotAudio.playWin();
+    }
+    const closeBtn = document.getElementById('btn-close-daily-grant');
+    const claimBtn = document.getElementById('btn-claim-daily-grant');
+    const hide = () => {
+      modal.style.display = 'none';
+      if (window.slotAudio && window.slotAudio.playClick) {
+        window.slotAudio.playClick();
+      }
+    };
+    if (closeBtn) closeBtn.onclick = hide;
+    if (claimBtn) claimBtn.onclick = hide;
+  }
+
+  showExclusiveLockModal(mode, checkResult) {
+    const modal = document.getElementById('exclusive-lock-modal');
+    if (!modal) return;
+    const titleEl = document.getElementById('exclusive-lock-title');
+    const quotaEl = document.getElementById('exclusive-lock-quota-val');
+    const descEl = document.getElementById('exclusive-lock-desc');
+    const timerEl = document.getElementById('exclusive-lock-timer');
+    const closeBtn = document.getElementById('btn-close-exclusive-lock');
+    const okBtn = document.getElementById('btn-exclusive-lock-ok');
+
+    const modeName = mode === 'vault' ? 'TREZOR (VAULT CRAWLER)' : 'SLOT BATTLE ROYALE';
+    if (titleEl) titleEl.textContent = `EKSKLUZIVNOST: ${modeName}`;
+    if (quotaEl) quotaEl.textContent = `ISKORIŠĆENO: ${checkResult.currentUsage} / ${checkResult.limit} ULAZAKA DANAS`;
+    if (descEl) descEl.textContent = checkResult.reason || 'Dnevna kvota ekskluzivnih ulazaka je iskorišćena. U cilju očuvanja ekskluzivnosti i vrednosti nagrada, pristup se ponovo otvara u ponoć!';
+
+    const updateTimer = () => {
+      const ms = checkResult.resetInMs !== undefined ? checkResult.resetInMs : (this.dailyAccessManager ? this.dailyAccessManager.getMsUntilMidnight() : 0);
+      const totalSec = Math.max(0, Math.floor(ms / 1000));
+      const hours = Math.floor(totalSec / 3600);
+      const minutes = Math.floor((totalSec % 3600) / 60);
+      const seconds = totalSec % 60;
+      if (timerEl) {
+        timerEl.textContent = `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+      }
+    };
+    updateTimer();
+
+    modal.style.display = 'flex';
+    if (this._lockTimerInterval) clearInterval(this._lockTimerInterval);
+    this._lockTimerInterval = setInterval(updateTimer, 1000);
+
+    const hide = () => {
+      modal.style.display = 'none';
+      if (this._lockTimerInterval) clearInterval(this._lockTimerInterval);
+      if (window.slotAudio && window.slotAudio.playClick) {
+        window.slotAudio.playClick();
+      }
+    };
+    if (closeBtn) closeBtn.onclick = hide;
+    if (okBtn) okBtn.onclick = hide;
   }
 
   switchGrandMode(mode) {
     if (window.slotAudio) window.slotAudio.playClick();
+
+    // Check operator daily access limits for Trezor and Battle Royale
+    if (mode === 'vault' || mode === 'royale') {
+      const playerId = this.playerTracker?.profile?.id || (this.dailyAccessManager ? this.dailyAccessManager.getCurrentPlayerId() : 'gsc_player_1');
+      if (this.dailyAccessManager) {
+        const check = this.dailyAccessManager.canEnterMode(playerId, mode);
+        if (!check.allowed) {
+          this.showExclusiveLockModal(mode, check);
+          // Keep active tab synced with current allowed mode
+          const tabs = document.querySelectorAll('.hub-mode-tab');
+          tabs.forEach(t => {
+            t.classList.toggle('active', t.getAttribute('data-mode') === (this.currentGrandMode || 'casino'));
+          });
+          return;
+        }
+        // Deduct/record entry
+        this.dailyAccessManager.recordEntry(playerId, mode);
+        this.updateModeQuotaPills();
+      }
+    }
+
+    // Set active tab in UI
+    const tabs = document.querySelectorAll('.hub-mode-tab');
+    tabs.forEach(t => {
+      t.classList.toggle('active', t.getAttribute('data-mode') === mode);
+    });
+
+    this.currentGrandMode = mode;
     const container = document.querySelector('.game-container');
 
     const standaloneGameIds = ['crash', 'plinko', 'blackjack', 'mines'];

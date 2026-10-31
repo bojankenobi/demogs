@@ -273,6 +273,45 @@ class AdminBridge {
         localStorage.clear();
         setTimeout(() => window.location.reload(), 400);
         break;
+
+      case 'UPDATE_OPERATOR_LIMITS':
+        if (this.app.dailyAccessManager && data.limits) {
+          this.app.dailyAccessManager.setLimits(data.limits);
+          if (typeof this.app.updateModeQuotaPills === 'function') {
+            this.app.updateModeQuotaPills();
+          }
+        }
+        this.broadcastState();
+        break;
+
+      case 'RESET_PLAYER_DAILY_LIMITS':
+        if (this.app.dailyAccessManager && data.playerId) {
+          const myId = this.app.playerTracker ? this.app.playerTracker.profile.id : null;
+          if (!data.playerId || data.playerId === myId || data.playerId === 'all') {
+            this.app.dailyAccessManager.resetPlayerLimits(myId || data.playerId);
+            if (typeof this.app.updateModeQuotaPills === 'function') {
+              this.app.updateModeQuotaPills();
+            }
+            if (this.app.showMessage) {
+              this.app.showMessage('✨ Vaši dnevni limiti su resetovani od strane operatera!', 'win');
+            }
+          }
+        }
+        this.broadcastState();
+        break;
+
+      case 'RESET_ALL_DAILY_LIMITS':
+        if (this.app.dailyAccessManager) {
+          this.app.dailyAccessManager.resetAllPlayerLimits();
+          if (typeof this.app.updateModeQuotaPills === 'function') {
+            this.app.updateModeQuotaPills();
+          }
+          if (this.app.showMessage) {
+            this.app.showMessage('✨ Svi dnevni limiti su resetovani!', 'win');
+          }
+        }
+        this.broadcastState();
+        break;
     }
   }
 
@@ -296,9 +335,44 @@ class AdminBridge {
         else if (jp.pots && jp.pots.diamond && typeof jp.pots.diamond.current === 'number') diamondVal = jp.pots.diamond.current;
       }
 
+      const playerId = this.app.playerTracker?.profile?.id || 
+                       (this.app.dailyAccessManager ? this.app.dailyAccessManager.getCurrentPlayerId() : 'gsc_player_1');
+      const playerName = this.app.playerTracker?.profile?.name || playerId;
+      const vipTier = this.app.playerTracker?.profile?.vipTier || 'STANDARD';
+      const grandMode = this.app.currentGrandMode || 'casino';
+      const sessionStart = this.app.sessionStartTime || Date.now();
+      const sessionDurationSec = Math.max(1, Math.floor((Date.now() - sessionStart) / 1000));
+      const isMobile = (window.innerWidth <= 768 || /Mobi|Android|iPhone/i.test(navigator.userAgent));
+
+      let vaultUsage = 0;
+      let royaleUsage = 0;
+      let vaultLimit = 2;
+      let royaleLimit = 1;
+      let dailyGrantClaimed = false;
+
+      if (this.app.dailyAccessManager) {
+        const dam = this.app.dailyAccessManager;
+        vaultUsage = dam.getUsage(playerId, 'vault');
+        royaleUsage = dam.getUsage(playerId, 'royale');
+        vaultLimit = dam.getLimit('vault');
+        royaleLimit = dam.getLimit('royale');
+        dailyGrantClaimed = dam.hasClaimedDailyGrant(playerId);
+      }
+
       return {
         timestamp: Date.now(),
         roomId: this.roomId,
+        playerId: playerId,
+        playerName: playerName,
+        vipTier: vipTier,
+        grandMode: grandMode,
+        sessionDurationSec: sessionDurationSec,
+        deviceType: isMobile ? 'Mobilni' : 'Desktop',
+        vaultUsage: vaultUsage,
+        royaleUsage: royaleUsage,
+        vaultLimit: vaultLimit,
+        royaleLimit: royaleLimit,
+        dailyGrantClaimed: dailyGrantClaimed,
         balance: this.app.wallet ? this.app.wallet.rsdBalance : 0,
         credits: this.app.wallet ? this.app.wallet.credits : 0,
         bet: this.app.wallet ? this.app.wallet.bet : 20,
@@ -319,6 +393,17 @@ class AdminBridge {
       return {
         timestamp: Date.now(),
         roomId: this.roomId,
+        playerId: 'gsc_player_1',
+        playerName: 'Gost Igrač',
+        vipTier: 'STANDARD',
+        grandMode: 'casino',
+        sessionDurationSec: 60,
+        deviceType: 'Desktop',
+        vaultUsage: 0,
+        royaleUsage: 0,
+        vaultLimit: 2,
+        royaleLimit: 1,
+        dailyGrantClaimed: false,
         balance: 0,
         credits: 0,
         bet: 20,
@@ -335,6 +420,7 @@ class AdminBridge {
     try {
       const state = this.getTelemetryState();
       this.postMessage({ action: 'STATE_UPDATE', state });
+      this.postMessage({ action: 'PLAYER_HEARTBEAT', player: state });
     } catch (err) {
       console.warn('[AdminBridge] broadcastState ignored error:', err);
     }

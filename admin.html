@@ -91,6 +91,14 @@
 
   <!-- Live Telemetry KPI Strip -->
   <section class="telemetry-strip" aria-label="Realtime Metrics">
+    <div class="stat-telemetry-box" title="Broj trenutno aktivnih igrača na terminalima">
+      <span class="stat-box-lbl">Online Igrači</span>
+      <span class="stat-box-val val-green font-mono" id="tel-online-users">1</span>
+    </div>
+    <div class="stat-telemetry-box" title="Ukupno zabeleženih prijava danas">
+      <span class="stat-box-lbl">Prijava Danas</span>
+      <span class="stat-box-val val-gold font-mono" id="tel-logins-today">0</span>
+    </div>
     <div class="stat-telemetry-box">
       <span class="stat-box-lbl">Aktivna Igra</span>
       <span class="stat-box-val" id="tel-active-game">Royal 3x3</span>
@@ -297,8 +305,130 @@
     <!-- TAB 4: CRM & BAZA IGRAČA -->
     <section class="tab-pane" id="pane-crm">
       <div class="pane-intro-box">
-        <h2 class="pane-title">Baza Registrovanih Igrača & VIP Upravljanje</h2>
-        <p class="pane-desc">Centralni uvid u sve registrovane igrače u Neon PostgreSQL bazi. Pregled obrta, broja spinova, VIP nivoa i push statusa.</p>
+        <h2 class="pane-title">Baza Registrovanih Igrača &amp; VIP Upravljanje</h2>
+        <p class="pane-desc">Centralni uvid u registrovane igrače u Neon PostgreSQL bazi, live status online terminala, dnevni limiti i dnevnik prijava.</p>
+      </div>
+
+      <!-- Operator Access & Exclusivity Control Card -->
+      <div class="push-card" style="margin-bottom: 24px;">
+        <div class="access-control-header">
+          <div>
+            <h3 class="trigger-panel-title">🛡️ Kontrola Pristupa &amp; Dnevni Limiti Igrača</h3>
+            <p class="card-sub-hint">Maksimalna kontrola ulazaka u Trezor (Vault) i Battle Royale radi očuvanja ekskluzivnosti i vrednosti nagrada, kao i podešavanje dnevnog bonusa prijave.</p>
+          </div>
+          <div class="access-control-actions">
+            <button type="button" class="btn-trigger-action gold" id="btn-save-operator-limits">Sačuvaj Pravila</button>
+            <button type="button" class="btn-trigger-action" id="btn-reset-all-daily-limits" title="Resetuj brojače ulazaka svim igračima za današnji dan">Resetuj Sve Limite Danas</button>
+          </div>
+        </div>
+
+        <div class="access-control-grid">
+          <div class="access-control-field">
+            <label for="input-limit-vault">Dnevni limit za Trezor (Vault Crawler):</label>
+            <input type="number" id="input-limit-vault" class="push-input-text font-mono" min="1" max="50" value="2">
+            <span class="field-hint">Maksimalan broj ulazaka po igraču dnevno (Podrazumevano: 2)</span>
+          </div>
+
+          <div class="access-control-field">
+            <label for="input-limit-royale">Dnevni limit za Battle Royale:</label>
+            <input type="number" id="input-limit-royale" class="push-input-text font-mono" min="1" max="20" value="1">
+            <span class="field-hint">Maksimalan broj učešća po igraču dnevno (Podrazumevano: 1)</span>
+          </div>
+
+          <div class="access-control-field">
+            <label for="input-daily-grant-zlt">Dnevni Bonus za Prijavu (ZLT):</label>
+            <input type="number" id="input-daily-grant-zlt" class="push-input-text font-mono" min="0" max="10000" step="10" value="100">
+            <span class="field-hint">Zlatnici koji se automatski dodeljuju u novčanik pri prvoj dnevnoj poseti (Podrazumevano: 100)</span>
+          </div>
+
+          <div class="access-control-field">
+            <label for="input-lock-reason">Tekst Ekskluzivnog Zaključavanja:</label>
+            <input type="text" id="input-lock-reason" class="push-input-text" value="Dnevna kvota ekskluzivnih ulazaka je iskorišćena.">
+            <span class="field-hint">Prikazuje se igraču na ekskluzivnom zaključanom ekranu sa tajmerom</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Online Players Monitoring Card -->
+      <div class="push-card" style="margin-bottom: 24px;">
+        <div class="access-control-header">
+          <div>
+            <h3 class="trigger-panel-title">
+              🟢 Trenutno Online Igrači 
+              <span class="online-users-header-badge" id="online-users-badge-count">1 aktivan</span>
+            </h3>
+            <p class="card-sub-hint">Real-time uvid u igrače na terminalima, trenutnu igru, saldo u zlatnicima i današnju potrošnju ulazaka.</p>
+          </div>
+          <button type="button" class="btn-trigger-action" id="btn-refresh-online-users">Osveži Online Status</button>
+        </div>
+
+        <div class="crm-table-box" style="margin-top: 14px;">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>ID Igrača / Profil</th>
+                <th>Trenutni Mod / Igra</th>
+                <th>Saldo (ZLT)</th>
+                <th>Trezor Ulaza Danas</th>
+                <th>Royale Ulaza Danas</th>
+                <th>Sesija Aktivna</th>
+                <th>Akcije</th>
+              </tr>
+            </thead>
+            <tbody id="online-players-table-body">
+              <tr>
+                <td colspan="8" class="table-loading-cell">Slušam heartbeat signal aktivnih slot igrača...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Dnevnik Logovanja & Aktivnosti Danas (Login Counter & Audit Trail) -->
+      <div class="push-card" style="margin-bottom: 24px;">
+        <div class="access-control-header">
+          <div>
+            <h3 class="trigger-panel-title">📊 Brojanje Logova &amp; Dnevnik Prijava (Audit Trail)</h3>
+            <p class="card-sub-hint">Evidencija svih dnevnih prijava na sistem, dodeljenih 100 ZLT bonusa i tipa uređaja (Mobilni / Desktop).</p>
+          </div>
+          <button type="button" class="btn-trigger-action" id="btn-refresh-logins-audit">Osveži Dnevnik Prijava</button>
+        </div>
+
+        <div class="logins-kpi-row">
+          <div class="login-kpi-card">
+            <span class="login-kpi-lbl">Broj Prijava Danas</span>
+            <span class="login-kpi-val" id="kpi-logins-today">0</span>
+          </div>
+          <div class="login-kpi-card">
+            <span class="login-kpi-lbl">Ukupno Zabeleženih Prijava</span>
+            <span class="login-kpi-val" id="kpi-logins-total">0</span>
+          </div>
+          <div class="login-kpi-card">
+            <span class="login-kpi-lbl">Dodeljeno Dnevnih Bonusa Danas</span>
+            <span class="login-kpi-val" id="kpi-bonuses-awarded-today">0 ZLT</span>
+          </div>
+        </div>
+
+        <div class="crm-table-box" style="margin-top: 14px;">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Vreme Prijave</th>
+                <th>ID Igrača</th>
+                <th>Korisnik / Profil</th>
+                <th>Dodeljen Dnevni Bonus</th>
+                <th>Uređaj</th>
+                <th>IP / Lokacija</th>
+              </tr>
+            </thead>
+            <tbody id="logins-audit-table-body">
+              <tr>
+                <td colspan="6" class="table-loading-cell">Učitavanje dnevnika prijava...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- CRM Controls & Filter Bar -->
@@ -650,6 +780,7 @@
   <script src="js/lib/peerjs.min.js"></script>
   <script src="js/games/classic/symbols.js?v=80"></script>
   <script src="js/core/math-manager.js?v=80"></script>
-  <script src="js/admin-dashboard.js?v=80"></script>
+  <script src="js/core/daily-access-manager.js?v=99"></script>
+  <script src="js/admin-dashboard.js?v=99"></script>
 </body>
 </html>

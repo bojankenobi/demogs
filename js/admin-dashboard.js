@@ -22,6 +22,7 @@ class AdminDashboard {
     this.initSimulator();
     this.initTriggers();
     this.initCrmHub();
+    this.initAccessControlAndOnlineMonitoring();
     this.initPromoHub();
     
     // Check for cached telemetry
@@ -103,11 +104,17 @@ class AdminDashboard {
   handleMessage(data) {
     if (!data || !data.action) return;
 
-    if (data.action === 'SLOT_ONLINE' || data.action === 'STATE_UPDATE') {
+    if (data.action === 'SLOT_ONLINE' || data.action === 'STATE_UPDATE' || data.action === 'PLAYER_HEARTBEAT') {
       const label = this.isRemoteConnected ? `WEBRTC (${this.targetRoomId})` : 'LOKALNO (LIVE)';
       this.setConnected(true, label);
       if (data.state) {
         this.applyLiveState(data.state);
+        if (data.state.playerId) {
+          this.recordPlayerHeartbeat(data.state);
+        }
+      }
+      if (data.player) {
+        this.recordPlayerHeartbeat(data.player);
       }
     }
   }
@@ -134,6 +141,9 @@ class AdminDashboard {
       if (cached) {
         const state = JSON.parse(cached);
         this.applyLiveState(state);
+        if (state.playerId) {
+          this.recordPlayerHeartbeat(state);
+        }
       }
     } catch (e) {}
   }
@@ -191,6 +201,12 @@ class AdminDashboard {
         }
       });
     }
+
+    // 4. Update online presence & telemetry counters
+    if (state.playerId) {
+      this.recordPlayerHeartbeat(state);
+    }
+    this.updateTelemetryStripOnlineStats();
   }
 
   /* ==========================================================================
@@ -461,6 +477,338 @@ class AdminDashboard {
     // Initial load
     this.fetchCrmPlayers();
     this.fetchVoucherScans();
+  }
+
+  /* ==========================================================================
+     Operator Daily Access Controls, Online Presence & Logins Audit
+     ========================================================================== */
+
+  initAccessControlAndOnlineMonitoring() {
+    this.onlinePlayers = new Map();
+    this.dailyAccessManager = (typeof window.DailyAccessManager !== 'undefined') ? new window.DailyAccessManager() : null;
+
+    // Load saved limits into inputs
+    this.loadOperatorLimitsIntoUI();
+
+    // Wire Save Operator Limits button
+    const saveBtn = document.getElementById('btn-save-operator-limits');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        this.saveOperatorLimitsFromUI();
+      });
+    }
+
+    // Wire Reset All Daily Limits button
+    const resetAllBtn = document.getElementById('btn-reset-all-daily-limits');
+    if (resetAllBtn) {
+      resetAllBtn.addEventListener('click', () => {
+        if (confirm('Da li ste sigurni da želite da resetujete današnje limite za Trezor i Royale SVIM igračima?')) {
+          if (this.dailyAccessManager) {
+            this.dailyAccessManager.resetAllPlayerLimits();
+          }
+          this.sendCommand({ action: 'RESET_ALL_DAILY_LIMITS' });
+          this.showToast('Današnji limiti za Trezor i Royale su resetovani!');
+          this.renderOnlinePlayers();
+        }
+      });
+    }
+
+    // Wire refresh buttons
+    const refOnlineBtn = document.getElementById('btn-refresh-online-users');
+    if (refOnlineBtn) {
+      refOnlineBtn.addEventListener('click', () => {
+        this.pruneInactiveOnlinePlayers();
+        this.renderOnlinePlayers();
+        this.showToast('Online status osvežen');
+      });
+    }
+
+    const refAuditBtn = document.getElementById('btn-refresh-logins-audit');
+    if (refAuditBtn) {
+      refAuditBtn.addEventListener('click', () => {
+        this.renderLoginsAudit();
+        this.showToast('Dnevnik prijava osvežen');
+      });
+    }
+
+    // Periodic pruner & online count updater every 3.5 seconds
+    setInterval(() => {
+      this.pruneInactiveOnlinePlayers();
+      this.renderOnlinePlayers();
+      this.updateTelemetryStripOnlineStats();
+    }, 3500);
+
+    // Initial render
+    this.renderOnlinePlayers();
+    this.renderLoginsAudit();
+    this.updateTelemetryStripOnlineStats();
+  }
+
+  loadOperatorLimitsIntoUI() {
+    if (!this.dailyAccessManager) return;
+    const limits = this.dailyAccessManager.getLimits();
+    const vaultInput = document.getElementById('input-limit-vault');
+    const royaleInput = document.getElementById('input-limit-royale');
+    const grantInput = document.getElementById('input-daily-grant-zlt');
+    const reasonInput = document.getElementById('input-lock-reason');
+
+    if (vaultInput && limits.vaultDailyLimit !== undefined) vaultInput.value = limits.vaultDailyLimit;
+    if (royaleInput && limits.royaleDailyLimit !== undefined) royaleInput.value = limits.royaleDailyLimit;
+    if (grantInput && limits.dailyLoginGrantZlt !== undefined) grantInput.value = limits.dailyLoginGrantZlt;
+    if (reasonInput && limits.lockReasonText) reasonInput.value = limits.lockReasonText;
+  }
+
+  saveOperatorLimitsFromUI() {
+    if (!this.dailyAccessManager) return;
+    const vaultInput = document.getElementById('input-limit-vault');
+    const royaleInput = document.getElementById('input-limit-royale');
+    const grantInput = document.getElementById('input-daily-grant-zlt');
+    const reasonInput = document.getElementById('input-lock-reason');
+
+    const newLimits = {
+      vaultDailyLimit: vaultInput ? Math.max(1, parseInt(vaultInput.value, 10) || 2) : 2,
+      royaleDailyLimit: royaleInput ? Math.max(1, parseInt(royaleInput.value, 10) || 1) : 1,
+      dailyLoginGrantZlt: grantInput ? Math.max(0, parseInt(grantInput.value, 10) || 100) : 100,
+      lockReasonText: reasonInput ? reasonInput.value.trim() : 'Dnevna kvota ekskluzivnih ulazaka je iskorišćena.'
+    };
+
+    this.dailyAccessManager.setLimits(newLimits);
+    this.sendCommand({
+      action: 'UPDATE_OPERATOR_LIMITS',
+      limits: newLimits
+    });
+
+    this.showToast('🛡️ Operaterska pravila pristupa i dnevni limiti su sačuvani i primenjeni!');
+    this.renderOnlinePlayers();
+  }
+
+  recordPlayerHeartbeat(player) {
+    if (!player) return;
+    const id = player.playerId || 'gsc_player_1';
+    const now = Date.now();
+
+    const record = {
+      playerId: id,
+      playerName: player.playerName || id,
+      vipTier: player.vipTier || 'STANDARD',
+      grandMode: player.grandMode || 'casino',
+      activeGame: player.activeGame || 'royal3x3',
+      balance: player.balance !== undefined ? player.balance : 0,
+      vaultUsage: player.vaultUsage || 0,
+      royaleUsage: player.royaleUsage || 0,
+      vaultLimit: player.vaultLimit || (this.dailyAccessManager ? this.dailyAccessManager.getLimit('vault') : 2),
+      royaleLimit: player.royaleLimit || (this.dailyAccessManager ? this.dailyAccessManager.getLimit('royale') : 1),
+      sessionDurationSec: player.sessionDurationSec || 60,
+      deviceType: player.deviceType || 'Desktop',
+      lastSeen: now
+    };
+
+    this.onlinePlayers.set(id, record);
+    this.renderOnlinePlayers();
+    this.updateTelemetryStripOnlineStats();
+  }
+
+  pruneInactiveOnlinePlayers() {
+    const now = Date.now();
+    const TIMEOUT_MS = 9000; // 9 seconds without heartbeat = offline
+    for (const [id, player] of this.onlinePlayers.entries()) {
+      if (now - player.lastSeen > TIMEOUT_MS) {
+        this.onlinePlayers.delete(id);
+      }
+    }
+  }
+
+  renderOnlinePlayers() {
+    const tbody = document.getElementById('online-players-table-body');
+    const badge = document.getElementById('online-users-badge-count');
+    if (!tbody) return;
+
+    const count = this.onlinePlayers.size;
+    if (badge) {
+      badge.textContent = `${count} ${count === 1 ? 'aktivan' : 'aktivnih'}`;
+    }
+
+    if (count === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="8" class="table-loading-cell" style="padding: 24px; color: var(--text-tertiary);">
+            Trenutno nema aktivnih igrača na terminalima. (Čekam heartbeat signal)
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    let rowsHtml = '';
+    for (const [id, p] of this.onlinePlayers.entries()) {
+      const modeNames = {
+        'casino': '🎰 Casino Salon',
+        'vault': '⚔️ Trezor (Vault Crawler)',
+        'royale': '👑 Slot Battle Royale'
+      };
+      const modeLabel = modeNames[p.grandMode] || p.grandMode;
+      const mins = Math.floor(p.sessionDurationSec / 60);
+      const secs = p.sessionDurationSec % 60;
+      const durationStr = `${mins}m ${secs}s`;
+
+      const vaultLimitReached = p.vaultUsage >= p.vaultLimit;
+      const royaleLimitReached = p.royaleUsage >= p.royaleLimit;
+
+      rowsHtml += `
+        <tr>
+          <td>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="online-pulse-indicator"></span>
+              <strong style="color: #4ade80; font-size: 0.78rem;">ONLINE</strong>
+            </div>
+          </td>
+          <td>
+            <strong style="color: var(--accent-gold); font-family: monospace;">${p.playerId}</strong>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">${p.playerName} (${p.vipTier})</div>
+          </td>
+          <td>
+            <span style="font-weight: 700; color: #fff;">${modeLabel}</span>
+            <div style="font-size: 0.72rem; color: var(--text-tertiary);">Igra: ${p.activeGame} • ${p.deviceType}</div>
+          </td>
+          <td class="font-mono" style="font-weight: 700; color: var(--accent-green, #22c55e);">
+            ${Number(p.balance).toLocaleString()} ZLT
+          </td>
+          <td>
+            <span class="quota-indicator-badge ${vaultLimitReached ? 'limit-reached' : 'open'}">
+              ${p.vaultUsage} / ${p.vaultLimit}
+            </span>
+          </td>
+          <td>
+            <span class="quota-indicator-badge ${royaleLimitReached ? 'limit-reached' : 'open'}">
+              ${p.royaleUsage} / ${p.royaleLimit}
+            </span>
+          </td>
+          <td style="font-size: 0.8rem; color: var(--text-secondary);">
+            ${durationStr}
+          </td>
+          <td>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <button type="button" class="btn-table-action btn-reset-p-limit" data-player="${p.playerId}" title="Resetuj dnevne limite za ovog igrača">
+                🔄 Reset Limita
+              </button>
+              <button type="button" class="btn-table-action btn-bonus-p-100" data-player="${p.playerId}" title="Pošalji +100 ZLT bonus">
+                🪙 +100
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    tbody.innerHTML = rowsHtml;
+
+    // Attach actions to buttons
+    tbody.querySelectorAll('.btn-reset-p-limit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pId = btn.getAttribute('data-player');
+        if (this.dailyAccessManager) {
+          this.dailyAccessManager.resetPlayerLimits(pId);
+        }
+        this.sendCommand({ action: 'RESET_PLAYER_DAILY_LIMITS', playerId: pId });
+        this.showToast(`Resetovani limiti za igrača [${pId}]`);
+        if (this.onlinePlayers.has(pId)) {
+          const pl = this.onlinePlayers.get(pId);
+          pl.vaultUsage = 0;
+          pl.royaleUsage = 0;
+          this.renderOnlinePlayers();
+        }
+      });
+    });
+
+    tbody.querySelectorAll('.btn-bonus-p-100').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pId = btn.getAttribute('data-player');
+        this.sendCommand({ action: 'WALLET_ADD', amount: 100 });
+        this.showToast(`Dodeljeno +100 ZLT igraču [${pId}]`);
+      });
+    });
+  }
+
+  renderLoginsAudit() {
+    const tbody = document.getElementById('logins-audit-table-body');
+    const kpiToday = document.getElementById('kpi-logins-today');
+    const kpiTotal = document.getElementById('kpi-logins-total');
+    const kpiBonuses = document.getElementById('kpi-bonuses-awarded-today');
+    if (!tbody) return;
+
+    if (!this.dailyAccessManager) {
+      tbody.innerHTML = `<tr><td colspan="6" class="table-loading-cell">DailyAccessManager modul nije dostupan.</td></tr>`;
+      return;
+    }
+
+    const logs = this.dailyAccessManager.getLoginAuditTrail();
+    const todayLogs = this.dailyAccessManager.getTodayLogins();
+    const todayLoginsCount = todayLogs.length;
+    const totalLoginsCount = logs.length;
+
+    let totalBonusAwardedToday = 0;
+    todayLogs.forEach(l => {
+      totalBonusAwardedToday += (l.bonusAwarded || 0);
+    });
+
+    if (kpiToday) kpiToday.textContent = todayLoginsCount;
+    if (kpiTotal) kpiTotal.textContent = totalLoginsCount;
+    if (kpiBonuses) kpiBonuses.textContent = `${totalBonusAwardedToday.toLocaleString()} ZLT`;
+
+    if (logs.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="table-loading-cell" style="padding: 24px; color: var(--text-tertiary);">
+            Nema zabeleženih prijava u dnevniku.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    let rowsHtml = '';
+    const recentLogs = logs.slice(0, 50);
+    recentLogs.forEach(entry => {
+      const isBonus = entry.bonusAwarded > 0;
+      rowsHtml += `
+        <tr>
+          <td style="font-size: 0.78rem; color: var(--text-secondary); font-family: monospace;">
+            ${entry.timeStr || new Date(entry.timestamp).toLocaleString()}
+          </td>
+          <td>
+            <strong style="color: var(--accent-gold); font-family: monospace;">${entry.playerId}</strong>
+          </td>
+          <td style="font-size: 0.8rem; color: var(--text-primary);">
+            ${entry.playerName || entry.playerId}
+          </td>
+          <td>
+            <span class="quota-indicator-badge ${isBonus ? 'open' : ''}" style="${isBonus ? 'background: rgba(34, 197, 94, 0.2); color: #4ade80;' : 'background: rgba(255,255,255,0.06); color: #aaa;'}">
+              ${isBonus ? `+${entry.bonusAwarded} ZLT Dnevna Prijava` : 'Prijava (Već Preuzeto)'}
+            </span>
+          </td>
+          <td style="font-size: 0.78rem; color: var(--text-secondary);">
+            ${entry.deviceType || 'Desktop / Kiosk'}
+          </td>
+          <td style="font-size: 0.78rem; color: var(--text-tertiary); font-family: monospace;">
+            ${entry.location || 'Kazino Klub / Lokalno'}
+          </td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = rowsHtml;
+  }
+
+  updateTelemetryStripOnlineStats() {
+    const telOnline = document.getElementById('tel-online-users');
+    const telLogins = document.getElementById('tel-logins-today');
+
+    if (telOnline) {
+      telOnline.textContent = this.onlinePlayers.size;
+    }
+    if (telLogins && this.dailyAccessManager) {
+      telLogins.textContent = this.dailyAccessManager.getTodayLoginsCount();
+    }
   }
 
   /* ==========================================================================
