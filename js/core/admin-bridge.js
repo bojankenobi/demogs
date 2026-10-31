@@ -199,6 +199,43 @@ class AdminBridge {
         }
         break;
 
+      case 'SET_ACTIVE_PROMO':
+        if (this.app) {
+          if (this.app.setActivePromotion) {
+            this.app.setActivePromotion(data.promo);
+          } else {
+            localStorage.setItem('gsc_active_promo', JSON.stringify(data.promo));
+          }
+        }
+        break;
+
+      case 'TRIGGER_PROMO_POPUP':
+        if (this.app && data.promo) {
+          const promo = data.promo;
+          const myPlayerId = this.app.playerTracker ? this.app.playerTracker.profile.id : null;
+          if (promo.targetType === 'single' && promo.targetPlayerId && promo.targetPlayerId !== myPlayerId) {
+            break;
+          }
+          if (promo.targetType === 'vip' && this.app.playerTracker?.profile?.vipTier !== 'VIP') {
+            break;
+          }
+          if (this.app.openPromotionModal) {
+            this.app.openPromotionModal(promo);
+          } else if (this.app.openVoucherModal) {
+            this.app.openVoucherModal({
+              campaignId: promo.id,
+              title: promo.title,
+              description: promo.body,
+              rewardValue: promo.promoValue,
+              imageUrl: promo.imageUrl,
+              location: promo.location,
+              promoAction: promo.promoAction,
+              expiresAt: promo.expiresAt
+            });
+          }
+        }
+        break;
+
       case 'TRIGGER_PUSH':
         if (this.app.notifications) {
           if (data.notifType === 'jackpot') this.app.notifications.triggerJackpotAlert('gold');

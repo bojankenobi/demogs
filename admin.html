@@ -127,7 +127,7 @@
       <button type="button" class="dash-tab-btn" data-tab="triggers">Daljinska Kontrola</button>
       <button type="button" class="dash-tab-btn" data-tab="crm">CRM & Baza Igrača</button>
       <button type="button" class="dash-tab-btn" data-tab="vouchers">Dnevnik Vaučera</button>
-      <button type="button" class="dash-tab-btn" data-tab="push">Smart Push Marketing</button>
+      <button type="button" class="dash-tab-btn" data-tab="push">Promocije & Smart Vaučeri</button>
       <button type="button" class="dash-tab-btn" data-tab="info">Sistemska Dijagnostika</button>
     </nav>
 
@@ -375,102 +375,203 @@
       </div>
     </section>
 
-    <!-- TAB 6: SMART PUSH MARKETING -->
+    <!-- TAB 6: PROMOTIVNI HUB & SMART VAUČERI -->
     <section class="tab-pane" id="pane-push">
       <div class="pane-intro-box">
-        <h2 class="pane-title">Smart Push Kampanje & Promocije</h2>
-        <p class="pane-desc">Slanje interaktivnih promotivnih poruka i digitalnih vaučera na uređaje igrača putem VAPID Web Push standarda.</p>
+        <h2 class="pane-title">Promotivni Hub &amp; Custom Kampanje</h2>
+        <p class="pane-desc">Kreiranje i upravljanje nedeljnim i mesečnim promocijama, postavljanje custom postera (upload slike sa računara ili link), podešavanje okidača vaučera i lansiranje kampanja u kazinu.</p>
       </div>
 
-      <div class="push-dash-layout">
+      <div class="promo-hub-container">
         <!-- Quick Preset Push Notifications -->
         <div class="push-card">
-          <h3 class="trigger-panel-title">Brzi Sistemski Događaji</h3>
-          <p class="card-sub-hint">Instant notifikacije za aktivaciju baze registrovanih igrača.</p>
-          <div class="quick-alerts-stack">
+          <h3 class="trigger-panel-title">⚡ Brzi Sistemski Događaji</h3>
+          <p class="card-sub-hint">Instant notifikacije za aktivaciju baze registrovanih igrača u realnom vremenu.</p>
+          <div class="quick-alerts-row">
             <button type="button" class="btn-trigger-action gold" id="btn-push-jackpot-alert">
-              Pošalji Džekpot Alarm (Preko 180.000 ZLT)
+              👑 Pošalji Džekpot Alarm (Preko 180.000 ZLT)
             </button>
             <button type="button" class="btn-trigger-action" id="btn-push-tour-alert">
-              Pošalji Poziv na 120s Kazino Turnir
+              🏆 Pošalji Poziv na 120s Kazino Turnir
             </button>
             <button type="button" class="btn-trigger-action" id="btn-push-bonus-alert">
-              Pošalji Obaveštenje za Točak Sreće
+              🎡 Pošalji Obaveštenje za Točak Sreće
             </button>
           </div>
         </div>
 
-        <!-- Custom Smart Promo Push Campaign -->
-        <div class="push-card">
-          <h3 class="trigger-panel-title">Kreiranje Ciljane Promo Kampanje</h3>
-          
-          <div class="push-form-group">
-            <label for="select-push-template">Šablon Promocije / Vaučera:</label>
-            <select id="select-push-template" class="push-select-dropdown">
-              <option value="custom">Prilagođena kampanja (Ručni unos)</option>
-              <option value="voucher_1000" selected>VIP Promo Tiket 1.000 ZLT za aparate u klubu</option>
-              <option value="voucher_drink">VIP Welcome Drink & Koktel na šanku</option>
-              <option value="voucher_tournament">VIP Ulaznica za 120s Kazino Turnir</option>
-              <option value="voucher_birthday">Rođendanski Poklon u Kazinu (2.000 ZLT)</option>
-              <option value="free_spins_25">VIP Online Poklon: 25 Besplatnih Spinova</option>
-            </select>
+        <!-- 2-Column Campaign Editor & Live Simulator -->
+        <div class="promo-editor-grid">
+          <!-- Col 1: Campaign Configuration Form -->
+          <div class="push-card">
+            <h3 class="trigger-panel-title">🎨 Podešavanje Promocije &amp; Okidača</h3>
+            
+            <div class="push-form-group">
+              <label for="select-push-template">Izbor Gotovog GrandSlot Šablona:</label>
+              <select id="select-push-template" class="push-select-dropdown">
+                <option value="custom">Prilagođena kampanja (Potpuni ručni unos)</option>
+                <option value="voucher_1000" selected>VIP Vikend Reload: 1.000 ZLT za aparate u klubu</option>
+                <option value="voucher_drink">VIP Welcome Drink &amp; Koktel na šanku</option>
+                <option value="voucher_tournament">VIP Ulaznica za 120s Kazino Turnir (50.000 ZLT)</option>
+                <option value="voucher_birthday">Rođendanski Poklon na Blagajni (2.000 ZLT)</option>
+                <option value="free_spins_25">Online Poklon: 25 Besplatnih Spinova (Super Bonus)</option>
+              </select>
+            </div>
+
+            <div class="push-form-row">
+              <div class="push-form-group" style="flex: 1;">
+                <label for="input-promo-campaign-id">Interni ID Kampanje:</label>
+                <input type="text" id="input-promo-campaign-id" class="push-input-text font-mono" value="promo_vikend_reload">
+              </div>
+              <div class="push-form-group" style="flex: 1;">
+                <label for="select-push-target">Ciljni Segment:</label>
+                <select id="select-push-target" class="push-select-dropdown">
+                  <option value="all">Svi Igrači u Kazinu</option>
+                  <option value="vip">Samo VIP Klub Igrači</option>
+                  <option value="inactive">Neaktivni Igrači (&gt;3 dana)</option>
+                  <option value="single">Specifičan Korisnik (ID)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="push-form-group" id="group-target-player-id" style="display: none;">
+              <label for="input-target-player-id">ID Ciljanog Igrača:</label>
+              <input type="text" id="input-target-player-id" class="push-input-text font-mono" placeholder="npr. gsc_usr_7891">
+            </div>
+
+            <div class="push-form-group">
+              <label for="input-push-title">Glavni Naslov Reklame / Postera:</label>
+              <input type="text" id="input-push-title" class="push-input-text" value="VIP VIKEND RELOAD TIKET">
+            </div>
+
+            <div class="push-form-group">
+              <label for="input-push-body">Tekst Ponude &amp; Pravila:</label>
+              <textarea id="input-push-body" class="push-input-text" rows="2" style="resize: vertical; font-family: inherit;">Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu i duplirajte uzbuđenje!</textarea>
+            </div>
+
+            <div class="push-form-row">
+              <div class="push-form-group" style="flex: 1;">
+                <label for="input-push-location">Lokacija Kluba:</label>
+                <input type="text" id="input-push-location" class="push-input-text" value="Grand Slot Club - Kralja Milana 12, Beograd">
+              </div>
+              <div class="push-form-group" style="flex: 1;">
+                <label for="input-promo-expiry">Rok Važenja (Ističe dana):</label>
+                <input type="datetime-local" id="input-promo-expiry" class="push-input-text font-mono">
+              </div>
+            </div>
+
+            <div class="quick-expiry-presets">
+              <span class="expiry-lbl">Brzi rok:</span>
+              <button type="button" class="btn-expiry-chip" data-days="3">+3 Dana</button>
+              <button type="button" class="btn-expiry-chip active" data-days="7">+7 Dana (Nedeljna)</button>
+              <button type="button" class="btn-expiry-chip" data-days="30">+30 Dana (Mesečna)</button>
+            </div>
+
+            <div class="push-form-group" style="margin-top: 14px;">
+              <label for="select-push-promo">Povezana Nagrada (Okidač za Vaučer / Bonus):</label>
+              <select id="select-push-promo" class="push-select-dropdown">
+                <option value="voucher:1000" selected>🎟️ Fizički Vaučer: 1.000 ZLT za Slot Aparate u Klubu</option>
+                <option value="voucher:2000">🎟️ Fizički Vaučer: 2.000 ZLT Rođendanski Bonus</option>
+                <option value="voucher_drink:1">🍸 Fizički Vaučer: VIP Welcome Drink na Šanku</option>
+                <option value="voucher_tour:1">🏆 Fizički Vaučer: VIP Ulaznica za Kazino Turnir</option>
+                <option value="credit_bonus:200">🪙 Online Dopuna: +200 ZLT na Saldo</option>
+                <option value="credit_bonus:500">🪙 Online Dopuna: +500 ZLT na Saldo</option>
+                <option value="credit_bonus:1000">🪙 Online Dopuna: +1.000 ZLT VIP Dopuna</option>
+                <option value="free_spins:10">🎰 Online: 10 Besplatnih Spinova (2x Množilac)</option>
+                <option value="free_spins:25">🎰 Online: 25 Besplatnih Spinova (Super Bonus)</option>
+                <option value="none:0">📢 Bez Nagrade (Samo informativni poster / najava)</option>
+              </select>
+            </div>
           </div>
 
-          <div class="push-form-group">
-            <label for="select-push-target">Ciljni Segment:</label>
-            <select id="select-push-target" class="push-select-dropdown">
-              <option value="all">Svi Pretplaćeni Igrači</option>
-              <option value="vip">Samo VIP Klub Igrači</option>
-              <option value="inactive">Neaktivni Igrači (&gt;3 dana bez spina)</option>
-              <option value="single">Specifičan Korisnik (Pojedinačni ID)</option>
-            </select>
+          <!-- Col 2: Custom Poster Upload & Live Screen Simulator -->
+          <div class="push-card">
+            <h3 class="trigger-panel-title">🖼️ Izbor Custom Postera &amp; Živi Prikaz</h3>
+
+            <!-- Drag & Drop Zone -->
+            <div class="poster-dropzone" id="poster-dropzone">
+              <input type="file" id="input-poster-file" accept="image/*" style="display: none;">
+              <div class="dropzone-content">
+                <span class="dropzone-icon">📤</span>
+                <div class="dropzone-text">
+                  <strong>Prevucite poster sliku ovde</strong> ili <button type="button" class="btn-browse-poster" id="btn-browse-poster">izaberite fajl sa računara</button>
+                </div>
+                <div class="dropzone-hint">Podržava JPG, PNG, WebP ili SVG sa automatskom optimizacijom</div>
+              </div>
+            </div>
+
+            <!-- Alternative URL input -->
+            <div class="push-form-group" style="margin-top: 10px;">
+              <label for="input-push-image">Putanja ili web link postera:</label>
+              <input type="text" id="input-push-image" class="push-input-text font-mono" value="assets/promotions/promo_weekend_vip.svg">
+            </div>
+
+            <!-- Live Simulator Box -->
+            <div class="live-screen-simulator-label">
+              <span>ŽIVI PREGLED KAKO IGRAČ VIDI POSTER U APLIKACIJI</span>
+              <span class="live-pulse-dot"></span>
+            </div>
+
+            <div class="live-poster-preview" id="live-poster-preview">
+              <div class="sim-poster-badge" id="sim-poster-badge">⭐ NEDELJNA PROMOCIJA</div>
+              <div class="sim-poster-img-wrap">
+                <img src="assets/promotions/promo_weekend_vip.svg" alt="Poster Preview" id="sim-poster-img">
+              </div>
+              <div class="sim-poster-body">
+                <h4 class="sim-poster-title" id="sim-poster-title">VIP VIKEND RELOAD TIKET</h4>
+                <div class="sim-poster-reward-tag" id="sim-poster-reward-tag">🎟️ 1.000 ZLT PROMO TIKET</div>
+                <p class="sim-poster-desc" id="sim-poster-desc">Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu i duplirajte uzbuđenje!</p>
+                <div class="sim-poster-meta">
+                  <span id="sim-poster-location">📍 Grand Slot Club</span>
+                  <span class="sim-poster-timer" id="sim-poster-timer">⏳ Ističe za: 7 dana</span>
+                </div>
+                <button type="button" class="sim-poster-cta-btn" id="sim-poster-cta-btn">
+                  🎟️ PREUZMI VIP VAUČER ZA KLUB
+                </button>
+              </div>
+            </div>
+
+            <!-- Primary Dispatch Actions -->
+            <div class="promo-actions-cluster">
+              <button type="button" class="btn-send-custom-push gold" id="btn-send-custom-push">
+                🚀 Objavi i Pošalji Igračima (Lobi + Pop-up)
+              </button>
+              <button type="button" class="btn-save-draft" id="btn-save-campaign-draft">
+                💾 Sačuvaj u Listu Kampanja
+              </button>
+            </div>
+            <div id="push-campaign-status" class="push-status-note"></div>
+          </div>
+        </div>
+
+        <!-- Row 3: Active & Scheduled Campaigns Management Table -->
+        <div class="push-card" style="margin-top: 20px;">
+          <div class="campaign-table-header">
+            <div>
+              <h3 class="trigger-panel-title">📋 Menadžer Svih Kampanja &amp; Promocija</h3>
+              <p class="card-sub-hint">Pregled svih aktivnih, zakazanih i arhiviranih promocija. Kliknite 'Aktiviraj u Lobiju' da postavite poster u kazino.</p>
+            </div>
+            <button type="button" class="btn-refresh-campaigns" id="btn-refresh-campaigns">🔄 Osveži Listu</button>
           </div>
 
-          <div class="push-form-group" id="group-target-player-id" style="display: none;">
-            <label for="input-target-player-id">ID Ciljanog Igrača:</label>
-            <input type="text" id="input-target-player-id" class="push-input-text font-mono" placeholder="npr. gsc_usr_7891">
+          <div class="campaigns-table-container">
+            <table class="crm-table" id="campaigns-registry-table">
+              <thead>
+                <tr>
+                  <th style="width: 70px;">Poster</th>
+                  <th>ID &amp; Naziv Kampanje</th>
+                  <th>Povezana Nagrada / Okidač</th>
+                  <th>Cilj &amp; Lokacija</th>
+                  <th>Važi do</th>
+                  <th>Status</th>
+                  <th style="text-align: right; min-width: 220px;">Akcije</th>
+                </tr>
+              </thead>
+              <tbody id="campaigns-table-body">
+                <!-- Dynamically populated from JS -->
+              </tbody>
+            </table>
           </div>
-
-          <div class="push-form-group">
-            <label for="input-push-title">Naslov Notifikacije:</label>
-            <input type="text" id="input-push-title" class="push-input-text" value="VIP PROMO TIKET 1.000 ZLT">
-          </div>
-
-          <div class="push-form-group">
-            <label for="input-push-body">Tekst Poruke:</label>
-            <input type="text" id="input-push-body" class="push-input-text" value="Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu!">
-          </div>
-
-          <div class="push-form-group">
-            <label for="input-push-image">Putanja Promotivnog Banera:</label>
-            <input type="text" id="input-push-image" class="push-input-text font-mono" value="assets/promotions/promo_voucher_bg.png">
-          </div>
-
-          <div class="push-form-group">
-            <label for="input-push-location">Lokacija Kluba:</label>
-            <input type="text" id="input-push-location" class="push-input-text" value="Grand Slot Club - Glavna Filijala">
-          </div>
-
-          <div class="push-form-group">
-            <label for="select-push-promo">Povezana Nagrada (Smart Action):</label>
-            <select id="select-push-promo" class="push-select-dropdown">
-              <option value="none:0">Bez Promocije (Samo tekstualno obaveštenje)</option>
-              <option value="voucher:1000" selected>Fizički Vaučer: 1.000 ZLT za Slot Aparate u Klubu</option>
-              <option value="voucher_drink:1">Fizički Vaučer: VIP Welcome Drink na Šanku</option>
-              <option value="voucher_tour:1">Fizički Vaučer: VIP Besplatan Ulaz na Turnir</option>
-              <option value="voucher:2000">Fizički Vaučer: 2.000 ZLT Rođendanski Bonus</option>
-              <option value="free_spins:10">Online: 10 Besplatnih Spinova (2x Množilac)</option>
-              <option value="free_spins:25">Online: 25 Besplatnih Spinova (VIP Bonus)</option>
-              <option value="credit_bonus:200">Online: +200 ZLT Promo Dopuna</option>
-              <option value="credit_bonus:500">Online: +500 ZLT Promo Dopuna</option>
-              <option value="credit_bonus:1000">Online: +1.000 ZLT VIP Dopuna</option>
-            </select>
-          </div>
-
-          <button type="button" class="btn-send-custom-push" id="btn-send-custom-push">
-            Pošalji Smart Push Kampanju
-          </button>
-          <div id="push-campaign-status" class="push-status-note"></div>
         </div>
       </div>
     </section>

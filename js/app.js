@@ -306,6 +306,7 @@ class IGTApp {
     // 7. Check for Smart Push Promotional Rewards & VIP Vouchers
     this.initPromoBonusListener();
     this.initVoucherHub();
+    this.initPromoBanner();
     this.checkPromoBonusFromUrl();
 
     // 8. The Vault Crawler & Slot-Battle Royale Engines
@@ -496,6 +497,152 @@ class IGTApp {
   }
 
   /* ==========================================================================
+     Lobby Weekly / Monthly Promo Banner & Custom Campaigns
+     ========================================================================== */
+
+  initPromoBanner() {
+    this.activePromotion = null;
+    this.promoTimerInterval = null;
+
+    const bannerEl = document.getElementById('lobby-promo-banner');
+    const openBtn = document.getElementById('btn-lobby-promo-open');
+
+    if (bannerEl) {
+      bannerEl.addEventListener('click', () => {
+        if (this.activePromotion) {
+          this.openPromotionModal(this.activePromotion);
+        }
+      });
+    }
+
+    if (openBtn) {
+      openBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (this.activePromotion) {
+          this.openPromotionModal(this.activePromotion);
+        }
+      });
+    }
+
+    this.loadActivePromotion();
+  }
+
+  loadActivePromotion() {
+    let promo = null;
+    try {
+      const stored = localStorage.getItem('gsc_active_promo');
+      if (stored) promo = JSON.parse(stored);
+    } catch (e) {}
+
+    if (!promo) {
+      promo = {
+        id: 'promo_vikend_reload',
+        title: 'VIP VIKEND RELOAD TIKET',
+        body: 'Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu i duplirajte uzbuđenje!',
+        imageUrl: 'assets/promotions/promo_weekend_vip.svg',
+        location: 'Grand Slot Club - Kralja Milana 12, Beograd',
+        expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
+        targetType: 'all',
+        promoAction: 'voucher',
+        promoValue: 1000,
+        status: 'ACTIVE'
+      };
+      try {
+        localStorage.setItem('gsc_active_promo', JSON.stringify(promo));
+      } catch (e) {}
+    }
+
+    this.setActivePromotion(promo, false);
+
+    // Auto-popup if player has not seen this promotion yet
+    const lastSeenId = localStorage.getItem('gsc_last_seen_promo_id');
+    if (promo && promo.status === 'ACTIVE' && lastSeenId !== promo.id) {
+      setTimeout(() => {
+        localStorage.setItem('gsc_last_seen_promo_id', promo.id);
+        this.openPromotionModal(promo);
+      }, 1400);
+    }
+  }
+
+  setActivePromotion(promo, shouldStore = true) {
+    this.activePromotion = promo;
+    if (shouldStore && promo) {
+      try {
+        localStorage.setItem('gsc_active_promo', JSON.stringify(promo));
+      } catch (e) {}
+    }
+
+    const wrap = document.getElementById('lobby-promo-banner-wrap');
+    if (!wrap) return;
+
+    if (!promo || promo.status !== 'ACTIVE') {
+      wrap.style.display = 'none';
+      return;
+    }
+
+    wrap.style.display = 'block';
+
+    const imgEl = document.getElementById('lobby-promo-img');
+    const titleEl = document.getElementById('lobby-promo-title');
+    const descEl = document.getElementById('lobby-promo-desc');
+    const rewardEl = document.getElementById('lobby-promo-reward-pill');
+    const countdownEl = document.getElementById('lobby-promo-countdown');
+    const badgeEl = document.getElementById('lobby-promo-badge');
+
+    if (imgEl && promo.imageUrl) imgEl.src = promo.imageUrl;
+    if (titleEl) titleEl.textContent = promo.title || 'VIP Promocija';
+    if (descEl) descEl.textContent = promo.body || promo.description || 'Preuzmite ekskluzivni vaučer za igru!';
+    if (badgeEl) badgeEl.textContent = promo.targetType === 'vip' ? '👑 SAMO ZA VIP ČLANOVE' : '⭐ EKSKLUZIVNA NEDELJNA PONUDA';
+
+    // Format reward tag
+    let rewardTag = '📢 OBAVEŠTENJE';
+    const val = Number(promo.promoValue || promo.rewardValue) || 1000;
+    if (promo.promoAction === 'voucher') rewardTag = `🎟️ ${val.toLocaleString()} ZLT VAUČER`;
+    else if (promo.promoAction === 'voucher_drink') rewardTag = '🍸 WELCOME DRINK';
+    else if (promo.promoAction === 'voucher_tour') rewardTag = '🏆 TURNIR ULAZNICA';
+    else if (promo.promoAction === 'credit_bonus') rewardTag = `🪙 +${val.toLocaleString()} ZLT DOPUNA`;
+    else if (promo.promoAction === 'free_spins') rewardTag = `🎰 +${val} FREE SPINOVA`;
+
+    if (rewardEl) rewardEl.textContent = rewardTag;
+
+    // Start live countdown timer on banner
+    if (this.promoTimerInterval) clearInterval(this.promoTimerInterval);
+    const updateCountdown = () => {
+      if (!countdownEl || !promo.expiresAt) return;
+      const diff = new Date(promo.expiresAt).getTime() - Date.now();
+      if (diff <= 0) {
+        countdownEl.textContent = '🔴 Promocija je istekla';
+        countdownEl.style.color = '#ef4444';
+      } else {
+        const d = Math.floor(diff / (24 * 3600000));
+        const h = Math.floor((diff % (24 * 3600000)) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        countdownEl.textContent = `⏳ Ističe za: ${d}d ${h}h ${m}m`;
+        countdownEl.style.color = '#facc15';
+      }
+    };
+    updateCountdown();
+    this.promoTimerInterval = setInterval(updateCountdown, 60000);
+  }
+
+  openPromotionModal(promo = null) {
+    if (!promo) promo = this.activePromotion;
+    if (!promo) return;
+
+    this.openVoucherModal({
+      campaignId: promo.id,
+      title: promo.title,
+      description: promo.body || promo.description,
+      imageUrl: promo.imageUrl,
+      location: promo.location,
+      rewardValue: promo.promoValue || promo.rewardValue || 1000,
+      rewardType: promo.promoAction || promo.rewardType || 'voucher',
+      promoAction: promo.promoAction || 'voucher',
+      expiresAt: promo.expiresAt
+    });
+  }
+
+  /* ==========================================================================
      Omnichannel VIP Voucher & Interactive Promotion Hub
      ========================================================================== */
 
@@ -650,13 +797,81 @@ class IGTApp {
     const locEl = document.getElementById('voucher-promo-location');
     const validEl = document.getElementById('voucher-promo-validity');
     const imgEl = document.getElementById('voucher-promo-img');
+    const claimBtn = document.getElementById('btn-claim-promo-action');
 
-    if (titleEl) titleEl.textContent = data.title || 'Grand Slot VIP Promocija';
-    if (descEl) descEl.textContent = data.description || data.body || 'Preuzmite lični VIP vaučer za klub!';
-    if (tagEl) tagEl.textContent = `+${Number(data.rewardValue || data.promoValue || 1000).toLocaleString()} RSD POKLON`;
+    const title = data.title || 'Grand Slot VIP Promocija';
+    const desc = data.description || data.body || 'Preuzmite lični VIP vaučer za klub!';
+    const val = Number(data.rewardValue || data.promoValue || 1000);
+    const action = data.promoAction || data.rewardType || 'voucher';
+
+    if (titleEl) titleEl.textContent = title;
+    if (descEl) descEl.textContent = desc;
     if (locEl) locEl.textContent = data.location || 'Grand Slot Club Beograd';
-    if (validEl) validEl.textContent = `${data.validHours || 48} sati`;
     if (imgEl && data.imageUrl) imgEl.src = data.imageUrl;
+
+    // Remaining validity
+    if (validEl) {
+      if (data.expiresAt) {
+        const diff = new Date(data.expiresAt).getTime() - Date.now();
+        if (diff > 0) {
+          const d = Math.floor(diff / (24 * 3600000));
+          const h = Math.floor((diff % (24 * 3600000)) / 3600000);
+          validEl.textContent = `${d} dana ${h} sati`;
+        } else {
+          validEl.textContent = 'Istekla';
+        }
+      } else {
+        validEl.textContent = `${data.validHours || 48} sati`;
+      }
+    }
+
+    // Dynamic Reward & Button Config
+    if (claimBtn) {
+      claimBtn.disabled = false;
+      // clone button to strip old listeners
+      const newBtn = claimBtn.cloneNode(true);
+      claimBtn.parentNode.replaceChild(newBtn, claimBtn);
+
+      if (action === 'credit_bonus') {
+        if (tagEl) tagEl.textContent = `🪙 +${val.toLocaleString()} ZLT ONLINE DOPUNA`;
+        newBtn.innerHTML = `🪙 PREUZMI +${val.toLocaleString()} ZLT ODMAH`;
+        newBtn.addEventListener('click', () => {
+          if (this.wallet && this.wallet.addFictionalRsd) {
+            this.wallet.addFictionalRsd(val);
+          }
+          if (window.slotAudio && window.slotAudio.playBigWin) window.slotAudio.playBigWin();
+          if (window.particleEngine && window.particleEngine.burst) window.particleEngine.burst(300, 250);
+          this.closeVoucherModal();
+          this.showMessage(`🎁 Čestitamo! Vaš račun je dopunjen sa +${val.toLocaleString()} ZLT!`, 'win');
+        });
+      } else if (action === 'free_spins') {
+        if (tagEl) tagEl.textContent = `🎰 +${val} BESPLATNIH SPINOVA`;
+        newBtn.innerHTML = `🎰 ZAPOČNI +${val} BESPLATNIH SPINOVA`;
+        newBtn.addEventListener('click', () => {
+          if (this.freeSpinsManager) this.freeSpinsManager.start(val, 2);
+          if (window.slotAudio && window.slotAudio.playBigWin) window.slotAudio.playBigWin();
+          if (window.particleEngine && window.particleEngine.burst) window.particleEngine.burst(300, 250);
+          this.closeVoucherModal();
+          this.showMessage(`🎰 Aktivirano +${val} BESPLATNIH SPINOVA (2x Množilac)!`, 'jackpot');
+        });
+      } else if (action === 'voucher_drink') {
+        if (tagEl) tagEl.textContent = '🍸 VIP WELCOME DRINK NA ŠANKU';
+        newBtn.innerHTML = '🍸 PREUZMI VIP KOKTEL VAUČER';
+        newBtn.addEventListener('click', () => this.claimActivePromoVoucher());
+      } else if (action === 'voucher_tour') {
+        if (tagEl) tagEl.textContent = '🏆 VIP ULAZNICA ZA TURNIR (50.000 ZLT)';
+        newBtn.innerHTML = '🏆 PREUZMI VIP ULAZNICU ZA TURNIR';
+        newBtn.addEventListener('click', () => this.claimActivePromoVoucher());
+      } else if (action === 'none') {
+        if (tagEl) tagEl.textContent = '📢 KAZINO OBAVEŠTENJE';
+        newBtn.innerHTML = '👍 RAZUMEM / NASTAVI IGRU';
+        newBtn.addEventListener('click', () => this.closeVoucherModal());
+      } else {
+        if (tagEl) tagEl.textContent = `🎟️ +${val.toLocaleString()} ZLT PROMO VAUČER`;
+        newBtn.innerHTML = `🎟️ PREUZMI VIP VAUČER ZA KLUB (${val.toLocaleString()} ZLT)`;
+        newBtn.addEventListener('click', () => this.claimActivePromoVoucher());
+      }
+    }
   }
 
   async claimActivePromoVoucher() {

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#140a02" />
+      <stop offset="45%" stop-color="#241405" />
+      <stop offset="75%" stop-color="#0f0701" />
+      <stop offset="100%" stop-color="#050200" />
+    </linearGradient>
+    <radialGradient id="gold-glow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#ffd700" stop-opacity="0.32" />
+      <stop offset="60%" stop-color="#d4af37" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="text-gold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="35%" stop-color="#ffea79" />
+      <stop offset="70%" stop-color="#f5c038" />
+      <stop offset="100%" stop-color="#b8860b" />
+    </linearGradient>
+    <linearGradient id="ribbon-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b8860b" />
+      <stop offset="50%" stop-color="#ffd700" />
+      <stop offset="100%" stop-color="#b8860b" />
+    </linearGradient>
+    <filter id="gold-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.9" />
+      <feDropShadow dx="0" dy="0" stdDeviation="14" flood-color="#ffd700" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#bg-grad)" />
+  <circle cx="400" cy="180" r="280" fill="url(#gold-glow)" />
+
+  <!-- Luxury Border & Corners -->
+  <rect x="18" y="18" width="764" height="414" rx="14" fill="none" stroke="#d4af37" stroke-width="2" stroke-opacity="0.6" />
+  <rect x="26" y="26" width="748" height="398" rx="10" fill="none" stroke="#ffd700" stroke-width="1" stroke-opacity="0.3" stroke-dasharray="6,4" />
+
+  <!-- Corner Ornaments -->
+  <path d="M 26 50 L 50 26 M 26 26 L 56 26 M 26 26 L 26 56" stroke="#ffd700" stroke-width="2" fill="none" />
+  <path d="M 774 50 L 750 26 M 774 26 L 744 26 M 774 26 L 774 56" stroke="#ffd700" stroke-width="2" fill="none" />
+  <path d="M 26 400 L 50 424 M 26 424 L 56 424 M 26 424 L 26 394" stroke="#ffd700" stroke-width="2" fill="none" />
+  <path d="M 774 400 L 750 424 M 774 424 L 744 424 M 774 424 L 774 394" stroke="#ffd700" stroke-width="2" fill="none" />
+
+  <!-- Brand Emblem (GrandSlot Pure Flower) -->
+  <g transform="translate(400, 115) scale(0.95)" filter="url(#gold-shadow)">
+    <g transform="translate(-62, -62)">
+      <!-- 7 Petals + Center -->
+      <polygon fill="url(#text-gold)" stroke="#fff" stroke-width="0.8" points="85.07 0 64.88 12.11 64.88 36.33 85.07 24.22 85.07 0"/>
+      <polygon fill="url(#text-gold)" stroke="#fff" stroke-width="0.8" points="29.39 6.8 26.28 30.13 45.22 45.23 48.33 21.9 29.39 6.8"/>
+      <polygon fill="url(#text-gold)" stroke="#fff" stroke-width="0.8" points="0 54.56 16.3 71.54 39.91 66.15 23.61 49.17 0 54.56"/>
+      <polygon fill="url(#text-gold)" stroke="#fff" stroke-width="0.8" points="19.02 107.33 42.46 105.17 52.96 83.35 29.53 85.5 19.02 107.33"/>
+      <polygon fill="url(#text-gold)" stroke="#fff" stroke-width="0.8" points="72.13 125.35 85.06 105.68 74.54 83.86 61.62 103.53 72.13 125.35"/>
+      <polygon fill="url(#text-gold)" stroke="#fff" stroke-width="0.8" points="119.33 95.07 112.02 72.7 88.4 67.31 95.72 89.68 119.33 95.07"/>
+      <polygon fill="url(#text-gold)" stroke="#fff" stroke-width="0.8" points="125.09 39.28 103.03 31.05 84.1 46.16 106.15 54.38 125.09 39.28"/>
+      <path fill="#ffffff" d="M64.88,42.15c-.25,0-.45.18-.49.42-.02.13-1.94,11.8-4.94,14.78-3,2.98-14.68,4.83-14.81,4.85-.24.04-.42.24-.43.49,0,.25.18.45.42.49.13.02,11.8,1.94,14.78,4.94,2.98,3,4.83,14.68,4.85,14.81.03.24.24.42.49.42s.45-.18.49-.42c.02-.13,1.94-11.8,4.94-14.78,3-2.98,14.68-4.83,14.81-4.85.24-.03.42-.24.42-.49,0-.25-.18-.45-.42-.49-.13-.02-11.8-1.94-14.78-4.94-2.98-3-4.83-14.68-4.85-14.81-.03-.24-.24-.42-.49-.42h0Z"/>
+      <circle cx="64.88" cy="62.67" r="4" fill="#ffffff" />
+    </g>
+  </g>
+
+  <!-- Top Ribbon Badge -->
+  <g transform="translate(400, 215)">
+    <rect x="-140" y="-14" width="280" height="28" rx="14" fill="#000" stroke="#ffd700" stroke-width="1.5" />
+    <text x="0" y="5" font-family="'Inter', sans-serif" font-size="12" font-weight="900" fill="#ffd700" letter-spacing="3" text-anchor="middle">★ EKSKLUZIVNA NEDELJNA PROMOCIJA ★</text>
+  </g>
+
+  <!-- Main Headline -->
+  <text x="400" y="275" font-family="'Inter', sans-serif" font-size="34" font-weight="900" fill="url(#text-gold)" letter-spacing="2" text-anchor="middle" filter="url(#gold-shadow)">
+    VIP VIKEND RELOAD TIKET
+  </text>
+
+  <!-- Highlight Reward Pill -->
+  <g transform="translate(400, 335)">
+    <rect x="-210" y="-22" width="420" height="44" rx="22" fill="url(#ribbon-grad)" stroke="#fff" stroke-width="1.5" />
+    <text x="0" y="8" font-family="'Inter', sans-serif" font-size="20" font-weight="900" fill="#140a02" letter-spacing="1.5" text-anchor="middle">
+      +1.000 ZLT ZA SLOT APARATE U KLUBU
+    </text>
+  </g>
+
+  <!-- Subtitle & Location -->
+  <text x="400" y="390" font-family="'Inter', sans-serif" font-size="14" font-weight="600" fill="#f5e6cc" text-anchor="middle">
+    Preuzmite svoj digitalni QR vaučer i aktivirajte kredit na blagajni ili šanku.
+  </text>
+  <text x="400" y="414" font-family="'Inter', sans-serif" font-size="12" font-weight="500" fill="#d4af37" text-anchor="middle">
+    📍 GRAND SLOT CLUB • VAŽI ZA SVE REGISTROVANE ČLANOVE
+  </text>
+</svg>

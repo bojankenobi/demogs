@@ -22,6 +22,7 @@ class AdminDashboard {
     this.initSimulator();
     this.initTriggers();
     this.initCrmHub();
+    this.initPromoHub();
     
     // Check for cached telemetry
     this.loadCachedTelemetry();
@@ -407,81 +408,16 @@ class AdminDashboard {
      Tab 4: CRM Player Database & Smart Push Campaigns
      ========================================================================== */
 
+  /* ==========================================================================
+     Tab 4 & 5: CRM Player Database & Voucher Scans
+     ========================================================================== */
+
   initCrmHub() {
     this.crmActiveSegment = 'all';
     this.crmSearchQuery = '';
     this.crmSearchTimeout = null;
 
-    // 0. Campaign Template Presets
-    const templateSelect = document.getElementById('select-push-template');
-    if (templateSelect) {
-      templateSelect.addEventListener('change', () => {
-        const val = templateSelect.value;
-        const titleInput = document.getElementById('input-push-title');
-        const bodyInput = document.getElementById('input-push-body');
-        const imageInput = document.getElementById('input-push-image');
-        const locationInput = document.getElementById('input-push-location');
-        const promoSelect = document.getElementById('select-push-promo');
-
-        const templates = {
-          voucher_1000: {
-            title: 'VIP PROMO TIKET 1.000 ZLT',
-            body: 'Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu!',
-            image: 'assets/promotions/promo_voucher_bg.png',
-            location: 'Grand Slot Club - Glavna Filijala',
-            promo: 'voucher:1000'
-          },
-          voucher_drink: {
-            title: 'VIP WELCOME DRINK NA ŠANKU',
-            body: 'Preuzmite svoj ekskluzivni koktel dobrodošlice prilikom posete klubu!',
-            image: 'assets/promotions/promo_drink_bg.png',
-            location: 'Grand Slot Club - VIP Bar',
-            promo: 'voucher_drink:1'
-          },
-          voucher_tournament: {
-            title: 'VIP ULAZNICA ZA KAZINO TURNIR',
-            body: 'Obezbedite besplatan ulaz na ekskluzivni 120s slot turnir u klubu!',
-            image: 'assets/promotions/promo_tournament_bg.png',
-            location: 'Grand Slot Club - Arena 1',
-            promo: 'voucher_tour:1'
-          },
-          voucher_birthday: {
-            title: 'SREĆAN ROĐENDAN OD GRAND SLOTA',
-            body: 'Čeka vas rođendanski keš poklon od 2.000 ZLT na blagajni kluba!',
-            image: 'assets/promotions/promo_birthday_bg.png',
-            location: 'Grand Slot Club - VIP Blagajna',
-            promo: 'voucher:2000'
-          },
-          free_spins_25: {
-            title: 'VIP POKLON: 25 BESPLATNIH SPINOVA',
-            body: 'Zavrtite slot odmah uz 25 gratis spinova i duplirane dobitke!',
-            image: 'assets/promotions/promo_spins_bg.png',
-            location: 'Grand Slot Online',
-            promo: 'free_spins:25'
-          }
-        };
-
-        if (templates[val]) {
-          const t = templates[val];
-          if (titleInput) titleInput.value = t.title;
-          if (bodyInput) bodyInput.value = t.body;
-          if (imageInput) imageInput.value = t.image;
-          if (locationInput) locationInput.value = t.location;
-          if (promoSelect) promoSelect.value = t.promo;
-        }
-      });
-    }
-
-    // 1. Target Selector Toggle
-    const targetSelect = document.getElementById('select-push-target');
-    const targetPlayerGroup = document.getElementById('group-target-player-id');
-    if (targetSelect && targetPlayerGroup) {
-      targetSelect.addEventListener('change', () => {
-        targetPlayerGroup.style.display = targetSelect.value === 'single' ? 'flex' : 'none';
-      });
-    }
-
-    // 2. Segment Filters
+    // Segment Filters
     const filterBtns = document.querySelectorAll('.crm-filter-btn');
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -492,7 +428,7 @@ class AdminDashboard {
       });
     });
 
-    // 3. Search Bar
+    // Search Bar
     const searchInput = document.getElementById('crm-player-search');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
@@ -504,7 +440,7 @@ class AdminDashboard {
       });
     }
 
-    // 4. Refresh Button
+    // Refresh CRM
     const refreshBtn = document.getElementById('btn-crm-refresh');
     if (refreshBtn) {
       refreshBtn.addEventListener('click', () => {
@@ -513,7 +449,7 @@ class AdminDashboard {
       });
     }
 
-    // 4b. Voucher Scans Refresh Button
+    // Refresh Voucher Scans
     const scansRefreshBtn = document.getElementById('btn-crm-scans-refresh');
     if (scansRefreshBtn) {
       scansRefreshBtn.addEventListener('click', () => {
@@ -522,7 +458,413 @@ class AdminDashboard {
       });
     }
 
-    // 5. Preset Quick Push Buttons
+    // Initial load
+    this.fetchCrmPlayers();
+    this.fetchVoucherScans();
+  }
+
+  /* ==========================================================================
+     Tab 6: Promotions Hub, Custom Posters & Voucher Trigger Manager
+     ========================================================================== */
+
+  initPromoHub() {
+    // 1. Seed or load campaign registry
+    this.campaignsRegistry = this.loadCampaignsRegistry();
+
+    // 2. Set default expiry: 7 days from now
+    this.setDefaultExpiry(7);
+
+    // 3. Quick Expiry presets (+3, +7, +30 days)
+    document.querySelectorAll('.btn-expiry-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-expiry-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const days = parseInt(btn.getAttribute('data-days'), 10) || 7;
+        this.setDefaultExpiry(days);
+        this.updateLivePosterPreview();
+      });
+    });
+
+    // 4. Target selector toggle
+    const targetSelect = document.getElementById('select-push-target');
+    const targetPlayerGroup = document.getElementById('group-target-player-id');
+    if (targetSelect && targetPlayerGroup) {
+      targetSelect.addEventListener('change', () => {
+        targetPlayerGroup.style.display = targetSelect.value === 'single' ? 'flex' : 'none';
+        this.updateLivePosterPreview();
+      });
+    }
+
+    // 5. Template selector
+    const templateSelect = document.getElementById('select-push-template');
+    if (templateSelect) {
+      templateSelect.addEventListener('change', () => {
+        this.applyPromoTemplate(templateSelect.value);
+      });
+    }
+
+    // 6. Live preview input listeners (realtime updating as operator types)
+    const previewTriggers = [
+      'input-push-title',
+      'input-push-body',
+      'input-push-image',
+      'input-push-location',
+      'select-push-promo',
+      'input-promo-expiry',
+      'input-promo-campaign-id'
+    ];
+    previewTriggers.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => this.updateLivePosterPreview());
+        el.addEventListener('change', () => this.updateLivePosterPreview());
+      }
+    });
+
+    // 7. Poster Drag & Drop + File Upload with automatic compression
+    this.initPosterUploader();
+
+    // 8. Preset Quick Push Buttons (Jackpot, Tour, Wheel)
+    this.initQuickPushButtons();
+
+    // 9. Publish & Send Campaign Button
+    const btnSend = document.getElementById('btn-send-custom-push');
+    if (btnSend) {
+      btnSend.addEventListener('click', () => this.publishCampaign(true));
+    }
+
+    // 10. Save Draft Button
+    const btnDraft = document.getElementById('btn-save-campaign-draft');
+    if (btnDraft) {
+      btnDraft.addEventListener('click', () => this.publishCampaign(false));
+    }
+
+    // 11. Refresh campaigns table
+    const btnRefresh = document.getElementById('btn-refresh-campaigns');
+    if (btnRefresh) {
+      btnRefresh.addEventListener('click', () => {
+        this.campaignsRegistry = this.loadCampaignsRegistry();
+        this.renderCampaignsTable();
+        this.showToast('Lista promocija osvežena');
+      });
+    }
+
+    // Initial render
+    this.updateLivePosterPreview();
+    this.renderCampaignsTable();
+  }
+
+  setDefaultExpiry(days) {
+    const input = document.getElementById('input-promo-expiry');
+    if (!input) return;
+    const targetDate = new Date(Date.now() + (days * 24 * 60 * 60 * 1000));
+    // format as YYYY-MM-DDTHH:mm
+    const pad = (n) => String(n).padStart(2, '0');
+    const formatted = `${targetDate.getFullYear()}-${pad(targetDate.getMonth() + 1)}-${pad(targetDate.getDate())}T${pad(targetDate.getHours())}:${pad(targetDate.getMinutes())}`;
+    input.value = formatted;
+  }
+
+  initPosterUploader() {
+    const dropzone = document.getElementById('poster-dropzone');
+    const fileInput = document.getElementById('input-poster-file');
+    const browseBtn = document.getElementById('btn-browse-poster');
+
+    if (browseBtn && fileInput) {
+      browseBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fileInput.click();
+      });
+    }
+
+    if (dropzone && fileInput) {
+      dropzone.addEventListener('click', (e) => {
+        if (e.target !== browseBtn) fileInput.click();
+      });
+
+      ['dragenter', 'dragover'].forEach(name => {
+        dropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        dropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('dragover');
+        });
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+          this.processUploadedPoster(files[0]);
+        }
+      });
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          this.processUploadedPoster(e.target.files[0]);
+        }
+      });
+    }
+  }
+
+  processUploadedPoster(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      alert('Molimo izaberite validan slikovni fajl (JPG, PNG, WebP, SVG).');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      if (file.type === 'image/svg+xml') {
+        this.setPosterImage(dataUrl, file.name);
+        return;
+      }
+
+      // Optimize bitmap images via offscreen canvas (max 1200x675)
+      const img = new Image();
+      img.onload = () => {
+        const maxW = 1200;
+        const maxH = 675;
+        let w = img.width;
+        let h = img.height;
+
+        if (w > maxW || h > maxH) {
+          if (w / h > maxW / maxH) {
+            h = Math.round((h * maxW) / w);
+            w = maxW;
+          } else {
+            w = Math.round((w * maxH) / h);
+            h = maxH;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.88);
+        this.setPosterImage(optimizedDataUrl, file.name);
+      };
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  setPosterImage(url, fileName) {
+    const imgInput = document.getElementById('input-push-image');
+    if (imgInput) imgInput.value = url;
+    this.updateLivePosterPreview();
+    this.showToast(`Poster uspešno postavljen: ${fileName || 'Custom slika'}`);
+  }
+
+  applyPromoTemplate(key) {
+    const templates = {
+      voucher_1000: {
+        id: 'promo_vikend_reload',
+        title: 'VIP VIKEND RELOAD TIKET',
+        body: 'Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu i duplirajte uzbuđenje!',
+        image: 'assets/promotions/promo_weekend_vip.svg',
+        location: 'Grand Slot Club - Kralja Milana 12, Beograd',
+        promo: 'voucher:1000',
+        days: 7
+      },
+      voucher_drink: {
+        id: 'promo_welcome_drink',
+        title: 'VIP WELCOME DRINK NA ŠANKU',
+        body: 'Preuzmite svoj ekskluzivni koktel dobrodošlice prilikom posete klubu!',
+        image: 'assets/promotions/promo_drink.svg',
+        location: 'Grand Slot Club - VIP Bar',
+        promo: 'voucher_drink:1',
+        days: 14
+      },
+      voucher_tournament: {
+        id: 'promo_120s_turnir',
+        title: 'VIP ULAZNICA ZA KAZINO TURNIR',
+        body: 'Obezbedite besplatan ulaz na ekskluzivni 120s slot turnir sa fondom od 50.000 ZLT!',
+        image: 'assets/promotions/promo_tournament.svg',
+        location: 'Grand Slot Club - Arena 1',
+        promo: 'voucher_tour:1',
+        days: 5
+      },
+      voucher_birthday: {
+        id: 'promo_vip_rodjendan',
+        title: 'SREĆAN ROĐENDAN OD GRAND SLOTA',
+        body: 'Čeka vas rođendanski keš poklon od 2.000 ZLT na blagajni kluba!',
+        image: 'assets/promotions/promo_birthday.svg',
+        location: 'Grand Slot Club - VIP Blagajna',
+        promo: 'voucher:2000',
+        days: 30
+      },
+      free_spins_25: {
+        id: 'promo_super_spins_25',
+        title: 'VIP POKLON: 25 BESPLATNIH SPINOVA',
+        body: 'Zavrtite slot odmah uz 25 gratis spinova i 2x duplirane dobitke u Super Bonusu!',
+        image: 'assets/promotions/promo_spins.svg',
+        location: 'Grand Slot Online',
+        promo: 'free_spins:25',
+        days: 7
+      }
+    };
+
+    if (templates[key]) {
+      const t = templates[key];
+      const idInput = document.getElementById('input-promo-campaign-id');
+      const titleInput = document.getElementById('input-push-title');
+      const bodyInput = document.getElementById('input-push-body');
+      const imageInput = document.getElementById('input-push-image');
+      const locationInput = document.getElementById('input-push-location');
+      const promoSelect = document.getElementById('select-push-promo');
+
+      if (idInput) idInput.value = t.id;
+      if (titleInput) titleInput.value = t.title;
+      if (bodyInput) bodyInput.value = t.body;
+      if (imageInput) imageInput.value = t.image;
+      if (locationInput) locationInput.value = t.location;
+      if (promoSelect) promoSelect.value = t.promo;
+      if (t.days) this.setDefaultExpiry(t.days);
+
+      this.updateLivePosterPreview();
+    }
+  }
+
+  updateLivePosterPreview() {
+    const title = (document.getElementById('input-push-title')?.value || 'VIP PROMOCIJA').trim();
+    const body = (document.getElementById('input-push-body')?.value || '').trim();
+    const image = (document.getElementById('input-push-image')?.value || 'assets/promotions/promo_weekend_vip.svg').trim();
+    const location = (document.getElementById('input-push-location')?.value || 'Grand Slot Club').trim();
+    const promoSelectVal = document.getElementById('select-push-promo')?.value || 'none:0';
+    const [action, rawVal] = promoSelectVal.split(':');
+    const val = parseInt(rawVal, 10) || 0;
+    const expiryVal = document.getElementById('input-promo-expiry')?.value;
+
+    const imgEl = document.getElementById('sim-poster-img');
+    const titleEl = document.getElementById('sim-poster-title');
+    const descEl = document.getElementById('sim-poster-desc');
+    const rewardEl = document.getElementById('sim-poster-reward-tag');
+    const locEl = document.getElementById('sim-poster-location');
+    const timerEl = document.getElementById('sim-poster-timer');
+    const ctaBtn = document.getElementById('sim-poster-cta-btn');
+
+    if (imgEl) imgEl.src = image;
+    if (titleEl) titleEl.textContent = title;
+    if (descEl) descEl.textContent = body;
+    if (locEl) locEl.textContent = `📍 ${location}`;
+
+    // Reward tag and CTA button label
+    let rewardText = '📢 KAZINO OBAVEŠTENJE';
+    let btnText = '👍 POGLEDAJ DETALJE';
+
+    if (action === 'voucher') {
+      rewardText = `🎟️ ${val.toLocaleString()} ZLT PROMO TIKET`;
+      btnText = `🎟️ PREUZMI ${val.toLocaleString()} ZLT VAUČER ZA KLUB`;
+    } else if (action === 'voucher_drink') {
+      rewardText = '🍸 VIP WELCOME DRINK NA ŠANKU';
+      btnText = '🍸 PREUZMI WELCOME DRINK VAUČER';
+    } else if (action === 'voucher_tour') {
+      rewardText = '🏆 VIP ULAZNICA ZA TURNIR (50.000 ZLT)';
+      btnText = '🏆 PREUZMI VIP ULAZNICU ZA TURNIR';
+    } else if (action === 'credit_bonus') {
+      rewardText = `🪙 +${val.toLocaleString()} ZLT ONLINE DOPUNA`;
+      btnText = `🪙 PREUZMI +${val.toLocaleString()} ZLT ODMAH`;
+    } else if (action === 'free_spins') {
+      rewardText = `🎰 +${val} BESPLATNIH SPINOVA`;
+      btnText = `🎰 ZAPOČNI +${val} BESPLATNIH SPINOVA`;
+    }
+
+    if (rewardEl) rewardEl.textContent = rewardText;
+    if (ctaBtn) ctaBtn.textContent = btnText;
+
+    // Remaining time format
+    if (timerEl) {
+      if (expiryVal) {
+        const diffMs = new Date(expiryVal).getTime() - Date.now();
+        if (diffMs <= 0) {
+          timerEl.textContent = '🔴 Promocija je istekla';
+          timerEl.style.color = '#ef4444';
+        } else {
+          const days = Math.floor(diffMs / (24 * 3600000));
+          const hours = Math.floor((diffMs % (24 * 3600000)) / 3600000);
+          timerEl.textContent = `⏳ Ističe za: ${days}d ${hours}h`;
+          timerEl.style.color = '#ffd700';
+        }
+      } else {
+        timerEl.textContent = '⏳ Trajanje: 7 dana';
+      }
+    }
+  }
+
+  loadCampaignsRegistry() {
+    try {
+      const stored = localStorage.getItem('gsc_promotions_registry');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+
+    const initial = [
+      {
+        id: 'promo_vikend_reload',
+        title: 'VIP VIKEND RELOAD TIKET',
+        body: 'Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu i duplirajte uzbuđenje!',
+        imageUrl: 'assets/promotions/promo_weekend_vip.svg',
+        location: 'Grand Slot Club - Kralja Milana 12, Beograd',
+        expiresAt: new Date(Date.now() + 7 * 86400000).toISOString(),
+        targetType: 'all',
+        promoAction: 'voucher',
+        promoValue: 1000,
+        status: 'ACTIVE'
+      },
+      {
+        id: 'promo_welcome_drink',
+        title: 'VIP WELCOME DRINK NA ŠANKU',
+        body: 'Preuzmite svoj ekskluzivni koktel dobrodošlice prilikom posete klubu!',
+        imageUrl: 'assets/promotions/promo_drink.svg',
+        location: 'Grand Slot Club - VIP Bar',
+        expiresAt: new Date(Date.now() + 14 * 86400000).toISOString(),
+        targetType: 'all',
+        promoAction: 'voucher_drink',
+        promoValue: 1,
+        status: 'PAUSED'
+      },
+      {
+        id: 'promo_120s_turnir',
+        title: 'VIP ULAZNICA ZA KAZINO TURNIR',
+        body: 'Obezbedite besplatan ulaz na ekskluzivni 120s slot turnir sa fondom od 50.000 ZLT!',
+        imageUrl: 'assets/promotions/promo_tournament.svg',
+        location: 'Grand Slot Club - Arena 1',
+        expiresAt: new Date(Date.now() + 5 * 86400000).toISOString(),
+        targetType: 'all',
+        promoAction: 'voucher_tour',
+        promoValue: 1,
+        status: 'PAUSED'
+      }
+    ];
+
+    try {
+      localStorage.setItem('gsc_promotions_registry', JSON.stringify(initial));
+      localStorage.setItem('gsc_active_promo', JSON.stringify(initial[0]));
+    } catch (e) {}
+
+    return initial;
+  }
+
+  saveCampaignsRegistry() {
+    try {
+      localStorage.setItem('gsc_promotions_registry', JSON.stringify(this.campaignsRegistry));
+    } catch (e) {}
+  }
+
+  initQuickPushButtons() {
     const btnPushJackpot = document.getElementById('btn-push-jackpot-alert');
     if (btnPushJackpot) {
       btnPushJackpot.addEventListener('click', async () => {
@@ -564,78 +906,292 @@ class AdminDashboard {
         this.showToast('Poslata notifikacija: Točak Sreće');
       });
     }
+  }
 
-    // 6. Smart Push Campaign Sender
-    const btnSendCustom = document.getElementById('btn-send-custom-push');
-    if (btnSendCustom) {
-      btnSendCustom.addEventListener('click', async () => {
-        const title = (document.getElementById('input-push-title')?.value || '').trim();
-        const body = (document.getElementById('input-push-body')?.value || '').trim();
-        const imageUrl = (document.getElementById('input-push-image')?.value || '').trim();
-        const location = (document.getElementById('input-push-location')?.value || '').trim() || 'Grand Slot Club - Glavna Filijala';
-        const targetType = document.getElementById('select-push-target')?.value || 'all';
-        const targetPlayerId = (document.getElementById('input-target-player-id')?.value || '').trim();
-        const promoSelectVal = document.getElementById('select-push-promo')?.value || 'none:0';
-        const [promoAction, rawVal] = promoSelectVal.split(':');
-        const promoValue = parseInt(rawVal, 10) || 0;
+  async publishCampaign(isLive) {
+    const campaignId = (document.getElementById('input-promo-campaign-id')?.value || `promo_${Date.now()}`).trim();
+    const title = (document.getElementById('input-push-title')?.value || '').trim();
+    const body = (document.getElementById('input-push-body')?.value || '').trim();
+    const imageUrl = (document.getElementById('input-push-image')?.value || 'assets/promotions/promo_weekend_vip.svg').trim();
+    const location = (document.getElementById('input-push-location')?.value || '').trim() || 'Grand Slot Club - Glavna Filijala';
+    const targetType = document.getElementById('select-push-target')?.value || 'all';
+    const targetPlayerId = (document.getElementById('input-target-player-id')?.value || '').trim();
+    const promoSelectVal = document.getElementById('select-push-promo')?.value || 'none:0';
+    const [promoAction, rawVal] = promoSelectVal.split(':');
+    const promoValue = parseInt(rawVal, 10) || 0;
+    const expiryInput = document.getElementById('input-promo-expiry')?.value;
+    const expiresAt = expiryInput ? new Date(expiryInput).toISOString() : new Date(Date.now() + 7 * 86400000).toISOString();
 
-        if (!title || !body) {
-          alert('Molimo unesite naslov i tekst poruke pre slanja.');
-          return;
-        }
-
-        if (targetType === 'single' && !targetPlayerId) {
-          alert('Molimo navedite ID ciljanog igrača za pojedinačnu poruku.');
-          return;
-        }
-
-        const statusEl = document.getElementById('push-campaign-status');
-        if (statusEl) {
-          statusEl.style.color = 'var(--accent-gold)';
-          statusEl.textContent = '⏳ Slanje kampanje u toku...';
-        }
-
-        // Live broadcast for open instances
-        this.sendCommand({
-          action: 'TRIGGER_PUSH',
-          title,
-          body,
-          imageUrl,
-          location,
-          targetType,
-          targetPlayerId,
-          promoAction,
-          promoValue
-        });
-
-        // Backend Web Push API call
-        const res = await this.dispatchPushApi({
-          title,
-          body,
-          imageUrl,
-          location,
-          targetType,
-          targetPlayerId,
-          promoAction,
-          promoValue
-        });
-
-        if (statusEl) {
-          if (res && res.success) {
-            statusEl.style.color = '#4ade80';
-            statusEl.textContent = res.message || `Uspešno poslato (poslato: ${res.sentCount || 1})`;
-            this.showToast('Smart Push Kampanja uspešno poslata');
-          } else {
-            statusEl.style.color = '#f87171';
-            statusEl.textContent = `Greška: ${res?.error || 'Došlo je do greške pri slanju.'}`;
-          }
-        }
-      });
+    if (!title || !body) {
+      alert('Molimo unesite naslov i tekst poruke pre objave.');
+      return;
     }
 
-    // Initial load
-    this.fetchCrmPlayers();
-    this.fetchVoucherScans();
+    if (targetType === 'single' && !targetPlayerId) {
+      alert('Molimo navedite ID ciljanog igrača za pojedinačnu poruku.');
+      return;
+    }
+
+    const campaign = {
+      id: campaignId,
+      title,
+      body,
+      imageUrl,
+      location,
+      targetType,
+      targetPlayerId: targetType === 'single' ? targetPlayerId : null,
+      promoAction,
+      promoValue,
+      expiresAt,
+      status: isLive ? 'ACTIVE' : 'PAUSED',
+      updatedAt: new Date().toISOString()
+    };
+
+    // Update or insert into registry
+    const existingIndex = this.campaignsRegistry.findIndex(c => c.id === campaignId);
+    if (existingIndex >= 0) {
+      this.campaignsRegistry[existingIndex] = campaign;
+    } else {
+      this.campaignsRegistry.unshift(campaign);
+    }
+
+    if (isLive) {
+      // Mark others as inactive if they are active
+      this.campaignsRegistry.forEach(c => {
+        if (c.id !== campaignId && c.status === 'ACTIVE') {
+          c.status = 'PAUSED';
+        }
+      });
+      localStorage.setItem('gsc_active_promo', JSON.stringify(campaign));
+    }
+
+    this.saveCampaignsRegistry();
+    this.renderCampaignsTable();
+
+    const statusEl = document.getElementById('push-campaign-status');
+
+    if (isLive) {
+      if (statusEl) {
+        statusEl.style.color = 'var(--accent-gold)';
+        statusEl.textContent = '⏳ Lansiranje kampanje u kazino lobiju i slanje pop-up obaveštenja...';
+      }
+
+      // 1. Live broadcast to active slot/casino terminals:
+      // A) Update persistent lobby banner
+      this.sendCommand({
+        action: 'SET_ACTIVE_PROMO',
+        promo: campaign
+      });
+
+      // B) Trigger live modal pop-up on open screens
+      this.sendCommand({
+        action: 'TRIGGER_PROMO_POPUP',
+        promo: campaign
+      });
+
+      // C) Trigger native audio/toast push
+      this.sendCommand({
+        action: 'TRIGGER_PUSH',
+        title,
+        body,
+        imageUrl,
+        location,
+        targetType,
+        targetPlayerId,
+        promoAction,
+        promoValue
+      });
+
+      // 2. Dispatch to backend Web Push API
+      const res = await this.dispatchPushApi({
+        title,
+        body,
+        imageUrl,
+        location,
+        targetType,
+        targetPlayerId,
+        promoAction,
+        promoValue
+      });
+
+      if (statusEl) {
+        if (res && res.success) {
+          statusEl.style.color = '#4ade80';
+          statusEl.textContent = `✅ Uspešno objavljeno u lobiju i poslato igračima (${res.message || 'aktivirano'})!`;
+          this.showToast('Promocija je aktivna u lobiju i poslata igračima!');
+        } else {
+          statusEl.style.color = '#f87171';
+          statusEl.textContent = `Greška: ${res?.error || 'Došlo je do greške pri slanju.'}`;
+        }
+      }
+    } else {
+      if (statusEl) {
+        statusEl.style.color = '#ffd700';
+        statusEl.textContent = `💾 Kampanja [${campaignId}] sačuvana kao nacrt.`;
+      }
+      this.showToast(`Kampanja [${title}] sačuvana kao nacrt.`);
+    }
+  }
+
+  renderCampaignsTable() {
+    const tbody = document.getElementById('campaigns-table-body');
+    if (!tbody) return;
+
+    if (!this.campaignsRegistry || this.campaignsRegistry.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="table-loading-cell">Nema unetih promocija. Kreirajte novu kampanju iznad.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    const now = Date.now();
+
+    this.campaignsRegistry.forEach((c) => {
+      const isExpired = new Date(c.expiresAt).getTime() < now;
+      let statusClass = 'status-paused';
+      let statusLabel = 'PAUZIRANA';
+
+      if (isExpired) {
+        statusClass = 'status-expired';
+        statusLabel = 'ISTEKLA';
+      } else if (c.status === 'ACTIVE') {
+        statusClass = 'status-active';
+        statusLabel = '🟢 AKTIVNA U LOBIJU';
+      }
+
+      // Format reward label
+      let rewardTag = '📢 Obaveštenje';
+      if (c.promoAction === 'voucher') rewardTag = `🎟️ ${Number(c.promoValue).toLocaleString()} ZLT Vaučer`;
+      else if (c.promoAction === 'voucher_drink') rewardTag = '🍸 Welcome Drink';
+      else if (c.promoAction === 'voucher_tour') rewardTag = '🏆 Turnir Ulaznica';
+      else if (c.promoAction === 'credit_bonus') rewardTag = `🪙 +${Number(c.promoValue).toLocaleString()} ZLT Online`;
+      else if (c.promoAction === 'free_spins') rewardTag = `🎰 +${c.promoValue} Besplatnih Spinova`;
+
+      const expDate = new Date(c.expiresAt);
+      const dateStr = `${expDate.getDate()}.${expDate.getMonth() + 1}.${expDate.getFullYear()}`;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <img src="${c.imageUrl}" class="campaign-thumb-mini" alt="Poster" onerror="this.src='assets/symbols/crystal-spade-clean.png'">
+        </td>
+        <td>
+          <strong style="color: #fff;">${this.escapeHtml(c.title)}</strong>
+          <div style="font-size: 0.72rem; color: var(--text-tertiary); font-family: monospace;">${this.escapeHtml(c.id)}</div>
+        </td>
+        <td>
+          <span style="font-size: 0.78rem; font-weight: 700; color: #ffd700;">${rewardTag}</span>
+        </td>
+        <td style="font-size: 0.75rem; color: var(--text-secondary);">
+          <div>${c.targetType === 'vip' ? '👑 VIP' : (c.targetType === 'single' ? '👤 Korisnik' : '👥 Svi')}</div>
+          <div style="color: var(--text-tertiary); font-size: 0.7rem;">${this.escapeHtml(c.location || 'Klub')}</div>
+        </td>
+        <td style="font-size: 0.75rem;">
+          <div style="color: ${isExpired ? '#f87171' : '#cbd5e1'}; font-weight: 600;">${dateStr}</div>
+        </td>
+        <td>
+          <span class="campaign-status-pill ${statusClass}">${statusLabel}</span>
+        </td>
+        <td>
+          <div class="campaign-row-actions">
+            ${c.status !== 'ACTIVE' ? `
+              <button type="button" class="btn-row-action act-activate" data-act="activate" data-id="${c.id}" title="Postavi ovu promociju kao glavnu u lobiju">
+                Aktiviraj
+              </button>
+            ` : `
+              <button type="button" class="btn-row-action act-pause" data-act="pause" data-id="${c.id}" title="Pauziraj promociju">
+                Pauziraj
+              </button>
+            `}
+            <button type="button" class="btn-row-action act-popup" data-act="popup" data-id="${c.id}" title="Pošalji instant pop-up poster igračima na ekran">
+              Pop-up
+            </button>
+            <button type="button" class="btn-row-action act-delete" data-act="delete" data-id="${c.id}" title="Obriši kampanju">
+              Obriši
+            </button>
+          </div>
+        </td>
+      `;
+
+      // Event listeners for actions
+      tr.querySelector('[data-act="activate"]')?.addEventListener('click', () => this.activateCampaignFromTable(c.id));
+      tr.querySelector('[data-act="pause"]')?.addEventListener('click', () => this.pauseCampaignFromTable(c.id));
+      tr.querySelector('[data-act="popup"]')?.addEventListener('click', () => this.triggerPopupFromTable(c.id));
+      tr.querySelector('[data-act="delete"]')?.addEventListener('click', () => this.deleteCampaignFromTable(c.id));
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  activateCampaignFromTable(campaignId) {
+    const campaign = this.campaignsRegistry.find(c => c.id === campaignId);
+    if (!campaign) return;
+
+    this.campaignsRegistry.forEach(c => {
+      c.status = (c.id === campaignId) ? 'ACTIVE' : 'PAUSED';
+    });
+
+    localStorage.setItem('gsc_active_promo', JSON.stringify(campaign));
+    this.saveCampaignsRegistry();
+    this.renderCampaignsTable();
+
+    // Broadcast to lobby
+    this.sendCommand({
+      action: 'SET_ACTIVE_PROMO',
+      promo: campaign
+    });
+
+    this.showToast(`Promocija [${campaign.title}] je sada aktivna u lobiju!`);
+  }
+
+  pauseCampaignFromTable(campaignId) {
+    const campaign = this.campaignsRegistry.find(c => c.id === campaignId);
+    if (!campaign) return;
+
+    campaign.status = 'PAUSED';
+    this.saveCampaignsRegistry();
+    this.renderCampaignsTable();
+
+    this.sendCommand({
+      action: 'SET_ACTIVE_PROMO',
+      promo: null
+    });
+
+    this.showToast(`Promocija [${campaign.title}] je pauzirana.`);
+  }
+
+  triggerPopupFromTable(campaignId) {
+    const campaign = this.campaignsRegistry.find(c => c.id === campaignId);
+    if (!campaign) return;
+
+    this.sendCommand({
+      action: 'TRIGGER_PROMO_POPUP',
+      promo: campaign
+    });
+
+    this.showToast(`Pop-up za [${campaign.title}] poslat na ekrane igrača!`);
+  }
+
+  deleteCampaignFromTable(campaignId) {
+    if (!confirm(`Da li ste sigurni da želite da obrišete kampanju [${campaignId}]?`)) return;
+
+    this.campaignsRegistry = this.campaignsRegistry.filter(c => c.id !== campaignId);
+    this.saveCampaignsRegistry();
+    this.renderCampaignsTable();
+    this.showToast(`Kampanja [${campaignId}] je obrisana.`);
   }
 
   async dispatchPushApi(payload) {

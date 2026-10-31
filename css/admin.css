@@ -1401,3 +1401,401 @@ body.admin-body {
     min-height: 44px;
   }
 }
+
+/* ==========================================================================
+   Promotions Hub & Custom Campaign Management
+   ========================================================================== */
+
+.promo-hub-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.quick-alerts-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.quick-alerts-row .btn-trigger-action {
+  flex: 1;
+  min-width: 220px;
+}
+
+.promo-editor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.push-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.quick-expiry-presets {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.expiry-lbl {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  font-weight: 600;
+}
+
+.btn-expiry-chip {
+  background: #1e1e24;
+  border: 1px solid #333;
+  color: #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-expiry-chip:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.btn-expiry-chip.active {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* Poster Dropzone */
+.poster-dropzone {
+  border: 2px dashed rgba(255, 215, 0, 0.35);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.poster-dropzone:hover,
+.poster-dropzone.dragover {
+  border-color: var(--accent-gold);
+  background: rgba(255, 215, 0, 0.08);
+}
+
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.dropzone-icon {
+  font-size: 1.8rem;
+}
+
+.dropzone-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.btn-browse-poster {
+  background: none;
+  border: none;
+  color: var(--accent-gold);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.dropzone-hint {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+}
+
+/* Live Simulator */
+.live-screen-simulator-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0 8px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--accent-gold);
+}
+
+.live-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: pulse 1.5s infinite;
+}
+
+.live-poster-preview {
+  position: relative;
+  background: linear-gradient(180deg, #180f05 0%, #0a0602 100%);
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75), 0 0 15px rgba(255, 215, 0, 0.15);
+  padding: 12px;
+}
+
+.sim-poster-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 1px;
+  z-index: 2;
+}
+
+.sim-poster-img-wrap {
+  width: 100%;
+  height: 170px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sim-poster-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sim-poster-body {
+  padding: 12px 6px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sim-poster-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffd700;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.sim-poster-reward-tag {
+  display: inline-block;
+  align-self: flex-start;
+  background: rgba(255, 215, 0, 0.15);
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+.sim-poster-desc {
+  font-size: 0.76rem;
+  color: #d1c7b7;
+  line-height: 1.4;
+  margin: 2px 0 6px;
+}
+
+.sim-poster-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.68rem;
+  color: #b5a995;
+  border-top: 1px dashed rgba(255, 215, 0, 0.2);
+  padding-top: 6px;
+}
+
+.sim-poster-timer {
+  color: #ffd700;
+  font-weight: 700;
+}
+
+.sim-poster-cta-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  background: linear-gradient(135deg, #ffd700 0%, #d4af37 50%, #996515 100%);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.promo-actions-cluster {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.promo-actions-cluster .btn-send-custom-push {
+  flex: 2;
+  margin-top: 0;
+}
+
+.btn-save-draft {
+  flex: 1;
+  background: #2a2a30;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-save-draft:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #888;
+}
+
+/* Campaigns Manager Table */
+.campaign-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.btn-refresh-campaigns {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: var(--accent-gold);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-refresh-campaigns:hover {
+  background: rgba(255, 215, 0, 0.2);
+}
+
+.campaigns-table-container {
+  overflow-x: auto;
+}
+
+.campaign-thumb-mini {
+  width: 56px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  background: #000;
+  display: block;
+}
+
+.campaign-status-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.campaign-status-pill.status-active {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid #22c55e;
+  color: #4ade80;
+}
+
+.campaign-status-pill.status-paused {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid #eab308;
+  color: #facc15;
+}
+
+.campaign-status-pill.status-expired {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #f87171;
+}
+
+.campaign-row-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.btn-row-action {
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-row-action.act-activate {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: #22c55e;
+  color: #4ade80;
+}
+
+.btn-row-action.act-activate:hover {
+  background: #22c55e;
+  color: #000;
+}
+
+.btn-row-action.act-popup {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+.btn-row-action.act-popup:hover {
+  background: #ffd700;
+  color: #000;
+}
+
+.btn-row-action.act-pause {
+  background: rgba(234, 179, 8, 0.15);
+  border-color: #eab308;
+  color: #facc15;
+}
+
+.btn-row-action.act-delete {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #f87171;
+}
+
+.btn-row-action.act-delete:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .promo-editor-grid {
+    grid-template-columns: 1fr;
+  }
+}
