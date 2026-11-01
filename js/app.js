@@ -87,6 +87,9 @@ class IGTApp {
     if (window.RoyalBlackjackGame) {
       this.blackjackGame = new window.RoyalBlackjackGame(this.wallet, this.jackpots);
     }
+    if (window.RoyalVideoPokerGame) {
+      this.videoPokerGame = new window.RoyalVideoPokerGame(this.wallet, this.jackpots);
+    }
 
     // 4. Lobby
     this.lobby = new window.CasinoLobby(this.wallet, this.jackpots);
@@ -282,6 +285,46 @@ class IGTApp {
         },
         get isSpinning() { return false; },
         gameInstance: this.blackjackGame
+      });
+    }
+
+    if (this.videoPokerGame) {
+      this.lobby.registerGame('videopoker', {
+        mount: () => {
+          const stage = document.querySelector('.slot-stage-scaler');
+          if (stage) stage.style.display = 'none';
+
+          const controlsPanel = document.querySelector('.controls-panel');
+          if (controlsPanel) controlsPanel.style.display = 'none';
+
+          const bannerWrap = document.querySelector('.status-banner-wrap');
+          if (bannerWrap) bannerWrap.style.display = 'none';
+
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.add('in-videopoker-mode');
+
+          if (this.isAutoSpin) this.toggleAutoSpin(false);
+
+          this.videoPokerGame.mount();
+        },
+        unmount: () => {
+          this.videoPokerGame.unmount();
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.remove('in-videopoker-mode');
+          this.restoreSlotUI();
+        },
+        forceExit: () => {
+          if (this.videoPokerGame && typeof this.videoPokerGame.forceExit === 'function') {
+            this.videoPokerGame.forceExit();
+          }
+        },
+        spin: () => {
+          if (this.videoPokerGame) {
+            this.videoPokerGame.handleMainAction();
+          }
+        },
+        get isSpinning() { return false; },
+        gameInstance: this.videoPokerGame
       });
     }
 
@@ -544,11 +587,12 @@ class IGTApp {
 
     const container = document.querySelector('.game-container');
 
-    const standaloneGameIds = ['crash', 'plinko', 'blackjack', 'mines'];
+    const standaloneGameIds = ['crash', 'plinko', 'blackjack', 'mines', 'videopoker'];
     const standaloneViews = [
       'crash-game-view',
       'plinko-game-view',
       'blackjack-game-view',
+      'videopoker-game-view',
       'mines-game-view'
     ];
 
@@ -570,7 +614,7 @@ class IGTApp {
       });
 
       if (container) {
-        container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode');
+        container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode', 'in-videopoker-mode');
         container.classList.toggle('in-vault-mode', mode === 'vault');
         container.classList.toggle('in-royale-mode', mode === 'royale');
       }
@@ -1244,6 +1288,7 @@ class IGTApp {
       'crash-game-view',
       'plinko-game-view',
       'blackjack-game-view',
+      'videopoker-game-view',
       'mines-game-view'
     ];
     standaloneViews.forEach(id => {
@@ -1253,7 +1298,7 @@ class IGTApp {
 
     const container = document.querySelector('.game-container');
     if (container) {
-      container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode');
+      container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode', 'in-videopoker-mode');
     }
 
     // Ensure no residual multiplayer overlays bleed into Casino or Trezor

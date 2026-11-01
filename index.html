@@ -975,6 +975,193 @@
         </div>
       </div>
 
+      <!-- Standalone Grand Royal Video Poker (Retro Aparat Poker) Game View -->
+      <div class="videopoker-stage-view" id="videopoker-game-view" style="display: none;">
+        <div class="videopoker-cabinet-panel">
+          <!-- Neon Glowing Retro Paytable -->
+          <div class="vp-paytable-board">
+            <div class="vp-paytable-header">
+              <span class="vp-brand-title">🃏 ROYAL VIDEO POKER</span>
+              <span class="vp-hand-rule-tag">JACKS OR BETTER • 9/6 RETRO</span>
+            </div>
+            <div class="vp-paytable-grid">
+              <div class="vp-pay-row" id="vp-row-royal_flush">
+                <span class="vp-hand-name">ROYAL FLUSH</span>
+                <span class="vp-hand-payout" id="vp-payout-royal_flush">16,000</span>
+              </div>
+              <div class="vp-pay-row" id="vp-row-straight_flush">
+                <span class="vp-hand-name">STRAIGHT FLUSH</span>
+                <span class="vp-hand-payout" id="vp-payout-straight_flush">1,000</span>
+              </div>
+              <div class="vp-pay-row" id="vp-row-four_of_a_kind">
+                <span class="vp-hand-name">POKER (4 OF A KIND)</span>
+                <span class="vp-hand-payout" id="vp-payout-four_of_a_kind">500</span>
+              </div>
+              <div class="vp-pay-row" id="vp-row-full_house">
+                <span class="vp-hand-name">FULL HOUSE</span>
+                <span class="vp-hand-payout" id="vp-payout-full_house">180</span>
+              </div>
+              <div class="vp-pay-row" id="vp-row-flush">
+                <span class="vp-hand-name">FLUSH (BOJA)</span>
+                <span class="vp-hand-payout" id="vp-payout-flush">120</span>
+              </div>
+              <div class="vp-pay-row" id="vp-row-straight">
+                <span class="vp-hand-name">STRAIGHT (KENTA)</span>
+                <span class="vp-hand-payout" id="vp-payout-straight">80</span>
+              </div>
+              <div class="vp-pay-row" id="vp-row-three_of_a_kind">
+                <span class="vp-hand-name">TRILING (3 OF A KIND)</span>
+                <span class="vp-hand-payout" id="vp-payout-three_of_a_kind">60</span>
+              </div>
+              <div class="vp-pay-row" id="vp-row-two_pair">
+                <span class="vp-hand-name">TWO PAIR (2 PARA)</span>
+                <span class="vp-hand-payout" id="vp-payout-two_pair">40</span>
+              </div>
+              <div class="vp-pay-row" id="vp-row-jacks_or_better">
+                <span class="vp-hand-name">JACKS OR BETTER (J+)</span>
+                <span class="vp-hand-payout" id="vp-payout-jacks_or_better">20</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Poker Playing Table / Felt Rack with 5 Cards -->
+          <div class="vp-cards-surface">
+            <div class="vp-status-bar">
+              <span class="vp-status-pill" id="vp-status-text">POSTAVITE OPKLADU I PRITISNITE PODELI</span>
+            </div>
+
+            <!-- 5 Playing Cards with Hold Badges -->
+            <div class="vp-cards-row">
+              <div class="vp-card-slot" id="vp-slot-0">
+                <button type="button" class="vp-hold-badge" id="vp-hold-0">ZADRŽI</button>
+                <div class="vp-card-box" id="vp-card-0">
+                  <div class="vp-card-placeholder">🂠</div>
+                </div>
+              </div>
+              <div class="vp-card-slot" id="vp-slot-1">
+                <button type="button" class="vp-hold-badge" id="vp-hold-1">ZADRŽI</button>
+                <div class="vp-card-box" id="vp-card-1">
+                  <div class="vp-card-placeholder">🂠</div>
+                </div>
+              </div>
+              <div class="vp-card-slot" id="vp-slot-2">
+                <button type="button" class="vp-hold-badge" id="vp-hold-2">ZADRŽI</button>
+                <div class="vp-card-box" id="vp-card-2">
+                  <div class="vp-card-placeholder">🂠</div>
+                </div>
+              </div>
+              <div class="vp-card-slot" id="vp-slot-3">
+                <button type="button" class="vp-hold-badge" id="vp-hold-3">ZADRŽI</button>
+                <div class="vp-card-box" id="vp-card-3">
+                  <div class="vp-card-placeholder">🂠</div>
+                </div>
+              </div>
+              <div class="vp-card-slot" id="vp-slot-4">
+                <button type="button" class="vp-hold-badge" id="vp-hold-4">ZADRŽI</button>
+                <div class="vp-card-box" id="vp-card-4">
+                  <div class="vp-card-placeholder">🂠</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Poker Control Deck -->
+          <div class="vp-control-deck">
+            <!-- Bet Stepper Row -->
+            <div class="vp-bet-row">
+              <div class="vp-bet-stepper-wrap">
+                <button type="button" class="vp-step-btn" id="vp-bet-minus" aria-label="Smanji ulog">−</button>
+                <div class="vp-bet-val-box">
+                  <span class="vp-bet-subtag">ULOG</span>
+                  <span class="vp-bet-amount" id="vp-bet-val">20</span>
+                </div>
+                <button type="button" class="vp-step-btn" id="vp-bet-plus" aria-label="Povećaj ulog">+</button>
+              </div>
+              <button type="button" class="vp-btn-max-bet" id="vp-bet-max">MAX BET</button>
+            </div>
+
+            <!-- Action Buttons for Phases -->
+            <div class="vp-action-container">
+              <!-- Deal Phase -->
+              <div class="vp-phase-deck" id="vp-ctrls-deal">
+                <button type="button" class="btn-vp-main btn-vp-deal" id="btn-vp-deal">
+                  <span class="btn-vp-icon">🃏</span>
+                  <span class="btn-vp-text">PODELI (DEAL)</span>
+                </button>
+              </div>
+
+              <!-- Hold Phase -->
+              <div class="vp-phase-deck" id="vp-ctrls-hold" style="display: none;">
+                <button type="button" class="btn-vp-main btn-vp-draw" id="btn-vp-draw">
+                  <span class="btn-vp-icon">✨</span>
+                  <span class="btn-vp-text">IZVUCI (DRAW)</span>
+                </button>
+              </div>
+
+              <!-- Win Result Phase: Gamble or Collect -->
+              <div class="vp-phase-deck vp-win-deck" id="vp-ctrls-win" style="display: none;">
+                <button type="button" class="btn-vp-gamble" id="btn-vp-gamble">
+                  <span class="btn-vp-icon">🔥</span>
+                  <span class="btn-vp-text">DUPLIRAJ (GAMBLE)</span>
+                </button>
+                <button type="button" class="btn-vp-collect" id="btn-vp-collect">
+                  <span class="btn-vp-icon">💰</span>
+                  <span class="btn-vp-text">UZMI DOBITAK</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gamble Crveno / Crno Modal Overlay -->
+          <div class="vp-gamble-modal" id="vp-gamble-modal" style="display: none;">
+            <div class="vp-gamble-cabinet">
+              <div class="vp-gamble-header">
+                <div class="vp-gamble-badge">🔥 DUPLANJE (GAMBLE)</div>
+                <div class="vp-gamble-streak-tag">Nivo: <span id="vp-gamble-streak">0/5</span></div>
+              </div>
+
+              <div class="vp-gamble-amounts">
+                <div class="vp-amount-box">
+                  <span class="vp-amt-label">TRENUTNO</span>
+                  <span class="vp-amt-val" id="vp-gamble-current-win">40 ZLT</span>
+                </div>
+                <div class="vp-amount-arrow">➔</div>
+                <div class="vp-amount-box highlight">
+                  <span class="vp-amt-label">DUPLO</span>
+                  <span class="vp-amt-val" id="vp-gamble-double-win">80 ZLT</span>
+                </div>
+              </div>
+
+              <!-- Flashing Card in Center -->
+              <div class="vp-gamble-card-area">
+                <div class="vp-flash-card red-flash" id="vp-gamble-flash-card">♥️</div>
+              </div>
+
+              <div class="vp-gamble-status" id="vp-gamble-msg">IZABERITE CRVENU ILI CRNU</div>
+
+              <!-- Red / Black Action Buttons -->
+              <div class="vp-gamble-actions">
+                <button type="button" class="btn-gamble-choice btn-gamble-red" id="btn-vp-gamble-red">
+                  <span class="gamble-btn-icon">♥️♦️</span>
+                  <span class="gamble-btn-txt">CRVENA</span>
+                </button>
+                <button type="button" class="btn-gamble-choice btn-gamble-black" id="btn-vp-gamble-black">
+                  <span class="gamble-btn-icon">♠️♣️</span>
+                  <span class="gamble-btn-txt">CRNA</span>
+                </button>
+              </div>
+
+              <!-- History Strip & Collect Option -->
+              <div class="vp-gamble-footer">
+                <div class="vp-history-label">ISTORIJA:</div>
+                <div class="vp-history-strip" id="vp-gamble-history-strip"></div>
+                <button type="button" class="btn-gamble-take" id="btn-vp-gamble-collect">UZMI DOBITAK</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- Status Message Banner: Situated cleanly between slot machine and bet controls -->
@@ -1403,6 +1590,29 @@
           <div class="egt-card-details">
             <h3 class="egt-card-title">ROYAL BLACKJACK</h3>
             <p class="egt-card-sub">Vegas Strip Pravila • 3D Karte • Split, Double Down & Osiguranje</p>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">IGRAJ SADA</span>
+          </div>
+        </div>
+
+        <!-- Game 8: Royal Video Poker (Retro Aparat) -->
+        <div class="egt-game-card" id="egt-opt-videopoker" data-game="videopoker">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-gold">800× APARAT</div>
+          
+          <div class="grand-card-poster poster-videopoker">
+            <div class="poster-symbols-cluster">
+              <span class="poster-card-royal">👑</span>
+              <span class="poster-card-hand">🂡🂮</span>
+            </div>
+            <div class="poster-specs-tag">JACKS OR BETTER • 800× • CRVENO/CRNO</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">ROYAL VIDEO POKER</h3>
+            <p class="egt-card-sub">Retro Aparat Poker • 9/6 Tabela • Smart-Hold • Crveno/Crno Kocka</p>
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
@@ -2889,6 +3099,7 @@
   <script src="js/games/crash/crash.js?v=97"></script>
   <script src="js/games/plinko/plinko.js?v=97"></script>
   <script src="js/games/blackjack/blackjack.js?v=97"></script>
+  <script src="js/games/video-poker/video-poker.js?v=99"></script>
 
   <!-- Application Controller -->
   <script src="js/app.js?v=98"></script>
