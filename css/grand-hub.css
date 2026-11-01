@@ -2283,14 +2283,14 @@
   }
 
   /* ==========================================================================
-     Mobile Action Docks
+     Mobile Action Docks (Hidden by default in Casino Salon mode!)
      ========================================================================== */
   .vault-mobile-action-dock,
   .royale-mobile-action-dock {
     width: 100% !important;
     max-width: 520px !important;
     margin: 4px auto !important;
-    display: flex !important;
+    display: none !important;
     justify-content: space-between !important;
     gap: 4px !important;
     padding: 4px 6px !important;
@@ -2574,6 +2574,14 @@
 }
 
 @media (min-width: 1024px) {
+  /* Hide mobile action docks on desktop */
+  .vault-mobile-action-dock,
+  .royale-mobile-action-dock,
+  #vault-mobile-dock,
+  #royale-mobile-dock {
+    display: none !important;
+  }
+
   .grand-mode-hub {
     max-width: 780px;
     padding: 6px 12px;

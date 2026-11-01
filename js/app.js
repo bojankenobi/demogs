@@ -337,6 +337,12 @@ class IGTApp {
       document.body.classList.add('theme-casino');
     }
 
+    // Ensure subgame mobile action docks are hidden on initial load in Casino mode
+    const initVDock = document.getElementById('vault-mobile-dock');
+    if (initVDock) initVDock.style.display = 'none';
+    const initRDock = document.getElementById('royale-mobile-dock');
+    if (initRDock) initRDock.style.display = 'none';
+
     this.initGrandModeHub();
     this.initDailyGrantAndAudit();
   }
@@ -588,6 +594,12 @@ class IGTApp {
       // Regular Casino Salon
       if (this.vaultCrawler) this.vaultCrawler.unmount();
       if (this.battleRoyale) this.battleRoyale.unmount();
+
+      // Ensure subgame mobile action docks are strictly hidden in clean Casino mode
+      const vDock = document.getElementById('vault-mobile-dock');
+      if (vDock) vDock.style.display = 'none';
+      const rDock = document.getElementById('royale-mobile-dock');
+      if (rDock) rDock.style.display = 'none';
 
       if (container) {
         container.classList.remove('in-vault-mode', 'in-royale-mode');

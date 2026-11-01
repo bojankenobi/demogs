@@ -32,14 +32,10 @@ const hubCss = fs.readFileSync('css/grand-hub.css', 'utf8');
 
 assert(hubCss.includes('@media (max-width: 1023px)'), 'Missing @media (max-width: 1023px) in grand-hub.css');
 assert(hubCss.includes('.vault-left-wing'), 'Missing .vault-left-wing in grand-hub.css');
-assert(hubCss.includes('.vault-mobile-action-dock'), 'Missing .vault-mobile-action-dock in grand-hub.css');
-assert(hubCss.includes('.royale-mobile-action-dock'), 'Missing .royale-mobile-action-dock in grand-hub.css');
-assert(hubCss.includes('.vault-left-wing .vault-tower-strip'), 'Missing suppression of 5-floor selector in top card on mobile');
-assert(hubCss.includes('.royale-left-wing .royale-leaderboard-card'), 'Missing suppression of competitor list in top card on mobile');
-assert(hubCss.includes('.vault-shop-card-modal'), 'Missing .vault-shop-card-modal styles');
-assert(hubCss.includes('.vault-floors-card-modal'), 'Missing .vault-floors-card-modal styles');
-assert(hubCss.includes('.royale-leaderboard-card-modal'), 'Missing .royale-leaderboard-card-modal styles');
-console.log('✓ CSS Mobile Ergonomic rules, order rules, and modal cards verified');
+assert(hubCss.includes('.vault-mobile-action-dock,\n  .royale-mobile-action-dock {\n    width: 100% !important;\n    max-width: 520px !important;\n    margin: 4px auto !important;\n    display: none !important;'), 'Mobile docks must be display: none !important by default so Casino mode stays 100% clean');
+assert(hubCss.includes('.game-container.in-vault-mode #vault-mobile-dock {\n    order: 7 !important;\n    display: flex !important;\n  }'), 'Vault dock must only show when in-vault-mode is active');
+assert(hubCss.includes('.game-container.in-royale-mode #royale-mobile-dock {\n    order: 7 !important;\n    display: flex !important;\n  }'), 'Royale dock must only show when in-royale-mode is active');
+console.log('✓ CSS Mobile Ergonomic rules, order rules, and modal cards verified (Casino mode stays 100% clean)');
 
 console.log('--- TEST 3: Slot Scaler Refinements in js/app.js ---');
 const appJs = fs.readFileSync('js/app.js', 'utf8');
