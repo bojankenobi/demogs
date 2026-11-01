@@ -251,6 +251,78 @@ class VaultCrawler {
     if (modal) modal.classList.remove('active');
   }
 
+  /* ==========================================================================
+     In-Run Quick Shop Modal (Crno Tržište for Mobile & Fast Purchasing)
+     ========================================================================== */
+  openShopModal() {
+    const modal = document.getElementById('vault-shop-modal');
+    if (!modal) return;
+    this.updateHUD();
+    modal.classList.add('active');
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+  }
+
+  closeShopModal() {
+    const modal = document.getElementById('vault-shop-modal');
+    if (modal) modal.classList.remove('active');
+  }
+
+  /* ==========================================================================
+     Tower Roadmap Modal (Floors 1-5 Roadmap for Mobile & Ergonomics)
+     ========================================================================== */
+  openFloorsModal() {
+    const modal = document.getElementById('vault-floors-modal');
+    if (!modal) return;
+    this.renderFloorsModal();
+    modal.classList.add('active');
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+  }
+
+  closeFloorsModal() {
+    const modal = document.getElementById('vault-floors-modal');
+    if (modal) modal.classList.remove('active');
+  }
+
+  renderFloorsModal() {
+    const listEl = document.getElementById('vault-floors-modal-list');
+    if (!listEl) return;
+
+    listEl.innerHTML = this.FLOOR_CONFIG.map((cfg) => {
+      const flNum = cfg.floor;
+      const isCleared = (flNum < this.floor);
+      const isActive = (flNum === this.floor);
+      const isLocked = (flNum > this.floor);
+
+      let badgeClass = 'locked';
+      let badgeText = '🔒 Zaključano';
+      if (isCleared) {
+        badgeClass = 'cleared';
+        badgeText = '✓ Rešeno';
+      } else if (isActive) {
+        badgeClass = 'active';
+        badgeText = `Trenutno: Soba ${this.nodeIndex + 1}/5`;
+      }
+
+      const rewardHtml = cfg.milestoneVoucher
+        ? `<div class="vault-floor-modal-reward">🎁 Nagrada: <strong>${cfg.milestoneVoucher.title}</strong></div>`
+        : '';
+
+      return `
+        <div class="vault-floor-modal-item ${isActive ? 'active' : ''} ${isCleared ? 'cleared' : ''}">
+          <div class="vault-floor-modal-left">
+            <span class="vault-floor-modal-icon">${cfg.enemy.icon}</span>
+            <div class="vault-floor-modal-info">
+              <strong class="vault-floor-modal-name">${cfg.name}</strong>
+              <span class="vault-floor-modal-sub">${cfg.desc}</span>
+              ${rewardHtml}
+            </div>
+          </div>
+          <div class="vault-floor-modal-badge ${badgeClass}">${badgeText}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
   renderLeaderboard() {
     const listEl = document.getElementById('vault-raiders-list');
     const myRankPill = document.getElementById('vault-my-rank-pill');
@@ -386,6 +458,64 @@ class VaultCrawler {
     if (btnShopShock) {
       btnShopShock.addEventListener('click', () => this.buyShopItem('shock'));
     }
+
+    // Mobile Heist Action Dock buttons
+    const btnDockShop = document.getElementById('btn-dock-vault-shop');
+    if (btnDockShop) {
+      btnDockShop.addEventListener('click', () => this.openShopModal());
+    }
+    const btnDockTalents = document.getElementById('btn-dock-vault-talents');
+    if (btnDockTalents) {
+      btnDockTalents.addEventListener('click', () => this.openTalentsModal());
+    }
+    const btnDockFloors = document.getElementById('btn-dock-vault-floors');
+    if (btnDockFloors) {
+      btnDockFloors.addEventListener('click', () => this.openFloorsModal());
+    }
+    const btnDockRank = document.getElementById('btn-dock-vault-rank');
+    if (btnDockRank) {
+      btnDockRank.addEventListener('click', () => this.openLeaderboardModal());
+    }
+    const btnDockReset = document.getElementById('btn-dock-vault-reset');
+    if (btnDockReset) {
+      btnDockReset.addEventListener('click', () => {
+        if (confirm('Želite li da započnete novu provalu od Sprata 1? Sakupljeni ključevi, plen i talenat-drvo se zadržavaju.')) {
+          this.resetRun();
+        }
+      });
+    }
+
+    // Modal Crno Tržište events
+    const btnCloseModalShop = document.getElementById('btn-close-vault-shop');
+    if (btnCloseModalShop) {
+      btnCloseModalShop.addEventListener('click', () => this.closeShopModal());
+    }
+    const btnDoneModalShop = document.getElementById('btn-done-vault-shop');
+    if (btnDoneModalShop) {
+      btnDoneModalShop.addEventListener('click', () => this.closeShopModal());
+    }
+    const btnModalPotion = document.getElementById('btn-vault-modal-potion');
+    if (btnModalPotion) {
+      btnModalPotion.addEventListener('click', () => this.buyShopItem('potion'));
+    }
+    const btnModalShield = document.getElementById('btn-vault-modal-shield');
+    if (btnModalShield) {
+      btnModalShield.addEventListener('click', () => this.buyShopItem('shield'));
+    }
+    const btnModalShock = document.getElementById('btn-vault-modal-shock');
+    if (btnModalShock) {
+      btnModalShock.addEventListener('click', () => this.buyShopItem('shock'));
+    }
+
+    // Modal Floors events
+    const btnCloseModalFloors = document.getElementById('btn-close-vault-floors');
+    if (btnCloseModalFloors) {
+      btnCloseModalFloors.addEventListener('click', () => this.closeFloorsModal());
+    }
+    const btnDoneModalFloors = document.getElementById('btn-done-vault-floors');
+    if (btnDoneModalFloors) {
+      btnDoneModalFloors.addEventListener('click', () => this.closeFloorsModal());
+    }
   }
 
   isGodPlayer() {
@@ -401,6 +531,9 @@ class VaultCrawler {
     this.isActive = true;
     if (this.stageView) this.stageView.style.display = 'flex';
     if (this.slotStage) this.slotStage.style.display = 'block';
+
+    const dock = document.getElementById('vault-mobile-dock');
+    if (dock) dock.style.display = 'flex';
 
     // God tier operator perk: ensure ample keys and max health
     if (this.isGodPlayer()) {
@@ -420,9 +553,15 @@ class VaultCrawler {
   unmount() {
     this.isActive = false;
     if (this.stageView) this.stageView.style.display = 'none';
+
+    const dock = document.getElementById('vault-mobile-dock');
+    if (dock) dock.style.display = 'none';
+
     this.closeLeaderboardModal();
     this.closeTalentsModal();
     this.closeVictoryModal();
+    this.closeShopModal();
+    this.closeFloorsModal();
   }
 
   initCurrentFloor() {
@@ -562,6 +701,22 @@ class VaultCrawler {
 
     const btnShock = document.getElementById('btn-vault-shop-shock');
     if (btnShock) btnShock.disabled = (this.vaultKeys < 2 || !this.currentEnemy || this.currentEnemy.hp <= 0);
+
+    // Sync Mobile Dock badge and Modal Shop buttons
+    const dockKeysBadge = document.getElementById('vault-dock-keys-badge');
+    if (dockKeysBadge) dockKeysBadge.textContent = `${this.vaultKeys} 🗝️`;
+
+    const modalKeysVal = document.getElementById('vault-shop-modal-keys-val');
+    if (modalKeysVal) modalKeysVal.textContent = `${this.vaultKeys} Ključeva`;
+
+    const btnModalPotion = document.getElementById('btn-vault-modal-potion');
+    if (btnModalPotion) btnModalPotion.disabled = (this.vaultKeys < 1 || this.playerHp >= this.playerMaxHp);
+
+    const btnModalShield = document.getElementById('btn-vault-modal-shield');
+    if (btnModalShield) btnModalShield.disabled = (this.vaultKeys < 1);
+
+    const btnModalShock = document.getElementById('btn-vault-modal-shock');
+    if (btnModalShock) btnModalShock.disabled = (this.vaultKeys < 2 || !this.currentEnemy || this.currentEnemy.hp <= 0);
 
     // Update Quick Talents Level Preview
     const prevWild = document.getElementById('vault-prev-wild');

@@ -1989,20 +1989,588 @@
 }
 
 /* ==============================================================================
-   DESKTOP & TABLET ADAPTIVE EXPANSIONS (min-width: 768px and min-width: 1024px)
+   MOBILE & TABLET ADAPTIVE EXPANSIONS (< 1024px)
    ============================================================================== */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .grand-mode-hub {
-    max-width: 640px;
-    padding: 4px 8px;
-    gap: 6px;
+@media (max-width: 1023px) {
+  /* Distribution for mobile/tablet in Vault and Royale modes */
+  .game-container.in-vault-mode,
+  .game-container.in-royale-mode {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    min-height: 100dvh !important;
+    padding-top: max(4px, env(safe-area-inset-top)) !important;
+    padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    padding-left: max(6px, env(safe-area-inset-left)) !important;
+    padding-right: max(6px, env(safe-area-inset-right)) !important;
+    gap: 3px !important;
+    width: 100% !important;
   }
-  .vault-crawler-stage {
-    max-width: 740px;
+
+  /* Compact brand logo & header */
+  .game-container.in-vault-mode .brand-logo-wrap,
+  .game-container.in-royale-mode .brand-logo-wrap {
+    max-width: 160px !important;
+    margin: 0 auto 2px auto !important;
   }
-  .battle-royale-stage {
-    max-width: 780px;
+  .game-container.in-vault-mode .main-brand-logo,
+  .game-container.in-royale-mode .main-brand-logo {
+    max-height: 26px !important;
   }
+  .game-container.in-vault-mode .grand-mode-hub,
+  .game-container.in-royale-mode .grand-mode-hub {
+    margin: 0 auto 3px auto !important;
+    padding: 2px 4px !important;
+    max-width: 480px !important;
+    gap: 3px !important;
+  }
+  .game-container.in-vault-mode .hub-mode-tab,
+  .game-container.in-royale-mode .hub-mode-tab {
+    padding: 4px 6px !important;
+    min-height: 28px !important;
+    font-size: 0.65rem !important;
+  }
+
+  /* Flatten intermediate containers so direct flex order applies */
+  .game-container.in-vault-mode .stage-area,
+  .game-container.in-royale-mode .stage-area {
+    display: contents !important;
+  }
+  .game-container.in-vault-mode #vault-crawler-view,
+  .game-container.in-royale-mode #battle-royale-view {
+    display: contents !important;
+  }
+
+  /* Flex order in .game-container */
+  .game-container.in-vault-mode .vault-left-wing {
+    order: 2 !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+  }
+  .game-container.in-vault-mode .slot-stage-scaler {
+    order: 3 !important;
+    margin: 0 auto !important;
+  }
+  .game-container.in-vault-mode .status-banner-wrap {
+    order: 4 !important;
+    margin: 1px auto !important;
+    max-width: 500px !important;
+  }
+  .game-container.in-vault-mode .hud-panel {
+    order: 5 !important;
+    margin: 1px auto !important;
+  }
+  .game-container.in-vault-mode .controls-panel {
+    order: 6 !important;
+    margin: 0 auto !important;
+    padding: 6px 10px !important;
+    max-width: 520px !important;
+  }
+  .game-container.in-vault-mode #vault-mobile-dock {
+    order: 7 !important;
+    display: flex !important;
+  }
+  .game-container.in-vault-mode .vault-right-wing {
+    order: 8 !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 8px auto 16px auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  /* Battle Royale flex ordering */
+  .game-container.in-royale-mode .royale-left-wing {
+    order: 2 !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 3px !important;
+  }
+  .game-container.in-royale-mode .slot-stage-scaler {
+    order: 3 !important;
+    margin: 0 auto !important;
+  }
+  .game-container.in-royale-mode .status-banner-wrap {
+    order: 4 !important;
+    margin: 1px auto !important;
+    max-width: 500px !important;
+  }
+  .game-container.in-royale-mode .hud-panel {
+    order: 5 !important;
+    margin: 1px auto !important;
+  }
+  .game-container.in-royale-mode .controls-panel {
+    order: 6 !important;
+    margin: 0 auto !important;
+    padding: 6px 10px !important;
+    max-width: 520px !important;
+  }
+  .game-container.in-royale-mode #royale-mobile-dock {
+    order: 7 !important;
+    display: flex !important;
+  }
+  .game-container.in-royale-mode .royale-right-wing {
+    order: 8 !important;
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 8px auto 16px auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  /* ==========================================================================
+     Ultra-Compact Mobile HUD Elements
+     ========================================================================== */
+  /* Vault Left Wing: Compact Heist Header & Room Line */
+  .vault-progression-card {
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+    background: linear-gradient(180deg, rgba(20, 26, 42, 0.95) 0%, rgba(11, 16, 28, 0.98) 100%) !important;
+    border: 1px solid rgba(212, 175, 55, 0.28) !important;
+  }
+  .vault-prog-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 2px !important;
+  }
+  .vault-floor-info {
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 6px !important;
+  }
+  .vault-floor-title {
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+    color: #fde047 !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+  }
+  .vault-floor-sub {
+    font-size: 0.58rem !important;
+    color: #94a3b8 !important;
+  }
+  .vault-heist-pct-badge {
+    font-size: 0.62rem !important;
+    padding: 1px 5px !important;
+  }
+
+  /* Hide the 5-floor selector in the top card on mobile to save 80px! (Accessible via dock or below controls) */
+  .vault-left-wing .vault-tower-strip {
+    display: none !important;
+  }
+
+  /* Compact Room Timeline Line */
+  .vault-map-strip {
+    padding: 3px 6px !important;
+    border-radius: 6px !important;
+    min-height: 24px !important;
+    margin: 0 !important;
+    background: rgba(0, 0, 0, 0.35) !important;
+  }
+  .vault-map-line {
+    top: 11px !important;
+    height: 2px !important;
+  }
+  .vault-node {
+    width: 22px !important;
+    height: 22px !important;
+    border-width: 1.5px !important;
+  }
+  .vault-node-icon {
+    font-size: 0.68rem !important;
+  }
+  .vault-node-lbl {
+    display: none !important; /* Hide labels under node dots on mobile to eliminate vertical height */
+  }
+
+  /* Vault Combat Card: Ultra-compact Dual Health Bar Strip */
+  .vault-combat-card {
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+    background: linear-gradient(180deg, rgba(20, 26, 42, 0.95) 0%, rgba(11, 16, 28, 0.98) 100%) !important;
+    border: 1px solid rgba(212, 175, 55, 0.28) !important;
+  }
+  .vault-combat-card .vault-card-section-title {
+    display: none !important; /* Remove redundant 'BORBA / ENCOUNTER' title on mobile */
+  }
+  .vault-combat-hud {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+    margin-bottom: 2px !important;
+  }
+  .combat-char-card {
+    padding: 3px 6px !important;
+    border-radius: 6px !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    min-width: 0 !important;
+  }
+  .combat-char-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+  .combat-char-name {
+    font-size: 0.66rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  .combat-char-val {
+    font-size: 0.66rem !important;
+    font-weight: 900 !important;
+  }
+  .combat-bar-track {
+    height: 4px !important;
+    border-radius: 2px !important;
+    margin: 1px 0 !important;
+  }
+  #vault-player-card .combat-bar-track:last-child {
+    height: 3px !important;
+  }
+  #vault-enemy-status-tip {
+    display: none !important; /* Hide enemy sub-tip to save 14px on mobile */
+  }
+  .vault-combat-log {
+    padding: 2px 6px !important;
+    font-size: 0.62rem !important;
+    min-height: 20px !important;
+    line-height: 20px !important;
+    border-radius: 4px !important;
+    margin-top: 2px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: center !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  }
+
+  /* Battle Royale Compact Header */
+  .royale-status-card {
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+  }
+  .royale-status-bar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  .royale-timer-box, .royale-rank-badge, .royale-score-box {
+    padding: 2px 6px !important;
+    font-size: 0.72rem !important;
+  }
+  .royale-zone-banner {
+    padding: 2px 6px !important;
+    font-size: 0.62rem !important;
+    min-height: 18px !important;
+    margin-top: 2px !important;
+  }
+  /* In mobile top strip, hide the large competitor list so slot is visible */
+  .royale-left-wing .royale-leaderboard-card {
+    display: none !important;
+  }
+
+  /* ==========================================================================
+     Mobile Action Docks
+     ========================================================================== */
+  .vault-mobile-action-dock,
+  .royale-mobile-action-dock {
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 4px auto !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    padding: 4px 6px !important;
+    background: linear-gradient(180deg, rgba(20, 26, 42, 0.95) 0%, rgba(10, 15, 26, 0.98) 100%) !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    box-sizing: border-box !important;
+  }
+
+  .v-dock-btn,
+  .r-dock-btn {
+    flex: 1 !important;
+    min-height: 38px !important;
+    padding: 4px 2px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 1px !important;
+    background: rgba(30, 41, 59, 0.7) !important;
+    border: 1px solid rgba(212, 175, 55, 0.25) !important;
+    border-radius: 8px !important;
+    color: #f1f5f9 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    position: relative !important;
+  }
+  .v-dock-btn:active,
+  .r-dock-btn:active {
+    transform: scale(0.96) !important;
+    background: rgba(212, 175, 55, 0.2) !important;
+  }
+  .v-dock-icon,
+  .r-dock-icon {
+    font-size: 0.9rem !important;
+    line-height: 1 !important;
+  }
+  .v-dock-lbl,
+  .r-dock-lbl {
+    font-size: 0.58rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.02em !important;
+    text-transform: uppercase !important;
+  }
+  .v-dock-badge {
+    position: absolute !important;
+    top: -5px !important;
+    right: -2px !important;
+    background: #d97706 !important;
+    color: #fff !important;
+    font-size: 0.5rem !important;
+    font-weight: 900 !important;
+    padding: 1px 4px !important;
+    border-radius: 8px !important;
+    border: 1px solid #fef08a !important;
+  }
+  .v-dock-btn.danger {
+    border-color: rgba(239, 68, 68, 0.4) !important;
+  }
+  .v-dock-btn.danger:hover,
+  .v-dock-btn.danger:active {
+    background: rgba(239, 68, 68, 0.2) !important;
+  }
+
+  /* Battle Royale Attack Pills on Mobile */
+  .r-dock-btn.pvp-atk.ready {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+    background: rgba(14, 165, 233, 0.2) !important;
+  }
+  .r-dock-btn.target-pill {
+    border-color: #fbbf24 !important;
+    background: rgba(245, 158, 11, 0.15) !important;
+  }
+}
+
+/* ==============================================================================
+   Modals: Crno Tržište, Karta Spratova, Live Royale Leaderboard
+   ============================================================================== */
+.vault-shop-card-modal,
+.vault-floors-card-modal,
+.royale-leaderboard-card-modal {
+  background: linear-gradient(180deg, rgba(20, 26, 42, 0.98) 0%, rgba(10, 15, 26, 0.99) 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.4) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(212, 175, 55, 0.15) !important;
+  border-radius: 14px !important;
+  max-width: 480px !important;
+  width: 92% !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+}
+
+.vault-modal-keys-strip {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 6px 12px !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  border-radius: 8px !important;
+  margin-bottom: 8px !important;
+  font-size: 0.76rem !important;
+  color: #fde047 !important;
+  font-weight: 800 !important;
+}
+
+.vault-shop-modal-items {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  margin-top: 8px !important;
+}
+
+.vault-shop-modal-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 10px 12px !important;
+  background: rgba(30, 41, 59, 0.65) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  border-radius: 10px !important;
+  color: #f8fafc !important;
+  cursor: pointer !important;
+  transition: all 0.18s ease !important;
+  text-align: left !important;
+}
+.vault-shop-modal-row:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.15) !important;
+  border-color: #fbbf24 !important;
+  transform: translateY(-1px) !important;
+}
+.vault-shop-modal-row:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  filter: grayscale(0.6) !important;
+}
+.shop-row-icon {
+  font-size: 1.4rem !important;
+  flex-shrink: 0 !important;
+}
+.shop-row-details {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  flex: 1 !important;
+}
+.shop-row-title {
+  font-size: 0.82rem !important;
+  font-weight: 800 !important;
+  color: #fbbf24 !important;
+}
+.shop-row-sub {
+  font-size: 0.66rem !important;
+  color: #cbd5e1 !important;
+}
+.shop-row-price {
+  font-size: 0.82rem !important;
+  font-weight: 900 !important;
+  color: #fde047 !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(212, 175, 55, 0.3) !important;
+  white-space: nowrap !important;
+}
+
+/* Floor Roadmap Modal Items */
+.vault-floors-modal-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  max-height: 58vh !important;
+  overflow-y: auto !important;
+  padding-right: 4px !important;
+}
+.vault-floor-modal-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  padding: 8px 10px !important;
+  background: rgba(30, 41, 59, 0.5) !important;
+  border: 1px solid rgba(212, 175, 55, 0.2) !important;
+  border-radius: 8px !important;
+}
+.vault-floor-modal-item.active {
+  border-color: #fbbf24 !important;
+  background: rgba(212, 175, 55, 0.12) !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.2) !important;
+}
+.vault-floor-modal-item.cleared {
+  border-color: rgba(34, 197, 94, 0.4) !important;
+}
+.vault-floor-modal-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.vault-floor-modal-icon {
+  font-size: 1.4rem !important;
+}
+.vault-floor-modal-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+.vault-floor-modal-name {
+  font-size: 0.78rem !important;
+  color: #f8fafc !important;
+  font-weight: 800 !important;
+}
+.vault-floor-modal-sub {
+  font-size: 0.62rem !important;
+  color: #94a3b8 !important;
+}
+.vault-floor-modal-reward {
+  font-size: 0.62rem !important;
+  color: #38bdf8 !important;
+  margin-top: 1px !important;
+}
+.vault-floor-modal-badge {
+  font-size: 0.62rem !important;
+  font-weight: 800 !important;
+  padding: 2px 6px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+}
+.vault-floor-modal-badge.cleared {
+  background: rgba(34, 197, 94, 0.2) !important;
+  color: #4ade80 !important;
+  border: 1px solid rgba(34, 197, 94, 0.4) !important;
+}
+.vault-floor-modal-badge.active {
+  background: rgba(251, 191, 36, 0.2) !important;
+  color: #fde047 !important;
+  border: 1px solid rgba(251, 191, 36, 0.5) !important;
+}
+.vault-floor-modal-badge.locked {
+  background: rgba(100, 116, 139, 0.2) !important;
+  color: #94a3b8 !important;
+  border: 1px solid rgba(100, 116, 139, 0.3) !important;
+}
+
+/* Royale Live Leaderboard Modal */
+.royale-leaderboard-modal-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  max-height: 58vh !important;
+  overflow-y: auto !important;
+}
+.royale-modal-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  background: rgba(30, 41, 59, 0.5) !important;
+  border: 1px solid rgba(212, 175, 55, 0.18) !important;
+  border-radius: 8px !important;
+  font-size: 0.76rem !important;
+}
+.royale-modal-row.you {
+  border-color: #fbbf24 !important;
+  background: rgba(212, 175, 55, 0.16) !important;
+  font-weight: 800 !important;
+}
+.royale-modal-row.eliminated {
+  opacity: 0.45 !important;
+  text-decoration: line-through !important;
+}
+.royale-modal-col-rank {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+.royale-modal-col-score {
+  font-weight: 800 !important;
+  color: #38bdf8 !important;
 }
 
 @media (min-width: 1024px) {

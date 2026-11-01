@@ -140,6 +140,88 @@ class SlotBattleRoyale {
         }
       });
     }
+
+    // Mobile Royale Action Dock bindings
+    const btnDockTarget = document.getElementById('btn-dock-royale-target');
+    if (btnDockTarget) {
+      btnDockTarget.addEventListener('click', () => {
+        // Cycle target: leader -> ahead -> nemesis -> leader
+        if (this.currentTargetMode === 'leader') this.currentTargetMode = 'ahead';
+        else if (this.currentTargetMode === 'ahead') this.currentTargetMode = 'nemesis';
+        else this.currentTargetMode = 'leader';
+
+        targetBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-target') === this.currentTargetMode));
+        this.updateHUD();
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+      });
+    }
+
+    const btnDockFreeze = document.getElementById('btn-dock-atk-freeze');
+    if (btnDockFreeze) {
+      btnDockFreeze.addEventListener('click', () => this.executeAttack('freeze'));
+    }
+    const btnDockSmoke = document.getElementById('btn-dock-atk-smoke');
+    if (btnDockSmoke) {
+      btnDockSmoke.addEventListener('click', () => this.executeAttack('smoke'));
+    }
+    const btnDockSiphon = document.getElementById('btn-dock-atk-siphon');
+    if (btnDockSiphon) {
+      btnDockSiphon.addEventListener('click', () => this.executeAttack('siphon'));
+    }
+    const btnDockLeaderboard = document.getElementById('btn-dock-royale-leaderboard');
+    if (btnDockLeaderboard) {
+      btnDockLeaderboard.addEventListener('click', () => this.openLeaderboardModal());
+    }
+
+    // Modal Royale Leaderboard events
+    const btnCloseModalLb = document.getElementById('btn-close-royale-leaderboard');
+    if (btnCloseModalLb) {
+      btnCloseModalLb.addEventListener('click', () => this.closeLeaderboardModal());
+    }
+    const btnDoneModalLb = document.getElementById('btn-done-royale-leaderboard');
+    if (btnDoneModalLb) {
+      btnDoneModalLb.addEventListener('click', () => this.closeLeaderboardModal());
+    }
+  }
+
+  openLeaderboardModal() {
+    const modal = document.getElementById('royale-leaderboard-modal');
+    if (!modal) return;
+    this.renderLeaderboardModal();
+    modal.classList.add('active');
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+  }
+
+  closeLeaderboardModal() {
+    const modal = document.getElementById('royale-leaderboard-modal');
+    if (modal) modal.classList.remove('active');
+  }
+
+  renderLeaderboardModal() {
+    const listEl = document.getElementById('royale-leaderboard-modal-list');
+    if (!listEl) return;
+    this.calculateRankings();
+    if (!this.sortedAll) return;
+
+    listEl.innerHTML = this.sortedAll.map((item, idx) => {
+      let medal = `#${idx + 1}`;
+      if (idx === 0) medal = '🥇 #1';
+      else if (idx === 1) medal = '🥈 #2';
+      else if (idx === 2) medal = '🥉 #3';
+
+      const isEliminated = item.eliminated;
+      const statusText = isEliminated ? 'ELIMINISAN' : `${item.score.toLocaleString()} ZLT`;
+
+      return `
+        <div class="royale-modal-row ${item.isYou ? 'you' : ''} ${isEliminated ? 'eliminated' : ''}">
+          <div class="royale-modal-col-rank">
+            <span>${medal}</span>
+            <span>${item.name}</span>
+          </div>
+          <div class="royale-modal-col-score">${statusText}</div>
+        </div>
+      `;
+    }).join('');
   }
 
   scheduleTimeout(fn, delay) {
@@ -162,6 +244,9 @@ class SlotBattleRoyale {
     this.isActive = true;
     if (this.stageView) this.stageView.style.display = 'flex';
     if (this.slotStage) this.slotStage.style.display = 'block';
+
+    const dock = document.getElementById('royale-mobile-dock');
+    if (dock) dock.style.display = 'flex';
 
     // Must pay buy-in (100 ZLT) to enter the battle arena!
     if (!this.isBuyInPaid) {
@@ -243,6 +328,10 @@ class SlotBattleRoyale {
 
   unmount() {
     this.isActive = false;
+
+    const dock = document.getElementById('royale-mobile-dock');
+    if (dock) dock.style.display = 'none';
+    this.closeLeaderboardModal();
 
     // If player leaves or navigates away before match completes legitimately, forfeit and rollback balance!
     if (!this.isMatchCompleted && typeof this.initialRsdBalance === 'number' && this.wallet) {
@@ -656,6 +745,23 @@ class SlotBattleRoyale {
       const tag = this.btnSiphon.querySelector('.pvp-card-ready');
       if (tag) tag.textContent = this.attacks.siphon ? 'SPREMNO!' : 'LOCKED';
     }
+
+    // Sync Mobile Royale Action Dock buttons
+    const dockFreeze = document.getElementById('btn-dock-atk-freeze');
+    if (dockFreeze) {
+      dockFreeze.disabled = !this.attacks.freeze;
+      dockFreeze.classList.toggle('ready', !!this.attacks.freeze);
+    }
+    const dockSmoke = document.getElementById('btn-dock-atk-smoke');
+    if (dockSmoke) {
+      dockSmoke.disabled = !this.attacks.smoke;
+      dockSmoke.classList.toggle('ready', !!this.attacks.smoke);
+    }
+    const dockSiphon = document.getElementById('btn-dock-atk-siphon');
+    if (dockSiphon) {
+      dockSiphon.disabled = !this.attacks.siphon;
+      dockSiphon.classList.toggle('ready', !!this.attacks.siphon);
+    }
   }
 
   updateHUD() {
@@ -664,6 +770,15 @@ class SlotBattleRoyale {
     if (this.timerEl) this.timerEl.textContent = `${mins}:${secs}`;
     if (this.rankEl) this.rankEl.textContent = `#${this.playerRank}`;
     if (this.scoreEl) this.scoreEl.textContent = `${this.playerScore.toLocaleString()} ZLT`;
+
+    // Sync Mobile Royale Dock Target Pill
+    const dockTargetLbl = document.getElementById('royale-dock-target-lbl');
+    if (dockTargetLbl) {
+      let lbl = '#1 Lider';
+      if (this.currentTargetMode === 'ahead') lbl = 'Rival Ispred';
+      else if (this.currentTargetMode === 'nemesis') lbl = 'Osveta';
+      dockTargetLbl.textContent = lbl;
+    }
   }
 
   endMatch(completed = true) {

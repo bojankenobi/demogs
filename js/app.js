@@ -1765,9 +1765,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const baseH = is3x3 ? 246 : 160;
     let uiOverhead = 330;
     if (vw <= 480) {
-      uiOverhead = hasActiveSubgame ? 460 : 320;
+      uiOverhead = hasActiveSubgame ? 345 : 320;
     } else if (hasActiveSubgame) {
       uiOverhead = (vw >= 1024 && (isVaultOpen || isRoyaleOpen)) ? 290 : 500;
+      if (vw < 1024) uiOverhead = 350; // Refined compact mobile/tablet HUD overhead
     }
 
     const availH = Math.max(80, vh - uiOverhead);

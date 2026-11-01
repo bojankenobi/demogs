@@ -1036,6 +1036,55 @@
       </div>
     </section>
 
+    <!-- Mobile Heist Action Dock: One-touch ergonomic bar below controls for Trezor Provala on mobile/tablet -->
+    <div class="vault-mobile-action-dock" id="vault-mobile-dock" style="display: none;">
+      <button type="button" class="v-dock-btn" id="btn-dock-vault-shop" title="Crno Tržište (Kupovine)">
+        <span class="v-dock-icon">🛒</span>
+        <span class="v-dock-lbl">Tržište</span>
+        <span class="v-dock-badge" id="vault-dock-keys-badge">0 🗝️</span>
+      </button>
+      <button type="button" class="v-dock-btn" id="btn-dock-vault-talents" title="Talent Drvo">
+        <span class="v-dock-icon">🏛️</span>
+        <span class="v-dock-lbl">Talenti</span>
+      </button>
+      <button type="button" class="v-dock-btn" id="btn-dock-vault-floors" title="Karta Spratova">
+        <span class="v-dock-icon">🏢</span>
+        <span class="v-dock-lbl">Spratovi</span>
+      </button>
+      <button type="button" class="v-dock-btn" id="btn-dock-vault-rank" title="Rang Lista Provalnika">
+        <span class="v-dock-icon">🏆</span>
+        <span class="v-dock-lbl">Rang</span>
+      </button>
+      <button type="button" class="v-dock-btn danger" id="btn-dock-vault-reset" title="Nova Provala">
+        <span class="v-dock-icon">🔄</span>
+        <span class="v-dock-lbl">Nova</span>
+      </button>
+    </div>
+
+    <!-- Mobile Royale Action Dock: One-touch PvP action bar below controls for Battle Royale on mobile/tablet -->
+    <div class="royale-mobile-action-dock" id="royale-mobile-dock" style="display: none;">
+      <button type="button" class="r-dock-btn target-pill" id="btn-dock-royale-target" title="Izaberi metu napada">
+        <span class="r-dock-icon">🎯</span>
+        <span class="r-dock-lbl" id="royale-dock-target-lbl">#1 Lider</span>
+      </button>
+      <button type="button" class="r-dock-btn pvp-atk" id="btn-dock-atk-freeze" title="Zaledi kolone suparnika" disabled>
+        <span class="r-dock-icon">❄️</span>
+        <span class="r-dock-lbl">Zaledi</span>
+      </button>
+      <button type="button" class="r-dock-btn pvp-atk" id="btn-dock-atk-smoke" title="Baci dimnu bombu" disabled>
+        <span class="r-dock-icon">💨</span>
+        <span class="r-dock-lbl">Dimna</span>
+      </button>
+      <button type="button" class="r-dock-btn pvp-atk" id="btn-dock-atk-siphon" title="Ukradi 25% poena mete" disabled>
+        <span class="r-dock-icon">⚡</span>
+        <span class="r-dock-lbl">Ukradi</span>
+      </button>
+      <button type="button" class="r-dock-btn" id="btn-dock-royale-leaderboard" title="Tabela igrača uživo">
+        <span class="r-dock-icon">🏆</span>
+        <span class="r-dock-lbl">Tabela</span>
+      </button>
+    </div>
+
     <!-- Minimalist Footer Controls (IGT Game Selector, Quick Sound & Casino Menu) -->
     <footer class="aux-row">
       <!-- IGT Game Selector Button -->
@@ -2592,6 +2641,87 @@
       </div>
       <div class="modal-footer" style="margin-top: 14px;">
         <button type="button" class="btn-vault-action" id="btn-done-vault-talents">Zatvori</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Crno Tržište (In-Run Quick Shop Modal for Mobile & Ergonomics) -->
+  <div class="modal-overlay vault-shop-overlay" id="vault-shop-modal">
+    <div class="modal-card vault-shop-card-modal">
+      <div class="modal-header">
+        <h2 class="modal-title">🛒 CRNO TRŽIŠTE TREZORA</h2>
+        <button type="button" class="modal-close" id="btn-close-vault-shop" aria-label="Zatvori">✕</button>
+      </div>
+      <div class="vault-modal-keys-strip">
+        <span>Tvoji sakupljeni ključevi:</span>
+        <div class="vault-keys-display">
+          <span>🗝️</span>
+          <span id="vault-shop-modal-keys-val">0 Ključeva</span>
+        </div>
+      </div>
+      <p class="modal-subtitle" style="font-size: 0.72rem; color: #94a3b8; margin: 4px 0 10px 0; text-align: center;">
+        Kupuj borbenu opremu u toku provale za direktnu prednost u borbi protiv čuvara!
+      </p>
+      <div class="vault-shop-modal-items">
+        <button type="button" class="vault-shop-modal-row" id="btn-vault-modal-potion">
+          <div class="shop-row-icon">🧪</div>
+          <div class="shop-row-details">
+            <strong class="shop-row-title">Eliksir Života</strong>
+            <span class="shop-row-sub">Obnavlja +30 HP Zdravlja</span>
+          </div>
+          <div class="shop-row-price">1 🗝️</div>
+        </button>
+        <button type="button" class="vault-shop-modal-row" id="btn-vault-modal-shield">
+          <div class="shop-row-icon">🛡️</div>
+          <div class="shop-row-details">
+            <strong class="shop-row-title">Pancir Prsluk</strong>
+            <span class="shop-row-sub">Dodaje +20 Energo-Štita</span>
+          </div>
+          <div class="shop-row-price">1 🗝️</div>
+        </button>
+        <button type="button" class="vault-shop-modal-row" id="btn-vault-modal-shock">
+          <div class="shop-row-icon">⚡</div>
+          <div class="shop-row-details">
+            <strong class="shop-row-title">EMP Šok</strong>
+            <span class="shop-row-sub">Direktan EMP udarac za -40 HP Čuvaru</span>
+          </div>
+          <div class="shop-row-price">2 🗝️</div>
+        </button>
+      </div>
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button type="button" class="btn-vault-action" id="btn-done-vault-shop">✓ Nastavi Provalu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Karta Spratova Trezora (Heist Tower Floor Roadmap Modal) -->
+  <div class="modal-overlay vault-floors-overlay" id="vault-floors-modal">
+    <div class="modal-card vault-floors-card-modal">
+      <div class="modal-header">
+        <h2 class="modal-title">🏢 KARTA SPRATOVA TREZORA</h2>
+        <button type="button" class="modal-close" id="btn-close-vault-floors" aria-label="Zatvori">✕</button>
+      </div>
+      <div class="vault-floors-modal-list" id="vault-floors-modal-list">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button type="button" class="btn-vault-action" id="btn-done-vault-floors">✓ Nazad na Režim</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Battle Royale Live Leaderboard (Mobile Quick Competitors Sheet) -->
+  <div class="modal-overlay royale-leaderboard-overlay" id="royale-leaderboard-modal">
+    <div class="modal-card royale-leaderboard-card-modal">
+      <div class="modal-header">
+        <h2 class="modal-title">🏆 TABELA TAKMIČARA UŽIVO</h2>
+        <button type="button" class="modal-close" id="btn-close-royale-leaderboard" aria-label="Zatvori">✕</button>
+      </div>
+      <div class="royale-leaderboard-modal-list" id="royale-leaderboard-modal-list">
+        <!-- Live competitors dynamic list -->
+      </div>
+      <div class="modal-footer" style="margin-top: 14px;">
+        <button type="button" class="btn-vault-action" id="btn-done-royale-leaderboard">✓ Povratak u Arenu</button>
       </div>
     </div>
   </div>
