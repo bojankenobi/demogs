@@ -23,8 +23,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=98">
-  <link rel="stylesheet" href="css/grand-hub.css?v=98">
+  <link rel="stylesheet" href="css/style.css?v=99">
+  <link rel="stylesheet" href="css/grand-hub.css?v=99">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
@@ -893,25 +893,45 @@
 
           <!-- Blackjack Control Deck -->
           <div class="blackjack-control-deck">
-            <!-- Betting Phase: Stepper, Quick Chips, Clear & Double Bet -->
+            <!-- Betting Phase: Stepper + Quick Utility Actions & Dedicated Chips Rack -->
             <div class="bj-betting-controls" id="bj-betting-controls">
-              <div class="bj-bet-stepper-wrap">
-                <button type="button" class="bj-step-btn" id="bj-bet-minus">−</button>
-                <div class="bj-bet-val-box">
-                  <span class="bj-bet-subtag">ULOG</span>
-                  <span class="bj-bet-amount" id="bj-bet-val">20</span>
+              <div class="bj-bet-row-controls">
+                <div class="bj-bet-stepper-wrap">
+                  <button type="button" class="bj-step-btn" id="bj-bet-minus" aria-label="Smanji ulog">−</button>
+                  <div class="bj-bet-val-box">
+                    <span class="bj-bet-subtag">ULOG</span>
+                    <span class="bj-bet-amount" id="bj-bet-val">20</span>
+                  </div>
+                  <button type="button" class="bj-step-btn" id="bj-bet-plus" aria-label="Povećaj ulog">+</button>
                 </div>
-                <button type="button" class="bj-step-btn" id="bj-bet-plus">+</button>
+
+                <div class="bj-bet-quick-actions">
+                  <button type="button" class="bj-chip-btn bj-utility-btn chip-2x double" id="bj-chip-double" title="Dupliraj ulog (2×)">
+                    <span class="bj-util-label">2×</span>
+                  </button>
+                  <button type="button" class="bj-chip-btn bj-utility-btn chip-clear clear" id="bj-chip-clear" title="Resetuj na minimalni ulog (10 ZLT)">
+                    <span class="bj-util-label">C</span>
+                  </button>
+                </div>
               </div>
 
+              <!-- Dedicated Authentic 5-Chip Casino Rack (Uncrowded & Tactile) -->
               <div class="bj-chips-strip">
-                <button type="button" class="bj-chip-btn chip-10" data-amt="10">10</button>
-                <button type="button" class="bj-chip-btn chip-20" data-amt="20">20</button>
-                <button type="button" class="bj-chip-btn chip-50" data-amt="50">50</button>
-                <button type="button" class="bj-chip-btn chip-100" data-amt="100">100</button>
-                <button type="button" class="bj-chip-btn chip-500" data-amt="500">500</button>
-                <button type="button" class="bj-chip-btn chip-2x" id="bj-chip-double">2X</button>
-                <button type="button" class="bj-chip-btn chip-clear" id="bj-chip-clear">C</button>
+                <button type="button" class="bj-chip-btn chip-10" data-amt="10" title="+10 ZLT">
+                  <span class="chip-val">10</span>
+                </button>
+                <button type="button" class="bj-chip-btn chip-20" data-amt="20" title="+20 ZLT">
+                  <span class="chip-val">20</span>
+                </button>
+                <button type="button" class="bj-chip-btn chip-50" data-amt="50" title="+50 ZLT">
+                  <span class="chip-val">50</span>
+                </button>
+                <button type="button" class="bj-chip-btn chip-100" data-amt="100" title="+100 ZLT">
+                  <span class="chip-val">100</span>
+                </button>
+                <button type="button" class="bj-chip-btn chip-500" data-amt="500" title="+500 ZLT">
+                  <span class="chip-val">500</span>
+                </button>
               </div>
 
               <button type="button" class="btn-bj-main btn-bj-deal" id="btn-bj-deal">

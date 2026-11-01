@@ -6383,40 +6383,49 @@ body {
 .game-container.in-blackjack-mode .stage-area {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
+  min-height: 0;
   margin: 2px 0 4px;
 }
 
 .blackjack-stage-view {
   width: 100%;
-  max-width: 480px;
+  max-width: 490px;
+  flex: 1;
+  min-height: 0;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: relative;
   z-index: 5;
 }
 
 .blackjack-cabinet-panel {
   width: 100%;
+  flex: 1;
+  min-height: 0;
   background: linear-gradient(180deg, rgba(13, 17, 27, 0.96) 0%, rgba(6, 9, 15, 0.98) 100%);
   border: 2px solid rgba(212, 175, 55, 0.45);
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(212, 175, 55, 0.08);
   border-radius: 16px;
-  padding: 8px 10px 10px;
+  padding: 10px 12px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 10px;
   backdrop-filter: blur(8px);
 }
 
 /* Luxury Emerald Velvet Table */
 .blackjack-table {
   width: 100%;
-  min-height: 290px;
+  flex: 1;
+  min-height: clamp(350px, 47vh, 460px);
   background: radial-gradient(ellipse at 50% 25%, #0e442d 0%, #08291b 60%, #03140d 100%);
   border: 2px solid rgba(212, 175, 55, 0.4);
   box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.85), inset 0 0 15px rgba(212, 175, 55, 0.15);
@@ -6426,7 +6435,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 8px 10px;
+  padding: 10px 12px;
 }
 
 /* Semi-circular Felt Line */
@@ -6444,7 +6453,7 @@ body {
 
 .blackjack-rules-inscription {
   position: absolute;
-  top: 32%;
+  top: 24%;
   left: 0;
   width: 100%;
   text-align: center;
@@ -6454,6 +6463,7 @@ body {
   gap: 2px;
   pointer-events: none;
   z-index: 1;
+  opacity: 0.72;
 }
 
 .bj-felt-brand-badge {
@@ -6594,26 +6604,29 @@ body {
 /* Center Message Pill Banner */
 .bj-center-message {
   position: relative;
-  z-index: 3;
+  z-index: 5;
   width: 100%;
   display: flex;
   justify-content: center;
-  margin: 2px 0;
+  margin: 10px 0;
 }
 
 .bj-msg-text {
   font-family: var(--font-title);
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   font-weight: 800;
   color: #fef08a;
-  letter-spacing: 0.6px;
-  background: rgba(5, 8, 14, 0.85);
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
-  padding: 4px 12px;
-  border-radius: 14px;
+  letter-spacing: 0.8px;
+  background: rgba(8, 12, 22, 0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(212, 175, 55, 0.6);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.88), 0 0 12px rgba(212, 175, 55, 0.2);
+  padding: 6px 16px;
+  border-radius: 16px;
   text-align: center;
-  max-width: 95%;
+  max-width: 92%;
+  line-height: 1.35;
 }
 
 .bj-msg-win {
@@ -6799,50 +6812,69 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 /* Betting Phase */
 .bj-betting-controls {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  width: 100%;
+}
+
+.bj-bet-row-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   width: 100%;
 }
 
 .bj-bet-stepper-wrap {
+  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 8px;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  background: rgba(0, 0, 0, 0.55);
+  border: 1.5px solid rgba(212, 175, 55, 0.35);
   border-radius: 10px;
-  padding: 4px 8px;
+  padding: 3px 8px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
 .bj-step-btn {
   width: 34px;
   height: 32px;
   background: linear-gradient(180deg, #27272a 0%, #18181b 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 6px;
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 800;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
 .bj-step-btn:hover {
   border-color: #fbbf24;
   color: #fbbf24;
+  transform: scale(1.05);
+}
+
+.bj-step-btn:active {
+  transform: scale(0.95);
 }
 
 .bj-bet-val-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 90px;
+  min-width: 80px;
 }
 
 .bj-bet-subtag {
@@ -6860,46 +6892,147 @@ body {
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
 }
 
-/* Quick Chips Strip */
+/* Stepper Utility Buttons (2X, C) */
+.bj-bet-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bj-utility-btn {
+  height: 38px;
+  min-width: 44px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bj-utility-btn.chip-2x,
+.bj-utility-btn.double {
+  background: linear-gradient(180deg, #d97706 0%, #92400e 100%);
+  border: 1.5px solid #fbbf24;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
+}
+
+.bj-utility-btn.chip-2x:hover,
+.bj-utility-btn.double:hover {
+  filter: brightness(1.2);
+  transform: translateY(-1px);
+}
+
+.bj-utility-btn.chip-clear,
+.bj-utility-btn.clear {
+  background: linear-gradient(180deg, #3f3f46 0%, #27272a 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  color: #e4e4e7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.bj-utility-btn.chip-clear:hover,
+.bj-utility-btn.clear:hover {
+  border-color: #f87171;
+  color: #f87171;
+  transform: translateY(-1px);
+}
+
+/* Quick Chips Strip - Dedicated 5-Chip Authentic Casino Rack */
 .bj-chips-strip {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 4px;
+  justify-content: space-around;
+  gap: 8px;
   width: 100%;
+  padding: 4px 2px;
 }
 
 .bj-chip-btn {
-  flex: 1;
-  height: 34px;
-  border-radius: 50%;
-  max-width: 44px;
+  position: relative;
+  width: 46px;
+  height: 46px;
+  min-width: 44px;
   aspect-ratio: 1;
-  margin: 0 auto;
-  border: 2px dashed rgba(255, 255, 255, 0.4);
-  font-size: 0.65rem;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 255, 255, 0.6);
+  font-size: 0.76rem;
   font-weight: 900;
   color: #fff;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.6);
-  transition: transform 0.15s ease, filter 0.15s ease;
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.65), 
+    inset 0 0 0 2px rgba(0, 0, 0, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.45);
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease, filter 0.16s ease;
+  user-select: none;
 }
 
 .bj-chip-btn:hover {
-  transform: translateY(-2px) scale(1.08);
-  filter: brightness(1.2);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.8), 
+    0 0 14px rgba(251, 191, 36, 0.5),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.4);
+  filter: brightness(1.15);
+  z-index: 2;
 }
 
-.chip-10 { background: radial-gradient(circle, #3b82f6 0%, #1d4ed8 100%); border-color: #93c5fd; }
-.chip-20 { background: radial-gradient(circle, #ef4444 0%, #b91c1c 100%); border-color: #fca5a5; }
-.chip-50 { background: radial-gradient(circle, #10b981 0%, #047857 100%); border-color: #6ee7b7; }
-.chip-100 { background: radial-gradient(circle, #1e293b 0%, #020617 100%); border-color: #d4af37; color: #fbbf24; }
-.chip-500 { background: radial-gradient(circle, #8b5cf6 0%, #6d28d9 100%); border-color: #c4b5fd; }
-.chip-2x { background: radial-gradient(circle, #f59e0b 0%, #b45309 100%); border-color: #fde68a; border-radius: 6px; }
-.chip-clear { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); border-radius: 6px; }
+.bj-chip-btn:active {
+  transform: translateY(1px) scale(0.96);
+}
+
+.bj-chip-btn .chip-val {
+  font-family: var(--font-title);
+  font-size: 0.76rem;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+}
+
+.chip-10 {
+  background: radial-gradient(circle at 40% 35%, #3b82f6 0%, #1d4ed8 70%, #172554 100%);
+  border-color: #93c5fd;
+  color: #ffffff;
+}
+
+.chip-20 {
+  background: radial-gradient(circle at 40% 35%, #ef4444 0%, #b91c1c 70%, #450a0a 100%);
+  border-color: #fca5a5;
+  color: #ffffff;
+}
+
+.chip-50 {
+  background: radial-gradient(circle at 40% 35%, #10b981 0%, #047857 70%, #022c22 100%);
+  border-color: #6ee7b7;
+  color: #ffffff;
+}
+
+.chip-100 {
+  background: radial-gradient(circle at 40% 35%, #334155 0%, #0f172a 70%, #020617 100%);
+  border-color: #fbbf24;
+  color: #fbbf24;
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.7), 
+    inset 0 0 0 2px rgba(212, 175, 55, 0.5),
+    0 0 8px rgba(251, 191, 36, 0.3);
+}
+
+.chip-500 {
+  background: radial-gradient(circle at 40% 35%, #a855f7 0%, #6d28d9 70%, #2e1065 100%);
+  border-color: #d8b4fe;
+  color: #ffffff;
+}
 
 /* Main Action Buttons */
 .btn-bj-main {
@@ -7122,14 +7255,21 @@ body {
 
 /* Mobile Responsiveness */
 @media (max-width: 480px) {
+  .blackjack-cabinet-panel {
+    padding: 8px 10px 10px;
+    gap: 8px;
+  }
   .blackjack-table {
-    min-height: 270px;
-    padding: 6px 8px;
+    min-height: clamp(340px, 48vh, 440px);
+    padding: 8px 10px;
+  }
+  .bj-cards-container {
+    min-height: 76px;
   }
   .bj-card {
-    width: 50px;
-    height: 74px;
-    margin-left: -19px;
+    width: 48px;
+    height: 70px;
+    margin-left: -18px;
   }
   .bj-card-rank {
     font-size: 0.68rem;
@@ -7152,9 +7292,26 @@ body {
     font-size: 0.55rem;
   }
   .bj-chip-btn {
-    height: 32px;
-    max-width: 38px;
-    font-size: 0.6rem;
+    width: 44px;
+    height: 44px;
+    min-width: 42px;
+    font-size: 0.72rem;
+  }
+  .bj-chip-btn .chip-val {
+    font-size: 0.72rem;
+  }
+  .bj-utility-btn {
+    height: 34px;
+    min-width: 40px;
+    font-size: 0.68rem;
+    padding: 0 8px;
+  }
+  .bj-center-message {
+    margin: 8px 0;
+  }
+  .bj-msg-text {
+    font-size: 0.72rem;
+    padding: 6px 14px;
   }
 }
 
@@ -12236,18 +12393,23 @@ body.free-spins-active .slot-cylinder-replica {
   }
 
   .bj-chip-btn {
-    height: 48px;
-    max-width: 62px;
+    width: 52px;
+    height: 52px;
+    max-width: 56px;
+    aspect-ratio: 1;
+    border-radius: 50%;
     font-size: 0.95rem;
-    border-width: 3.5px;
-    border-radius: 12px;
+    border-width: 2.5px;
   }
 
+  .bj-utility-btn,
   .bj-chip-btn.clear,
   .bj-chip-btn.double {
     height: 48px;
-    min-width: 72px;
+    min-width: 68px;
+    border-radius: 10px;
     font-size: 0.88rem;
+    aspect-ratio: auto;
   }
 
   /* Action Buttons (Hit, Stand, Double, Split) */
@@ -12607,16 +12769,22 @@ body.free-spins-active .slot-cylinder-replica {
   }
 
   .bj-chip-btn {
-    height: 54px;
-    max-width: 70px;
+    width: 58px;
+    height: 58px;
+    max-width: 62px;
+    aspect-ratio: 1;
+    border-radius: 50%;
     font-size: 1.05rem;
   }
 
+  .bj-utility-btn,
   .bj-chip-btn.clear,
   .bj-chip-btn.double {
-    height: 54px;
-    min-width: 82px;
+    height: 52px;
+    min-width: 78px;
+    border-radius: 10px;
     font-size: 0.95rem;
+    aspect-ratio: auto;
   }
 
   .bj-act-btn {
