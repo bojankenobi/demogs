@@ -372,6 +372,20 @@ class VaultCrawler {
         }
       });
     }
+
+    // In-Run Shop Consumables (Crno Tržište)
+    const btnShopPotion = document.getElementById('btn-vault-shop-potion');
+    if (btnShopPotion) {
+      btnShopPotion.addEventListener('click', () => this.buyShopItem('potion'));
+    }
+    const btnShopShield = document.getElementById('btn-vault-shop-shield');
+    if (btnShopShield) {
+      btnShopShield.addEventListener('click', () => this.buyShopItem('shield'));
+    }
+    const btnShopShock = document.getElementById('btn-vault-shop-shock');
+    if (btnShopShock) {
+      btnShopShock.addEventListener('click', () => this.buyShopItem('shock'));
+    }
   }
 
   mount() {
@@ -520,7 +534,76 @@ class VaultCrawler {
       this.enemyHpVal.textContent = `${this.currentEnemy.hp}/${this.currentEnemy.maxHp}`;
     }
 
+    // Update Shop Consumables Availability
+    const btnPotion = document.getElementById('btn-vault-shop-potion');
+    if (btnPotion) btnPotion.disabled = (this.vaultKeys < 1 || this.playerHp >= this.playerMaxHp);
+
+    const btnShield = document.getElementById('btn-vault-shop-shield');
+    if (btnShield) btnShield.disabled = (this.vaultKeys < 1);
+
+    const btnShock = document.getElementById('btn-vault-shop-shock');
+    if (btnShock) btnShock.disabled = (this.vaultKeys < 2 || !this.currentEnemy || this.currentEnemy.hp <= 0);
+
+    // Update Quick Talents Level Preview
+    const prevWild = document.getElementById('vault-prev-wild');
+    if (prevWild) prevWild.textContent = `Lvl ${this.talents.wildLuck}/5`;
+    const prevArmor = document.getElementById('vault-prev-armor');
+    if (prevArmor) prevArmor.textContent = `Lvl ${this.talents.armorPlating}/5`;
+    const prevMagnet = document.getElementById('vault-prev-magnet');
+    if (prevMagnet) prevMagnet.textContent = `Lvl ${this.talents.goldMagnet}/5`;
+
     this.renderTowerFloors();
+  }
+
+  buyShopItem(itemKey) {
+    if (!this.isActive) return false;
+    if (itemKey === 'potion') {
+      const cost = 1;
+      if (this.vaultKeys < cost) {
+        this.setLog('⚠️ Nemaš dovoljno ključeva za Eliksir Života (potreban 1 🗝️)!');
+        return false;
+      }
+      if (this.playerHp >= this.playerMaxHp) {
+        this.setLog('⚠️ Tvoje zdravlje je već na maksimumu!');
+        return false;
+      }
+      this.vaultKeys -= cost;
+      this.playerHp = Math.min(this.playerMaxHp, this.playerHp + 30);
+      this.spawnFloatingNumber('+30 HP 💚', 'heal', false);
+      this.setLog('🧪 Popio si Eliksir Života (+30 HP)!');
+    } else if (itemKey === 'shield') {
+      const cost = 1;
+      if (this.vaultKeys < cost) {
+        this.setLog('⚠️ Nemaš dovoljno ključeva za Pancir (potreban 1 🗝️)!');
+        return false;
+      }
+      this.vaultKeys -= cost;
+      this.playerShield += 20;
+      this.spawnFloatingNumber('+20 ŠTIT 🛡️', 'shield', false);
+      this.setLog('🛡️ Opremio si Ojačani Pancir (+20 Štit)!');
+    } else if (itemKey === 'shock') {
+      const cost = 2;
+      if (this.vaultKeys < cost) {
+        this.setLog('⚠️ Nemaš dovoljno ključeva za EMP Šok (potrebna 2 🗝️)!');
+        return false;
+      }
+      if (!this.currentEnemy || this.currentEnemy.hp <= 0) {
+        this.setLog('⚠️ Nema aktivnog neprijatelja za EMP Šok!');
+        return false;
+      }
+      this.vaultKeys -= cost;
+      const dmg = 40;
+      this.currentEnemy.hp = Math.max(0, this.currentEnemy.hp - dmg);
+      this.spawnFloatingNumber(`-${dmg} HP ⚡`, 'dmg', true);
+      this.setLog(`⚡ EMP Šok probija sisteme čuvara za -${dmg} štete!`);
+      if (this.currentEnemy.hp <= 0) {
+        this.onEnemyDefeated();
+      }
+    }
+    if (window.slotAudio && window.slotAudio.playCoinDrop) window.slotAudio.playCoinDrop();
+    this.saveState();
+    this.updateHUD();
+    return true;
   }
 
   /* ==========================================================================
@@ -942,4 +1025,10 @@ class VaultCrawler {
   }
 }
 
-window.VaultCrawler = VaultCrawler;
+if (typeof window !== 'undefined') {
+  window.VaultCrawler = VaultCrawler;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = VaultCrawler;
+}

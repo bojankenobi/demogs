@@ -227,94 +227,163 @@
         <!-- Floating Combat Numbers & Effects Container -->
         <div class="vault-fx-overlay" id="vault-fx-overlay"></div>
 
-        <div class="vault-header-card">
-          <div class="vault-floor-badge">
-            <span class="vault-floor-title" id="vault-floor-title">Sprat 1: Predvorje & Straža</span>
-            <span class="vault-floor-sub" id="vault-floor-sub">Soba 1/5 • Prizemlje kazina sa laserskim senzorima</span>
-          </div>
-          <div class="vault-keys-display" id="vault-keys-display">
-            <span>🗝️</span>
-            <span id="vault-keys-val">0 Ključeva</span>
-          </div>
-        </div>
-
-        <!-- Visual Heist Tower Progression (Building Cross-Section with 5 Floors) -->
-        <div class="vault-tower-strip">
-          <div class="tower-progress-header">
-            <span class="tower-progress-title">🏢 MAPA PROVALE TREZORA</span>
-            <span class="tower-progress-pct" id="vault-heist-pct">0% Trezora</span>
-          </div>
-          <div class="tower-floors-grid" id="vault-tower-floors">
-            <!-- 5 Floors rendered dynamically -->
-          </div>
-          <div class="tower-progress-track">
-            <div class="tower-progress-fill" id="vault-heist-progress-fill" style="width: 10%;"></div>
-          </div>
-        </div>
-
-        <!-- Floor Map Nodes (Slay the Spire Style Soba 1-5) -->
-        <div class="vault-map-strip">
-          <div class="vault-map-line" id="vault-map-laser-line"></div>
-          <div class="vault-map-nodes" id="vault-map-nodes" style="display: flex; justify-content: space-between; width: 100%; position: relative; z-index: 2;">
-            <!-- Generated dynamically -->
-          </div>
-        </div>
-
-        <!-- Combat HUD: Player HP / Shield vs Enemy HP -->
-        <div class="vault-combat-hud">
-          <!-- Player Character Card -->
-          <div class="combat-char-card" id="vault-player-card">
-            <div class="combat-char-header">
-              <span class="combat-char-name">🕵️ Ti (Provalnik)</span>
-              <span class="combat-char-val" id="vault-player-hp-val">100/100</span>
+        <!-- LEFT WING: Provala, Sprat & Borba -->
+        <aside class="vault-cockpit-wing vault-left-wing">
+          <!-- Heist & Floor Progression Card -->
+          <div class="vault-panel-card vault-progression-card">
+            <div class="vault-prog-header">
+              <div class="vault-floor-info">
+                <span class="vault-floor-title" id="vault-floor-title">Sprat 1: Predvorje & Straža</span>
+                <span class="vault-floor-sub" id="vault-floor-sub">Soba 1/5 • Prizemlje kazina sa laserskim senzorima</span>
+              </div>
+              <div class="vault-heist-pct-badge">
+                <span class="tower-progress-pct" id="vault-heist-pct">0% Trezora</span>
+              </div>
             </div>
-            <div class="combat-bar-track">
-              <div class="combat-bar-fill fill-player-hp" id="vault-player-hp-fill" style="width: 100%;"></div>
+
+            <!-- Compact Mini Floor Stepper Bar (Floors 1-5) -->
+            <div class="vault-tower-strip">
+              <div class="tower-floors-grid" id="vault-tower-floors">
+                <!-- 5 Floors rendered dynamically -->
+              </div>
+              <div class="tower-progress-track">
+                <div class="tower-progress-fill" id="vault-heist-progress-fill" style="width: 10%;"></div>
+              </div>
             </div>
-            <div class="combat-char-header" style="margin-top: 2px;">
-              <span style="font-size: 0.65rem; color: #38bdf8; font-weight: 800;">ŠTIT</span>
-              <span class="combat-char-val" id="vault-player-shield-val" style="color: #38bdf8;">+0</span>
-            </div>
-            <div class="combat-bar-track" style="height: 5px;">
-              <div class="combat-bar-fill fill-player-shield" id="vault-player-shield-fill" style="width: 0%;"></div>
+
+            <!-- Floor Map Nodes (Slay the Spire Style Soba 1-5) -->
+            <div class="vault-map-strip">
+              <div class="vault-map-line" id="vault-map-laser-line"></div>
+              <div class="vault-map-nodes" id="vault-map-nodes" style="display: flex; justify-content: space-between; width: 100%; position: relative; z-index: 2;">
+                <!-- Generated dynamically -->
+              </div>
             </div>
           </div>
 
-          <!-- Enemy Character Card -->
-          <div class="combat-char-card enemy" id="vault-enemy-card">
-            <div class="combat-char-header">
-              <span class="combat-char-name" id="vault-enemy-name">👮 Stražar Predvorja</span>
-              <span class="combat-char-val" id="vault-enemy-hp-val">300/300</span>
+          <!-- Combat Encounter Card -->
+          <div class="vault-panel-card vault-combat-card">
+            <div class="vault-card-section-title">⚔️ BORBA / ENCOUNTER</div>
+            <div class="vault-combat-hud">
+              <!-- Player Character Card -->
+              <div class="combat-char-card" id="vault-player-card">
+                <div class="combat-char-header">
+                  <span class="combat-char-name">🕵️ Ti (Provalnik)</span>
+                  <span class="combat-char-val" id="vault-player-hp-val">100/100</span>
+                </div>
+                <div class="combat-bar-track">
+                  <div class="combat-bar-fill fill-player-hp" id="vault-player-hp-fill" style="width: 100%;"></div>
+                </div>
+                <div class="combat-char-header" style="margin-top: 2px;">
+                  <span style="font-size: 0.65rem; color: #38bdf8; font-weight: 800;">ŠTIT</span>
+                  <span class="combat-char-val" id="vault-player-shield-val" style="color: #38bdf8;">+0</span>
+                </div>
+                <div class="combat-bar-track" style="height: 5px;">
+                  <div class="combat-bar-fill fill-player-shield" id="vault-player-shield-fill" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- Enemy Character Card -->
+              <div class="combat-char-card enemy" id="vault-enemy-card">
+                <div class="combat-char-header">
+                  <span class="combat-char-name" id="vault-enemy-name">👮 Stražar Predvorja</span>
+                  <span class="combat-char-val" id="vault-enemy-hp-val">300/300</span>
+                </div>
+                <div class="combat-bar-track">
+                  <div class="combat-bar-fill fill-enemy-hp" id="vault-enemy-hp-fill" style="width: 100%;"></div>
+                </div>
+                <div style="font-size: 0.65rem; color: #f87171; font-weight: 700; margin-top: 4px; text-align: right;" id="vault-enemy-status-tip">
+                  Rotira napad nakon svakog spina!
+                </div>
+              </div>
             </div>
-            <div class="combat-bar-track">
-              <div class="combat-bar-fill fill-enemy-hp" id="vault-enemy-hp-fill" style="width: 100%;"></div>
-            </div>
-            <div style="font-size: 0.65rem; color: #f87171; font-weight: 700; margin-top: 4px; text-align: right;" id="vault-enemy-status-tip">
-              Rotira napad nakon svakog spina!
+
+            <!-- Combat Feed / Log -->
+            <div class="vault-combat-log" id="vault-combat-log">
+              🚨 Zavrti slot za napad na čuvara trezora!
             </div>
           </div>
-        </div>
+        </aside>
 
-        <!-- Combat Feed / Log -->
-        <div class="vault-combat-log" id="vault-combat-log">
-          🚨 Zavrti slot za napad na čuvara trezora!
-        </div>
+        <!-- RIGHT WING: Talenti, Kupovine & Akcije -->
+        <aside class="vault-cockpit-wing vault-right-wing">
+          <!-- Trezor Ključevi & Resursi -->
+          <div class="vault-panel-card vault-keys-card">
+            <div class="vault-keys-header">
+              <span class="vault-keys-label">🗝️ TREZOR KLJUČEVI</span>
+              <div class="vault-keys-display" id="vault-keys-display">
+                <span>🗝️</span>
+                <span id="vault-keys-val">0 Ključeva</span>
+              </div>
+            </div>
+            <div class="vault-keys-hint">Sakupljaj ključeve spinovima za opremu i trajne talente!</div>
+          </div>
 
-        <!-- Actions Deck -->
-        <div class="vault-bottom-actions">
-          <button type="button" class="btn-vault-action gold-glow" id="btn-vault-leaderboard">
-            <span class="vbtn-txt-full">🏆 Rang Lista Provalnika</span>
-            <span class="vbtn-txt-short">🏆 Rang Lista</span>
-          </button>
-          <button type="button" class="btn-vault-action" id="btn-vault-talents">
-            <span class="vbtn-txt-full">🏛️ Talent Drvo</span>
-            <span class="vbtn-txt-short">🏛️ Talenti</span>
-          </button>
-          <button type="button" class="btn-vault-action secondary" id="btn-vault-reset-run" style="flex: 0.6;">
-            <span class="vbtn-txt-full">🔄 Nova Provala</span>
-            <span class="vbtn-txt-short">🔄 Nova</span>
-          </button>
-        </div>
+          <!-- Crno Tržište (Kupovine u toku provale) -->
+          <div class="vault-panel-card vault-shop-card">
+            <div class="vault-card-section-title">🛒 CRNO TRŽIŠTE (KUPOVINE)</div>
+            <div class="vault-shop-items">
+              <button type="button" class="vault-shop-btn" id="btn-vault-shop-potion" title="Obnavlja +30 HP (Cena: 1 Ključ)">
+                <span class="shop-item-icon">🧪</span>
+                <span class="shop-item-info">
+                  <strong class="shop-item-name">Eliksir Života</strong>
+                  <span class="shop-item-effect">+30 HP Zdravlje</span>
+                </span>
+                <span class="shop-item-cost">1 🗝️</span>
+              </button>
+              <button type="button" class="vault-shop-btn" id="btn-vault-shop-shield" title="Dodaje +20 Štita (Cena: 1 Ključ)">
+                <span class="shop-item-icon">🛡️</span>
+                <span class="shop-item-info">
+                  <strong class="shop-item-name">Pancir Prsluk</strong>
+                  <span class="shop-item-effect">+20 Energo-Štit</span>
+                </span>
+                <span class="shop-item-cost">1 🗝️</span>
+              </button>
+              <button type="button" class="vault-shop-btn" id="btn-vault-shop-shock" title="Direktan EMP udarac u čuvara za -40 HP (Cena: 2 Ključa)">
+                <span class="shop-item-icon">⚡</span>
+                <span class="shop-item-info">
+                  <strong class="shop-item-name">EMP Šok</strong>
+                  <span class="shop-item-effect">-40 HP Čuvaru</span>
+                </span>
+                <span class="shop-item-cost">2 🗝️</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Talenti Preview & Trigger -->
+          <div class="vault-panel-card vault-talents-card">
+            <div class="vault-card-section-title">🏛️ TALENT DRVO</div>
+            <div class="vault-talents-quick-grid">
+              <div class="talent-quick-row">
+                <span>🌟 Wild Sreća:</span>
+                <strong id="vault-prev-wild">Lvl 0/5</strong>
+              </div>
+              <div class="talent-quick-row">
+                <span>🛡️ Ojačani Pancir:</span>
+                <strong id="vault-prev-armor">Lvl 0/5</strong>
+              </div>
+              <div class="talent-quick-row">
+                <span>🧲 Zlatni Magnet:</span>
+                <strong id="vault-prev-magnet">Lvl 0/5</strong>
+              </div>
+            </div>
+            <button type="button" class="btn-vault-action btn-open-talents" id="btn-vault-talents">
+              <span class="vbtn-txt-full">🏛️ Otvori Talent Drvo</span>
+              <span class="vbtn-txt-short">🏛️ Talenti</span>
+            </button>
+          </div>
+
+          <!-- Meta Actions: Rang Lista & Nova Provala -->
+          <div class="vault-panel-card vault-actions-card">
+            <button type="button" class="btn-vault-action gold-glow" id="btn-vault-leaderboard">
+              <span class="vbtn-txt-full">🏆 Rang Lista Provalnika</span>
+              <span class="vbtn-txt-short">🏆 Rang Lista</span>
+            </button>
+            <button type="button" class="btn-vault-action secondary" id="btn-vault-reset-run" style="flex: 0.6;">
+              <span class="vbtn-txt-full">🔄 Nova Provala</span>
+              <span class="vbtn-txt-short">🔄 Nova</span>
+            </button>
+          </div>
+        </aside>
       </div>
 
       <!-- Slot-Battle Royale (Multiplayer 120s Arena HUD) -->

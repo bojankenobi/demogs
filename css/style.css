@@ -14640,3 +14640,9 @@ body.theme-royale .stage-bezel {
     grid-column: span 4;
   }
 }
+
+/* Hide daily missions ticker in Vault and Royale modes to save screen height */
+.game-container.in-vault-mode .daily-missions-ticker-bar,
+.game-container.in-royale-mode .daily-missions-ticker-bar {
+  display: none !important;
+}

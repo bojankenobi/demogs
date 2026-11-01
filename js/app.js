@@ -1750,7 +1750,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (vw <= 480) {
       uiOverhead = hasActiveSubgame ? 460 : 320;
     } else if (hasActiveSubgame) {
-      uiOverhead = 500;
+      uiOverhead = (vw >= 1024 && isVaultOpen) ? 290 : 500;
     }
 
     const availH = Math.max(80, vh - uiOverhead);
