@@ -385,7 +385,7 @@ class DailyMissionsManager {
     if (!countEl || !this.state) return;
 
     const completedCount = this.state.missions.filter(m => m.completed).length;
-    countEl.textContent = `${completedCount}/3 Rešeno`;
+    countEl.innerHTML = `<span class="cnt-num">${completedCount}/3</span> <span class="cnt-lbl dmb-txt-full">Rešeno</span>`;
 
     if (completedCount === 3) {
       countEl.style.color = '#4ade80';

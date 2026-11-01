@@ -2747,24 +2747,61 @@ body {
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
 }
 
-/* Helper Visibility Classes for Responsive Text */
+/* Progressive Disclosure & Helper Visibility Classes for Responsive Text */
+.tab-txt-full,
+.vbtn-txt-full,
+.rbtn-txt-full,
+.dmb-txt-full {
+  display: none;
+}
+
 .tab-txt-short,
 .vbtn-txt-short,
-.rbtn-txt-short {
+.rbtn-txt-short,
+.dmb-txt-short {
+  display: inline;
+}
+
+.dmb-txt-mini {
   display: none;
+}
+
+/* Large Desktop Screens (>= 1024px): Full Elegant Titles */
+@media (min-width: 1024px) {
+  .tab-txt-full,
+  .vbtn-txt-full,
+  .rbtn-txt-full,
+  .dmb-txt-full {
+    display: inline !important;
+  }
+  .tab-txt-short,
+  .vbtn-txt-short,
+  .rbtn-txt-short,
+  .dmb-txt-short,
+  .dmb-txt-mini {
+    display: none !important;
+  }
 }
 
 /* Responsiveness for mobile screens */
 @media (max-width: 480px) {
   .tab-txt-full,
   .vbtn-txt-full,
-  .rbtn-txt-full {
+  .rbtn-txt-full,
+  .dmb-txt-full,
+  .dmb-txt-short {
     display: none !important;
   }
   .tab-txt-short,
   .vbtn-txt-short,
   .rbtn-txt-short {
     display: inline !important;
+  }
+  .dmb-txt-mini {
+    display: inline !important;
+  }
+  .dmb-timer {
+    display: none !important;
   }
 
   .game-container {
@@ -2796,21 +2833,67 @@ body {
     max-width: 100%;
   }
   .hub-mode-tab {
-    padding: 6px 4px;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 6px 3px;
     min-height: 36px;
-    border-radius: 16px;
-    gap: 4px;
-    font-size: 0.7rem;
+    border-radius: 14px;
+    gap: 3px;
+    font-size: 0.68rem;
     letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .hub-tab-text {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .hub-tab-icon {
     font-size: 0.95rem;
+    flex-shrink: 0;
   }
-  .hub-tab-badge {
-    top: -5px;
+  .grand-mode-hub .hub-tab-badge {
+    top: -4px;
     right: 2px;
     font-size: 0.5rem;
     padding: 1px 4px;
+  }
+  .grand-mode-hub .hub-quota-pill {
+    bottom: -2px;
+    right: 2px;
+    font-size: 0.52rem;
+    padding: 1px 4px;
+    border-radius: 6px;
+  }
+
+  /* Compact Daily Missions Sticky Bar */
+  .daily-missions-ticker-bar {
+    width: 100%;
+    margin: 3px auto 6px auto;
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .dmb-left {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .dmb-center {
+    padding: 2px 8px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .dmb-right {
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .dmb-open-pill {
+    font-size: 0.65rem;
+    padding: 2px 6px;
   }
 
   /* Live Casino Jackpots Bar */
@@ -3119,8 +3202,22 @@ body {
   .hub-tab-icon {
     font-size: 0.85rem;
   }
-  .hub-tab-badge {
-    display: none; /* Hide badge on extra small screen */
+  .grand-mode-hub .hub-tab-badge {
+    display: none !important; /* Hide badge on extra small screen */
+  }
+  .grand-mode-hub .hub-quota-pill {
+    bottom: -1px;
+    right: 1px;
+    font-size: 0.44rem;
+    padding: 0 2px;
+  }
+  .daily-missions-ticker-bar {
+    padding: 4px 6px;
+    font-size: 0.65rem;
+  }
+  .dmb-open-pill {
+    font-size: 0.58rem;
+    padding: 1px 4px;
   }
 
   .status-banner {
@@ -6269,7 +6366,17 @@ body {
 }
 
 .game-container.in-blackjack-mode .jackpots-ticker-bar,
-.game-container.in-blackjack-mode .bonus-meters-bar {
+.game-container.in-blackjack-mode .bonus-meters-bar,
+.game-container.in-crash-mode .jackpots-ticker-bar,
+.game-container.in-crash-mode .bonus-meters-bar,
+.game-container.in-plinko-mode .jackpots-ticker-bar,
+.game-container.in-plinko-mode .bonus-meters-bar,
+.game-container.in-mines-mode .jackpots-ticker-bar,
+.game-container.in-mines-mode .bonus-meters-bar,
+.game-container.in-vault-mode .jackpots-ticker-bar,
+.game-container.in-vault-mode .bonus-meters-bar,
+.game-container.in-royale-mode .jackpots-ticker-bar,
+.game-container.in-royale-mode .bonus-meters-bar {
   display: none !important;
 }
 
@@ -11951,7 +12058,7 @@ body.free-spins-active .slot-cylinder-replica {
     max-width: 760px;
   }
 
-  /* Desktop Header & Nav */
+  /* Tablet Header & Nav */
   .header-section {
     margin-bottom: 8px;
   }
@@ -11961,16 +12068,46 @@ body.free-spins-active .slot-cylinder-replica {
   .main-brand-logo {
     max-height: 60px;
   }
-  .hub-mode-nav {
-    max-width: 580px;
+  .grand-mode-hub {
+    max-width: 640px;
     margin: 0 auto 10px;
+    gap: 6px;
+    padding: 4px 8px;
   }
   .hub-mode-tab {
-    padding: 10px 18px;
-    font-size: 0.95rem;
+    padding: 8px 12px;
+    font-size: 0.78rem;
   }
   .hub-tab-icon {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
+  }
+
+  /* Unclamp Stage Views for Tablet Screens */
+  .blackjack-stage-view {
+    max-width: 840px;
+    width: 100%;
+  }
+  .crash-stage-view {
+    max-width: 860px;
+    width: 100%;
+  }
+  .plinko-stage-view {
+    max-width: 820px;
+    width: 100%;
+  }
+  .mines-stage-view {
+    max-width: 720px;
+    width: 100%;
+  }
+
+  /* Balanced Header Bars for Tablet */
+  .daily-missions-ticker-bar,
+  .jackpots-ticker-bar,
+  .bonus-meters-bar {
+    max-width: 720px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* --------------------------------------------------------------------------
@@ -12277,33 +12414,173 @@ body.free-spins-active .slot-cylinder-replica {
 /* Large Desktop Monitors (1024px and up: 1080p, 1440p, 4K) */
 @media (min-width: 1024px) {
   .game-container {
-    max-width: 860px;
+    max-width: 1240px;
+    padding-left: 28px;
+    padding-right: 28px;
+    padding-top: 18px;
+    padding-bottom: 32px;
   }
 
   .game-container.in-blackjack-mode {
-    max-width: 1080px;
+    max-width: 1240px;
   }
 
   .game-container.in-crash-mode {
-    max-width: 1040px;
+    max-width: 1200px;
   }
 
   .game-container.in-plinko-mode {
-    max-width: 940px;
+    max-width: 1080px;
+  }
+
+  .game-container.in-mines-mode {
+    max-width: 860px;
+  }
+
+  .game-container.in-vault-mode {
+    max-width: 1160px;
+  }
+
+  .game-container.in-royale-mode {
+    max-width: 1220px;
   }
 
   .brand-logo-wrap {
     max-width: 320px;
+    margin-bottom: 8px;
   }
   .main-brand-logo {
     max-height: 68px;
   }
 
-  /* 1. Blackjack Large Desktop */
+  /* Desktop Grand Mode Hub */
+  .grand-mode-hub {
+    max-width: 780px;
+    width: 100%;
+    margin: 0 auto 12px;
+    padding: 6px 12px;
+    gap: 10px;
+    border-radius: 36px;
+  }
+  .hub-mode-tab {
+    padding: 10px 18px;
+    font-size: 0.84rem;
+    min-height: 46px;
+    gap: 8px;
+    border-radius: 26px;
+  }
+  .hub-tab-icon {
+    font-size: 1.25rem;
+  }
+  .grand-mode-hub .hub-tab-badge {
+    top: -8px;
+    right: 8px;
+    font-size: 0.6rem;
+    padding: 2px 7px;
+  }
+  .grand-mode-hub .hub-quota-pill {
+    bottom: -6px;
+    right: 8px;
+    font-size: 0.62rem;
+    padding: 2px 7px;
+  }
+
+  /* Desktop Header Bars: Centered & Balanced */
+  .jackpots-ticker-bar,
+  .bonus-meters-bar,
+  .daily-missions-ticker-bar {
+    max-width: 820px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .daily-missions-ticker-bar {
+    margin-top: 6px;
+    margin-bottom: 16px;
+    padding: 10px 20px;
+    border-radius: 14px;
+  }
+
+  /* 1. Blackjack Desktop Expansion */
+  .blackjack-stage-view {
+    max-width: 1140px;
+    width: 100%;
+  }
+  .blackjack-cabinet-panel {
+    max-width: 1140px;
+    width: 100%;
+    padding: 22px 28px;
+    border-radius: 24px;
+    gap: 16px;
+  }
   .blackjack-table {
     min-height: 540px;
-    padding: 24px 32px;
+    width: 100%;
+    padding: 26px 36px;
     border-radius: 24px;
+  }
+  .bj-betting-controls {
+    max-width: 780px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .bj-actions-deck {
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* 2. Crash Desktop Expansion */
+  .crash-stage-view {
+    max-width: 1080px;
+    width: 100%;
+  }
+  .crash-cabinet-panel {
+    max-width: 1080px;
+    width: 100%;
+    padding: 22px 28px;
+    border-radius: 24px;
+  }
+
+  /* 3. Plinko Desktop Expansion */
+  .plinko-stage-view {
+    max-width: 980px;
+    width: 100%;
+  }
+  .plinko-cabinet-panel {
+    max-width: 980px;
+    width: 100%;
+    padding: 22px 28px;
+    border-radius: 24px;
+  }
+
+  /* 4. Mines Desktop Expansion */
+  .mines-stage-view {
+    max-width: 780px;
+    width: 100%;
+  }
+  .mines-cabinet-panel {
+    max-width: 780px;
+    width: 100%;
+    padding: 20px 24px;
+    border-radius: 22px;
+  }
+  .mines-board-grid {
+    max-width: 480px;
+    gap: 10px;
+  }
+
+  /* 5. Slot & Arcade Controls Console */
+  .slot-stage-scaler {
+    max-width: 760px;
+    width: 100%;
+  }
+  .controls-panel {
+    max-width: 820px;
+    width: 100%;
+    margin: 0 auto;
+    gap: 16px;
+    padding: 16px 24px;
   }
 
   .bj-card {
@@ -12598,6 +12875,7 @@ body.free-spins-active .slot-cylinder-replica {
   border-radius: 8px;
   letter-spacing: 0.5px;
   line-height: 1;
+  pointer-events: none;
 }
 
 .hub-quota-pill.exhausted {
@@ -12941,9 +13219,9 @@ body.theme-royale .stage-bezel {
 
 @media (min-width: 1024px) {
   .game-container {
-    max-width: 1200px;
-    padding-left: 24px;
-    padding-right: 24px;
+    max-width: 1240px;
+    padding-left: 28px;
+    padding-right: 28px;
   }
 
   .slot-stage-scaler {
@@ -13808,8 +14086,11 @@ body.theme-royale .stage-bezel {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 6px 12px 10px 12px;
+  width: 100%;
+  max-width: 820px;
+  margin: 6px auto 10px auto;
   padding: 8px 14px;
+  box-sizing: border-box;
   background: linear-gradient(90deg, rgba(35, 23, 7, 0.95) 0%, rgba(18, 12, 3, 0.95) 50%, rgba(28, 20, 6, 0.95) 100%);
   border: 1px solid rgba(255, 215, 0, 0.5);
   border-radius: 12px;
