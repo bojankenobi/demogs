@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=102">
+  <link rel="stylesheet" href="css/style.css?v=103">
   <link rel="stylesheet" href="css/grand-hub.css?v=99">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -1189,7 +1189,7 @@
           <div class="holdem-table">
             <div class="holdem-felt-rail"></div>
 
-            <!-- Table Header Watermark: Grand Slot Club & Dealer Rules -->
+            <!-- Table Header Banner: Grand Slot Club & Dealer Rules (Positioned cleanly at table top, never overlapped by cards) -->
             <div class="holdem-rules-watermark">
               <span class="holdem-title-gold">♠️ GRAND ROYAL CASINO HOLD'EM ♣️</span>
               <span class="holdem-sub-silver">Diler se kvalifikuje sa parom 4-ki ili jače • Ante plaća do 100:1</span>
@@ -1260,10 +1260,10 @@
             </div>
           </div>
 
-          <!-- Casino Hold'em Control Deck -->
+          <!-- Casino Hold'em Control Deck (Rock-solid constant height, zero jump/bounce) -->
           <div class="holdem-control-deck">
-            <!-- Phase 1: Betting Controls (Stepper, Chips, Deal) -->
-            <div class="ch-betting-controls" id="ch-ctrls-deal">
+            <!-- Stable Betting Rack: always preserves position and height -->
+            <div class="ch-bet-rack-wrap" id="ch-bet-rack-wrap">
               <div class="ch-bet-row-controls">
                 <div class="ch-bet-stepper-wrap">
                   <button type="button" class="ch-step-btn" id="ch-bet-minus" aria-label="Smanji Ante ulog">−</button>
@@ -1292,35 +1292,41 @@
                 <button type="button" class="ch-chip-btn chip-100" data-amt="100" title="+100 ZLT"><span class="chip-val">100</span></button>
                 <button type="button" class="ch-chip-btn chip-500" data-amt="500" title="+500 ZLT"><span class="chip-val">500</span></button>
               </div>
-
-              <button type="button" class="btn-ch-main btn-ch-deal" id="btn-ch-deal">
-                <span class="btn-ch-icon">🃏</span>
-                <span class="btn-ch-text">PODELI KARTE (ANTE)</span>
-              </button>
             </div>
 
-            <!-- Phase 2: Flop Decision Controls (Call or Fold) -->
-            <div class="ch-decision-controls" id="ch-ctrls-decision" style="display: none;">
-              <button type="button" class="btn-ch-action btn-ch-call" id="btn-ch-call">
-                <span class="btn-ch-icon">🔥</span>
-                <span class="btn-ch-text">PRATI (CALL = 2× ANTE)</span>
-              </button>
-              <button type="button" class="btn-ch-action btn-ch-fold" id="btn-ch-fold">
-                <span class="btn-ch-icon">🏳️</span>
-                <span class="btn-ch-text">ODUSTANI (FOLD)</span>
-              </button>
-            </div>
+            <!-- Dynamic Action Bar: Exactly 48px high in all phases -->
+            <div class="ch-action-bar-wrap">
+              <!-- Phase 1: Deal Button -->
+              <div class="ch-action-phase" id="ch-ctrls-deal">
+                <button type="button" class="btn-ch-main btn-ch-deal" id="btn-ch-deal">
+                  <span class="btn-ch-icon">🃏</span>
+                  <span class="btn-ch-text">PODELI KARTE (ANTE)</span>
+                </button>
+              </div>
 
-            <!-- Phase 3: Round Over Controls (Rebet or New Deal) -->
-            <div class="ch-round-over-controls" id="ch-ctrls-round-over" style="display: none;">
-              <button type="button" class="btn-ch-main btn-ch-rebet" id="btn-ch-rebet">
-                <span class="btn-ch-icon">🔄</span>
-                <span class="btn-ch-text">ISTI ULOG & DELI</span>
-              </button>
-              <button type="button" class="btn-ch-main btn-ch-new" id="btn-ch-new-round">
-                <span class="btn-ch-icon">✨</span>
-                <span class="btn-ch-text">NOVA RUNDA</span>
-              </button>
+              <!-- Phase 2: Flop Decision Controls (Call or Fold) -->
+              <div class="ch-action-phase" id="ch-ctrls-decision" style="display: none;">
+                <button type="button" class="btn-ch-action btn-ch-call" id="btn-ch-call">
+                  <span class="btn-ch-icon">🔥</span>
+                  <span class="btn-ch-text">PRATI (CALL = 2× ANTE)</span>
+                </button>
+                <button type="button" class="btn-ch-action btn-ch-fold" id="btn-ch-fold">
+                  <span class="btn-ch-icon">🏳️</span>
+                  <span class="btn-ch-text">ODUSTANI (FOLD)</span>
+                </button>
+              </div>
+
+              <!-- Phase 3: Round Over Controls (Rebet or New Deal) -->
+              <div class="ch-action-phase" id="ch-ctrls-round-over" style="display: none;">
+                <button type="button" class="btn-ch-main btn-ch-rebet" id="btn-ch-rebet">
+                  <span class="btn-ch-icon">🔄</span>
+                  <span class="btn-ch-text">ISTI ULOG & DELI</span>
+                </button>
+                <button type="button" class="btn-ch-main btn-ch-new" id="btn-ch-new-round">
+                  <span class="btn-ch-icon">✨</span>
+                  <span class="btn-ch-text">NOVA RUNDA</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -3287,7 +3293,7 @@
   <script src="js/games/plinko/plinko.js?v=97"></script>
   <script src="js/games/blackjack/blackjack.js?v=97"></script>
   <script src="js/games/video-poker/video-poker.js?v=102"></script>
-  <script src="js/games/casino-holdem/casino-holdem.js?v=102"></script>
+  <script src="js/games/casino-holdem/casino-holdem.js?v=103"></script>
 
   <!-- Application Controller -->
   <script src="js/app.js?v=102"></script>

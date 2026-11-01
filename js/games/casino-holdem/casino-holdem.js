@@ -758,10 +758,19 @@ class RoyalCasinoHoldemGame {
     const dealCtrl = document.getElementById('ch-ctrls-deal');
     const decisionCtrl = document.getElementById('ch-ctrls-decision');
     const roundOverCtrl = document.getElementById('ch-ctrls-round-over');
+    const rack = document.getElementById('ch-bet-rack-wrap');
 
     if (dealCtrl) dealCtrl.style.display = phase === 'betting' ? 'flex' : 'none';
     if (decisionCtrl) decisionCtrl.style.display = phase === 'flop_decision' ? 'flex' : 'none';
     if (roundOverCtrl) roundOverCtrl.style.display = phase === 'round_over' ? 'flex' : 'none';
+
+    if (rack) {
+      if (phase === 'betting') {
+        rack.classList.remove('is-disabled');
+      } else {
+        rack.classList.add('is-disabled');
+      }
+    }
   }
 
   setMessage(msg) {
