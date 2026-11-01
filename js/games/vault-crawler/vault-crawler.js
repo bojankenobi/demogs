@@ -388,10 +388,29 @@ class VaultCrawler {
     }
   }
 
+  isGodPlayer() {
+    try {
+      const profile = JSON.parse(localStorage.getItem('igt_player_profile') || '{}');
+      if (profile.is_god || profile.role === 'GOD' || profile.vipTier === 'GOD') return true;
+      if (profile.username && profile.username.toLowerCase() === 'god') return true;
+    } catch (e) {}
+    return false;
+  }
+
   mount() {
     this.isActive = true;
     if (this.stageView) this.stageView.style.display = 'flex';
     if (this.slotStage) this.slotStage.style.display = 'block';
+
+    // God tier operator perk: ensure ample keys and max health
+    if (this.isGodPlayer()) {
+      if (this.vaultKeys < 99) {
+        this.vaultKeys = 99;
+        this.saveState();
+      }
+      this.playerHp = this.playerMaxHp;
+      this.playerShield = Math.max(60, this.playerShield);
+    }
 
     // Start or resume floor
     this.initCurrentFloor();

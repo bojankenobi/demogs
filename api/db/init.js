@@ -106,6 +106,17 @@ export default async function handler(req, res) {
     await sql`CREATE INDEX IF NOT EXISTS idx_vouchers_status ON vouchers (status);`;
     await sql`CREATE INDEX IF NOT EXISTS idx_vouchers_redeemed ON vouchers (redeemed_at DESC);`;
 
+    // 5. Seed God Tier Operator Account
+    await sql`
+      INSERT INTO players (
+        id, username, nickname, balance_rsd, vip_tier, total_turnover, total_spins, total_wins
+      ) VALUES (
+        'gsc_usr_god', 'god', '⚡ GOD OPERATOR', 1000000.00, 'GOD', 9999999, 9999, 9999999
+      ) ON CONFLICT (id) DO UPDATE SET
+        balance_rsd = 1000000.00,
+        vip_tier = 'GOD';
+    `;
+
     return res.status(200).json({
       success: true,
       message: 'Neon PostgreSQL šema je uspešno inicijalizovana (players, push_campaigns, vouchers).'

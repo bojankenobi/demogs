@@ -1731,6 +1731,12 @@
             <span class="btn-login-text" id="btn-login-text">PRIJAVI SE</span>
           </button>
 
+          <!-- Quick Fill God Tier Chip for Fast Testing -->
+          <div class="login-god-quick-chip" id="btn-quick-fill-god" title="Klikni za automatsko popunjavanje God Tier naloga">
+            <span class="god-chip-icon">⚡</span>
+            <span class="god-chip-text">God Tier Tester: <strong>god</strong> / <strong>god123</strong> <small>(Klikni za brzi unos)</small></span>
+          </div>
+
           <div class="auth-switch-footer">
             <span>Nemaš nalog?</span>
             <button type="button" class="auth-switch-link" id="link-go-to-reg">Registruj se i uzmi 1.000 Zlatnika bonusa &rarr;</button>
@@ -1909,6 +1915,26 @@
             <button type="button" class="denom-pill-btn" data-denom="4">4 ZLT</button>
           </div>
         </div>
+        <!-- GOD TIER DEV & TESTING CONTROLS (Visible only when logged in as God) -->
+        <div class="profile-god-section" id="profile-god-deck" style="display: none;">
+          <div class="god-deck-title">⚡ GOD TIER TESTER KONTROLE</div>
+          <p class="god-deck-desc">Ekskluzivni režim za testiranje bez ikakvih blokada i ograničenja:</p>
+          <div class="god-actions-grid">
+            <button type="button" class="btn-god-action" id="btn-god-reset-quotas" title="Resetuj iskorišćenost kvota za Trezor i Royale">
+              <span>🔓</span> <strong>Resetuj Kvote (∞)</strong>
+            </button>
+            <button type="button" class="btn-god-action" id="btn-god-add-gold" title="Dodaj 100.000 Zlatnika">
+              <span>💰</span> <strong>+100.000 ZLT</strong>
+            </button>
+            <button type="button" class="btn-god-action" id="btn-god-add-keys" title="Dodaj 99 Ključeva za Trezor">
+              <span>🗝️</span> <strong>+99 Ključeva</strong>
+            </button>
+            <button type="button" class="btn-god-action" id="btn-god-max-talents" title="Postavi sve talente na Lvl 5">
+              <span>🏛️</span> <strong>Max Talenti (Lvl 5)</strong>
+            </button>
+          </div>
+        </div>
+
       </div>
 
       <div class="profile-footer-actions">

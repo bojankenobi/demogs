@@ -2029,3 +2029,130 @@
   }
 
 }
+
+/* ==============================================================================
+   5. GOD TIER Operator & Dev Tester Styling
+   ============================================================================== */
+
+.god-quota-pill {
+  background: rgba(245, 158, 11, 0.25) !important;
+  color: #fbbf24 !important;
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.6) !important;
+  font-weight: 900 !important;
+  font-size: 0.85rem !important;
+  animation: pulse-live 1.8s infinite ease-in-out;
+}
+
+.god-player-badge {
+  color: #fbbf24 !important;
+  font-weight: 900 !important;
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.7);
+  letter-spacing: 0.05em;
+}
+
+.god-profile-btn {
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.7) !important;
+  border-color: #fbbf24 !important;
+  background: rgba(245, 158, 11, 0.15) !important;
+}
+
+/* Quick Fill Chip in Login Modal */
+.login-god-quick-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 12px 0 6px;
+  padding: 8px 12px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px dashed rgba(245, 158, 11, 0.45);
+  border-radius: 8px;
+  font-size: 0.74rem;
+  color: #fbbf24;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.login-god-quick-chip:hover {
+  background: rgba(245, 158, 11, 0.22);
+  border-style: solid;
+  border-color: #f59e0b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+.god-chip-icon {
+  font-size: 1rem;
+}
+
+.god-chip-text small {
+  color: #94a3b8;
+}
+
+/* God Deck inside Profile Modal */
+.profile-god-section {
+  margin-top: 14px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(30, 20, 10, 0.88) 0%, rgba(18, 12, 8, 0.96) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.18);
+}
+
+.god-deck-title {
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: #fbbf24;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.god-deck-desc {
+  font-size: 0.68rem;
+  color: #cbd5e1;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.god-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btn-god-action {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 10px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 8px;
+  color: #f8fafc;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.btn-god-action:hover {
+  background: rgba(212, 175, 55, 0.25);
+  border-color: #fbbf24;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+}
+
+.btn-god-action span {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.btn-god-action strong {
+  font-size: 0.72rem;
+  color: #f8fafc;
+  font-weight: 800;
+}
+

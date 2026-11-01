@@ -94,12 +94,36 @@ class DailyAccessManager {
     this.saveOperatorLimits(limits);
   }
 
+  isGodPlayer(playerId) {
+    if (!playerId) {
+      playerId = this.getCurrentPlayerId();
+    }
+    const cleanId = String(playerId).toLowerCase();
+    if (cleanId === 'gsc_usr_god' || cleanId === 'god' || cleanId === 'godmode' || cleanId === 'admin') return true;
+
+    try {
+      const stored = localStorage.getItem('igt_player_profile') || localStorage.getItem('gsc_player_profile');
+      if (stored) {
+        const p = JSON.parse(stored);
+        if (p) {
+          if (p.is_god || p.role === 'GOD' || p.vipTier === 'GOD') return true;
+          if (p.username && p.username.toLowerCase() === 'god') return true;
+        }
+      }
+    } catch (e) {}
+
+    return false;
+  }
+
   getUsage(playerId, mode) {
     const access = this.getPlayerAccess(playerId);
     return mode === 'vault' ? (access.vaultEntries || 0) : (access.royaleEntries || 0);
   }
 
   getRemaining(playerId, mode) {
+    if (this.isGodPlayer(playerId)) {
+      return 999;
+    }
     const limit = this.getLimit(mode);
     const usage = this.getUsage(playerId, mode);
     return Math.max(0, limit - usage);
@@ -151,6 +175,19 @@ class DailyAccessManager {
   canEnterMode(playerId, mode) {
     if (mode !== 'vault' && mode !== 'royale') {
       return { allowed: true, mode };
+    }
+
+    if (this.isGodPlayer(playerId)) {
+      return {
+        allowed: true,
+        mode,
+        current: 0,
+        currentUsage: 0,
+        max: 999,
+        limit: 999,
+        remaining: 999,
+        isGod: true
+      };
     }
 
     const limits = this.getOperatorLimits();
