@@ -315,6 +315,25 @@
           ⚠️ SIGURNA ZONA JE OTVORENA • SVI IGRAČI SU AKTIVNI
         </div>
 
+        <!-- Smart Meta Target Selector -->
+        <div class="royale-smart-targets">
+          <span class="smart-targets-label">🎯 CILJ NAPADA:</span>
+          <div class="smart-targets-row">
+            <button type="button" class="btn-target-selector active" data-target="leader" id="btn-target-leader">
+              <span class="target-icon">👑</span>
+              <span class="target-name">#1 LIDER</span>
+            </button>
+            <button type="button" class="btn-target-selector" data-target="ahead" id="btn-target-ahead">
+              <span class="target-icon">⚠️</span>
+              <span class="target-name">RIVAL ISPRED</span>
+            </button>
+            <button type="button" class="btn-target-selector" data-target="revenge" id="btn-target-revenge">
+              <span class="target-icon">🎯</span>
+              <span class="target-name">OSVETA</span>
+            </button>
+          </div>
+        </div>
+
         <!-- PvP Attack Cards Deck -->
         <div class="royale-attacks-deck">
           <button type="button" class="btn-pvp-attack" id="btn-pvp-freeze" disabled>
@@ -2349,6 +2368,51 @@
       <button type="button" class="btn-exclusive-lock-ok" id="btn-exclusive-lock-ok">
         POVRATAK U CASINO SALON
       </button>
+    </div>
+  </div>
+
+  <!-- Modal: Battle Royale Buy-In & Kotizacija -->
+  <div class="modal-overlay royale-buyin-overlay" id="royale-buyin-modal" style="display: none;">
+    <div class="royale-buyin-card">
+      <button type="button" class="royale-buyin-close" id="btn-close-royale-buyin" aria-label="Zatvori">✕</button>
+      <div class="royale-buyin-hero">
+        <span class="royale-hero-icon">⚔️</span>
+        <div class="royale-buyin-badge">ARENA ULAZNICA</div>
+      </div>
+      <h2 class="royale-buyin-title">BATTLE ROYALE ARENA</h2>
+      <p class="royale-buyin-desc">
+        Takmičenje uživo sa 20 igrača u sobi! 120 sekundi brzih turnirskih spinova, zone eliminacije i taktički napadi.
+      </p>
+
+      <div class="royale-buyin-pricing-box">
+        <div class="buyin-price-row">
+          <span class="buyin-lbl">Kotizacija za meč:</span>
+          <span class="buyin-val font-mono" id="royale-buyin-cost">100 ZLT</span>
+        </div>
+        <div class="buyin-price-row">
+          <span class="buyin-lbl">Nagradni fond sobe:</span>
+          <span class="buyin-val font-gold font-mono" id="royale-buyin-pot">2.000 ZLT</span>
+        </div>
+        <div class="buyin-price-row">
+          <span class="buyin-lbl">Vaš trenutni saldo:</span>
+          <span class="buyin-val font-green font-mono" id="royale-player-wallet-val">1.000 ZLT</span>
+        </div>
+      </div>
+
+      <div class="royale-buyin-prizes-preview">
+        <span class="prize-pill gold">🥇 1. Mesto: 1.000 ZLT + Finale</span>
+        <span class="prize-pill silver">🥈 2. Mesto: 500 ZLT</span>
+        <span class="prize-pill bronze">🥉 3. Mesto: 300 ZLT</span>
+      </div>
+
+      <div class="royale-buyin-actions">
+        <button type="button" class="btn-royale-pay-entry" id="btn-confirm-royale-buyin">
+          🪙 UPLATI 100 ZLT &amp; UĐI U ARENU
+        </button>
+        <button type="button" class="btn-royale-cancel-entry" id="btn-cancel-royale-buyin">
+          Povratak u Kazino
+        </button>
+      </div>
     </div>
   </div>
 

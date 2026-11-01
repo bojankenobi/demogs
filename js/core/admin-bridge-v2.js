@@ -249,6 +249,17 @@ class AdminBridge {
         }
         break;
 
+      case 'SET_ROYALE_BUYIN':
+        if (this.app && this.app.battleRoyale && typeof data.buyInCost === 'number') {
+          this.app.battleRoyale.buyInCost = data.buyInCost;
+          const costEl = document.getElementById('royale-buyin-cost');
+          const potEl = document.getElementById('royale-buyin-pot');
+          if (costEl) costEl.textContent = `${data.buyInCost} ZLT`;
+          if (potEl) potEl.textContent = `${(data.buyInCost * 20).toLocaleString()} ZLT`;
+          this.broadcastState();
+        }
+        break;
+
       case 'SET_ACTIVE_PROMO':
         if (this.app) {
           if (this.app.setActivePromotion) {

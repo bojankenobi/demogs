@@ -458,6 +458,25 @@ class AdminDashboard {
       this.showToast('Dodeljen turnirski nagradni fond Battle Royale-a');
     });
 
+    const btnSaveBuyIn = document.getElementById('btn-save-royale-buyin');
+    const inputBuyIn = document.getElementById('input-admin-royale-buyin');
+    const potCalcEl = document.getElementById('admin-royale-pot-calc');
+
+    if (inputBuyIn) {
+      inputBuyIn.addEventListener('input', () => {
+        const val = Math.max(0, parseInt(inputBuyIn.value, 10) || 0);
+        if (potCalcEl) potCalcEl.textContent = `${(val * 20).toLocaleString()} ZLT`;
+      });
+    }
+
+    if (btnSaveBuyIn && inputBuyIn) {
+      btnSaveBuyIn.addEventListener('click', () => {
+        const cost = Math.max(0, parseInt(inputBuyIn.value, 10) || 100);
+        this.sendCommand({ action: 'SET_ROYALE_BUYIN', buyInCost: cost });
+        this.showToast(`Kotizacija za Battle Royale postavljena na: ${cost} ZLT`);
+      });
+    }
+
     // 5. Session Reset
     const btnResetSession = document.getElementById('btn-cmd-reset-session');
     if (btnResetSession) btnResetSession.addEventListener('click', () => {

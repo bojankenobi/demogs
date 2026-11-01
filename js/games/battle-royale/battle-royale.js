@@ -19,7 +19,14 @@ class SlotBattleRoyale {
 
     // Balance snapshot for forfeit / surrender protection
     this.initialBalance = null;
+    this.initialRsdBalance = null;
     this.isMatchCompleted = false;
+
+    // Buy-in & Smart Target Settings
+    this.buyInCost = 100; // 100 ZLT tournament buy-in
+    this.isBuyInPaid = false;
+    this.currentTargetMode = 'leader'; // 'leader' | 'ahead' | 'revenge'
+    this.lastAttacker = null;
 
     this.playerScore = 0;
     this.playerRank = 1;
@@ -78,15 +85,48 @@ class SlotBattleRoyale {
       this.btnSiphon.addEventListener('click', () => this.executeAttack('siphon'));
     }
 
+    // Smart Meta Target Selector buttons
+    const targetBtns = document.querySelectorAll('.btn-target-selector');
+    targetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        targetBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.currentTargetMode = btn.getAttribute('data-target') || 'leader';
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+      });
+    });
+
+    // Buy-in modal elements
+    this.buyInModal = document.getElementById('royale-buyin-modal');
+    this.btnConfirmBuyIn = document.getElementById('btn-confirm-royale-buyin');
+    this.btnCancelBuyIn = document.getElementById('btn-cancel-royale-buyin');
+    this.btnCloseBuyIn = document.getElementById('btn-close-royale-buyin');
+
+    if (this.btnConfirmBuyIn) {
+      this.btnConfirmBuyIn.addEventListener('click', () => this.handleConfirmBuyIn());
+    }
+    if (this.btnCancelBuyIn) {
+      this.btnCancelBuyIn.addEventListener('click', () => this.handleCancelBuyIn());
+    }
+    if (this.btnCloseBuyIn) {
+      this.btnCloseBuyIn.addEventListener('click', () => this.handleCancelBuyIn());
+    }
+
     const btnStartArena = document.getElementById('btn-start-royale-round');
     if (btnStartArena) {
-      btnStartArena.addEventListener('click', () => this.startMatch());
+      btnStartArena.addEventListener('click', () => {
+        if (!this.isBuyInPaid) {
+          this.promptBuyInModal();
+        } else {
+          this.startMatch();
+        }
+      });
     }
 
     const btnExitArena = document.getElementById('btn-exit-royale-round');
     if (btnExitArena) {
       btnExitArena.addEventListener('click', () => {
-        if (confirm('Da li ste sigurni da želite da odustanete od Battle Royale arene?\nSvi zlatnici osvojeni u ovom meču biće poništeni i biće vam vraćeno početno stanje.')) {
+        if (confirm('Da li ste sigurni da želite da odustanete od Battle Royale arene?\nUplaćena kotizacija od 100 ZLT je nepovratna, a privremeni poeni se brišu.')) {
           this.forfeitMatch();
         }
       });
@@ -114,15 +154,81 @@ class SlotBattleRoyale {
     if (this.stageView) this.stageView.style.display = 'flex';
     if (this.slotStage) this.slotStage.style.display = 'block';
 
-    // Snapshot player balance upon entering Battle Royale arena
-    if (this.wallet) {
-      this.initialRsdBalance = typeof this.wallet.rsdBalance === 'number' ? this.wallet.rsdBalance : 0;
-      this.initialBalance = typeof this.wallet.balance === 'number' ? this.wallet.balance : 0;
+    // Must pay buy-in (100 ZLT) to enter the battle arena!
+    if (!this.isBuyInPaid) {
+      this.promptBuyInModal();
+      return;
     }
-    this.isMatchCompleted = false;
 
     if (!this.timerInterval) {
       this.startMatch();
+    }
+  }
+
+  promptBuyInModal() {
+    if (!this.buyInModal) return;
+    const curBal = this.wallet ? this.wallet.rsdBalance : 0;
+    const balEl = document.getElementById('royale-player-wallet-val');
+    const costEl = document.getElementById('royale-buyin-cost');
+    const potEl = document.getElementById('royale-buyin-pot');
+    const confirmBtn = document.getElementById('btn-confirm-royale-buyin');
+
+    if (balEl) balEl.textContent = `${curBal.toLocaleString()} ZLT`;
+    if (costEl) costEl.textContent = `${this.buyInCost} ZLT`;
+    if (potEl) potEl.textContent = `${(this.buyInCost * 20).toLocaleString()} ZLT`;
+
+    if (curBal < this.buyInCost) {
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = `❌ NEDOVOLJNO ZLT (Potrebno: ${this.buyInCost})`;
+      }
+    } else {
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = `🪙 UPLATI ${this.buyInCost} ZLT & UĐI U ARENU`;
+      }
+    }
+
+    this.buyInModal.style.display = 'flex';
+  }
+
+  handleConfirmBuyIn() {
+    const curBal = this.wallet ? this.wallet.rsdBalance : 0;
+    if (curBal < this.buyInCost) {
+      alert('Nemate dovoljno zlatnika za kotizaciju u areni!');
+      return;
+    }
+
+    // Deduct buy-in entry fee from player wallet
+    this.wallet.rsdBalance -= this.buyInCost;
+    if (typeof this.wallet.saveState === 'function') this.wallet.saveState();
+    if (typeof this.wallet.updateUI === 'function') this.wallet.updateUI();
+
+    this.isBuyInPaid = true;
+    // Snapshot initial balance AFTER paying the buy-in fee
+    this.initialRsdBalance = this.wallet.rsdBalance;
+    this.initialBalance = this.wallet.balance;
+
+    if (this.buyInModal) {
+      this.buyInModal.style.display = 'none';
+    }
+
+    if (window.slotAudio && window.slotAudio.playLever) {
+      window.slotAudio.playLever();
+    }
+
+    this.startMatch();
+  }
+
+  handleCancelBuyIn() {
+    if (this.buyInModal) {
+      this.buyInModal.style.display = 'none';
+    }
+    // Return cleanly to Casino Salon mode
+    if (window.slotApp && typeof window.slotApp.switchGrandMode === 'function') {
+      const tabs = document.querySelectorAll('.hub-mode-tab');
+      tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-mode') === 'casino'));
+      window.slotApp.switchGrandMode('casino');
     }
   }
 
@@ -300,6 +406,12 @@ class SlotBattleRoyale {
   }
 
   receiveRivalAttack() {
+    // Pick attacker for revenge target
+    const activeCompetitors = this.competitors.filter(c => !c.eliminated);
+    if (activeCompetitors.length > 0) {
+      this.lastAttacker = activeCompetitors[Math.floor(Math.random() * activeCompetitors.length)];
+    }
+
     // Check if player has Kevlar Shield from Vault Crawler!
     const inventoryRaw = localStorage.getItem('gsc_vault_inventory_v1');
     if (inventoryRaw) {
@@ -469,21 +581,44 @@ class SlotBattleRoyale {
     if (!this.attacks[type]) return;
     this.attacks[type] = false;
 
-    if (type === 'freeze') {
-      const rival = this.competitors.find(c => !c.eliminated);
-      const targetName = rival ? rival.name : 'Protivnik';
-      this.setZoneNotice(`❄️ ZALEDIO SI [${targetName}]! Kolone su mu zamrznute na 3s!`);
-      if (rival) rival.score = Math.max(0, rival.score - 40);
-    } else if (type === 'smoke') {
-      this.setZoneNotice('💨 DIMNA BOMBA POSLATA! Protivnici moraju da čiste ekran!');
-    } else if (type === 'siphon') {
-      const rival = this.competitors.find(c => !c.eliminated && c.score > 0);
-      if (rival) {
-        const stolen = Math.round(rival.score * 0.12);
-        rival.score -= stolen;
-        this.playerScore += stolen;
-        this.setZoneNotice(`⚡ UKRAO SI +${stolen} POENA od [${rival.name}]!`);
+    // Pick target based on Smart Meta currentTargetMode
+    let target = null;
+    const activeCompetitors = this.competitors.filter(c => !c.eliminated);
+
+    if (this.currentTargetMode === 'leader') {
+      // #1 competitor by score
+      const sorted = [...activeCompetitors].sort((a, b) => b.score - a.score);
+      target = sorted[0];
+    } else if (this.currentTargetMode === 'ahead') {
+      // Competitor immediately ahead of player in rankings
+      this.calculateRankings();
+      const myIdx = this.sortedAll ? this.sortedAll.findIndex(x => x.isYou) : -1;
+      if (myIdx > 0 && this.sortedAll[myIdx - 1] && !this.sortedAll[myIdx - 1].eliminated) {
+        target = this.competitors.find(c => c.id === this.sortedAll[myIdx - 1].id);
       }
+      if (!target) target = activeCompetitors[0];
+    } else if (this.currentTargetMode === 'revenge') {
+      // Competitor who attacked last
+      if (this.lastAttacker) {
+        target = this.competitors.find(c => c.id === this.lastAttacker.id && !c.eliminated);
+      }
+      if (!target) target = activeCompetitors[0];
+    }
+
+    if (!target) {
+      target = activeCompetitors[0] || { name: 'Protivnik', score: 0 };
+    }
+
+    if (type === 'freeze') {
+      this.setZoneNotice(`❄️ ZALEDIO SI [${target.name}]! Kolone su mu zamrznute na 3s!`);
+      target.score = Math.max(0, target.score - 40);
+    } else if (type === 'smoke') {
+      this.setZoneNotice(`💨 DIMNA BOMBA POSLATA NA [${target.name}]!`);
+    } else if (type === 'siphon') {
+      const stolen = Math.round(target.score * 0.15) || 50;
+      target.score = Math.max(0, target.score - stolen);
+      this.playerScore += stolen;
+      this.setZoneNotice(`⚡ UKRAO SI +${stolen} POENA od [${target.name}]!`);
     }
 
     this.updateAttacksDeck();
@@ -528,30 +663,39 @@ class SlotBattleRoyale {
 
     if (completed && !this.isEliminated) {
       this.isMatchCompleted = true;
+      this.isBuyInPaid = false; // Reset buy-in state for next entry
       this.calculateRankings();
 
       if (this.playerRank === 1) {
-        // VICTORY ROYALE!
+        // VICTORY ROYALE! Top 1 prize: 1.000 ZLT + Finale Ticket + VIP Voucher
+        if (this.wallet && typeof this.wallet.addFictionalRsd === 'function') {
+          this.wallet.addFictionalRsd(1000);
+        }
+        if (window.slotAudio && window.slotAudio.playRoyaleVictory) {
+          window.slotAudio.playRoyaleVictory();
+        }
         this.awardRoyaleVoucher(
-          'Glavni Zlatni VIP Tiket: 2.000 ZLT + Piće',
+          'Glavni Zlatni VIP Tiket: 1.000 ZLT + Finale u 21:00h',
           'club_ticket',
-          2000,
-          '1. Mesto u Battle Royale Areni! Važi 48 sati u bilo kom od 20 lokala!'
+          1000,
+          '1. Mesto u Battle Royale Areni! Zlatna ulaznica za Grand Finale u 21:00h (Fond 5.000 ZLT)!'
         );
-        alert('👑 POBEDA! Osvojili ste 1. MESTO u Battle Royale Areni!\nVaš Zlatni VIP Vaučer od 2.000 ZLT je spreman!');
-      } else if (this.playerRank <= 5) {
-        // Top 2-5 Silver Reward
-        this.awardRoyaleVoucher(
-          'Srebrni Vaučer: VIP Koktel na Šanku',
-          'drink',
-          500,
-          'Top 5 Plasman u Battle Royale Areni! Preuzmite piće u bilo kom od 20 lokala u roku od 48h!'
-        );
-        alert(`🥈 ČESTITAMO! Plasman #${this.playerRank} u Battle Royale Areni!\nOsvojili ste Srebrni vaučer za piće na šanku!`);
+        alert('👑 VICTORY ROYALE! Osvojili ste 1. MESTO u areni!\n+1.000 ZLT dodeljeno u novčanik (10x povrat uloga)!\nOsvojili ste Zlatnu ulaznicu za večernje Grand Finale u 21:00h!');
+      } else if (this.playerRank === 2) {
+        if (this.wallet && typeof this.wallet.addFictionalRsd === 'function') {
+          this.wallet.addFictionalRsd(500);
+        }
+        alert('🥈 SREBRNA MEDALJA! Završili ste na 2. MESTU!\n+500 ZLT (5x povrat uloga) dodeljeno na vaš račun!');
+      } else if (this.playerRank === 3) {
+        if (this.wallet && typeof this.wallet.addFictionalRsd === 'function') {
+          this.wallet.addFictionalRsd(300);
+        }
+        alert('🥉 BRONZANA MEDALJA! Završili ste na 3. MESTU!\n+300 ZLT (3x povrat uloga) dodeljeno na vaš račun!');
       } else {
-        alert(`Kraj meča! Završili ste na #${this.playerRank} mestu sa ${this.playerScore} poena. Sledeća runda počinje uskoro!`);
+        alert(`Meč je završen! Plasman: #${this.playerRank} od 20 takmičara sa ${this.playerScore.toLocaleString()} poena.\nKotizacija je iskorišćena. Pobednik nosi fond. Više sreće u sledećoj sobi!`);
       }
     } else {
+      this.isBuyInPaid = false;
       this.forfeitMatch();
     }
   }
