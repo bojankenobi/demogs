@@ -464,3 +464,4 @@ bj.unmount();
 console.log('   Unmounted RoyalBlackjackGame.');
 
 console.log('✅ All Vault Crawler, Battle Royale, Grand Crash, Plinko Deluxe, and Royal Blackjack tests PASSED successfully!');
+process.exit(0);

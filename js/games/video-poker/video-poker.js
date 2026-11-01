@@ -138,7 +138,7 @@ class RoyalVideoPokerGame {
     if (this.viewContainer) {
       this.viewContainer.style.display = 'flex';
     }
-    this.resetRound();
+    this.resetRound(true);
     this.updateBetDisplay();
     this.updatePaytableDisplay();
     this.setMessage('POSTAVITE OPKLADU I PRITISNITE PODELI');
@@ -197,6 +197,17 @@ class RoyalVideoPokerGame {
      Round Flow: Deal -> Hold -> Draw -> Payout
      ========================================================================== */
   startDeal() {
+    // If coming from a previous round, win result or lose result, safely reset and collect
+    if (this.gameState === 'round_over' || this.gameState === 'win_result' || this.gameState === 'lose_result') {
+      if (this.lastWinAmount > 0) {
+        if (this.wallet && typeof this.wallet.addWin === 'function') {
+          this.wallet.addWin(this.lastWinAmount);
+        }
+        this.lastWinAmount = 0;
+      }
+      this.resetRound();
+    }
+
     if (this.gameState !== 'betting') return;
 
     // Check balance
@@ -319,9 +330,9 @@ class RoyalVideoPokerGame {
 
   evaluateFinalResult() {
     const result = this.evaluateHand(this.hand);
-    this.gameState = 'round_over';
 
     if (result.handId) {
+      this.gameState = 'win_result';
       this.currentWinningHand = result;
       this.lastWinAmount = this.currentBet * result.multiplier;
       this.highlightPaytableRow(result.handId);
@@ -332,8 +343,10 @@ class RoyalVideoPokerGame {
       this.updateControlsForPhase('win_result');
     } else {
       this.lastWinAmount = 0;
+      this.currentWinningHand = null;
+      this.gameState = 'betting';
       this.setMessage('NEMA DOBITKA. PROBAJTE PONOVO!');
-      this.updateControlsForPhase('lose_result');
+      this.updateControlsForPhase('betting');
     }
   }
 
@@ -353,18 +366,20 @@ class RoyalVideoPokerGame {
     this.resetRound();
   }
 
-  resetRound() {
+  resetRound(showCardBacks = false) {
     this.gameState = 'betting';
     this.heldIndices = [false, false, false, false, false];
     this.updateHoldBadges();
     this.clearPaytableHighlight();
     for (let i = 0; i < 5; i++) {
       if (this.cardContainers[i]) {
-        this.cardContainers[i].classList.remove('is-held', 'is-winning');
+        this.cardContainers[i].classList.remove('is-held', 'is-winning', 'card-just-drawn');
+        if (showCardBacks) {
+          this.cardContainers[i].innerHTML = this.buildCardBackHTML();
+        }
       }
     }
     this.updateControlsForPhase('betting');
-    this.setMessage('POSTAVITE OPKLADU I PRITISNITE PODELI');
   }
 
   /* ==========================================================================
@@ -668,6 +683,11 @@ class RoyalVideoPokerGame {
   }
 
   adjustBet(delta) {
+    if (this.gameState === 'win_result') {
+      this.collectWin();
+    } else if (this.gameState === 'round_over' || this.gameState === 'lose_result') {
+      this.resetRound();
+    }
     if (this.gameState !== 'betting') return;
     this.currentBet = Math.max(this.minBet, Math.min(this.maxBet, this.currentBet + delta));
     this.updateBetDisplay();
@@ -676,6 +696,11 @@ class RoyalVideoPokerGame {
   }
 
   setBet(amt) {
+    if (this.gameState === 'win_result') {
+      this.collectWin();
+    } else if (this.gameState === 'round_over' || this.gameState === 'lose_result') {
+      this.resetRound();
+    }
     if (this.gameState !== 'betting') return;
     this.currentBet = Math.max(this.minBet, Math.min(this.maxBet, amt));
     this.updateBetDisplay();
@@ -732,8 +757,20 @@ class RoyalVideoPokerGame {
       if (container && this.hand[i]) {
         container.innerHTML = this.buildCardHTML(this.hand[i]);
         container.classList.remove('is-held', 'is-winning');
+        container.classList.add('card-just-drawn');
+        setTimeout(() => container.classList.remove('card-just-drawn'), 450);
       }
     }
+  }
+
+  buildCardBackHTML() {
+    return `
+      <div class="vp-card-back">
+        <div class="vp-card-back-pattern">
+          <img src="assets/symbols/logo-flower.svg" alt="GrandSlot" class="vp-card-back-flower">
+        </div>
+      </div>
+    `;
   }
 
   renderDrawnCards() {

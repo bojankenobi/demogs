@@ -245,6 +245,12 @@ class SlotBattleRoyale {
     if (this.stageView) this.stageView.style.display = 'flex';
     if (this.slotStage) this.slotStage.style.display = 'block';
 
+    // Snapshot player balance upon entry if not yet set
+    if (this.wallet && this.initialBalance === null) {
+      this.initialBalance = typeof this.wallet.balance === 'number' ? this.wallet.balance : (typeof this.wallet.getBalanceRsd === 'function' ? this.wallet.getBalanceRsd() : 0);
+      this.initialRsdBalance = typeof this.wallet.rsdBalance === 'number' ? this.wallet.rsdBalance : this.initialBalance;
+    }
+
     const dock = document.getElementById('royale-mobile-dock');
     if (dock) dock.style.display = 'flex';
 
@@ -261,7 +267,7 @@ class SlotBattleRoyale {
 
   promptBuyInModal() {
     if (!this.buyInModal) return;
-    const curBal = this.wallet ? this.wallet.rsdBalance : 0;
+    const curBal = this.wallet ? (this.wallet.rsdBalance ?? this.wallet.balance ?? (typeof this.wallet.getBalanceRsd === 'function' ? this.wallet.getBalanceRsd() : 0) ?? 0) : 0;
     const balEl = document.getElementById('royale-player-wallet-val');
     const costEl = document.getElementById('royale-buyin-cost');
     const potEl = document.getElementById('royale-buyin-pot');
@@ -287,7 +293,7 @@ class SlotBattleRoyale {
   }
 
   handleConfirmBuyIn() {
-    const curBal = this.wallet ? this.wallet.rsdBalance : 0;
+    const curBal = this.wallet ? (this.wallet.rsdBalance ?? this.wallet.balance ?? (typeof this.wallet.getBalanceRsd === 'function' ? this.wallet.getBalanceRsd() : 0) ?? 0) : 0;
     if (curBal < this.buyInCost) {
       alert('Nemate dovoljno zlatnika za kotizaciju u areni!');
       return;
@@ -334,12 +340,17 @@ class SlotBattleRoyale {
     this.closeLeaderboardModal();
 
     // If player leaves or navigates away before match completes legitimately, forfeit and rollback balance!
-    if (!this.isMatchCompleted && typeof this.initialRsdBalance === 'number' && this.wallet) {
-      this.wallet.rsdBalance = this.initialRsdBalance;
+    if (!this.isMatchCompleted && this.wallet) {
+      if (typeof this.initialRsdBalance === 'number' && typeof this.wallet.rsdBalance === 'number') {
+        this.wallet.rsdBalance = this.initialRsdBalance;
+      }
+      if (typeof this.initialBalance === 'number' && typeof this.wallet.balance === 'number') {
+        this.wallet.balance = this.initialBalance;
+      }
       if (typeof this.wallet.saveState === 'function') this.wallet.saveState();
       if (typeof this.wallet.updateUI === 'function') this.wallet.updateUI();
       if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
-        window.slotNotifications.show(`🏳️ NAPUŠTENA ARENA: Zlatnici su vraćeni na pređašnje stanje (${this.initialRsdBalance} ZLT).`, 'info');
+        window.slotNotifications.show(`🏳️ NAPUŠTENA ARENA: Zlatnici su vraćeni na pređašnje stanje (${this.initialRsdBalance ?? this.initialBalance} ZLT).`, 'info');
       }
     }
 
@@ -350,13 +361,18 @@ class SlotBattleRoyale {
 
   forfeitMatch() {
     // 1. Rollback any coins gained or spent during Battle Royale to pre-match balance
-    if (this.wallet && typeof this.initialRsdBalance === 'number') {
-      this.wallet.rsdBalance = this.initialRsdBalance;
+    if (this.wallet) {
+      if (typeof this.initialRsdBalance === 'number' && typeof this.wallet.rsdBalance === 'number') {
+        this.wallet.rsdBalance = this.initialRsdBalance;
+      }
+      if (typeof this.initialBalance === 'number' && typeof this.wallet.balance === 'number') {
+        this.wallet.balance = this.initialBalance;
+      }
       if (typeof this.wallet.saveState === 'function') this.wallet.saveState();
       if (typeof this.wallet.updateUI === 'function') this.wallet.updateUI();
     }
 
-    const restoredBal = this.initialRsdBalance;
+    const restoredBal = this.initialRsdBalance ?? this.initialBalance;
     this.isMatchCompleted = true; // Mark as handled so unmount doesn't duplicate rollback
     this.cleanUpEffects();
 

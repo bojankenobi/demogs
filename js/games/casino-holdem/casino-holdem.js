@@ -175,6 +175,9 @@ class RoyalCasinoHoldemGame {
      Game Flow: Deal -> Flop -> Call/Fold -> Turn+River -> Showdown
      ========================================================================== */
   startDeal() {
+    if (this.gameState === 'round_over') {
+      this.resetRound();
+    }
     if (this.gameState !== 'betting') return;
 
     // Check balance for Ante
@@ -628,13 +631,23 @@ class RoyalCasinoHoldemGame {
     }
   }
 
+  buildCardBackHTML(isSmall = false) {
+    return `
+      <div class="ch-card ch-card-back ${isSmall ? 'ch-card-small' : ''}">
+        <div class="ch-card-back-pattern">
+          <img src="assets/symbols/logo-flower.svg" alt="GrandSlot" class="ch-card-back-flower ${isSmall ? 'small' : ''}">
+        </div>
+      </div>
+    `;
+  }
+
   renderHoleCards() {
-    // Render Dealer Face Down Cards
+    // Render Dealer Face Down Cards with GrandSlot Flower Emblem
     const dealerContainer = document.getElementById('ch-dealer-cards');
     if (dealerContainer) {
       dealerContainer.innerHTML = `
-        <div class="ch-card ch-card-back"><div class="ch-card-pattern">🂠</div></div>
-        <div class="ch-card ch-card-back"><div class="ch-card-pattern">🂠</div></div>
+        ${this.buildCardBackHTML(false)}
+        ${this.buildCardBackHTML(false)}
       `;
     }
 
@@ -649,10 +662,10 @@ class RoyalCasinoHoldemGame {
             ${this.buildCardHTML(this.seats[i].cards[1])}
           `;
         } else {
-          // AI Companions face-down cards
+          // AI Companions face-down cards with GrandSlot Flower Emblem
           container.innerHTML = `
-            <div class="ch-card ch-card-back ch-card-small"><div class="ch-card-pattern">🂠</div></div>
-            <div class="ch-card ch-card-back ch-card-small"><div class="ch-card-pattern">🂠</div></div>
+            ${this.buildCardBackHTML(true)}
+            ${this.buildCardBackHTML(true)}
           `;
         }
       }
