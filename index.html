@@ -1162,6 +1162,150 @@
         </div>
       </div>
 
+      <!-- Standalone Grand Royal Casino Hold'em (Table Poker with Multi-Seat Live Feel) -->
+      <div class="casino-holdem-stage-view" id="casino-holdem-game-view" style="display: none;">
+        <div class="holdem-cabinet-panel">
+          <!-- Luxury Emerald Velvet Table Felt Surface -->
+          <div class="holdem-table">
+            <div class="holdem-felt-rail"></div>
+
+            <!-- Table Header Watermark: Grand Slot Club & Dealer Rules -->
+            <div class="holdem-rules-watermark">
+              <span class="holdem-title-gold">♠️ GRAND ROYAL CASINO HOLD'EM ♣️</span>
+              <span class="holdem-sub-silver">Diler se kvalifikuje sa parom 4-ki ili jače • Ante plaća do 100:1</span>
+            </div>
+
+            <!-- Dealer Hand Area (Top) -->
+            <div class="holdem-dealer-section">
+              <div class="holdem-section-header">
+                <span class="holdem-label">DILER</span>
+                <span class="bj-score-badge" id="ch-dealer-score" style="display: none;">0</span>
+              </div>
+              <div class="ch-cards-row ch-dealer-cards" id="ch-dealer-cards">
+                <!-- 2 Dealer cards rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Community Cards Board Area (Center Flop, Turn, River) -->
+            <div class="holdem-board-section">
+              <div class="holdem-board-label">ZAJEDNIČKE KARTE (FLOP • TURN • RIVER)</div>
+              <div class="ch-community-cards-wrap" id="ch-community-cards">
+                <div class="ch-card-placeholder"></div>
+                <div class="ch-card-placeholder"></div>
+                <div class="ch-card-placeholder"></div>
+                <div class="ch-card-placeholder"></div>
+                <div class="ch-card-placeholder"></div>
+              </div>
+            </div>
+
+            <!-- Center Status Message Banner -->
+            <div class="ch-center-message" id="ch-center-message">
+              <span class="ch-msg-text" id="ch-msg-text">POSTAVITE ANTE OPKLADU I PRITISNITE PODELI KARTE</span>
+            </div>
+
+            <!-- Multi-Seat Player Area (3 Seats: Guest 1, You, Guest 2) -->
+            <div class="holdem-seats-row">
+              <!-- Seat 0: Companion AI (Marko V.) -->
+              <div class="holdem-seat" id="ch-seat-0">
+                <div class="ch-seat-avatar">👤 Marko V.</div>
+                <div class="ch-seat-cards" id="ch-seat-0-cards"></div>
+                <div class="ch-seat-hand-badge" id="ch-seat-0-hand-badge" style="display: none;"></div>
+                <div class="ch-seat-bets">
+                  <span class="ch-bet-chip">A: <strong id="ch-seat-0-ante-val">20</strong></span>
+                  <span class="ch-bet-chip call" id="ch-seat-0-call-badge" style="display: none;">C: <strong id="ch-seat-0-call-val">0</strong></span>
+                </div>
+              </div>
+
+              <!-- Seat 1: The Main Player (You) -->
+              <div class="holdem-seat player-seat active" id="ch-seat-1">
+                <div class="ch-seat-avatar gold-star">⭐ TI (IGRAČ)</div>
+                <div class="ch-seat-cards" id="ch-seat-1-cards"></div>
+                <div class="ch-seat-hand-badge player-badge" id="ch-seat-1-hand-badge" style="display: none;"></div>
+                <div class="ch-seat-bets player-bets">
+                  <span class="ch-bet-chip ante-chip">ANTE: <strong id="ch-seat-1-ante-val">20</strong></span>
+                  <span class="ch-bet-chip call-chip" id="ch-seat-1-call-badge" style="display: none;">CALL: <strong id="ch-seat-1-call-val">40</strong></span>
+                </div>
+              </div>
+
+              <!-- Seat 2: Companion AI (Stefan K.) -->
+              <div class="holdem-seat" id="ch-seat-2">
+                <div class="ch-seat-avatar">👤 Stefan K.</div>
+                <div class="ch-seat-cards" id="ch-seat-2-cards"></div>
+                <div class="ch-seat-hand-badge" id="ch-seat-2-hand-badge" style="display: none;"></div>
+                <div class="ch-seat-bets">
+                  <span class="ch-bet-chip">A: <strong id="ch-seat-2-ante-val">20</strong></span>
+                  <span class="ch-bet-chip call" id="ch-seat-2-call-badge" style="display: none;">C: <strong id="ch-seat-2-call-val">0</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Casino Hold'em Control Deck -->
+          <div class="holdem-control-deck">
+            <!-- Phase 1: Betting Controls (Stepper, Chips, Deal) -->
+            <div class="ch-betting-controls" id="ch-ctrls-deal">
+              <div class="ch-bet-row-controls">
+                <div class="ch-bet-stepper-wrap">
+                  <button type="button" class="ch-step-btn" id="ch-bet-minus" aria-label="Smanji Ante ulog">−</button>
+                  <div class="ch-bet-val-box">
+                    <span class="ch-bet-subtag">ANTE</span>
+                    <span class="ch-bet-amount" id="ch-bet-val">20</span>
+                  </div>
+                  <button type="button" class="ch-step-btn" id="ch-bet-plus" aria-label="Povećaj Ante ulog">+</button>
+                </div>
+
+                <div class="ch-bet-quick-actions">
+                  <button type="button" class="ch-chip-btn ch-utility-btn chip-2x" id="ch-chip-double" title="Dupliraj ulog (2×)">
+                    <span class="ch-util-label">2×</span>
+                  </button>
+                  <button type="button" class="ch-chip-btn ch-utility-btn chip-clear" id="ch-chip-clear" title="Resetuj na minimalni Ante (10 ZLT)">
+                    <span class="ch-util-label">C</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 5-Chip Casino Rack -->
+              <div class="ch-chips-strip">
+                <button type="button" class="ch-chip-btn chip-10" data-amt="10" title="+10 ZLT"><span class="chip-val">10</span></button>
+                <button type="button" class="ch-chip-btn chip-20" data-amt="20" title="+20 ZLT"><span class="chip-val">20</span></button>
+                <button type="button" class="ch-chip-btn chip-50" data-amt="50" title="+50 ZLT"><span class="chip-val">50</span></button>
+                <button type="button" class="ch-chip-btn chip-100" data-amt="100" title="+100 ZLT"><span class="chip-val">100</span></button>
+                <button type="button" class="ch-chip-btn chip-500" data-amt="500" title="+500 ZLT"><span class="chip-val">500</span></button>
+              </div>
+
+              <button type="button" class="btn-ch-main btn-ch-deal" id="btn-ch-deal">
+                <span class="btn-ch-icon">🃏</span>
+                <span class="btn-ch-text">PODELI KARTE (ANTE)</span>
+              </button>
+            </div>
+
+            <!-- Phase 2: Flop Decision Controls (Call or Fold) -->
+            <div class="ch-decision-controls" id="ch-ctrls-decision" style="display: none;">
+              <button type="button" class="btn-ch-action btn-ch-call" id="btn-ch-call">
+                <span class="btn-ch-icon">🔥</span>
+                <span class="btn-ch-text">PRATI (CALL = 2× ANTE)</span>
+              </button>
+              <button type="button" class="btn-ch-action btn-ch-fold" id="btn-ch-fold">
+                <span class="btn-ch-icon">🏳️</span>
+                <span class="btn-ch-text">ODUSTANI (FOLD)</span>
+              </button>
+            </div>
+
+            <!-- Phase 3: Round Over Controls (Rebet or New Deal) -->
+            <div class="ch-round-over-controls" id="ch-ctrls-round-over" style="display: none;">
+              <button type="button" class="btn-ch-main btn-ch-rebet" id="btn-ch-rebet">
+                <span class="btn-ch-icon">🔄</span>
+                <span class="btn-ch-text">ISTI ULOG & DELI</span>
+              </button>
+              <button type="button" class="btn-ch-main btn-ch-new" id="btn-ch-new-round">
+                <span class="btn-ch-icon">✨</span>
+                <span class="btn-ch-text">NOVA RUNDA</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </section>
 
     <!-- Status Message Banner: Situated cleanly between slot machine and bet controls -->
@@ -1613,6 +1757,29 @@
           <div class="egt-card-details">
             <h3 class="egt-card-title">ROYAL VIDEO POKER</h3>
             <p class="egt-card-sub">Retro Aparat Poker • 9/6 Tabela • Smart-Hold • Crveno/Crno Kocka</p>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">IGRAJ SADA</span>
+          </div>
+        </div>
+
+        <!-- Game 9: Royal Casino Hold'em (Table Poker) -->
+        <div class="egt-game-card" id="egt-opt-holdem" data-game="holdem">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-gold">VIP STO • 100:1</div>
+          
+          <div class="grand-card-poster poster-holdem">
+            <div class="poster-symbols-cluster">
+              <span class="poster-card-chips">👥</span>
+              <span class="poster-card-cards">🂡🂱</span>
+            </div>
+            <div class="poster-specs-tag">MULTI-SEAT • FLOP • TURN • RIVER</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">CASINO HOLD'EM</h3>
+            <p class="egt-card-sub">Stolski Poker Protiv Dilera • 3 Sedišta • Flop, Turn & River</p>
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
@@ -3100,6 +3267,7 @@
   <script src="js/games/plinko/plinko.js?v=97"></script>
   <script src="js/games/blackjack/blackjack.js?v=97"></script>
   <script src="js/games/video-poker/video-poker.js?v=99"></script>
+  <script src="js/games/casino-holdem/casino-holdem.js?v=99"></script>
 
   <!-- Application Controller -->
   <script src="js/app.js?v=98"></script>

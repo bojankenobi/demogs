@@ -90,6 +90,9 @@ class IGTApp {
     if (window.RoyalVideoPokerGame) {
       this.videoPokerGame = new window.RoyalVideoPokerGame(this.wallet, this.jackpots);
     }
+    if (window.RoyalCasinoHoldemGame) {
+      this.casinoHoldemGame = new window.RoyalCasinoHoldemGame(this.wallet, this.jackpots);
+    }
 
     // 4. Lobby
     this.lobby = new window.CasinoLobby(this.wallet, this.jackpots);
@@ -325,6 +328,46 @@ class IGTApp {
         },
         get isSpinning() { return false; },
         gameInstance: this.videoPokerGame
+      });
+    }
+
+    if (this.casinoHoldemGame) {
+      this.lobby.registerGame('holdem', {
+        mount: () => {
+          const stage = document.querySelector('.slot-stage-scaler');
+          if (stage) stage.style.display = 'none';
+
+          const controlsPanel = document.querySelector('.controls-panel');
+          if (controlsPanel) controlsPanel.style.display = 'none';
+
+          const bannerWrap = document.querySelector('.status-banner-wrap');
+          if (bannerWrap) bannerWrap.style.display = 'none';
+
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.add('in-holdem-mode');
+
+          if (this.isAutoSpin) this.toggleAutoSpin(false);
+
+          this.casinoHoldemGame.mount();
+        },
+        unmount: () => {
+          this.casinoHoldemGame.unmount();
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.remove('in-holdem-mode');
+          this.restoreSlotUI();
+        },
+        forceExit: () => {
+          if (this.casinoHoldemGame && typeof this.casinoHoldemGame.forceExit === 'function') {
+            this.casinoHoldemGame.forceExit();
+          }
+        },
+        spin: () => {
+          if (this.casinoHoldemGame) {
+            this.casinoHoldemGame.handleMainAction();
+          }
+        },
+        get isSpinning() { return false; },
+        gameInstance: this.casinoHoldemGame
       });
     }
 
@@ -587,12 +630,13 @@ class IGTApp {
 
     const container = document.querySelector('.game-container');
 
-    const standaloneGameIds = ['crash', 'plinko', 'blackjack', 'mines', 'videopoker'];
+    const standaloneGameIds = ['crash', 'plinko', 'blackjack', 'mines', 'videopoker', 'holdem'];
     const standaloneViews = [
       'crash-game-view',
       'plinko-game-view',
       'blackjack-game-view',
       'videopoker-game-view',
+      'casino-holdem-game-view',
       'mines-game-view'
     ];
 
@@ -614,7 +658,7 @@ class IGTApp {
       });
 
       if (container) {
-        container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode', 'in-videopoker-mode');
+        container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode', 'in-videopoker-mode', 'in-holdem-mode');
         container.classList.toggle('in-vault-mode', mode === 'vault');
         container.classList.toggle('in-royale-mode', mode === 'royale');
       }
@@ -1289,6 +1333,7 @@ class IGTApp {
       'plinko-game-view',
       'blackjack-game-view',
       'videopoker-game-view',
+      'casino-holdem-game-view',
       'mines-game-view'
     ];
     standaloneViews.forEach(id => {
@@ -1298,7 +1343,7 @@ class IGTApp {
 
     const container = document.querySelector('.game-container');
     if (container) {
-      container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode', 'in-videopoker-mode');
+      container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode', 'in-videopoker-mode', 'in-holdem-mode');
     }
 
     // Ensure no residual multiplayer overlays bleed into Casino or Trezor
