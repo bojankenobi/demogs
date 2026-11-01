@@ -257,9 +257,11 @@ console.log('✓ Gamble doubling sequence (40 -> 80) verified');
 // --- TEST 6: Application Controller Integration ---
 console.log('\n--- TEST 6: App.js Integration Verification ---');
 const appJs = fs.readFileSync('js/app.js', 'utf8');
+const lobbyJs = fs.readFileSync('js/core/lobby.js', 'utf8');
 assert(appJs.includes('this.videoPokerGame = new window.RoyalVideoPokerGame'), 'Video poker instance missing in app.js');
 assert(appJs.includes("this.lobby.registerGame('videopoker'"), 'Video poker not registered in lobby in app.js');
 assert(appJs.includes("'videopoker-game-view'"), 'videopoker-game-view missing in standaloneViews');
+assert(lobbyJs.includes("'videopoker'"), 'Video poker card missing in lobby.js opts/modalBoxes');
 console.log('✓ Video Poker is completely registered in App and CasinoLobby');
 
 console.log('\n======================================================');

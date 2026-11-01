@@ -132,6 +132,9 @@ class RoyalVideoPokerGame {
      ========================================================================== */
   mount() {
     this.isActive = true;
+    if (!this.viewContainer) {
+      this.viewContainer = document.getElementById('videopoker-game-view');
+    }
     if (this.viewContainer) {
       this.viewContainer.style.display = 'flex';
     }
@@ -145,6 +148,9 @@ class RoyalVideoPokerGame {
     this.isActive = false;
     this.clearAllTimers();
     this.stopGambleFlasher();
+    if (!this.viewContainer) {
+      this.viewContainer = document.getElementById('videopoker-game-view');
+    }
     if (this.viewContainer) {
       this.viewContainer.style.display = 'none';
     }

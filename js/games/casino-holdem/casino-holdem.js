@@ -121,6 +121,9 @@ class RoyalCasinoHoldemGame {
      ========================================================================== */
   mount() {
     this.isActive = true;
+    if (!this.viewContainer) {
+      this.viewContainer = document.getElementById('casino-holdem-game-view');
+    }
     if (this.viewContainer) {
       this.viewContainer.style.display = 'flex';
     }
@@ -132,6 +135,9 @@ class RoyalCasinoHoldemGame {
   unmount() {
     this.isActive = false;
     this.clearAllTimers();
+    if (!this.viewContainer) {
+      this.viewContainer = document.getElementById('casino-holdem-game-view');
+    }
     if (this.viewContainer) {
       this.viewContainer.style.display = 'none';
     }

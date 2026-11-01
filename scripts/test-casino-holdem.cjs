@@ -59,7 +59,7 @@ assert(htmlContent.includes('id="ch-seat-0"'), 'index.html must have #ch-seat-0 
 assert(htmlContent.includes('id="ch-seat-1"'), 'index.html must have #ch-seat-1 (Player)');
 assert(htmlContent.includes('id="ch-seat-2"'), 'index.html must have #ch-seat-2 (Companion 2)');
 assert(htmlContent.includes('id="ch-community-cards"'), 'index.html must have #ch-community-cards');
-assert(htmlContent.includes('src="js/games/casino-holdem/casino-holdem.js?v=99"'), 'index.html must include casino-holdem.js script tag');
+assert(htmlContent.includes('src="js/games/casino-holdem/casino-holdem.js'), 'index.html must include casino-holdem.js script tag');
 console.log('✅ Suite 1: DOM Elements & Scripts Verified in index.html');
 
 // 2. Load casino-holdem.js
@@ -212,9 +212,11 @@ console.log('✅ Suite 5: Hand Comparison Logic Verified');
 // 6. Test App Lobby Registration and switchGrandMode
 console.log('--- Testing App Lobby Registration ---');
 const appCode = fs.readFileSync(path.join(__dirname, '../js/app.js'), 'utf8');
+const lobbyCode = fs.readFileSync(path.join(__dirname, '../js/core/lobby.js'), 'utf8');
 assert(appCode.includes('this.lobby.registerGame(\'holdem\''), 'app.js must register holdem in CasinoLobby');
 assert(appCode.includes('in-holdem-mode'), 'app.js must handle in-holdem-mode class');
 assert(appCode.includes('casino-holdem-game-view'), 'app.js standaloneViews must include casino-holdem-game-view');
+assert(lobbyCode.includes('\'holdem\''), 'lobby.js must handle holdem in opts and modalBoxes');
 console.log('✅ Suite 6: App Controller Lobby Wiring Verified');
 
 // 7. Verify CSS styles for Hold'em

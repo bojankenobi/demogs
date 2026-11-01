@@ -50,11 +50,15 @@ class CasinoLobby {
       { id: 'mines', el: document.getElementById('egt-opt-mines') },
       { id: 'crash', el: document.getElementById('egt-opt-crash') },
       { id: 'plinko', el: document.getElementById('egt-opt-plinko') },
-      { id: 'blackjack', el: document.getElementById('egt-opt-blackjack') }
+      { id: 'blackjack', el: document.getElementById('egt-opt-blackjack') },
+      { id: 'videopoker', el: document.getElementById('egt-opt-videopoker') },
+      { id: 'holdem', el: document.getElementById('egt-opt-holdem') }
     ];
 
+    const boundCards = new Set();
     opts.forEach(({ id, el }) => {
       if (el) {
+        boundCards.add(el);
         el.addEventListener('click', () => {
           if (window.slotAudio) window.slotAudio.playClick();
           this.switchGame(id);
@@ -62,6 +66,24 @@ class CasinoLobby {
         });
       }
     });
+
+    // Dynamic binding for all current and future lobby game cards
+    if (this.modal) {
+      const allCards = this.modal.querySelectorAll('.egt-game-card');
+      allCards.forEach(card => {
+        if (!boundCards.has(card)) {
+          const gameId = card.getAttribute('data-game') || (card.id ? card.id.replace('egt-opt-', '') : null);
+          if (gameId) {
+            boundCards.add(card);
+            card.addEventListener('click', () => {
+              if (window.slotAudio) window.slotAudio.playClick();
+              this.switchGame(gameId);
+              this.closeModal();
+            });
+          }
+        }
+      });
+    }
   }
 
   openModal() {
@@ -88,7 +110,7 @@ class CasinoLobby {
     if (this.activeGameId === gameId) return;
 
     // If switching to a standalone non-slot game while in Trezor or Battle Royale, automatically return to Casino Salon!
-    if (['crash', 'plinko', 'blackjack', 'mines'].includes(gameId)) {
+    if (['crash', 'plinko', 'blackjack', 'mines', 'videopoker', 'holdem'].includes(gameId)) {
       const container = document.querySelector('.game-container');
       if (container && (container.classList.contains('in-vault-mode') || container.classList.contains('in-royale-mode'))) {
         const tabs = document.querySelectorAll('.hub-mode-tab');
@@ -148,6 +170,10 @@ class CasinoLobby {
         this.currentLabel.textContent = 'PLINKO DELUXE';
       } else if (gameId === 'blackjack') {
         this.currentLabel.textContent = 'ROYAL BLACKJACK';
+      } else if (gameId === 'videopoker') {
+        this.currentLabel.textContent = 'ROYAL VIDEO POKER';
+      } else if (gameId === 'holdem') {
+        this.currentLabel.textContent = 'CASINO HOLD\'EM';
       } else {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameClassic') : '1-LINE CLASSIC';
       }
@@ -160,7 +186,9 @@ class CasinoLobby {
       mines: document.getElementById('egt-opt-mines'),
       crash: document.getElementById('egt-opt-crash'),
       plinko: document.getElementById('egt-opt-plinko'),
-      blackjack: document.getElementById('egt-opt-blackjack')
+      blackjack: document.getElementById('egt-opt-blackjack'),
+      videopoker: document.getElementById('egt-opt-videopoker'),
+      holdem: document.getElementById('egt-opt-holdem')
     };
 
     const activeText = window.i18n ? window.i18n.t('egtActiveTag') : 'AKTIVNA IGRA';
