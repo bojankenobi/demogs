@@ -136,6 +136,7 @@
       <button type="button" class="dash-tab-btn" data-tab="crm">CRM & Baza Igrača</button>
       <button type="button" class="dash-tab-btn" data-tab="vouchers">Dnevnik Vaučera</button>
       <button type="button" class="dash-tab-btn" data-tab="push">Promocije & Smart Vaučeri</button>
+      <button type="button" class="dash-tab-btn" data-tab="leaderboards">Kuća Slavnih & Sezone 🏆</button>
       <button type="button" class="dash-tab-btn" data-tab="info">Sistemska Dijagnostika</button>
     </nav>
 
@@ -813,6 +814,120 @@
         <div id="webrtc-conn-feedback" class="webrtc-feedback"></div>
       </div>
     </section>
+
+    <!-- TAB 8: KUĆA SLAVNIH & SEZONSKI MENADŽMENT -->
+    <section class="tab-pane" id="pane-leaderboards">
+      <div class="pane-intro-box">
+        <div class="pane-header-row">
+          <div>
+            <h2 class="pane-title">Kuća Slavnih & Sezonske Rang Liste (Prestige Hub)</h2>
+            <p class="pane-desc">Pregled prestiž rang lista za sva 3 stuba (🎰 Kazino Salon, ⚔️ Trezor Provala, 👑 Battle Royale), upravljanje nedeljnim nagradnim fondom, moderacija i ručni reset sezone sa automatskom dodelom nagrada.</p>
+          </div>
+          <button type="button" class="btn-trigger-action" id="btn-admin-refresh-leaderboards">🔄 Osveži Rang Liste</button>
+        </div>
+      </div>
+
+      <!-- Season Status & Operator Actions Card -->
+      <div class="push-card">
+        <h3 class="trigger-panel-title">🏆 Status Sezone & Nagradni Fond</h3>
+        <p class="card-sub-hint">
+          Sezona se automatski zaključava svake nedelje u 23:59:59. Kao operater možete i ručno zaključiti sezonu i odmah isplatiti nagrade top igračima.
+        </p>
+
+        <div class="access-control-grid" style="margin-top: 14px;">
+          <div class="access-metric-card">
+            <span class="access-metric-label">Aktivna Sezona:</span>
+            <span class="access-metric-val val-gold" id="admin-season-name">Sezona --</span>
+          </div>
+          <div class="access-metric-card">
+            <span class="access-metric-label">Preostalo Vreme:</span>
+            <span class="access-metric-val val-cyan font-mono" id="admin-season-countdown">00d 00h 00m</span>
+          </div>
+          <div class="access-metric-card">
+            <span class="access-metric-label">Ukupan Fond (Top 3):</span>
+            <span class="access-metric-val val-gold" id="admin-season-total-fund">8.500 ZLT</span>
+          </div>
+        </div>
+
+        <!-- Prize Pool Config Grid -->
+        <div class="promo-form-grid" style="margin-top: 16px;">
+          <div class="push-form-group">
+            <label for="admin-prize-first">🥇 1. Mesto (ZLT):</label>
+            <input type="number" id="admin-prize-first" class="push-input-text font-mono" value="5000" min="0" step="100">
+          </div>
+          <div class="push-form-group">
+            <label for="admin-prize-second">🥈 2. Mesto (ZLT):</label>
+            <input type="number" id="admin-prize-second" class="push-input-text font-mono" value="2500" min="0" step="100">
+          </div>
+          <div class="push-form-group">
+            <label for="admin-prize-third">🥉 3. Mesto (ZLT):</label>
+            <input type="number" id="admin-prize-third" class="push-input-text font-mono" value="1000" min="0" step="100">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 14px; flex-wrap: wrap; align-items: center;">
+          <button type="button" class="btn-send-custom-push" id="btn-admin-save-prizepool" style="background: linear-gradient(135deg, #10b981, #059669);">
+            💾 Sačuvaj Nagradni Fond
+          </button>
+          <button type="button" class="btn-send-custom-push" id="btn-admin-manual-reset" style="background: linear-gradient(135deg, #d97706, #b45309);">
+            🏁 Zaključi Sezonu & Isplati Nagrade Odmah
+          </button>
+          <span id="admin-prizepool-status" class="pin-status-text"></span>
+        </div>
+      </div>
+
+      <!-- 3 Pillars Live Rankings Inspection -->
+      <div class="push-card" style="margin-top: 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+          <h3 class="trigger-panel-title" style="margin: 0;">📊 Pregled Rang Liste po Stubovima</h3>
+          <div class="history-filter-pills" id="admin-leaderboard-pills">
+            <button type="button" class="filter-pill active" data-board="casino">🎰 Kazino Salon</button>
+            <button type="button" class="filter-pill" data-board="vault">⚔️ Trezor Provala</button>
+            <button type="button" class="filter-pill" data-board="royale">👑 Battle Royale</button>
+          </div>
+        </div>
+
+        <div class="crm-table-box" style="margin-top: 8px;">
+          <table class="crm-table">
+            <thead>
+              <tr id="admin-lead-thead">
+                <th>Rang</th>
+                <th>Takmičar / Gost</th>
+                <th>Ključna Metrika 1</th>
+                <th>Ključna Metrika 2</th>
+                <th>Prestiž Skor</th>
+                <th>Akcija</th>
+              </tr>
+            </thead>
+            <tbody id="admin-lead-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Hall of Fame Historic Archive -->
+      <div class="push-card" style="margin-top: 18px;">
+        <h3 class="trigger-panel-title">🏛️ Zid Šampiona (Kuća Slavnih Arhiva)</h3>
+        <p class="card-sub-hint">Istorijski pobednici i šampioni prethodnih sezona sa zabeleženim nagradama i prestiž titulama.</p>
+
+        <div class="crm-table-box" style="margin-top: 10px;">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Sezona & Datum</th>
+                <th>🎰 Kazino Šampion</th>
+                <th>⚔️ Majstor Trezora</th>
+                <th>👑 Šampion Arene</th>
+              </tr>
+            </thead>
+            <tbody id="admin-fame-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Scripts -->
@@ -820,6 +935,7 @@
   <script src="js/games/classic/symbols.js?v=80"></script>
   <script src="js/core/math-manager.js?v=80"></script>
   <script src="js/core/daily-access-manager.js?v=99"></script>
+  <script src="js/core/prestige-manager.js?v=1"></script>
   <script src="js/admin-dashboard.js?v=99"></script>
 </body>
 </html>

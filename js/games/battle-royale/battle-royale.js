@@ -70,6 +70,15 @@ class SlotBattleRoyale {
     this.zoneBannerEl = document.getElementById('royale-zone-banner');
     this.leaderboardStripEl = document.getElementById('royale-leaderboard-strip');
 
+    // Make rank badge open Prestige Hub
+    if (this.rankEl && this.rankEl.parentElement) {
+      this.rankEl.parentElement.style.cursor = 'pointer';
+      this.rankEl.parentElement.title = 'Pogledaj rang listu i prestiž Kuće Slavnih';
+      this.rankEl.parentElement.addEventListener('click', () => {
+        if (window.prestigeManager) window.prestigeManager.openModal('royale');
+      });
+    }
+
     // Attack action buttons
     this.btnFreeze = document.getElementById('btn-pvp-freeze');
     this.btnSmoke = document.getElementById('btn-pvp-smoke');
@@ -666,6 +675,13 @@ class SlotBattleRoyale {
       this.isBuyInPaid = false; // Reset buy-in state for next entry
       this.calculateRankings();
 
+      // Record match results in Prestige Leaderboard (Battle Royale Pillar)
+      if (window.prestigeManager) {
+        const isWin = (this.playerRank === 1);
+        const killsEstimate = Math.max(1, Math.floor(this.playerScore / 500));
+        window.prestigeManager.recordRoyaleMatch(this.playerRank, killsEstimate, isWin);
+      }
+
       if (this.playerRank === 1) {
         // VICTORY ROYALE! Top 1 prize: 1.000 ZLT + Finale Ticket + VIP Voucher
         if (this.wallet && typeof this.wallet.addFictionalRsd === 'function') {
@@ -695,6 +711,9 @@ class SlotBattleRoyale {
         alert(`Meč je završen! Plasman: #${this.playerRank} od 20 takmičara sa ${this.playerScore.toLocaleString()} poena.\nKotizacija je iskorišćena. Pobednik nosi fond. Više sreće u sledećoj sobi!`);
       }
     } else {
+      if (this.isEliminated && window.prestigeManager) {
+        window.prestigeManager.recordRoyaleMatch(this.playerRank || 12, 0, false);
+      }
       this.isBuyInPaid = false;
       this.forfeitMatch();
     }

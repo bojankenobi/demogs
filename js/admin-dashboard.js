@@ -24,6 +24,7 @@ class AdminDashboard {
     this.initCrmHub();
     this.initAccessControlAndOnlineMonitoring();
     this.initPromoHub();
+    this.initLeaderboardsManager();
     
     // Check for cached telemetry
     this.loadCachedTelemetry();
@@ -2326,6 +2327,228 @@ class AdminDashboard {
     if (type === 'success') el.style.color = '#00e676';
     else if (type === 'error') el.style.color = '#ef4444';
     else el.style.color = '#ffd700';
+  }
+
+  /* ==========================================================================
+     Kuća Slavnih & Sezonski Rang-Liste (Prestige Hub & Leaderboards Manager)
+     ========================================================================== */
+  initLeaderboardsManager() {
+    if (!window.prestigeManager && window.PrestigeManager) {
+      window.prestigeManager = new window.PrestigeManager();
+    }
+    this.prestigeManager = window.prestigeManager;
+    this.adminActiveBoard = 'casino';
+
+    // 1. Hook filter pills
+    const pills = document.querySelectorAll('#admin-leaderboard-pills .filter-pill');
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.adminActiveBoard = pill.getAttribute('data-board') || 'casino';
+        this.renderAdminLeaderboards();
+      });
+    });
+
+    // 2. Refresh button
+    const refreshBtn = document.getElementById('btn-admin-refresh-leaderboards');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        if (this.prestigeManager) this.prestigeManager.initData();
+        this.renderAdminLeaderboards();
+        this.showToast('Rang liste i sezone su ažurirane!', 'success');
+      });
+    }
+
+    // 3. Save Prize Pool
+    const savePrizeBtn = document.getElementById('btn-admin-save-prizepool');
+    if (savePrizeBtn) {
+      savePrizeBtn.addEventListener('click', () => {
+        const p1 = Number(document.getElementById('admin-prize-first')?.value) || 5000;
+        const p2 = Number(document.getElementById('admin-prize-second')?.value) || 2500;
+        const p3 = Number(document.getElementById('admin-prize-third')?.value) || 1000;
+
+        if (this.prestigeManager) {
+          this.prestigeManager.updatePrizePool(p1, p2, p3);
+          const status = document.getElementById('admin-prizepool-status');
+          if (status) {
+            status.textContent = '✓ Nagradni fond uspešno sačuvan!';
+            status.style.color = '#00e676';
+            setTimeout(() => { status.textContent = ''; }, 3500);
+          }
+          this.renderAdminLeaderboards();
+        }
+      });
+    }
+
+    // 4. Manual Season Reset & Payout Trigger
+    const resetBtn = document.getElementById('btn-admin-manual-reset');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        const ok = confirm('⚠️ DA LI STE SIGURNI DA ŽELITE RUČNO ZAVRŠITI SEZONU?\n\nOva akcija će:\n1. Proglasiti pobednike sezone u Kazinu, Trezoru i Battle Royale-u.\n2. Isplatiti ZLT nagrade top igračima.\n3. Arhivirati šampione u Kuću Slavnih.\n4. Pokrenuti novi sezonski ciklus.');
+        if (!ok) return;
+
+        if (this.prestigeManager) {
+          const archived = this.prestigeManager.executeSeasonReset(true);
+          this.renderAdminLeaderboards();
+          alert(`🏆 Sezona je uspešno zaključena!\n\nŠampioni su upisani u Kuću Slavnih:\n🎰 Kazino: ${archived.casinoChamp.name} (${archived.casinoChamp.score} bodova)\n⚔️ Trezor: ${archived.vaultChamp.name} (${archived.vaultChamp.score} bodova)\n👑 Royale: ${archived.royaleChamp.name} (${archived.royaleChamp.score} bodova)\n\nNova sezona je otvorena!`);
+        }
+      });
+    }
+
+    // Initial render
+    this.renderAdminLeaderboards();
+  }
+
+  renderAdminLeaderboards() {
+    if (!this.prestigeManager) return;
+
+    // 1. Season Info & Countdown
+    const season = this.prestigeManager.season;
+    const rem = this.prestigeManager.getTimeRemaining();
+
+    const nameEl = document.getElementById('admin-season-name');
+    if (nameEl) nameEl.textContent = season.seasonName;
+
+    const countEl = document.getElementById('admin-season-countdown');
+    if (countEl) countEl.textContent = rem.formatted;
+
+    const totalZlt = (season.prizePool.first + season.prizePool.second + season.prizePool.third);
+    const fundEl = document.getElementById('admin-season-total-fund');
+    if (fundEl) fundEl.textContent = `${totalZlt.toLocaleString()} ZLT`;
+
+    // Populate Prize Inputs if not focused
+    const p1Input = document.getElementById('admin-prize-first');
+    const p2Input = document.getElementById('admin-prize-second');
+    const p3Input = document.getElementById('admin-prize-third');
+    if (p1Input && document.activeElement !== p1Input) p1Input.value = season.prizePool.first;
+    if (p2Input && document.activeElement !== p2Input) p2Input.value = season.prizePool.second;
+    if (p3Input && document.activeElement !== p3Input) p3Input.value = season.prizePool.third;
+
+    // 2. Pillar Table Headers
+    const thead = document.getElementById('admin-lead-thead');
+    if (thead) {
+      if (this.adminActiveBoard === 'casino') {
+        thead.innerHTML = `
+          <th>Rang</th>
+          <th>Takmičar / Gost</th>
+          <th>Najveći Dobitak (X)</th>
+          <th>Ukupni Obrt (ZLT) / Spinovi</th>
+          <th>Prestiž Skor</th>
+          <th>Akcija</th>
+        `;
+      } else if (this.adminActiveBoard === 'vault') {
+        thead.innerHTML = `
+          <th>Rang</th>
+          <th>Takmičar / Gost</th>
+          <th>Maksimalni Sprat</th>
+          <th>Bossovi / Ključevi / Plen</th>
+          <th>Prestiž Skor</th>
+          <th>Akcija</th>
+        `;
+      } else if (this.adminActiveBoard === 'royale') {
+        thead.innerHTML = `
+          <th>Rang</th>
+          <th>Takmičar / Gost</th>
+          <th>Victory Royale Pobede</th>
+          <th>Eliminacije / Finale Karte</th>
+          <th>Prestiž Skor</th>
+          <th>Akcija</th>
+        `;
+      }
+    }
+
+    // 3. Pillar Table Body
+    const tbody = document.getElementById('admin-lead-tbody');
+    if (tbody) {
+      const list = this.prestigeManager.getSortedLeaderboard(this.adminActiveBoard);
+      tbody.innerHTML = list.map(item => {
+        let m1 = '-';
+        let m2 = '-';
+
+        if (this.adminActiveBoard === 'casino') {
+          m1 = `${item.highestWinX || 0}x`;
+          m2 = `${(item.totalWagered || 0).toLocaleString()} ZLT (${item.totalSpins || 0} sp.)`;
+        } else if (this.adminActiveBoard === 'vault') {
+          m1 = `Sprat ${item.maxFloor || 1}/5`;
+          m2 = `${item.bossesDefeated || 0} boss / ${item.keysCollected || 0} klj. / ${(item.totalLootZlt || 0).toLocaleString()} ZLT`;
+        } else if (this.adminActiveBoard === 'royale') {
+          m1 = `${item.wins || 0} Pobeda 👑`;
+          m2 = `${item.kills || 0} Kills / ${item.finaleTickets || 0} Karata`;
+        }
+
+        const isDisqualifiable = !item.isYou;
+
+        return `
+          <tr>
+            <td>
+              <span class="font-mono font-bold" style="color: ${item.rank === 1 ? '#ffd700' : (item.rank === 2 ? '#cbd5e1' : (item.rank === 3 ? '#cd7f32' : '#94a3b8'))};">
+                #${item.rank}
+              </span>
+            </td>
+            <td>
+              <strong>${item.name}</strong>
+              ${item.isYou ? ' <span class="badge-role" style="background: rgba(56,189,248,0.2); color: #38bdf8;">VI</span>' : ''}
+            </td>
+            <td class="font-mono">${m1}</td>
+            <td class="font-mono">${m2}</td>
+            <td>
+              <span class="font-mono font-bold" style="color: #ffd700;">${(item.score || 0).toLocaleString()}</span>
+            </td>
+            <td>
+              ${isDisqualifiable ? `
+                <button type="button" class="btn-lock-session btn-dq-entry" data-cat="${this.adminActiveBoard}" data-id="${item.id}" style="padding: 4px 8px; font-size: 0.68rem;">
+                  Diskvalifikuj ❌
+                </button>
+              ` : '<span style="color: #64748b; font-size: 0.72rem;">Vaš nalog</span>'}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Bind DQ buttons
+      tbody.querySelectorAll('.btn-dq-entry').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cat = btn.getAttribute('data-cat');
+          const id = btn.getAttribute('data-id');
+          if (confirm(`Ukloniti takmičara sa ID-jem [${id}] sa rang liste?`)) {
+            this.prestigeManager.disqualifyEntry(cat, id);
+            this.renderAdminLeaderboards();
+            this.showToast('Takmičar je uklonjen sa rang liste.', 'info');
+          }
+        });
+      });
+    }
+
+    // 4. Hall of Fame Archive Table
+    const fameTbody = document.getElementById('admin-fame-tbody');
+    if (fameTbody) {
+      const fame = this.prestigeManager.hallOfFame || [];
+      if (fame.length === 0) {
+        fameTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #64748b;">Nema arhiviranih prethodnih sezona.</td></tr>`;
+      } else {
+        fameTbody.innerHTML = fame.map(f => `
+          <tr>
+            <td>
+              <strong>${f.seasonName}</strong><br>
+              <span style="font-size: 0.7rem; color: #94a3b8;">${f.date}</span>
+            </td>
+            <td>
+              <strong style="color: #ffd700;">${f.casinoChamp.name}</strong><br>
+              <span style="font-size: 0.72rem; color: #94a3b8;">${f.casinoChamp.score.toLocaleString()} bodova (${f.casinoChamp.prize})</span>
+            </td>
+            <td>
+              <strong style="color: #38bdf8;">${f.vaultChamp.name}</strong><br>
+              <span style="font-size: 0.72rem; color: #94a3b8;">${f.vaultChamp.score.toLocaleString()} bodova (${f.vaultChamp.prize})</span>
+            </td>
+            <td>
+              <strong style="color: #f43f5e;">${f.royaleChamp.name}</strong><br>
+              <span style="font-size: 0.72rem; color: #94a3b8;">${f.royaleChamp.score.toLocaleString()} bodova (${f.royaleChamp.prize})</span>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
   }
 }
 

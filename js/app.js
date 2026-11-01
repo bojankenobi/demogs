@@ -344,9 +344,22 @@ class IGTApp {
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
         const mode = tab.getAttribute('data-mode');
-        this.switchGrandMode(mode);
+        if (mode) {
+          this.switchGrandMode(mode);
+        }
       });
     });
+
+    // Prestige Hub / Kuća Slavnih Trigger
+    const prestigeTab = document.getElementById('hub-btn-prestige');
+    if (prestigeTab) {
+      prestigeTab.addEventListener('click', () => {
+        if (window.prestigeManager) {
+          window.prestigeManager.openModal(this.currentGrandMode || 'casino');
+        }
+      });
+    }
+
     this.updateModeQuotaPills();
   }
 
@@ -1302,6 +1315,11 @@ class IGTApp {
     if (this.playerTracker) {
       const activeGameId = (this.lobby && this.lobby.activeGameId) || 'classic';
       this.playerTracker.recordSpin(activeGameId, this.wallet.bet, winAmount);
+    }
+
+    // Record spin in Prestige Leaderboard (Casino Pillar)
+    if (window.prestigeManager) {
+      window.prestigeManager.recordCasinoSpin(this.wallet.bet, winAmount);
     }
 
     if (this.tournament && this.tournament.isActive && winAmount > 0) {

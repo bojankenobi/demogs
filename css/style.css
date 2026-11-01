@@ -13243,3 +13243,558 @@ body.theme-royale .stage-bezel {
 
 
 
+
+/* ==========================================================================
+   KUĆA SLAVNIH & PRESTIGE HUB LEADERBOARD SYSTEM
+   ========================================================================== */
+
+/* Prestige Trigger Buttons */
+.btn-prestige-hub {
+  position: relative;
+  background: radial-gradient(circle at 50% 30%, #3d2b02 0%, #171101 100%);
+  border: 1px solid rgba(255, 215, 0, 0.6);
+  border-radius: 50%;
+  color: #ffd700;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
+}
+
+.btn-prestige-hub:hover {
+  transform: translateY(-2px) scale(1.05);
+  border-color: #ffd700;
+  box-shadow: 0 0 18px rgba(255, 215, 0, 0.6);
+  color: #fff;
+}
+
+.hub-tab-prestige {
+  border-color: rgba(255, 215, 0, 0.4) !important;
+}
+
+.hub-tab-prestige .gold-badge {
+  background: linear-gradient(135deg, #ffd700, #b8860b);
+  color: #000;
+  font-weight: 900;
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Modal Overlay & Container */
+.prestige-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 5, 10, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: prestigeFadeIn 0.25s ease-out;
+}
+
+.prestige-modal-overlay.is-open {
+  display: flex !important;
+}
+
+@keyframes prestigeFadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.prestige-modal-card {
+  width: 100%;
+  max-width: 860px;
+  max-height: 92vh;
+  background: radial-gradient(circle at 50% 0%, #201809 0%, #0d0f15 50%, #06070a 100%);
+  border: 2px solid rgba(246, 200, 69, 0.75);
+  border-radius: 16px;
+  box-shadow: 0 0 45px rgba(246, 200, 69, 0.3), 0 25px 70px rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: #f1f5f9;
+}
+
+/* Modal Header */
+.prestige-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: linear-gradient(180deg, rgba(246, 200, 69, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+  border-bottom: 1px solid rgba(246, 200, 69, 0.25);
+}
+
+.prestige-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.prestige-crown-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.7));
+  animation: crownPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes crownPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.prestige-title {
+  margin: 0;
+  font-family: 'Cinzel', serif, 'Montserrat', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #fff 20%, #f6c845 70%, #d99a18 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.prestige-season-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 3px;
+}
+
+.season-timer-pill {
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  color: #ffd700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-family: monospace;
+}
+
+.btn-close-prestige {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  color: #94a3b8;
+  font-size: 1.4rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.btn-close-prestige:hover {
+  color: #fff;
+  border-color: #ffd700;
+  transform: rotate(90deg);
+}
+
+/* Personal Prestige Status Card */
+.prestige-personal-card {
+  margin: 14px 20px;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, rgba(30, 24, 13, 0.85) 0%, rgba(15, 17, 24, 0.85) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.08);
+}
+
+.prestige-avatar-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  background: #11141c;
+  flex-shrink: 0;
+}
+
+/* Avatar Frames */
+.frame-bronze {
+  border: 2px solid #cd7f32;
+  box-shadow: 0 0 8px rgba(205, 127, 50, 0.4);
+}
+
+.frame-silver {
+  border: 2px solid #cbd5e1;
+  box-shadow: 0 0 10px rgba(203, 213, 225, 0.5);
+}
+
+.frame-gold {
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.6);
+}
+
+.frame-cyan {
+  border: 2px solid #38bdf8;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+}
+
+.frame-gold-animated {
+  border: 2px solid #ffd700;
+  animation: goldFramePulse 2s infinite alternate;
+}
+
+@keyframes goldFramePulse {
+  0% { box-shadow: 0 0 10px #ffd700, 0 0 20px rgba(255, 215, 0, 0.4); }
+  100% { box-shadow: 0 0 22px #ff8c00, 0 0 35px rgba(255, 140, 0, 0.7); }
+}
+
+.prestige-user-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.prestige-user-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+  flex-wrap: wrap;
+}
+
+.prestige-username {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.prestige-title-badge {
+  background: rgba(255, 215, 0, 0.15);
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  color: #ffd700;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.prestige-user-stats-strip {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.prestige-rank-showcase {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.prestige-rank-showcase .rank-lbl {
+  display: block;
+  font-size: 0.62rem;
+  color: #94a3b8;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.prestige-rank-showcase .rank-val {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.prestige-rank-showcase .score-sub {
+  display: block;
+  font-size: 0.72rem;
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+/* Tabs Navigation */
+.prestige-tabs-nav {
+  display: flex;
+  padding: 0 20px;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-x: auto;
+}
+
+.prestige-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #94a3b8;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.prestige-tab-btn:hover {
+  color: #fff;
+}
+
+.prestige-tab-btn.active {
+  color: #ffd700;
+  border-bottom-color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+.prestige-tab-btn.fame-tab.active {
+  color: #c084fc;
+  border-bottom-color: #c084fc;
+}
+
+/* Table Content Body */
+.prestige-body-content {
+  flex: 1;
+  padding: 14px 20px;
+  overflow-y: auto;
+  min-height: 280px;
+}
+
+.prestige-table-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prestige-table-header {
+  display: grid;
+  grid-template-columns: 70px 1.8fr 1.2fr 1.2fr 1fr 1.4fr;
+  padding: 8px 12px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prestige-table-row {
+  display: grid;
+  grid-template-columns: 70px 1.8fr 1.2fr 1.2fr 1fr 1.4fr;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.15s ease;
+}
+
+.prestige-table-row:hover {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 215, 0, 0.2);
+}
+
+.prestige-table-row.top-1 {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(15, 23, 42, 0.5) 100%);
+  border-color: rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+}
+
+.prestige-table-row.top-2 {
+  background: linear-gradient(90deg, rgba(203, 213, 225, 0.12) 0%, rgba(15, 23, 42, 0.5) 100%);
+  border-color: rgba(203, 213, 225, 0.4);
+}
+
+.prestige-table-row.top-3 {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.12) 0%, rgba(15, 23, 42, 0.5) 100%);
+  border-color: rgba(205, 127, 50, 0.4);
+}
+
+.prestige-table-row.is-player-row {
+  border: 1.5px solid #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.12) !important;
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.prestige-row-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  background: #0b0f19;
+  margin-right: 8px;
+}
+
+.prestige-row-name {
+  font-weight: 700;
+  color: #fff;
+}
+
+.you-badge-chip {
+  background: #38bdf8;
+  color: #000;
+  font-size: 0.58rem;
+  font-weight: 900;
+  padding: 1px 4px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+
+.prestige-medal {
+  font-weight: 900;
+  font-size: 0.85rem;
+}
+
+.prestige-medal.gold { color: #ffd700; }
+.prestige-medal.silver { color: #e2e8f0; }
+.prestige-medal.bronze { color: #cd7f32; }
+
+.score-highlight {
+  color: #ffd700;
+  font-family: monospace;
+  font-size: 0.88rem;
+}
+
+.prize-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.prize-tag.first {
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+}
+
+.prize-tag.second {
+  background: rgba(203, 213, 225, 0.2);
+  color: #e2e8f0;
+  border: 1px solid rgba(203, 213, 225, 0.4);
+}
+
+.prize-tag.third {
+  background: rgba(205, 127, 50, 0.2);
+  color: #fdba74;
+  border: 1px solid rgba(205, 127, 50, 0.4);
+}
+
+.prize-tag.none {
+  color: #64748b;
+}
+
+/* Hall of Fame Cards */
+.fame-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fame-season-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(192, 132, 252, 0.35);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+}
+
+.fame-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.fame-season-title {
+  font-weight: 800;
+  color: #c084fc;
+  font-size: 0.95rem;
+}
+
+.fame-season-date {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.fame-podiums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.fame-podium-box {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+}
+
+.podium-pillar-tag {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.podium-winner-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.podium-winner-score {
+  font-size: 0.75rem;
+  color: #ffd700;
+  font-family: monospace;
+}
+
+.podium-winner-reward {
+  font-size: 0.68rem;
+  color: #38bdf8;
+  margin-top: 4px;
+}
+
+/* Modal Footer */
+.prestige-footer {
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  color: #94a3b8;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 680px) {
+  .prestige-modal-card {
+    max-height: 96vh;
+    border-radius: 12px;
+  }
+  .prestige-personal-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .prestige-rank-showcase {
+    text-align: center;
+  }
+  .prestige-table-header,
+  .prestige-table-row {
+    grid-template-columns: 50px 1.4fr 1fr 1fr;
+  }
+  .col-head.stat-col:nth-child(4),
+  .row-cell.stat-col:nth-child(4),
+  .col-head.prize-col,
+  .row-cell.prize-col {
+    display: none;
+  }
+}

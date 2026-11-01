@@ -234,6 +234,10 @@ class VaultCrawler {
   }
 
   openLeaderboardModal() {
+    if (window.prestigeManager) {
+      window.prestigeManager.openModal('vault');
+      return;
+    }
     const modal = document.getElementById('vault-leaderboard-modal');
     if (!modal) return;
 
@@ -662,6 +666,11 @@ class VaultCrawler {
     const isFloorBoss = (this.nodeIndex >= 4);
     const cfg = this.FLOOR_CONFIG[this.floor - 1];
 
+    // Record Vault progression in Prestige Manager
+    if (window.prestigeManager) {
+      window.prestigeManager.recordVaultProgress(this.floor, isFloorBoss, keysWon, lootWon);
+    }
+
     if (window.slotAudio && window.slotAudio.playWin) {
       window.slotAudio.playWin();
     }
@@ -758,6 +767,9 @@ class VaultCrawler {
         this.resetRun();
       } else {
         this.floor++;
+        if (window.prestigeManager) {
+          window.prestigeManager.recordVaultProgress(this.floor, false, 0, 0);
+        }
         this.nodeIndex = 0;
         this.playerHp = this.playerMaxHp;
         this.saveState();

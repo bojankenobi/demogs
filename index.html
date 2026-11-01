@@ -76,6 +76,11 @@
           <span class="hub-tab-icon">⚔️</span>
           <span class="hub-tab-text"><span class="tab-txt-full">BATTLE ROYALE</span><span class="tab-txt-short">ROYALE</span></span>
         </button>
+        <button class="hub-mode-tab hub-tab-prestige" id="hub-btn-prestige" title="Kuća Slavnih & Sezonske Rang Liste">
+          <span class="hub-tab-badge gold-badge">TOP 3</span>
+          <span class="hub-tab-icon">🏆</span>
+          <span class="hub-tab-text"><span class="tab-txt-full">KUĆA SLAVNIH</span><span class="tab-txt-short">RANG</span></span>
+        </button>
       </nav>
       <!-- Live Casino Jackpots Bar: SILVER, GOLD & DIAMOND (Thin Metallic Frames) -->
       <div class="jackpots-ticker-bar" id="jackpots-ticker-bar">
@@ -951,8 +956,12 @@
         <span class="ambient-icon">🎶</span>
       </button>
 
+      <button class="btn-icon-mini btn-prestige-hub desktop-only-icon" id="prestige-hall-btn" title="Kuća Slavnih & Tabela Uspeha (Kazino, Trezor, Royale)" aria-label="Kuća Slavnih">
+        <span class="prestige-icon">🏆</span>
+      </button>
+
       <button class="btn-icon-mini btn-tournament desktop-only-icon" id="tournament-btn" title="Turnirski Režim (120s Izazov)" data-i18n-title="tournamentBtnTitle" aria-label="Turnir">
-        <span class="tour-icon">🏆</span>
+        <span class="tour-icon">⚡</span>
       </button>
 
       <button class="btn-icon-mini btn-player-profile desktop-only-icon" id="player-profile-btn" title="Profil igrača & statistika" data-i18n-title="profileModalTitle" aria-label="Profil igrača">
@@ -2244,6 +2253,81 @@
     </div>
   </div>
 
+  <!-- =========================================================================
+       PRESTIGE HUB & KUĆA SLAVNIH (Unified Leaderboard for Casino, Vault, Royale)
+       ========================================================================= -->
+  <div class="modal-overlay prestige-modal-overlay" id="prestige-hall-modal" aria-hidden="true">
+    <div class="prestige-modal-card">
+      
+      <!-- Top Header & Season Info -->
+      <div class="prestige-header">
+        <div class="prestige-header-left">
+          <div class="prestige-crown-icon">🏆</div>
+          <div>
+            <h2 class="prestige-title">KUĆA SLAVNIH & TABELA USPEHA</h2>
+            <div class="prestige-season-badge">
+              <span id="prestige-season-title">Sezona • Nedeljni Šampionat</span>
+              <span class="season-timer-pill">⏳ Reset za: <strong id="prestige-season-timer-val">00d 00h 00m 00s</strong></span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn-close-prestige" id="prestige-hall-close-btn" aria-label="Zatvori">&times;</button>
+      </div>
+
+      <!-- Personal Prestige Status Card -->
+      <div class="prestige-personal-card" id="prestige-personal-card">
+        <div class="prestige-avatar-box frame-gold" id="prestige-my-avatar">👤</div>
+        <div class="prestige-user-meta">
+          <div class="prestige-user-heading">
+            <span class="prestige-username" id="prestige-my-name">Vi (Gost)</span>
+            <span class="prestige-title-badge" id="prestige-my-title">🛡️ Bronzani Takmičar</span>
+          </div>
+          <div class="prestige-user-stats-strip" id="prestige-my-metric">
+            Učitavanje statistike...
+          </div>
+        </div>
+        <div class="prestige-rank-showcase">
+          <span class="rank-lbl">TRENUTNI PLASMAN</span>
+          <span class="rank-val" id="prestige-my-rank">#--</span>
+          <span class="score-sub" id="prestige-my-score">0 Bodova</span>
+        </div>
+      </div>
+
+      <!-- 4 Pillars & Archive Navigation Tabs -->
+      <div class="prestige-tabs-nav">
+        <button type="button" class="prestige-tab-btn active" data-tab="casino" id="prestige-tab-casino">
+          <span class="tab-ico">🎰</span>
+          <span class="tab-name">KAZINO LEGENDE</span>
+        </button>
+        <button type="button" class="prestige-tab-btn" data-tab="vault" id="prestige-tab-vault">
+          <span class="tab-ico">⚔️</span>
+          <span class="tab-name">MAJSTORI TREZORA</span>
+        </button>
+        <button type="button" class="prestige-tab-btn" data-tab="royale" id="prestige-tab-royale">
+          <span class="tab-ico">👑</span>
+          <span class="tab-name">ŠAMPIONI ARENE</span>
+        </button>
+        <button type="button" class="prestige-tab-btn fame-tab" data-tab="fame" id="prestige-tab-fame">
+          <span class="tab-ico">🏛️</span>
+          <span class="tab-name">VEČNA KUĆA (ARHIVA)</span>
+        </button>
+      </div>
+
+      <!-- Table Content Area -->
+      <div class="prestige-body-content" id="prestige-table-content">
+        <!-- Dynamically rendered by PrestigeManager -->
+      </div>
+
+      <!-- Footer Info & Rewards Breakdown -->
+      <div class="prestige-footer">
+        <div class="prestige-rewards-info">
+          <span>🎁 Nedeljni Fond za Top 3 u svakom režimu: <strong>🥇 1. Mesto: 5.000 ZLT + Titula</strong> • <strong>🥈 2. Mesto: 2.500 ZLT</strong> • <strong>🥉 3. Mesto: 1.000 ZLT</strong></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Modal: Vault Talent Tree (Trajna RPG Progresija) -->
   <div class="modal-overlay" id="vault-talents-modal">
     <div class="modal-card vault-talents-card">
@@ -2425,6 +2509,7 @@
   <script src="js/core/player-tracker.js?v=82"></script>
   <script src="js/core/wallet.js?v=89"></script>
   <script src="js/core/daily-access-manager.js?v=99"></script>
+  <script src="js/core/prestige-manager.js?v=1"></script>
   <script src="js/core/jackpots-v2.js?v=80"></script>
   <script src="js/core/meters.js?v=75"></script>
   <script src="js/core/wheel.js?v=75"></script>
