@@ -166,6 +166,21 @@
         </div>
       </div>
     </header>
+    <!-- Daily Challenges & Streak Sticky Tracker Bar (Casino Salon Exclusive) -->
+    <div class="daily-missions-ticker-bar" id="daily-missions-bar" title="Kliknite za pregled dnevnih zadataka i 7-dnevnog niza">
+      <div class="dmb-left">
+        <span class="dmb-badge">🎯 DNEVNE MISIJE</span>
+        <span class="dmb-tasks-progress" id="dmb-tasks-count">0/3 Rešeno</span>
+      </div>
+      <div class="dmb-center">
+        <span class="dmb-streak-flame" id="dmb-streak-icon">🔥</span>
+        <span class="dmb-streak-text">NIZ: <strong id="dmb-streak-val">Dan 1/7</strong></span>
+      </div>
+      <div class="dmb-right">
+        <span class="dmb-timer" id="dmb-reset-timer">⏳ Reset: --:--:--</span>
+        <span class="dmb-open-pill">OTVORI ➔</span>
+      </div>
+    </div>
 
     <!-- Stage Area: 3D Horizontal Gold Cylinder Slot Machine -->
     <section class="stage-area">
@@ -2328,6 +2343,66 @@
     </div>
   </div>
 
+  
+  <!-- =========================================================================
+       DAILY MISSIONS & 7-DAY STREAK MODAL (Casino Salon Retention Loop)
+       ========================================================================= -->
+  <div class="modal-overlay daily-missions-overlay" id="daily-missions-modal" aria-hidden="true">
+    <div class="daily-missions-modal-card">
+      
+      <!-- Modal Header -->
+      <div class="dmm-header">
+        <div class="dmm-header-left">
+          <span class="dmm-crown-icon">🎯</span>
+          <div>
+            <h2 class="dmm-title">DNEVNI IZAZOVI & 7-DNEVNI NIZ</h2>
+            <div class="dmm-subtitle">Rešite zadatke u igrama i održavajte niz za ZLT nagrade & VIP Škrinju!</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close-dmm" id="btn-close-daily-missions" aria-label="Zatvori">&times;</button>
+      </div>
+
+      <!-- 7-Day Streak Section -->
+      <div class="dmm-streak-section">
+        <div class="dmm-section-header">
+          <div class="dmm-section-title">
+            <span>🔥 7-DNEVNI KALENDAR LOJALNOSTI</span>
+            <span class="dmm-reset-pill">⏳ Reset: <strong id="dmm-reset-timer">00:00:00</strong></span>
+          </div>
+          <div class="dmm-section-desc">Svaki uzastopni dan donosi veći bonus. Propušten dan vraća niz na Dan 1!</div>
+        </div>
+
+        <div class="dmm-streak-grid" id="dmm-streak-grid">
+          <!-- Populated by DailyMissionsManager: Day 1 (15 ZLT) to Day 7 (150 ZLT + VIP Škrinja) -->
+        </div>
+
+        <div class="dmm-streak-claim-row">
+          <button type="button" class="btn-streak-claim-active" id="btn-claim-daily-streak">
+            🎁 PREUZMI DNEVNI BONUS (+15 ZLT)
+          </button>
+        </div>
+      </div>
+
+      <!-- 3 Daily Missions Section -->
+      <div class="dmm-tasks-section">
+        <div class="dmm-section-title" style="margin-bottom: 8px;">
+          <span>🎯 DANAŠNJI ZADACI (3 IGRE)</span>
+          <span style="font-size: 0.75rem; color: #94a3b8; font-weight: normal;">Završite zadatak za direktnu dopunu novčanika</span>
+        </div>
+
+        <div class="dmm-tasks-list" id="dmm-tasks-list">
+          <!-- Populated dynamically: task_slot, task_arcade, task_table -->
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="dmm-footer">
+        <span>💡 Savet: Koristite dugme <strong>IGRAJ ➔</strong> za direktan skok u odgovarajuću igru!</span>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Modal: Vault Talent Tree (Trajna RPG Progresija) -->
   <div class="modal-overlay" id="vault-talents-modal">
     <div class="modal-card vault-talents-card">
@@ -2510,6 +2585,7 @@
   <script src="js/core/wallet.js?v=89"></script>
   <script src="js/core/daily-access-manager.js?v=99"></script>
   <script src="js/core/prestige-manager.js?v=1"></script>
+  <script src="js/core/daily-missions-manager.js?v=1"></script>
   <script src="js/core/jackpots-v2.js?v=80"></script>
   <script src="js/core/meters.js?v=75"></script>
   <script src="js/core/wheel.js?v=75"></script>

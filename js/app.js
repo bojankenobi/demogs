@@ -324,6 +324,12 @@ class IGTApp {
       this.dailyAccessManager = new window.DailyAccessManager();
       window.dailyAccessManager = this.dailyAccessManager;
     }
+
+    // 8.6 Daily Missions & 7-Day Streak Retention Manager
+    if (window.DailyMissionsManager) {
+      this.dailyMissionsManager = new window.DailyMissionsManager();
+      window.dailyMissionsManager = this.dailyMissionsManager;
+    }
     this.sessionStartTime = Date.now();
     this.currentGrandMode = 'casino';
     if (typeof document !== 'undefined' && document.body) {
@@ -584,6 +590,10 @@ class IGTApp {
 
     if (typeof window.updateSlotScale === 'function') {
       window.updateSlotScale();
+    }
+
+    if (this.dailyMissionsManager) {
+      this.dailyMissionsManager.renderBar();
     }
   }
 
@@ -1320,6 +1330,11 @@ class IGTApp {
     // Record spin in Prestige Leaderboard (Casino Pillar)
     if (window.prestigeManager) {
       window.prestigeManager.recordCasinoSpin(this.wallet.bet, winAmount);
+    }
+
+    // Record spin in Daily Missions (Slot Task)
+    if (window.dailyMissionsManager) {
+      window.dailyMissionsManager.recordSlotSpin();
     }
 
     if (this.tournament && this.tournament.isActive && winAmount > 0) {

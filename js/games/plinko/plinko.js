@@ -609,6 +609,10 @@ class PlinkoDeluxeGame {
       this.wallet.addWin(winAmt);
     }
 
+    if (window.dailyMissionsManager) {
+      window.dailyMissionsManager.recordArcadeWin(mult);
+    }
+
     if (window.slotApp && window.slotApp.playerTracker) {
       window.slotApp.playerTracker.recordSpin('plinko', ball.bet, winAmt);
     }

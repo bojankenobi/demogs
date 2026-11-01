@@ -270,6 +270,20 @@ class NotificationManager {
     }
   }
 
+  triggerStreakReminder(currentDay = 1) {
+    const isEn = window.i18n && window.i18n.currentLang === 'en';
+    const title = isEn ? '🔥 YOUR DAILY STREAK IS EXPIRING!' : '🔥 VAŠ DNEVNI NIZ ISTIČE U PONOĆ!';
+    const body = isEn 
+      ? `You are on Day ${currentDay}/7 of your streak! Complete today's missions now so you don't lose your progress!`
+      : `Nalazite se na Danu ${currentDay}/7 svog niza! Završite današnje zadatke pre ponoći da sačuvate bonus i VIP škrinju!`;
+
+    this.sendPushNotification(title, body);
+
+    if (this.app?.showMessage) {
+      this.app.showMessage(`🔔 PODSETNIK: ${title}`, 'jackpot');
+    }
+  }
+
   updateUI() {
     const badge = document.getElementById('menu-notif-status-badge');
     if (!badge) return;

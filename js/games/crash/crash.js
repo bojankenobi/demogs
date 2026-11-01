@@ -805,6 +805,11 @@ class GrandCrashGame {
       window.slotAudio.playCashout();
     }
 
+    // Daily Missions Hook (Arcade multiplier task)
+    if (window.dailyMissionsManager) {
+      window.dailyMissionsManager.recordArcadeWin(finalMult);
+    }
+
     if (finalMult >= 2.5 && window.particleEngine) {
       window.particleEngine.spawnCelebration(true);
     }

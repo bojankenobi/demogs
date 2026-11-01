@@ -1322,6 +1322,20 @@ class AdminDashboard {
         this.showToast('Poslata notifikacija: Točak Sreće');
       });
     }
+
+    const btnPushStreak = document.getElementById('btn-push-streak-alert');
+    if (btnPushStreak) {
+      btnPushStreak.addEventListener('click', async () => {
+        this.sendCommand({ action: 'TRIGGER_PUSH', notifType: 'streak' });
+        await this.dispatchPushApi({
+          title: '🔥 VAŠ DNEVNI NIZ ISTIČE U PONOĆ!',
+          body: 'Rešite preostale dnevne zadatke pre ponoći da sačuvate bonus i VIP škrinju!',
+          targetType: 'all',
+          promoAction: 'none'
+        });
+        this.showToast('Poslat podsetnik: Dnevni Streak ističe u ponoć');
+      });
+    }
   }
 
   async publishCampaign(isLive) {

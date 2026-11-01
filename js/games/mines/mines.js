@@ -307,6 +307,11 @@ class MinesGame {
     this.currentMultiplier = this.calculateMultiplier(this.revealedCount);
     const currentWin = Math.round(this.currentBet * this.currentMultiplier);
 
+    // Daily Missions Hook (Table / Diamond action)
+    if (window.dailyMissionsManager) {
+      window.dailyMissionsManager.recordTableAction();
+    }
+
     tileEl.classList.add('revealed', 'gem');
     const backSide = tileEl.querySelector('.mines-tile-back');
     if (backSide) {

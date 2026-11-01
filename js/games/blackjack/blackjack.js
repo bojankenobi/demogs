@@ -938,6 +938,11 @@ class RoyalBlackjackGame {
   resolveRound() {
     this.setPhase('round_over');
 
+    // Daily Missions Hook (Table game action)
+    if (window.dailyMissionsManager) {
+      window.dailyMissionsManager.recordTableAction();
+    }
+
     const dealerScore = this.calculateHandScore(this.dealerCards);
     const dealerBust = dealerScore.isBust;
     const dealerBJ = dealerScore.isBlackjack;

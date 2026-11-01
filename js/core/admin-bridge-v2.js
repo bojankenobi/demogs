@@ -302,6 +302,10 @@ class AdminBridge {
           if (data.notifType === 'jackpot') this.app.notifications.triggerJackpotAlert('gold');
           else if (data.notifType === 'tournament') this.app.notifications.triggerTournamentAlert();
           else if (data.notifType === 'bonus') this.app.notifications.triggerBonusAlert();
+          else if (data.notifType === 'streak') {
+            const streakDay = window.dailyMissionsManager ? window.dailyMissionsManager.state.streak : 1;
+            this.app.notifications.triggerStreakReminder(streakDay);
+          }
           else if (data.title && data.body) {
             const myPlayerId = this.app.playerTracker ? this.app.playerTracker.profile.id : null;
             if (data.targetType === 'single' && data.targetPlayerId && data.targetPlayerId !== myPlayerId) {
