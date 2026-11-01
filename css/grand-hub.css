@@ -615,7 +615,7 @@
 }
 
 /* ==============================================================================
-   3. Slot-Battle Royale (Multiplayer 120s) Stage View
+   3. Slot-Battle Royale (Multiplayer 120s) Stage View & Cockpit Layout
    ============================================================================== */
 .battle-royale-stage {
   display: flex;
@@ -628,25 +628,56 @@
   z-index: 10;
 }
 
-.royale-status-bar {
+/* Royale Cockpit Wings & Panels */
+.royale-cockpit-wing {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.royale-panel-card {
+  background: linear-gradient(180deg, rgba(32, 14, 20, 0.94) 0%, rgba(18, 10, 14, 0.97) 100%);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 12px;
+  padding: 9px 11px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.royale-card-section-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #f87171;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.royale-status-card .royale-status-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  background: linear-gradient(180deg, rgba(35, 14, 20, 0.95) 0%, rgba(16, 12, 18, 0.98) 100%);
-  border: 1px solid rgba(239, 68, 68, 0.45);
-  border-radius: 12px;
-  box-shadow: 0 4px 18px rgba(220, 38, 38, 0.25);
+  padding: 4px 2px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .royale-timer-box {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .royale-timer-val {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 900;
   font-family: monospace;
   color: #f87171;
@@ -656,128 +687,221 @@
 .royale-rank-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
+  gap: 5px;
+  padding: 3px 10px;
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 20px;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 800;
   color: #fbbf24;
 }
 
+.royale-score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .royale-zone-banner {
-  padding: 6px 12px;
+  padding: 6px 10px;
   background: rgba(220, 38, 38, 0.2);
   border: 1px solid #ef4444;
   border-radius: 8px;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 800;
   color: #fca5a5;
   text-align: center;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  margin-top: 2px;
 }
 
 .royale-zone-banner.shrinking {
   animation: pulse-red-zone 1s infinite alternate;
 }
 
-@keyframes pulse-red-zone {
-  from { background: rgba(220, 38, 38, 0.2); }
-  to { background: rgba(220, 38, 38, 0.5); }
-}
-
-/* PvP Attacks Deck (Cards that can be triggered against rivals) */
-.royale-attacks-deck {
-  display: flex;
-  gap: 8px;
+/* Smart Meta Target Selector in Cockpit */
+.royale-targeting-card .royale-smart-targets {
+  margin: 0;
   width: 100%;
 }
 
-.btn-pvp-attack {
+.royale-targeting-card .smart-targets-row {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+}
+
+.btn-target-selector {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 4px;
-  min-height: 54px;
-  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-  border: 1px solid #475569;
-  border-radius: 10px;
+  padding: 6px 4px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-target-selector:hover {
+  border-color: #f87171;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.btn-target-selector.active {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.22);
+  color: #fef08a;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.target-icon {
+  font-size: 1rem;
+}
+
+.target-name {
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+/* PvP Attacks Deck in Cockpit */
+.royale-attacks-card .royale-attacks-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.royale-attacks-card .btn-pvp-attack {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  min-height: 40px;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 8px;
   color: #f8fafc;
   cursor: pointer;
-  transition: all 0.18s ease;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
 }
 
-.btn-pvp-attack:hover:not(:disabled) {
-  border-color: #38bdf8;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+.royale-attacks-card .btn-pvp-attack:hover:not(:disabled) {
+  border-color: #f87171;
+  background: rgba(239, 68, 68, 0.18);
+  transform: translateX(2px);
 }
 
-.btn-pvp-attack:disabled {
+.royale-attacks-card .btn-pvp-attack:disabled {
   opacity: 0.45;
   cursor: not-allowed;
-  filter: grayscale(0.8);
+  filter: grayscale(0.6);
 }
 
 .pvp-card-icon {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.pvp-card-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .pvp-card-title {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  margin-top: 2px;
+  color: #f8fafc;
+}
+
+.pvp-card-sub {
+  font-size: 0.62rem;
+  color: #94a3b8;
 }
 
 .pvp-card-ready {
-  font-size: 0.58rem;
+  font-size: 0.65rem;
   font-weight: 900;
   color: #4ade80;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-radius: 8px;
+  white-space: nowrap;
+  margin-left: 6px;
 }
 
-/* Live Competitors Ticker (Avatars & Points) */
-.royale-leaderboard-strip {
+/* Live Competitors Leaderboard Card */
+.royale-leaderboard-card .royale-leaderboard-strip {
   display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 6px 2px;
-  scrollbar-width: none;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 2px 1px;
 }
 
-.royale-leaderboard-strip::-webkit-scrollbar {
-  display: none;
+.royale-leaderboard-card .royale-leaderboard-strip::-webkit-scrollbar {
+  width: 4px;
 }
 
-.competitor-pill {
-  flex-shrink: 0;
+.royale-leaderboard-card .royale-leaderboard-strip::-webkit-scrollbar-thumb {
+  background: rgba(239, 68, 68, 0.35);
+  border-radius: 4px;
+}
+
+.royale-leaderboard-card .competitor-pill {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
+  justify-content: space-between;
+  padding: 5px 8px;
   background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
   font-size: 0.72rem;
   color: #cbd5e1;
 }
 
-.competitor-pill.you {
-  border-color: #d4af37;
-  background: rgba(212, 175, 55, 0.18);
+.royale-leaderboard-card .competitor-pill.you {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
   color: #fef08a;
   font-weight: 800;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }
 
-.competitor-pill.eliminated {
-  opacity: 0.3;
+.royale-leaderboard-card .competitor-pill.eliminated {
+  opacity: 0.35;
   text-decoration: line-through;
   filter: grayscale(1);
+}
+
+/* Round Actions Card */
+.royale-actions-card .royale-bottom-actions {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.royale-actions-card .btn-vault-action {
+  padding: 8px 6px;
+  min-height: 38px;
+  font-size: 0.72rem;
 }
 
 /* Frozen Reel Overlay (Disruption Effect) */
@@ -2027,6 +2151,129 @@
     z-index: 10 !important;
     padding: 10px 18px !important;
   }
+
+  /* ==========================================================================
+     Zero-Scroll 3-Column Desktop Cockpit for Battle Royale
+     ========================================================================== */
+  body.theme-royale {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+  }
+
+  .game-container.in-royale-mode {
+    max-width: 1440px !important;
+    width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    position: relative !important;
+    padding: 6px 16px 8px 16px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Compact header to maximize vertical screen space */
+  .game-container.in-royale-mode .brand-logo-wrap {
+    max-width: 180px !important;
+    margin: 0 auto 2px auto !important;
+  }
+  .game-container.in-royale-mode .main-brand-logo {
+    max-height: 32px !important;
+  }
+  .game-container.in-royale-mode .grand-mode-hub {
+    margin: 0 auto 4px auto !important;
+    padding: 3px 10px !important;
+    max-width: 660px !important;
+  }
+  .game-container.in-royale-mode .hub-mode-tab {
+    padding: 6px 14px !important;
+    min-height: 36px !important;
+    font-size: 0.78rem !important;
+  }
+  .game-container.in-royale-mode .daily-missions-ticker-bar {
+    display: none !important;
+  }
+
+  /* Center stage: occupies the middle space between the wings */
+  .game-container.in-royale-mode .stage-area {
+    position: static !important;
+    width: 100% !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    min-height: 0 !important;
+  }
+
+  /* Flanking 3-Column Wings Cockpit */
+  .game-container.in-royale-mode #battle-royale-view {
+    position: absolute !important;
+    top: 74px !important;
+    bottom: 8px !important;
+    left: 16px !important;
+    right: 16px !important;
+    pointer-events: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    z-index: 20 !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .game-container.in-royale-mode .royale-cockpit-wing {
+    pointer-events: auto !important;
+    width: 325px !important;
+    max-width: 325px !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    overflow-y: auto !important;
+    z-index: 25 !important;
+    padding-right: 4px !important;
+  }
+
+  .royale-cockpit-wing::-webkit-scrollbar {
+    width: 4px;
+  }
+  .royale-cockpit-wing::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  .royale-cockpit-wing::-webkit-scrollbar-thumb {
+    background: rgba(239, 68, 68, 0.4);
+    border-radius: 4px;
+  }
+
+  /* Center Slot Cylinder, Status Banner and Controls Panel */
+  .game-container.in-royale-mode .slot-stage-scaler {
+    margin: 0 auto !important;
+    z-index: 10 !important;
+    position: relative !important;
+  }
+
+  .game-container.in-royale-mode .status-banner-wrap {
+    max-width: 520px !important;
+    margin: 2px auto !important;
+    z-index: 10 !important;
+  }
+
+  .game-container.in-royale-mode .controls-panel {
+    max-width: 540px !important;
+    margin: 0 auto !important;
+    z-index: 10 !important;
+    padding: 10px 18px !important;
+  }
+
 
 }
 

@@ -14646,3 +14646,17 @@ body.theme-royale .stage-bezel {
 .game-container.in-royale-mode .daily-missions-ticker-bar {
   display: none !important;
 }
+
+@media (min-width: 1024px) {
+  body.theme-royale {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+  }
+  .game-container.in-royale-mode {
+    max-width: 1440px !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+  }
+}

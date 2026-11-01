@@ -388,79 +388,108 @@
 
       <!-- Slot-Battle Royale (Multiplayer 120s Arena HUD) -->
       <div class="battle-royale-stage" id="battle-royale-view" style="display: none;">
-        <div class="royale-status-bar">
-          <div class="royale-timer-box">
-            <span style="font-size: 1.1rem;">⏱️</span>
-            <span class="royale-timer-val" id="royale-timer-val">02:00</span>
+        <!-- LEFT WING: Match Status, Safe Zone & Live Competitors Leaderboard -->
+        <aside class="royale-cockpit-wing royale-left-wing">
+          <!-- Status Meča (Vreme, Rang, Poeni) -->
+          <div class="royale-panel-card royale-status-card">
+            <div class="royale-status-bar">
+              <div class="royale-timer-box">
+                <span style="font-size: 1.1rem;">⏱️</span>
+                <span class="royale-timer-val" id="royale-timer-val">02:00</span>
+              </div>
+              <div class="royale-rank-badge">
+                <span>RANG:</span>
+                <span id="royale-rank-val" style="font-size: 1.1rem; color: #fbbf24;">#1</span>
+              </div>
+              <div class="royale-score-box" style="text-align: right;">
+                <div style="font-size: 0.65rem; color: #94a3b8; font-weight: 800;">POENI</div>
+                <div id="royale-score-val" style="font-size: 1.1rem; font-weight: 900; color: #38bdf8;">0 ZLT</div>
+              </div>
+            </div>
+
+            <!-- Safe Zone Shrinking Warning Banner -->
+            <div class="royale-zone-banner" id="royale-zone-banner">
+              ⚠️ SIGURNA ZONA JE OTVORENA • SVI IGRAČI SU AKTIVNI
+            </div>
           </div>
-          <div class="royale-rank-badge">
-            <span>RANG:</span>
-            <span id="royale-rank-val" style="font-size: 1.1rem; color: #fbbf24;">#1</span>
+
+          <!-- Live Competitors Ranking Ticker -->
+          <div class="royale-panel-card royale-leaderboard-card">
+            <div class="royale-card-section-title">🏆 RANG LISTA RIVALA (LIVE)</div>
+            <div class="royale-leaderboard-strip" id="royale-leaderboard-strip">
+              <!-- Populated dynamically -->
+            </div>
           </div>
-          <div class="royale-score-box" style="text-align: right;">
-            <div style="font-size: 0.65rem; color: #94a3b8; font-weight: 800;">POENI</div>
-            <div id="royale-score-val" style="font-size: 1.1rem; font-weight: 900; color: #38bdf8;">0 ZLT</div>
+        </aside>
+
+        <!-- RIGHT WING: Smart Meta Targets, PvP Attacks & Round Actions -->
+        <aside class="royale-cockpit-wing royale-right-wing">
+          <!-- Smart Meta Target Selector -->
+          <div class="royale-panel-card royale-targeting-card">
+            <div class="royale-card-section-title">🎯 CILJ NAPADA (META)</div>
+            <div class="royale-smart-targets">
+              <div class="smart-targets-row">
+                <button type="button" class="btn-target-selector active" data-target="leader" id="btn-target-leader">
+                  <span class="target-icon">👑</span>
+                  <span class="target-name">#1 LIDER</span>
+                </button>
+                <button type="button" class="btn-target-selector" data-target="ahead" id="btn-target-ahead">
+                  <span class="target-icon">⚠️</span>
+                  <span class="target-name">RIVAL ISPRED</span>
+                </button>
+                <button type="button" class="btn-target-selector" data-target="revenge" id="btn-target-revenge">
+                  <span class="target-icon">🎯</span>
+                  <span class="target-name">OSVETA</span>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Safe Zone Shrinking Warning Banner -->
-        <div class="royale-zone-banner" id="royale-zone-banner">
-          ⚠️ SIGURNA ZONA JE OTVORENA • SVI IGRAČI SU AKTIVNI
-        </div>
-
-        <!-- Smart Meta Target Selector -->
-        <div class="royale-smart-targets">
-          <span class="smart-targets-label">🎯 CILJ NAPADA:</span>
-          <div class="smart-targets-row">
-            <button type="button" class="btn-target-selector active" data-target="leader" id="btn-target-leader">
-              <span class="target-icon">👑</span>
-              <span class="target-name">#1 LIDER</span>
-            </button>
-            <button type="button" class="btn-target-selector" data-target="ahead" id="btn-target-ahead">
-              <span class="target-icon">⚠️</span>
-              <span class="target-name">RIVAL ISPRED</span>
-            </button>
-            <button type="button" class="btn-target-selector" data-target="revenge" id="btn-target-revenge">
-              <span class="target-icon">🎯</span>
-              <span class="target-name">OSVETA</span>
-            </button>
+          <!-- PvP Attack Cards Deck -->
+          <div class="royale-panel-card royale-attacks-card">
+            <div class="royale-card-section-title">⚡ SPECIJALNI PVP NAPADI</div>
+            <div class="royale-attacks-deck">
+              <button type="button" class="btn-pvp-attack" id="btn-pvp-freeze" disabled>
+                <span class="pvp-card-icon">❄️</span>
+                <span class="pvp-card-info">
+                  <strong class="pvp-card-title">ZALEDI (3s)</strong>
+                  <span class="pvp-card-sub">Blokira spinove</span>
+                </span>
+                <span class="pvp-card-ready">LOCKED</span>
+              </button>
+              <button type="button" class="btn-pvp-attack" id="btn-pvp-smoke" disabled>
+                <span class="pvp-card-icon">💨</span>
+                <span class="pvp-card-info">
+                  <strong class="pvp-card-title">DIMNA BOMBA</strong>
+                  <span class="pvp-card-sub">Otežava dobitak</span>
+                </span>
+                <span class="pvp-card-ready">LOCKED</span>
+              </button>
+              <button type="button" class="btn-pvp-attack" id="btn-pvp-siphon" disabled>
+                <span class="pvp-card-icon">⚡</span>
+                <span class="pvp-card-info">
+                  <strong class="pvp-card-title">UKRADI POENE</strong>
+                  <span class="pvp-card-sub">25% poena mete</span>
+                </span>
+                <span class="pvp-card-ready">LOCKED</span>
+              </button>
+            </div>
           </div>
-        </div>
 
-        <!-- PvP Attack Cards Deck -->
-        <div class="royale-attacks-deck">
-          <button type="button" class="btn-pvp-attack" id="btn-pvp-freeze" disabled>
-            <span class="pvp-card-icon">❄️</span>
-            <span class="pvp-card-title">ZALEDI (3s)</span>
-            <span class="pvp-card-ready">LOCKED</span>
-          </button>
-          <button type="button" class="btn-pvp-attack" id="btn-pvp-smoke" disabled>
-            <span class="pvp-card-icon">💨</span>
-            <span class="pvp-card-title">DIMNA BOMBA</span>
-            <span class="pvp-card-ready">LOCKED</span>
-          </button>
-          <button type="button" class="btn-pvp-attack" id="btn-pvp-siphon" disabled>
-            <span class="pvp-card-icon">⚡</span>
-            <span class="pvp-card-title">UKRADI POENE</span>
-            <span class="pvp-card-ready">LOCKED</span>
-          </button>
-        </div>
-
-        <!-- Live Competitors Ranking Ticker -->
-        <div class="royale-leaderboard-strip" id="royale-leaderboard-strip">
-          <!-- Populated dynamically -->
-        </div>
-
-        <div class="royale-bottom-actions" style="display: flex; gap: 8px;">
-          <button type="button" class="btn-vault-action" id="btn-start-royale-round">
-            <span class="rbtn-txt-full">⚔️ Započni Novu 120s Rundu</span>
-            <span class="rbtn-txt-short">⚔️ Nova Runda</span>
-          </button>
-          <button type="button" class="btn-vault-action secondary" id="btn-exit-royale-round" style="flex: 0.5;">
-            <span class="rbtn-txt-full">🏳️ Odustani</span>
-            <span class="rbtn-txt-short">🏳️ Odustani</span>
-          </button>
-        </div>
+          <!-- Round Controls Deck -->
+          <div class="royale-panel-card royale-actions-card">
+            <div class="royale-bottom-actions" style="display: flex; gap: 8px;">
+              <button type="button" class="btn-vault-action" id="btn-start-royale-round">
+                <span class="rbtn-txt-full">⚔️ Započni 120s Rundu</span>
+                <span class="rbtn-txt-short">⚔️ Nova Runda</span>
+              </button>
+              <button type="button" class="btn-vault-action secondary" id="btn-exit-royale-round" style="flex: 0.5;">
+                <span class="rbtn-txt-full">🏳️ Odustani</span>
+                <span class="rbtn-txt-short">🏳️ Odustani</span>
+              </button>
+            </div>
+          </div>
+        </aside>
       </div>
 
       <!-- Universal Responsive Scaler: Guarantees full visibility of cylinder & lever on all devices -->

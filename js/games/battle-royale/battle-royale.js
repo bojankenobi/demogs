@@ -747,4 +747,10 @@ class SlotBattleRoyale {
   }
 }
 
-window.SlotBattleRoyale = SlotBattleRoyale;
+if (typeof window !== 'undefined') {
+  window.SlotBattleRoyale = SlotBattleRoyale;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = SlotBattleRoyale;
+}
