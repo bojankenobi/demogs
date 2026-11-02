@@ -346,14 +346,34 @@ class RoyalBlackjackGame {
   setPhase(phase) {
     this.gameState = phase;
 
+    const betRackWrap = document.getElementById('bj-bet-rack-wrap');
+    if (betRackWrap) {
+      if (phase === 'betting') {
+        betRackWrap.classList.remove('is-disabled');
+      } else {
+        betRackWrap.classList.add('is-disabled');
+      }
+    }
+
     if (this.bettingControls) {
-      this.bettingControls.style.display = phase === 'betting' ? 'flex' : 'none';
+      this.bettingControls.style.display = (phase === 'betting' || phase === 'dealing') ? 'flex' : 'none';
+      if (this.btnDeal) {
+        if (phase === 'dealing') {
+          this.btnDeal.disabled = true;
+          this.btnDeal.style.opacity = '0.6';
+          this.btnDeal.style.pointerEvents = 'none';
+        } else {
+          this.btnDeal.disabled = false;
+          this.btnDeal.style.opacity = '1';
+          this.btnDeal.style.pointerEvents = 'auto';
+        }
+      }
     }
     if (this.actionControls) {
-      this.actionControls.style.display = phase === 'player_turn' ? 'flex' : 'none';
+      this.actionControls.style.display = phase === 'player_turn' ? 'grid' : 'none';
     }
     if (this.roundOverControls) {
-      this.roundOverControls.style.display = phase === 'round_over' ? 'flex' : 'none';
+      this.roundOverControls.style.display = phase === 'round_over' ? 'grid' : 'none';
     }
   }
 
@@ -371,14 +391,20 @@ class RoyalBlackjackGame {
     this.hasInsurance = false;
     this.insuranceBet = 0;
 
-    if (this.dealerCardsEl) this.dealerCardsEl.innerHTML = '';
+    if (this.dealerCardsEl) {
+      this.dealerCardsEl.innerHTML = '<div class="bj-card-placeholder"></div><div class="bj-card-placeholder"></div>';
+    }
     if (this.dealerScoreEl) {
       this.dealerScoreEl.style.display = 'none';
       this.dealerScoreEl.textContent = '0';
     }
 
-    if (this.playerCardsEls[0]) this.playerCardsEls[0].innerHTML = '';
-    if (this.playerCardsEls[1]) this.playerCardsEls[1].innerHTML = '';
+    if (this.playerCardsEls[0]) {
+      this.playerCardsEls[0].innerHTML = '<div class="bj-card-placeholder"></div><div class="bj-card-placeholder"></div>';
+    }
+    if (this.playerCardsEls[1]) {
+      this.playerCardsEls[1].innerHTML = '';
+    }
 
     if (this.playerScoreEls[0]) this.playerScoreEls[0].style.display = 'none';
     if (this.playerScoreEls[1]) this.playerScoreEls[1].style.display = 'none';
@@ -510,7 +536,12 @@ class RoyalBlackjackGame {
       </div>
     `;
 
-    containerEl.appendChild(cardEl);
+    const placeholder = containerEl.querySelector('.bj-card-placeholder');
+    if (placeholder) {
+      placeholder.replaceWith(cardEl);
+    } else {
+      containerEl.appendChild(cardEl);
+    }
   }
 
   updatePlayerScore(handIndex) {
