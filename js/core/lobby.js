@@ -38,6 +38,17 @@ class CasinoLobby {
       });
     }
 
+    const menuLobbyBtn = document.getElementById('menu-opt-lobby');
+    if (menuLobbyBtn) {
+      menuLobbyBtn.addEventListener('click', () => {
+        if (window.igtApp && typeof window.igtApp.closeCasinoMenu === 'function') {
+          window.igtApp.closeCasinoMenu();
+        }
+        if (window.slotAudio) window.slotAudio.playClick();
+        setTimeout(() => this.openModal(), 120);
+      });
+    }
+
     if (this.closeBtn && this.modal) {
       this.closeBtn.addEventListener('click', () => {
         if (window.slotAudio) window.slotAudio.playClick();

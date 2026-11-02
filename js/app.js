@@ -2121,6 +2121,20 @@ class IGTApp {
     }
 
 
+    // Option 1: Izbor Igara (Lobi)
+    const optLobby = document.getElementById('menu-opt-lobby');
+    if (optLobby) {
+      optLobby.addEventListener('click', () => {
+        this.closeCasinoMenu();
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        setTimeout(() => {
+          if (window.casinoLobby && typeof window.casinoLobby.openModal === 'function') {
+            window.casinoLobby.openModal();
+          }
+        }, 120);
+      });
+    }
+
     // Option 2: Tournament
     const optTournament = document.getElementById('menu-opt-tournament');
     if (optTournament) {
@@ -2132,12 +2146,19 @@ class IGTApp {
       });
     }
 
-    // Option: VIP Vaučeri & Promocije
+    // Option 3: VIP Vaučeri & Promocije (Moji Vaučeri: Aktivni, Iskorišćeni, Istekli)
     const optVoucher = document.getElementById('menu-opt-voucher');
     if (optVoucher) {
       optVoucher.addEventListener('click', () => {
         this.closeCasinoMenu();
-        setTimeout(() => this.openVoucherModal(), 120);
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        setTimeout(() => {
+          if (typeof this.openMyVouchersModal === 'function') {
+            this.openMyVouchersModal('active');
+          } else {
+            this.openVoucherModal();
+          }
+        }, 120);
       });
     }
 

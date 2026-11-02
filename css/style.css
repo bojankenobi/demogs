@@ -2417,14 +2417,27 @@ body {
    MINIMALIST ICON-ONLY FOOTER CONTROLS
    Luxury Golden Medallions with Pure Vector Gold Icons
    ============================================================ */
-.aux-row {
+.aux-row,
+.footer-system-bar {
   width: 100%;
-  max-width: 470px;
+  max-width: 520px;
   margin-top: 10px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.footer-center-space {
+  flex: 1 1 auto;
+}
+
+.footer-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .btn-icon-mini {
@@ -12564,79 +12577,128 @@ body.free-spins-active .slot-cylinder-replica {
 }
 
 /* ==========================================================================
-   TABLET & MOBILE UNIFIED FOOTER & CASINO MENU STYLES
+   UNIVERSAL CLEAN EGT CONSOLE FOOTER & CASINO MENU STYLES
+   Secondary utility icons (Rules, PWA, Ambient, Hall, Tournament, Profile, Lang, Voucher)
+   are cleanly centralized inside the Main Menu across ALL screen sizes.
    ========================================================================== */
 
-/* Tablet & Mobile Media Query: Hide secondary buttons, give main controls room to breathe */
-@media (max-width: 900px) {
-  .desktop-only-icon {
-    display: none !important;
-  }
+/* Universal: Hide cluttered utility buttons from bottom bar across all devices */
+.desktop-only-icon,
+.btn-voucher-hud,
+.footer-system-hidden-store {
+  display: none !important;
+}
 
-  .aux-row {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    gap: 6px !important;
-    margin-top: 6px !important;
-    padding: 0 4px !important;
-  }
+/* Base clean EGT Console footer bar */
+.aux-row,
+.footer-system-bar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  max-width: 520px;
+  margin: 8px auto 0 auto !important;
+  padding: 0 4px !important;
+  box-sizing: border-box !important;
+}
 
-  .aux-row .btn-grand-game-select {
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-    max-width: 170px !important;
-    justify-content: center !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    padding: 6px 8px !important;
-    font-size: 0.68rem !important;
-  }
+.footer-center-space {
+  flex: 1 1 auto;
+}
 
-  .aux-row .btn-icon-mini {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    min-height: 36px !important;
-    aspect-ratio: 1 / 1 !important;
-    flex-shrink: 0 !important;
-    border-radius: 50% !important;
-  }
+.footer-right-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+}
 
-  .aux-row .btn-casino-menu {
-    flex-shrink: 0 !important;
-    padding: 0 10px !important;
-    height: 36px !important;
-    font-size: 0.7rem !important;
+.footer-right-actions .btn-quick-mute {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  aspect-ratio: 1 / 1 !important;
+  flex-shrink: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(14, 18, 28, 0.88) !important;
+  border: 1.5px solid rgba(212, 175, 55, 0.5) !important;
+  color: #ffd700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 215, 0, 0.25) !important;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  padding: 0 !important;
+}
+
+.footer-right-actions .btn-quick-mute:hover {
+  background: rgba(255, 215, 0, 0.18) !important;
+  border-color: #ffd700 !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.6) !important;
+}
+
+.footer-right-actions .btn-casino-menu {
+  flex-shrink: 0 !important;
+  height: 38px !important;
+  padding: 0 14px !important;
+  border-radius: 20px !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 1.2px !important;
+}
+
+/* Widescreen Desktop Expansion */
+@media (min-width: 1024px) {
+  .aux-row,
+  .footer-system-bar {
+    max-width: 820px !important;
+    padding: 0 12px !important;
+    margin-top: 12px !important;
+  }
+  .footer-right-actions {
+    gap: 12px !important;
+  }
+  .footer-right-actions .btn-quick-mute {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+  }
+  .footer-right-actions .btn-casino-menu {
+    height: 42px !important;
+    padding: 0 18px !important;
+    font-size: 0.82rem !important;
   }
 }
 
-@media (max-width: 380px) {
-  .aux-row {
-    gap: 4px !important;
+/* Mobile & Small Screens */
+@media (max-width: 480px) {
+  .aux-row,
+  .footer-system-bar {
+    max-width: 100% !important;
     padding: 0 2px !important;
+    margin-top: 5px !important;
   }
-
   .aux-row .btn-grand-game-select {
-    max-width: 130px !important;
+    max-width: 140px !important;
     padding: 4px 6px !important;
-    font-size: 0.62rem !important;
-  }
-
-  .aux-row .btn-icon-mini {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    min-height: 30px !important;
-  }
-
-  .aux-row .btn-casino-menu {
-    padding: 0 8px !important;
     font-size: 0.64rem !important;
-    height: 30px !important;
+  }
+  .footer-right-actions {
+    gap: 6px !important;
+  }
+  .footer-right-actions .btn-quick-mute {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+  }
+  .footer-right-actions .btn-casino-menu {
+    height: 34px !important;
+    padding: 0 10px !important;
+    font-size: 0.68rem !important;
   }
 }
 
