@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=104">
+  <link rel="stylesheet" href="css/style.css?v=105">
   <link rel="stylesheet" href="css/grand-hub.css?v=99">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -45,21 +45,12 @@
   </script>
 </head>
 <body>
-  <!-- Grand Slot VIP Splash Screen (2-Second Brand Intro) -->
+  <!-- Grand Slot VIP Splash Screen (2-Second Brand Intro: Clean Logo with Text) -->
   <div class="grand-splash-screen" id="grand-splash-screen">
     <div class="splash-center-content">
-      <div class="splash-flower-wrap">
-        <img src="assets/symbols/logo-flower.svg" alt="GrandSlot Cvet" class="splash-flower-logo">
-        <div class="splash-flower-halo"></div>
-      </div>
       <div class="splash-brand-wrap">
-        <img src="assets/logo.svg" alt="Grand Slot Club" class="splash-brand-logo">
-        <span class="splash-vip-tag">VIP CASINO &amp; CLUB TERMINAL</span>
+        <img src="assets/logo.svg" alt="Grand Slot" class="splash-brand-logo">
       </div>
-      <div class="splash-loader-bar">
-        <div class="splash-loader-progress"></div>
-      </div>
-      <div class="splash-status-note">UČITAVANJE KAZINO SALONA...</div>
     </div>
   </div>
 
@@ -1564,8 +1555,106 @@
     </footer>
   </main>
 
+  <!-- Grand Slot Initial Mode Selection (3 Pillars: Casino, Trezor, Battle) -->
+  <div class="modal-overlay grand-mode-select-overlay is-hidden" id="main-mode-select-modal">
+    <div class="grand-mode-select-card">
+      <div class="mode-select-header">
+        <img src="assets/logo.svg" alt="Grand Slot" class="mode-select-brand-logo">
+        <h2 class="mode-select-title">IZABERITE REŽIM IGRE</h2>
+        <p class="mode-select-subtitle">Dobrodošli u Grand Slot Club. Izaberite željeno iskustvo:</p>
+      </div>
+
+      <div class="mode-select-grid">
+        <!-- Pillar 1: Casino -->
+        <button type="button" class="mode-pillar-card pillar-casino" id="btn-select-mode-casino">
+          <div class="pillar-card-glow"></div>
+          <div class="pillar-badge badge-gold">KLASIČNO &amp; POPULARNO</div>
+          <div class="pillar-icon-wrap">
+            <span class="pillar-icon">🎰</span>
+          </div>
+          <div class="pillar-details">
+            <h3 class="pillar-title">CASINO SALON</h3>
+            <p class="pillar-desc">Slot mašine, stolovi i brze igre. Izaberite opuštenu igru ili dnevne misije sa zadacima.</p>
+          </div>
+          <span class="pillar-action-btn">OTVORI CASINO ›</span>
+        </button>
+
+        <!-- Pillar 2: Trezor -->
+        <button type="button" class="mode-pillar-card pillar-vault" id="btn-select-mode-vault">
+          <div class="pillar-card-glow"></div>
+          <div class="pillar-badge badge-red">ROGUE-LIKE RPG</div>
+          <div class="pillar-icon-wrap">
+            <span class="pillar-icon">🏛️</span>
+            <span class="pillar-sub-icon">🗝️</span>
+          </div>
+          <div class="pillar-details">
+            <h3 class="pillar-title">TREZOR PROVALA</h3>
+            <p class="pillar-desc">Pljačka sefova, borba protiv boss čuvara i RPG talenat drvo.</p>
+            <div class="pillar-slot-lock">🔒 Automatski 3x3 slot</div>
+          </div>
+          <span class="pillar-action-btn">POKRENI PROVALU ›</span>
+        </button>
+
+        <!-- Pillar 3: Battle Royale -->
+        <button type="button" class="mode-pillar-card pillar-royale" id="btn-select-mode-royale">
+          <div class="pillar-card-glow"></div>
+          <div class="pillar-badge badge-blue">MULTIPLAYER LIVE</div>
+          <div class="pillar-icon-wrap">
+            <span class="pillar-icon">⚔️</span>
+            <span class="pillar-sub-icon">👑</span>
+          </div>
+          <div class="pillar-details">
+            <h3 class="pillar-title">BATTLE ROYALE</h3>
+            <p class="pillar-desc">120s live arena protiv drugih igrača. Zaledi, dimna bomba i borba za Top 3 nagrade.</p>
+            <div class="pillar-slot-lock">🔒 Automatski 3x3 slot</div>
+          </div>
+          <span class="pillar-action-btn">ULAZAK U ARENU ›</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Casino Experience Style: Casual vs Daily Sa Taskovima -->
+  <div class="modal-overlay casino-style-select-overlay is-hidden" id="casino-style-select-modal">
+    <div class="casino-style-select-card">
+      <div class="style-select-header">
+        <div class="style-select-badge">🎰 CASINO SALON</div>
+        <h2 class="style-select-title">IZABERITE STIL IGRE</h2>
+        <p class="style-select-subtitle">Kako želite da igrate u Kazino Salonu danas?</p>
+      </div>
+
+      <div class="style-options-grid">
+        <!-- Option A: Casual -->
+        <button type="button" class="casino-style-option-card style-casual" id="btn-style-casual">
+          <div class="style-opt-icon">☕</div>
+          <div class="style-opt-content">
+            <h3 class="style-opt-title">CASUAL IGRA</h3>
+            <span class="style-opt-tag">BEZ ZADATAKA • ČISTA ZABAVA</span>
+            <p class="style-opt-desc">Igrajte opušteno, svojim tempom, bez pritiska dnevnih taskova i tajmera. Čisto kazino iskustvo.</p>
+          </div>
+          <span class="style-opt-btn">IZABERI CASUAL ›</span>
+        </button>
+
+        <!-- Option B: Daily sa taskovima -->
+        <button type="button" class="casino-style-option-card style-daily" id="btn-style-daily">
+          <div class="style-opt-icon">🎯</div>
+          <div class="style-opt-content">
+            <h3 class="style-opt-title">DAILY SA TASKOVIMA</h3>
+            <span class="style-opt-tag tag-reward">DNEVNE MISIJE • 7-DNEVNI NIZ • VAUČERI</span>
+            <p class="style-opt-desc">Rešavajte dnevne zadatke, skupljajte streak poene i osvajajte bonus zlatnike i ekskluzivne vaučere!</p>
+          </div>
+          <span class="style-opt-btn gold">IZABERI DAILY SA TASKOVIMA ›</span>
+        </button>
+      </div>
+
+      <div class="style-select-footer">
+        <button type="button" class="btn-style-back" id="btn-back-to-main-modes">◀ NAZAD NA IZBOR REŽIMA</button>
+      </div>
+    </div>
+  </div>
+
   <!-- IGT Game Selection Modal (Luxury Casino Multigame Terminal) -->
-  <div class="modal-overlay egt-lobby-overlay active" id="egt-games-modal">
+  <div class="modal-overlay egt-lobby-overlay is-hidden" id="egt-games-modal">
     <div class="egt-cabinet-frame">
       <!-- IGT Cabinet Top Bezel / Live Jackpot Strip -->
       <div class="egt-cabinet-top">
@@ -3390,7 +3479,7 @@
   <script src="js/lib/peerjs.min.js"></script>
   <script src="js/lib/qrcode.min.js"></script>
   <script src="js/core/admin-bridge-v2.js?v=80"></script>
-  <script src="js/core/lobby.js?v=104"></script>
+  <script src="js/core/lobby.js?v=105"></script>
 
   <!-- Game Modules -->
   <script src="js/games/classic/symbols.js?v=75"></script>
@@ -3399,8 +3488,8 @@
   <script src="js/games/royal3x3/royal3x3.js?v=75"></script>
   <script src="js/games/mines/mines.js?v=75"></script>
   <script src="js/games/mines/mini-mines.js?v=75"></script>
-  <script src="js/games/vault-crawler/vault-crawler.js?v=88"></script>
-  <script src="js/games/battle-royale/battle-royale.js?v=102"></script>
+  <script src="js/games/vault-crawler/vault-crawler.js?v=89"></script>
+  <script src="js/games/battle-royale/battle-royale.js?v=103"></script>
   <script src="js/games/crash/crash.js?v=97"></script>
   <script src="js/games/plinko/plinko.js?v=97"></script>
   <script src="js/games/blackjack/blackjack.js?v=97"></script>
@@ -3408,6 +3497,6 @@
   <script src="js/games/casino-holdem/casino-holdem.js?v=103"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=104"></script>
+  <script src="js/app.js?v=105"></script>
 </body>
 </html>

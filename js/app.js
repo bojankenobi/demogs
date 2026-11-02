@@ -418,6 +418,10 @@ class IGTApp {
     }
     this.sessionStartTime = Date.now();
     this.currentGrandMode = 'casino';
+    this.casinoStyle = 'daily';
+    try {
+      this.casinoStyle = localStorage.getItem('gsc_casino_style') || 'daily';
+    } catch (_) {}
     if (typeof document !== 'undefined' && document.body) {
       document.body.classList.remove('theme-casino', 'theme-vault', 'theme-royale');
       document.body.classList.add('theme-casino');
@@ -448,6 +452,69 @@ class IGTApp {
       });
     });
 
+    // Main 3-Pillar Experience Modal Triggers
+    const btnModeCasino = document.getElementById('btn-select-mode-casino');
+    if (btnModeCasino) {
+      btnModeCasino.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        this.openCasinoStyleModal();
+      });
+    }
+
+    const btnModeVault = document.getElementById('btn-select-mode-vault');
+    if (btnModeVault) {
+      btnModeVault.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        this.closeMainModeModal();
+        this.switchGrandMode('vault');
+      });
+    }
+
+    const btnModeRoyale = document.getElementById('btn-select-mode-royale');
+    if (btnModeRoyale) {
+      btnModeRoyale.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        this.closeMainModeModal();
+        this.switchGrandMode('royale');
+      });
+    }
+
+    // Casino Style Selection (Casual vs Daily sa taskovima)
+    const btnStyleCasual = document.getElementById('btn-style-casual');
+    if (btnStyleCasual) {
+      btnStyleCasual.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        this.setCasinoStyle('casual');
+      });
+    }
+
+    const btnStyleDaily = document.getElementById('btn-style-daily');
+    if (btnStyleDaily) {
+      btnStyleDaily.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        this.setCasinoStyle('daily');
+      });
+    }
+
+    const btnBackToMainModes = document.getElementById('btn-back-to-main-modes');
+    if (btnBackToMainModes) {
+      btnBackToMainModes.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        this.openMainModeModal();
+      });
+    }
+
+    // Allow clicking the main brand logo to open the 3-pillar mode selector anytime
+    const brandLogo = document.querySelector('.main-brand-logo');
+    if (brandLogo) {
+      brandLogo.style.cursor = 'pointer';
+      brandLogo.title = 'Izbor Glavnog Režima (Kazino Salon, Trezor Provala, Battle Royale)';
+      brandLogo.addEventListener('click', () => {
+        if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+        this.openMainModeModal();
+      });
+    }
+
     // Prestige Hub / Kuća Slavnih Trigger
     const prestigeTab = document.getElementById('hub-btn-prestige');
     if (prestigeTab) {
@@ -459,6 +526,72 @@ class IGTApp {
     }
 
     this.updateModeQuotaPills();
+  }
+
+  openMainModeModal() {
+    this.closeCasinoStyleModal();
+    const modal = document.getElementById('main-mode-select-modal');
+    if (modal) {
+      modal.classList.remove('is-hidden');
+      modal.classList.add('active');
+    }
+  }
+
+  closeMainModeModal() {
+    const modal = document.getElementById('main-mode-select-modal');
+    if (modal) {
+      modal.classList.add('is-hidden');
+      modal.classList.remove('active');
+    }
+  }
+
+  openCasinoStyleModal() {
+    this.closeMainModeModal();
+    const modal = document.getElementById('casino-style-select-modal');
+    if (modal) {
+      modal.classList.remove('is-hidden');
+      modal.classList.add('active');
+    }
+  }
+
+  closeCasinoStyleModal() {
+    const modal = document.getElementById('casino-style-select-modal');
+    if (modal) {
+      modal.classList.add('is-hidden');
+      modal.classList.remove('active');
+    }
+  }
+
+  setCasinoStyle(style) {
+    this.casinoStyle = style;
+    try {
+      localStorage.setItem('gsc_casino_style', style);
+    } catch (_) {}
+
+    const missionsBar = document.getElementById('daily-missions-bar');
+    if (missionsBar) {
+      missionsBar.style.display = (style === 'daily') ? 'flex' : 'none';
+      if (style === 'daily' && this.dailyMissionsManager) {
+        this.dailyMissionsManager.renderBar();
+      }
+    }
+
+    this.closeCasinoStyleModal();
+    this.closeMainModeModal();
+    this.switchGrandMode('casino');
+
+    // Otvara izbor igara odmah nakon izbora stila kazina
+    if (this.lobby && typeof this.lobby.openModal === 'function') {
+      this.lobby.openModal();
+    }
+
+    if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
+      if (style === 'casual') {
+        window.slotNotifications.show('☕ Kazino Salon: Pokrenut CASUAL stil igre (čista zabava bez zadataka).', 'info');
+      } else {
+        window.slotNotifications.show('🎯 Kazino Salon: Pokrenut DAILY stil sa aktivnim zadacima i nagradama!', 'info');
+      }
+    }
   }
 
   initDailyGrantAndAudit() {
@@ -592,6 +725,32 @@ class IGTApp {
   switchGrandMode(mode) {
     if (window.slotAudio) window.slotAudio.playClick();
 
+    // 1. Forfeit protection: Leaving active Trezor mid-run wipes all heist loot
+    if (this.currentGrandMode === 'vault' && mode !== 'vault') {
+      if (this.vaultCrawler && this.vaultCrawler.isActive && !this.vaultCrawler.isRunResolved) {
+        const confirmExit = confirm('⚠️ NAPUŠTANJE TREZORA:\nDa li ste sigurni da želite da izađete pre kraja provale?\n\nIzlazak pre pobede ili poraza briše SVE zlatnike (ZLT) koje ste zaradili tokom ove provale!');
+        if (!confirmExit) {
+          const tabs = document.querySelectorAll('.hub-mode-tab');
+          tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-mode') === 'vault'));
+          return;
+        }
+        this.vaultCrawler.forfeitRun();
+      }
+    }
+
+    // 2. Forfeit protection: Leaving active Battle Royale mid-match wipes score & forfeits buy-in
+    if (this.currentGrandMode === 'royale' && mode !== 'royale') {
+      if (this.battleRoyale && this.battleRoyale.isActive && !this.battleRoyale.isMatchCompleted) {
+        const confirmExit = confirm('⚠️ NAPUŠTANJE BATTLE ROYALE ARENE:\nDa li ste sigurni da želite da napustite meč?\n\nIzlazak pre kraja meča briše sve privremene poene i nepovratno gubite uplaćenu kotizaciju od 100 ZLT!');
+        if (!confirmExit) {
+          const tabs = document.querySelectorAll('.hub-mode-tab');
+          tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-mode') === 'royale'));
+          return;
+        }
+        this.battleRoyale.forfeitMatch();
+      }
+    }
+
     // Check operator daily access limits for Trezor and Battle Royale
     if (mode === 'vault' || mode === 'royale') {
       const playerId = this.playerTracker?.profile?.id || (this.dailyAccessManager ? this.dailyAccessManager.getCurrentPlayerId() : 'gsc_player_1');
@@ -641,14 +800,17 @@ class IGTApp {
     ];
 
     if (mode === 'vault' || mode === 'royale') {
-      // If we are currently on a non-slot standalone game, unmount it & remember it
-      if (this.lobby && standaloneGameIds.includes(this.lobby.activeGameId)) {
-        this.savedCasinoGameId = this.lobby.activeGameId;
-        if (this.lobby.activeGame && typeof this.lobby.activeGame.unmount === 'function') {
-          this.lobby.activeGame.unmount();
+      // Strict rule: in Trezor and Battle Royale, only Royal 3x3 slot is permitted!
+      if (this.lobby) {
+        if (standaloneGameIds.includes(this.lobby.activeGameId)) {
+          this.savedCasinoGameId = this.lobby.activeGameId;
+          if (this.lobby.activeGame && typeof this.lobby.activeGame.unmount === 'function') {
+            this.lobby.activeGame.unmount();
+          }
         }
-        // Switch lobby to royal3x3 slot so reel spins attack the vault boss / score points!
-        this.lobby.switchGame('royal3x3');
+        if (this.lobby.activeGameId !== 'royal3x3') {
+          this.lobby.switchGame('royal3x3');
+        }
       }
 
       // Hide all standalone views
@@ -670,6 +832,10 @@ class IGTApp {
       if (controlsPanel) controlsPanel.style.display = 'flex';
       const bannerWrap = document.querySelector('.status-banner-wrap');
       if (bannerWrap) bannerWrap.style.display = 'block';
+
+      // Hide daily missions bar in Vault and Royale
+      const missionsBar = document.getElementById('daily-missions-bar');
+      if (missionsBar) missionsBar.style.display = 'none';
 
       if (mode === 'vault') {
         if (this.battleRoyale) this.battleRoyale.unmount();
@@ -693,6 +859,12 @@ class IGTApp {
         container.classList.remove('in-vault-mode', 'in-royale-mode');
       }
 
+      // Restore daily missions bar according to chosen casino style (casual vs daily)
+      const missionsBar = document.getElementById('daily-missions-bar');
+      if (missionsBar) {
+        missionsBar.style.display = (this.casinoStyle === 'daily') ? 'flex' : 'none';
+      }
+
       // If user came to Trezor from Crash, Plinko, Blackjack or Mines, restore that game!
       if (this.savedCasinoGameId) {
         const restoreId = this.savedCasinoGameId;
@@ -705,11 +877,15 @@ class IGTApp {
       }
     }
 
+    if (this.lobby && typeof this.lobby.updateCurrentLabel === 'function') {
+      this.lobby.updateCurrentLabel();
+    }
+
     if (typeof window.updateSlotScale === 'function') {
       window.updateSlotScale();
     }
 
-    if (this.dailyMissionsManager) {
+    if (this.dailyMissionsManager && this.casinoStyle === 'daily' && mode === 'casino') {
       this.dailyMissionsManager.renderBar();
     }
   }
@@ -2920,15 +3096,16 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         splashEl.style.display = 'none';
 
-        // Check if user has claimed/saved their welcome VIP voucher
-        const isClaimed = localStorage.getItem('gsc_vip_voucher_claimed') === 'true';
-        if (!isClaimed) {
-          if (app && typeof app.openVoucherModal === 'function') {
-            app.openVoucherModal();
-          }
+        // Nakon 2 sekunde pojavljuju se tri stavke za izbor: Kazino, Trezor, Battle Royale
+        if (app && typeof app.openMainModeModal === 'function') {
+          app.openMainModeModal();
         }
       }, 500);
     }, 2000);
+  } else {
+    if (app && typeof app.openMainModeModal === 'function') {
+      app.openMainModeModal();
+    }
   }
 
   // PWA Service Worker

@@ -122,6 +122,12 @@ class CasinoLobby {
   }
 
   openModal() {
+    if (window.slotApp && (window.slotApp.currentGrandMode === 'vault' || window.slotApp.currentGrandMode === 'royale')) {
+      if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
+        window.slotNotifications.show('🔒 U ovom režimu je zaključan isključivo Royal 3x3 slot za sve borbe!', 'info');
+      }
+      return;
+    }
     this.updateLobbyJackpots();
     if (this.modal) {
       this.modal.classList.remove('is-hidden');
@@ -143,6 +149,16 @@ class CasinoLobby {
 
   switchGame(gameId) {
     if (this.activeGameId === gameId) return;
+
+    // Strict restriction: in Vault and Royale only royal3x3 slot is permitted!
+    if (window.slotApp && (window.slotApp.currentGrandMode === 'vault' || window.slotApp.currentGrandMode === 'royale')) {
+      if (gameId !== 'royal3x3') {
+        if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
+          window.slotNotifications.show('🔒 U ovom režimu je zaključan isključivo Royal 3x3 slot!', 'warning');
+        }
+        return;
+      }
+    }
 
     if (gameId === 'vault' || gameId === 'royale') {
       if (window.slotApp && typeof window.slotApp.switchGrandMode === 'function') {
@@ -201,7 +217,9 @@ class CasinoLobby {
 
   updateSelectorUI(gameId) {
     if (this.currentLabel) {
-      if (gameId === 'fullfocus') {
+      if (window.slotApp && (window.slotApp.currentGrandMode === 'vault' || window.slotApp.currentGrandMode === 'royale')) {
+        this.currentLabel.textContent = '🔒 ROYAL 3x3';
+      } else if (gameId === 'fullfocus') {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameFullFocus') : '3x3 FULL FOCUS';
       } else if (gameId === 'royal3x3') {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameRoyal3x3') : 'ROYAL 3x3';

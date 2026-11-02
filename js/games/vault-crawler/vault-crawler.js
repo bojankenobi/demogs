@@ -28,6 +28,11 @@ class VaultCrawler {
     this.vaultKeys = 0;
     this.totalLootZlt = 0;
 
+    // Run-specific forfeit tracking (early exit wipes loot)
+    this.initialRsdBalance = null;
+    this.currentRunLootZlt = 0;
+    this.isRunResolved = false;
+
     this.currentEnemy = null;
     this.isCombatActive = false;
 
@@ -439,8 +444,14 @@ class VaultCrawler {
     const btnResetRun = document.getElementById('btn-vault-reset-run');
     if (btnResetRun) {
       btnResetRun.addEventListener('click', () => {
-        if (confirm('Želite li da započnete novu provalu od Sprata 1? Sakupljeni ključevi, plen i talenat-drvo se zadržavaju.')) {
-          this.resetRun();
+        if (!this.isRunResolved && this.currentRunLootZlt > 0) {
+          if (confirm(`⚠️ PREKID PROVALE:\nDa li ste sigurni da želite novu provalu?\nPrekid provale pre pobede ili poraza briše ${this.currentRunLootZlt} ZLT zarađenih u ovoj provali!`)) {
+            this.forfeitRun();
+          }
+        } else {
+          if (confirm('Želite li da započnete novu provalu od Sprata 1? Sakupljeni ključevi i talenat-drvo se zadržavaju.')) {
+            this.resetRun();
+          }
         }
       });
     }
@@ -535,6 +546,13 @@ class VaultCrawler {
     const dock = document.getElementById('vault-mobile-dock');
     if (dock) dock.style.display = 'flex';
 
+    // Snapshot player balance upon entry to track heist earnings
+    if (this.wallet && this.initialRsdBalance === null) {
+      this.initialRsdBalance = typeof this.wallet.rsdBalance === 'number' ? this.wallet.rsdBalance : (this.wallet.balance || 0);
+      this.currentRunLootZlt = 0;
+      this.isRunResolved = false;
+    }
+
     // God tier operator perk: ensure ample keys and max health
     if (this.isGodPlayer()) {
       if (this.vaultKeys < 99) {
@@ -550,6 +568,27 @@ class VaultCrawler {
     this.updateHUD();
   }
 
+  forfeitRun() {
+    if (!this.isRunResolved && this.wallet) {
+      if (typeof this.initialRsdBalance === 'number') {
+        this.wallet.rsdBalance = this.initialRsdBalance;
+      } else if (typeof this.currentRunLootZlt === 'number' && this.currentRunLootZlt > 0) {
+        this.wallet.rsdBalance = Math.max(0, (this.wallet.rsdBalance || 0) - this.currentRunLootZlt);
+      }
+      if (typeof this.wallet.saveState === 'function') this.wallet.saveState();
+      if (typeof this.wallet.updateUI === 'function') this.wallet.updateUI();
+
+      this.isRunResolved = true;
+      this.currentRunLootZlt = 0;
+      this.initialRsdBalance = null;
+      this.resetRun();
+
+      if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
+        window.slotNotifications.show('🏳️ NAPUSTILI STE TREZOR: Obrisana je sva zarada iz ove provale jer ste izašli pre kraja!', 'warning');
+      }
+    }
+  }
+
   unmount() {
     this.isActive = false;
     if (this.stageView) this.stageView.style.display = 'none';
@@ -562,6 +601,13 @@ class VaultCrawler {
     this.closeVictoryModal();
     this.closeShopModal();
     this.closeFloorsModal();
+
+    // If player leaves Trezor before victory or defeat, wipe all run loot!
+    if (!this.isRunResolved && this.currentRunLootZlt > 0) {
+      this.forfeitRun();
+    }
+    this.initialRsdBalance = null;
+    this.currentRunLootZlt = 0;
   }
 
   initCurrentFloor() {
@@ -904,6 +950,7 @@ class VaultCrawler {
     // ZLT Loot awarded
     const lootWon = Math.round((Math.floor(Math.random() * 200) + 150) * magnetBoost);
     this.totalLootZlt += lootWon;
+    this.currentRunLootZlt = (this.currentRunLootZlt || 0) + lootWon;
     if (this.wallet && typeof this.wallet.addFictionalRsd === 'function') {
       this.wallet.addFictionalRsd(lootWon);
     }
@@ -1021,6 +1068,9 @@ class VaultCrawler {
 
       if (this.floor >= this.maxFloors) {
         this.setLog('👑 Opljačkao si celokupni Glavni Sef Grand Slot Cluba! Čestitamo!');
+        this.isRunResolved = true;
+        this.currentRunLootZlt = 0;
+        this.initialRsdBalance = null;
         this.resetRun();
       } else {
         this.floor++;
@@ -1075,6 +1125,9 @@ class VaultCrawler {
 
   handlePlayerDefeated() {
     this.isCombatActive = false;
+    this.isRunResolved = true;
+    this.currentRunLootZlt = 0;
+    this.initialRsdBalance = null;
     this.setLog('💀 Obezbeđenje te je savladalo! Provala je propala, ali sakupljeni ključevi su sačuvani.');
     this.updateHUD();
 
