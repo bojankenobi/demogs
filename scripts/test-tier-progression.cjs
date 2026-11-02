@@ -228,3 +228,5 @@ console.log('✓ All DOM components, CSS rules, and Admin controls verified');
 console.log('\n===============================================================');
 console.log('🎉 ALL MULTI-TIER PROGRESSION & LOYALTY TESTS PASSED 100%! 🎉');
 console.log('===============================================================');
+
+process.exit(0);

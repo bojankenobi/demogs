@@ -4356,48 +4356,69 @@ body {
 
 .grand-jp-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 5px 8px;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 8px;
   border-radius: 8px;
   background: linear-gradient(180deg, #221406 0%, #0d0702 100%);
   border: 1px solid rgba(255, 215, 0, 0.4);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  text-align: center;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .grand-jp-card.jp-silver {
-  border-color: rgba(226, 232, 240, 0.5);
-  box-shadow: 0 0 8px rgba(226, 232, 240, 0.2);
+  border-color: rgba(203, 213, 225, 0.5);
+  box-shadow: 0 0 10px rgba(203, 213, 225, 0.2);
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%);
 }
 
 .grand-jp-card.jp-gold {
-  border-color: rgba(255, 215, 0, 0.7);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.25);
+  background: linear-gradient(180deg, rgba(69, 39, 10, 0.5) 0%, rgba(26, 15, 3, 0.8) 100%);
 }
 
 .grand-jp-card.jp-diamond {
-  border-color: rgba(0, 240, 255, 0.6);
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
-}
-
-.grand-jp-icon {
-  font-size: 1.15rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+  border-color: rgba(6, 182, 212, 0.6);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+  background: linear-gradient(180deg, rgba(8, 51, 68, 0.5) 0%, rgba(4, 24, 33, 0.8) 100%);
 }
 
 .grand-jp-meta {
   display: flex;
   flex-direction: column;
-  line-height: 1.1;
-  text-align: left;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.15;
+  text-align: center;
+  width: 100%;
 }
 
 .grand-jp-name {
   font-family: 'Cinzel', serif;
-  font-size: 0.58rem;
-  color: #cca452;
-  font-weight: 800;
-  letter-spacing: 0.8px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.grand-jp-card.jp-silver .grand-jp-name {
+  color: #cbd5e1;
+  text-shadow: 0 0 6px rgba(203, 213, 225, 0.5);
+}
+
+.grand-jp-card.jp-gold .grand-jp-name {
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+}
+
+.grand-jp-card.jp-diamond .grand-jp-name {
+  color: #22d3ee;
+  text-shadow: 0 0 8px rgba(34, 211, 238, 0.5);
 }
 
 .grand-jp-val {
@@ -4524,90 +4545,95 @@ body {
 .egt-card-ribbon {
   position: absolute;
   top: 8px;
-  left: -26px;
-  transform: rotate(-35deg);
-  width: 95px;
+  right: 10px;
+  left: auto;
+  transform: none;
+  width: auto;
   text-align: center;
   font-family: 'Cinzel', serif;
-  font-size: 0.52rem;
+  font-size: 0.58rem;
   font-weight: 900;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   color: #fff;
-  padding: 2px 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
-  z-index: 3;
+  padding: 3px 8px;
+  border-radius: 999px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.7);
+  z-index: 5;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
-.ribbon-gold { background: linear-gradient(90deg, #d49514, #7a4b00); color: #fff; }
-.ribbon-red { background: linear-gradient(90deg, #d32f2f, #b71c1c); }
-.ribbon-cyan { background: linear-gradient(90deg, #0097a7, #006064); }
-.ribbon-green { background: linear-gradient(90deg, #2e7d32, #1b5e20); }
+.ribbon-gold { background: linear-gradient(135deg, rgba(212, 149, 20, 0.95), rgba(122, 75, 0, 0.95)); border-color: rgba(255, 215, 0, 0.6); }
+.ribbon-red { background: linear-gradient(135deg, rgba(211, 47, 47, 0.95), rgba(183, 28, 28, 0.95)); border-color: rgba(255, 100, 100, 0.6); }
+.ribbon-cyan { background: linear-gradient(135deg, rgba(0, 151, 167, 0.95), rgba(0, 96, 100, 0.95)); border-color: rgba(0, 229, 255, 0.6); }
+.ribbon-green { background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(27, 94, 32, 0.95)); border-color: rgba(105, 240, 174, 0.6); }
 
 /* Luxury Poster Artwork Frame */
 .grand-card-poster {
   width: 100%;
-  max-width: 190px;
-  height: 94px;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 215, 0, 0.4);
+  max-width: 100%;
+  height: 106px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 215, 0, 0.35);
   position: relative;
   overflow: hidden;
-  margin: 6px 0 8px;
+  margin: 6px 0 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 3px 8px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.85), 0 4px 12px rgba(0, 0, 0, 0.7);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
 }
 
 @media (max-width: 480px) {
   .grand-card-poster {
-    height: 82px;
-    margin: 4px 0 6px;
+    height: 88px;
+    margin: 4px 0 8px;
   }
 }
 
 .poster-classic {
-  background: radial-gradient(circle at 50% 40%, #3d2407 0%, #150b01 100%);
+  background: radial-gradient(circle at 50% 45%, #3d2407 0%, #150b01 100%);
 }
 
 .poster-royal {
-  background: radial-gradient(circle at 50% 40%, #3e0c18 0%, #130206 100%);
+  background: radial-gradient(circle at 50% 45%, #3e0c18 0%, #130206 100%);
 }
 
 .poster-focus {
-  background: radial-gradient(circle at 50% 40%, #0c2d3a 0%, #030f14 100%);
+  background: radial-gradient(circle at 50% 45%, #0c2d3a 0%, #030f14 100%);
 }
 
 .poster-mines {
-  background: radial-gradient(circle at 50% 40%, #123320 0%, #041209 100%);
+  background: radial-gradient(circle at 50% 45%, #123320 0%, #041209 100%);
 }
 
 .poster-xtension {
-  background: radial-gradient(circle at 50% 40%, #3d2c00 0%, #150f00 100%);
+  background: radial-gradient(circle at 50% 45%, #3d2c00 0%, #150f00 100%);
 }
 
 .poster-symbols-cluster {
   position: relative;
   width: 100%;
-  height: 64px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .poster-hero-sym {
-  width: 52px;
-  height: 52px;
+  width: 58px;
+  height: 58px;
   object-fit: contain;
   position: relative;
   z-index: 2;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 12px rgba(255, 215, 0, 0.65));
   animation: heroSymFloat 3s infinite ease-in-out alternate;
 }
 
 .poster-hero-sym.bomb-hero {
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(255, 23, 68, 0.7));
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 12px rgba(255, 23, 68, 0.75));
 }
 
 @keyframes heroSymFloat {
@@ -4617,72 +4643,67 @@ body {
 
 .poster-sub-sym {
   position: absolute;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
-  opacity: 0.75;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+  opacity: 0.8;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.85));
   z-index: 1;
 }
 
 .poster-sub-sym.sym-left {
-  left: 12px;
-  transform: rotate(-12deg) scale(0.9);
+  left: 18px;
+  transform: rotate(-14deg) scale(0.92);
 }
 
 .poster-sub-sym.sym-right {
-  right: 12px;
-  transform: rotate(12deg) scale(0.9);
+  right: 18px;
+  transform: rotate(14deg) scale(0.92);
 }
 
 .poster-specs-tag {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.95) 100%);
-  border-top: 1px solid rgba(255, 215, 0, 0.3);
-  font-family: 'Cinzel', serif;
-  font-size: 0.52rem;
-  font-weight: 800;
-  color: #ffd700;
-  letter-spacing: 0.6px;
-  padding: 2px 0;
-  text-align: center;
+  display: none !important;
 }
 
 .egt-card-details {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   width: 100%;
 }
 
 .egt-card-title {
   font-family: 'Cinzel', serif;
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   font-weight: 900;
   color: #fff;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
+  letter-spacing: 0.8px;
+  margin-bottom: 3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-transform: uppercase;
 }
 
 @media (max-width: 480px) {
   .egt-card-title {
-    font-size: 0.7rem;
+    font-size: 0.74rem;
   }
 }
 
 .egt-card-sub {
   font-size: 0.58rem;
-  color: #aaa;
-  line-height: 1.2;
+  color: #94a3b8;
+  line-height: 1.25;
+  min-height: 24px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 @media (max-width: 480px) {
   .egt-card-sub {
     font-size: 0.52rem;
+    min-height: 22px;
   }
 }
 
@@ -6017,14 +6038,41 @@ body {
 
 /* Poster Artwork for Grand Crash in Lobby */
 .poster-crash {
-  background: radial-gradient(circle at 50% 40%, #1e1b4b 0%, #070714 100%);
+  background: radial-gradient(circle at 50% 45%, #1e1b4b 0%, #070714 100%);
 }
 
-.poster-crash-rocket {
-  font-size: 2.4rem;
+.poster-crash-art {
+  position: relative;
+  width: 76px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.poster-rocket-icon {
+  font-size: 2.3rem;
   line-height: 1;
-  filter: drop-shadow(0 0 12px #38bdf8) drop-shadow(0 0 20px #fbbf24);
+  filter: drop-shadow(0 0 12px #38bdf8) drop-shadow(0 0 18px #fbbf24);
+  transform: rotate(-25deg);
   animation: heroSymFloat 2.4s infinite ease-in-out alternate;
+  z-index: 2;
+}
+
+.poster-radar-glow {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.28) 0%, rgba(56, 189, 248, 0.04) 60%, transparent 70%);
+  border: 1px dashed rgba(56, 189, 248, 0.45);
+  animation: radarSpin 6s linear infinite;
+  z-index: 1;
+}
+
+@keyframes radarSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 480px) {
@@ -6404,14 +6452,37 @@ body {
 
 /* Poster Artwork for Plinko in Lobby */
 .poster-plinko {
-  background: radial-gradient(circle at 50% 40%, #1c1917 0%, #09090b 100%);
+  background: radial-gradient(circle at 50% 45%, #23120f 0%, #0d0605 100%);
 }
 
-.poster-plinko-pyramid {
-  font-size: 2.2rem;
+.poster-plinko-art {
+  position: relative;
+  width: 76px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.poster-plinko-orb {
+  font-size: 1.8rem;
   line-height: 1;
-  filter: drop-shadow(0 0 12px #ef4444) drop-shadow(0 0 20px #fbbf24);
-  animation: heroSymFloat 2.4s infinite ease-in-out alternate;
+  filter: drop-shadow(0 0 10px #ef4444) drop-shadow(0 0 18px #f59e0b);
+  animation: heroSymFloat 2.2s infinite ease-in-out alternate;
+  z-index: 2;
+}
+
+.poster-plinko-pegs {
+  display: flex;
+  gap: 12px;
+  color: #fbbf24;
+  font-size: 0.95rem;
+  line-height: 1;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 6px #f59e0b);
+  z-index: 1;
 }
 
 @media (max-width: 480px) {
@@ -7324,63 +7395,117 @@ body {
   color: #94a3b8;
 }
 
-/* Poster in Lobby */
+/* Poster in Lobby: Blackjack */
 .poster-blackjack {
-  background: radial-gradient(circle at 50% 40%, #0f2e20 0%, #03140e 100%);
-}
-
-.poster-card-ace,
-.poster-card-jack {
-  font-size: 2.2rem;
-  line-height: 1;
-  filter: drop-shadow(0 0 10px #fbbf24);
-  animation: heroSymFloat 2.4s infinite ease-in-out alternate;
-}
-
-.poster-card-jack {
-  margin-left: -18px;
-  animation-delay: 0.3s;
+  background: radial-gradient(circle at 50% 45%, #0f2e20 0%, #03140e 100%);
 }
 
 /* Poster Video Poker in Lobby Modal */
 .poster-videopoker {
-  background: radial-gradient(circle at 50% 40%, #0b1e38 0%, #030812 100%);
-}
-
-.poster-card-royal {
-  font-size: 2rem;
-  line-height: 1;
-  filter: drop-shadow(0 0 10px #fbbf24);
-  animation: heroSymFloat 2.4s infinite ease-in-out alternate;
-}
-
-.poster-card-hand {
-  font-size: 2.2rem;
-  line-height: 1;
-  margin-left: -14px;
-  animation: heroSymFloat 2.4s infinite ease-in-out alternate;
-  animation-delay: 0.3s;
+  background: radial-gradient(circle at 50% 45%, #0b1e38 0%, #030812 100%);
 }
 
 /* Poster Casino Hold'em in Lobby Modal */
 .poster-holdem {
-  background: radial-gradient(circle at 50% 40%, #092e1e 0%, #03140c 100%);
+  background: radial-gradient(circle at 50% 45%, #092e1e 0%, #03140c 100%);
 }
 
-.poster-card-chips {
-  font-size: 2.1rem;
-  line-height: 1;
-  filter: drop-shadow(0 0 10px #10b981);
-  animation: heroSymFloat 2.4s infinite ease-in-out alternate;
+/* Common Casino Card Fan Component for Table Posters */
+.poster-card-fan {
+  position: relative;
+  width: 72px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.poster-card-cards {
-  font-size: 2.2rem;
-  line-height: 1;
-  margin-left: -12px;
-  filter: drop-shadow(0 0 10px #fbbf24);
-  animation: heroSymFloat 2.4s infinite ease-in-out alternate;
-  animation-delay: 0.3s;
+.poster-mini-card {
+  width: 32px;
+  height: 46px;
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 215, 0, 0.7);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), inset 0 0 2px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 0.92rem;
+  letter-spacing: -0.5px;
+  position: absolute;
+  transition: transform 0.2s ease;
+}
+
+.poster-mini-card.card-spade-a {
+  color: #0f172a;
+  transform: rotate(-10deg) translate(-10px, 2px);
+  z-index: 1;
+}
+
+.poster-mini-card.card-jack-j {
+  color: #dc2626;
+  transform: rotate(12deg) translate(10px, -2px);
+  z-index: 2;
+}
+
+.poster-mini-card.card-royal-k {
+  color: #0f172a;
+  transform: rotate(-8deg) translate(-9px, 2px);
+  z-index: 1;
+}
+
+.poster-mini-card.card-royal-a {
+  color: #dc2626;
+  transform: rotate(10deg) translate(9px, -2px);
+  z-index: 2;
+}
+
+.poster-mini-card.card-table-a {
+  color: #dc2626;
+  transform: rotate(-10deg) translate(-10px, 2px);
+  z-index: 1;
+}
+
+.poster-mini-card.card-table-k {
+  color: #dc2626;
+  transform: rotate(10deg) translate(8px, -1px);
+  z-index: 2;
+}
+
+.poster-poker-crown {
+  position: absolute;
+  top: -6px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 8px #ffd700);
+  z-index: 3;
+  animation: heroSymFloat 3s infinite ease-in-out alternate;
+}
+
+.poster-table-chip {
+  position: absolute;
+  bottom: -4px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffd700 0%, #b45309 80%, #78350f 100%);
+  border: 1.5px dashed #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 215, 0, 0.5);
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  font-weight: 900;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  transform: rotate(-12deg);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* ==========================================================================
