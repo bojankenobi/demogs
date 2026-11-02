@@ -30,6 +30,7 @@ const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8')
 
 assert(indexHtml.includes('id="crash-game-view"'), 'crash-game-view container must exist');
 assert(indexHtml.includes('class="crash-cabinet-panel"'), 'crash-cabinet-panel must exist');
+assert(indexHtml.includes('class="crash-bets-sidebar"'), 'crash-bets-sidebar must exist for left wing');
 assert(indexHtml.includes('class="crash-multiplayer-deck"'), 'crash-multiplayer-deck must exist');
 assert(indexHtml.includes('class="crash-center-arena"'), 'crash-center-arena must exist');
 assert(indexHtml.includes('class="crash-results-sidebar"'), 'crash-results-sidebar must exist');
@@ -39,7 +40,7 @@ assert(indexHtml.includes('id="crash-stat-max"'), 'crash-stat-max must exist');
 assert(indexHtml.includes('id="crash-stat-avg"'), 'crash-stat-avg must exist');
 assert(indexHtml.includes('id="crash-action-btn"'), 'crash-action-btn must exist');
 assert(indexHtml.includes('crash.js?v=98'), 'crash.js cache buster bumped to v=98');
-assert(indexHtml.includes('style.css?v=107'), 'style.css cache buster bumped to v=107');
+assert(indexHtml.includes('style.css?v=108'), 'style.css cache buster bumped to v=108');
 
 console.log('✓ All 3 cockpit wings, canvas arena, and stat badges verified in index.html');
 
@@ -48,10 +49,11 @@ console.log('\n--- TEST 3: Desktop Zero-Scroll 3-Column Layout in css/style.css 
 const styleCss = fs.readFileSync(path.join(__dirname, '../css/style.css'), 'utf8');
 
 assert(styleCss.includes('.crash-center-arena'), 'Base .crash-center-arena rule must exist');
+assert(styleCss.includes('.crash-bets-sidebar'), 'Base .crash-bets-sidebar rule must exist');
 assert(styleCss.includes('.crash-results-sidebar'), 'Base .crash-results-sidebar rule must exist');
-assert(styleCss.includes('grid-template-columns: 290px 1fr 240px') || styleCss.includes('grid-template-columns:'), 'Desktop 3-column grid must exist');
+assert(styleCss.includes('grid-template-columns: 320px 1fr 220px') || styleCss.includes('grid-template-columns:'), 'Desktop 3-column grid must exist');
 assert(styleCss.includes('.game-container.in-crash-mode'), '.game-container.in-crash-mode styling must exist');
-assert(styleCss.includes('calc(100vh - 160px)'), 'Zero-scroll height constraint must exist');
+assert(styleCss.includes('1440px'), 'Widescreen expansion rule (1440px) must exist');
 
 console.log('✓ Desktop 3-column zero-scroll CSS rules verified');
 

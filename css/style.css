@@ -5238,19 +5238,21 @@ body {
 
 .crash-cabinet-panel {
   width: 100%;
-  background: linear-gradient(180deg, #111728 0%, #090d16 100%);
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  border-radius: 14px;
-  padding: 6px 8px 10px;
-  box-shadow: 
-    0 0 20px rgba(212, 149, 20, 0.15),
-    0 12px 35px rgba(0, 0, 0, 0.95);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
-/* Crash Center Arena (Canvas + Controls) */
+/* Left Sidebar on Mobile (BETS & OPKLADE) */
+.crash-bets-sidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  order: 3;
+}
+
+/* Crash Center Arena (Rocket Flight Radar Screen) */
 .crash-center-arena {
   width: 100%;
   display: flex;
@@ -14361,51 +14363,126 @@ body.free-spins-active .slot-cylinder-replica {
     width: 100%;
   }
 
-  /* 2. Crash Desktop Cockpit (Widescreen 3-Column Zero-Scroll Layout) */
+  /* 2. Crash Desktop Cockpit (Expansive 3-Wing Frameless Zero-Scroll Layout) */
   .game-container.in-crash-mode {
-    max-width: 1240px;
+    max-width: 1440px;
+    width: 98%;
     height: 100vh;
     max-height: 100vh;
     overflow: hidden;
+    padding: 0 8px;
+    margin: 0 auto;
+    justify-content: flex-start;
   }
 
   .crash-stage-view {
-    max-width: 1220px;
+    max-width: 1420px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 4px;
+    padding: 0;
     display: flex;
     justify-content: center;
   }
 
+  /* Frameless, expansive desktop cockpit container (No clunky enclosed box frame) */
   .crash-cabinet-panel {
     display: grid;
-    grid-template-columns: 290px 1fr 240px;
-    gap: 14px;
-    padding: 12px 16px;
-    border-radius: 20px;
-    max-width: 1220px;
+    grid-template-columns: 320px 1fr 220px;
+    gap: 16px;
     width: 100%;
-    height: 520px;
+    height: clamp(450px, calc(100vh - 165px), 560px);
     max-height: calc(100vh - 160px);
-    overflow: hidden;
+    overflow: visible;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
     align-items: stretch;
     box-sizing: border-box;
   }
 
-  /* Left Wing: Multiplayer Leaderboard & Live Bets */
-  .crash-multiplayer-deck {
+  /* 1. Left Wing: Complete Bets Deck (Controls + Live Multiplayer Bets) */
+  .crash-bets-sidebar {
     order: 1;
     height: 100%;
     max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  /* Betting Console in Left Wing */
+  .crash-bets-sidebar .crash-control-deck {
+    flex-shrink: 0;
+    background: rgba(10, 15, 26, 0.9);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 16px;
+    padding: 10px 12px;
+    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .crash-bets-sidebar .crash-bet-box {
+    height: 38px;
+    min-width: 130px;
+  }
+
+  .crash-bets-sidebar .crash-bet-amount {
+    font-size: 1.05rem;
+  }
+
+  .crash-bets-sidebar .crash-step-btn {
+    width: 36px;
+    font-size: 1.15rem;
+  }
+
+  .crash-bets-sidebar .crash-chip-btn {
+    height: 32px;
+    min-width: 36px;
+    font-size: 0.8rem;
+  }
+
+  .crash-bets-sidebar .crash-auto-row {
+    padding: 5px 10px;
+    border-radius: 8px;
+  }
+
+  .crash-bets-sidebar .crash-preset-btn {
+    padding: 3px 8px;
+    font-size: 0.78rem;
+  }
+
+  .crash-bets-sidebar .btn-crash-action {
+    padding: 10px 14px;
+    font-size: 1.05rem;
+    border-radius: 10px;
+  }
+
+  .crash-bets-sidebar .crash-action-title {
+    font-size: 0.98rem;
+  }
+
+  .crash-bets-sidebar .crash-action-sub {
+    font-size: 0.82rem;
+  }
+
+  /* Live Multiplayer Bets in Left Wing */
+  .crash-bets-sidebar .crash-multiplayer-deck {
+    flex: 1;
+    height: auto;
+    max-height: none;
     margin-top: 0;
     display: flex;
     flex-direction: column;
-    background: rgba(8, 12, 22, 0.95);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 14px;
+    background: rgba(10, 15, 26, 0.9);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   }
 
   .crash-mp-header {
@@ -14416,7 +14493,7 @@ body.free-spins-active .slot-cylinder-replica {
   }
 
   .crash-mp-toggle-btn {
-    display: none; /* Always expanded on desktop */
+    display: none; /* Always open in desktop sidebar */
   }
 
   .crash-mp-body {
@@ -14428,102 +14505,53 @@ body.free-spins-active .slot-cylinder-replica {
     scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
   }
 
-  /* Center Stage: Radar Canvas Arena & Bet Controls */
+  /* 2. Center Stage: GIGANTIC Focused Rocket Flight Radar Arena */
   .crash-center-arena {
     order: 2;
     display: flex;
     flex-direction: column;
     height: 100%;
-    gap: 8px;
-    justify-content: space-between;
     min-width: 0;
   }
 
-  .crash-canvas-wrap {
-    flex: 1;
-    min-height: 250px;
-    max-height: 330px;
-    height: auto;
-    border-radius: 14px;
+  .crash-center-arena .crash-canvas-wrap {
+    width: 100%;
+    height: 100%;
+    min-height: 440px;
+    border-radius: 18px;
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    background: radial-gradient(circle at 65% 35%, #0e182b 0%, #060a12 100%);
+    box-shadow: 
+      0 8px 36px rgba(0, 0, 0, 0.75),
+      inset 0 0 40px rgba(212, 175, 55, 0.06);
+    position: relative;
+    overflow: hidden;
   }
 
   .crash-multiplier-val {
-    font-size: 4rem;
+    font-size: 5rem;
+    text-shadow: 0 0 45px rgba(255, 215, 0, 0.6);
   }
 
   .crash-status-sub {
-    font-size: 1rem;
-    letter-spacing: 1px;
-  }
-
-  .crash-control-deck {
-    flex-shrink: 0;
-    padding: 8px 12px;
-    gap: 7px;
-    background: rgba(8, 12, 22, 0.92);
-    border: 1px solid rgba(212, 175, 55, 0.25);
-    border-radius: 14px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
-  }
-
-  .crash-bet-box {
-    height: 42px;
-    min-width: 150px;
-  }
-
-  .crash-bet-amount {
-    font-size: 1.1rem;
-  }
-
-  .crash-step-btn {
-    width: 40px;
     font-size: 1.2rem;
+    letter-spacing: 1.8px;
   }
 
-  .crash-chip-btn {
-    height: 36px;
-    min-width: 42px;
-    font-size: 0.85rem;
-  }
-
-  .crash-auto-row {
-    padding: 6px 12px;
-    border-radius: 10px;
-  }
-
-  .crash-preset-btn {
-    padding: 4px 10px;
-    font-size: 0.82rem;
-  }
-
-  .btn-crash-action {
-    padding: 12px 18px;
-    font-size: 1.1rem;
-    border-radius: 10px;
-  }
-
-  .crash-action-title {
-    font-size: 1.05rem;
-  }
-
-  .crash-action-sub {
-    font-size: 0.85rem;
-  }
-
-  /* Right Wing: Results & Multiplier History Sidebar */
+  /* 3. Right Wing: Results & Multiplier History Sidebar */
   .crash-results-sidebar {
     order: 3;
     height: 100%;
     max-height: 100%;
     display: flex;
     flex-direction: column;
-    background: rgba(8, 12, 22, 0.95);
+    background: rgba(10, 15, 26, 0.9);
     border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 10px 12px;
     box-sizing: border-box;
     overflow: hidden;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   }
 
   .crash-results-header {
@@ -14562,15 +14590,16 @@ body.free-spins-active .slot-cylinder-replica {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
-    padding-top: 8px;
+    padding-top: 10px;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: auto;
   }
 
   .cr-stat-box {
     background: rgba(18, 25, 42, 0.85);
-    border: 1px solid rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.18);
     border-radius: 8px;
-    padding: 5px 6px;
+    padding: 6px 8px;
     text-align: center;
   }
 
@@ -14585,7 +14614,7 @@ body.free-spins-active .slot-cylinder-replica {
 
   .cr-stat-val {
     display: block;
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     font-weight: 900;
     color: #f1f5f9;
   }

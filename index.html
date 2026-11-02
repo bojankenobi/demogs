@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=107">
+  <link rel="stylesheet" href="css/style.css?v=108">
   <link rel="stylesheet" href="css/grand-hub.css?v=99">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -644,56 +644,10 @@
       <!-- Standalone Grand Crash (Aviator) Game View -->
       <div class="crash-stage-view" id="crash-game-view" style="display: none;">
         <div class="crash-cabinet-panel">
-          <!-- 1. LEFT WING: Live Multiplayer Leaderboard & Bets (Desktop Side Panel) -->
-          <aside class="crash-multiplayer-deck" id="crash-multiplayer-deck">
-            <div class="crash-mp-header">
-              <div class="crash-mp-tabs">
-                <button type="button" class="crash-mp-tab active" id="crash-tab-all-bets">
-                  <span class="mp-live-dot"></span> OPKLADE (<span id="crash-mp-count">0</span>)
-                </button>
-                <button type="button" class="crash-mp-tab" id="crash-tab-top-wins">
-                  🏆 TOP DOBICI
-                </button>
-              </div>
-              <div class="crash-mp-pot" id="crash-mp-pot">POT: 0 ZLT</div>
-              <button type="button" class="crash-mp-toggle-btn" id="crash-mp-toggle-btn" title="Prikaži/Sakrij igrače">▲</button>
-            </div>
-
-            <div class="crash-mp-body" id="crash-mp-body">
-              <div class="crash-mp-table-head">
-                <span class="mp-col-user">IGRAČ</span>
-                <span class="mp-col-bet">ULOG</span>
-                <span class="mp-col-cashout">ISPLATA</span>
-              </div>
-              <div class="crash-mp-list" id="crash-mp-list">
-                <!-- Populated dynamically with active players -->
-              </div>
-            </div>
-          </aside>
-
-          <!-- 2. CENTER STAGE: Flight Canvas Arena & Betting Control Console -->
-          <main class="crash-center-arena">
-            <!-- Radar & Flight Canvas Container -->
-            <div class="crash-canvas-wrap">
-              <canvas id="crash-canvas" width="480" height="250"></canvas>
-
-              <!-- Floating live cashout toast feed -->
-              <div class="crash-live-toasts" id="crash-live-toasts"></div>
-
-              <!-- Dynamic Flight HUD Overlay -->
-              <div class="crash-hud-overlay" id="crash-hud-overlay">
-                <div class="crash-multiplier-val waiting" id="crash-mult-display">1.00x</div>
-                <div class="crash-status-sub" id="crash-status-sub">ČEKA SE SLEDEĆI LET...</div>
-
-                <!-- Countdown progress bar -->
-                <div class="crash-countdown-wrap" id="crash-countdown-wrap" style="display: none;">
-                  <div class="crash-countdown-fill" id="crash-countdown-fill" style="width: 100%;"></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Crash Bottom Control Deck -->
-            <div class="crash-control-deck">
+          <!-- 1. LEFT WING: Betting Deck & Live Multiplayer Bets (Desktop Side Panel) -->
+          <aside class="crash-bets-sidebar" id="crash-bets-sidebar">
+            <!-- Crash Control Deck (Ulog, Auto-Isplata, Akciono Dugme) -->
+            <div class="crash-control-deck" id="crash-control-deck">
               <!-- Bet Stepper & Quick Chips -->
               <div class="crash-bet-strip">
                 <div class="crash-bet-box">
@@ -740,6 +694,55 @@
                 <span class="crash-action-sub" id="crash-action-sub">20 ZLT</span>
               </button>
             </div>
+
+            <!-- Live Multiplayer Feed Deck -->
+            <div class="crash-multiplayer-deck" id="crash-multiplayer-deck">
+              <div class="crash-mp-header">
+                <div class="crash-mp-tabs">
+                  <button type="button" class="crash-mp-tab active" id="crash-tab-all-bets">
+                    <span class="mp-live-dot"></span> OPKLADE (<span id="crash-mp-count">0</span>)
+                  </button>
+                  <button type="button" class="crash-mp-tab" id="crash-tab-top-wins">
+                    🏆 TOP DOBICI
+                  </button>
+                </div>
+                <div class="crash-mp-pot" id="crash-mp-pot">POT: 0 ZLT</div>
+                <button type="button" class="crash-mp-toggle-btn" id="crash-mp-toggle-btn" title="Prikaži/Sakrij igrače">▲</button>
+              </div>
+
+              <div class="crash-mp-body" id="crash-mp-body">
+                <div class="crash-mp-table-head">
+                  <span class="mp-col-user">IGRAČ</span>
+                  <span class="mp-col-bet">ULOG</span>
+                  <span class="mp-col-cashout">ISPLATA</span>
+                </div>
+                <div class="crash-mp-list" id="crash-mp-list">
+                  <!-- Populated dynamically with active players -->
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- 2. CENTER STAGE: Big Focused Flight Canvas Arena -->
+          <main class="crash-center-arena" id="crash-center-arena">
+            <!-- Radar & Flight Canvas Container -->
+            <div class="crash-canvas-wrap">
+              <canvas id="crash-canvas" width="720" height="420"></canvas>
+
+              <!-- Floating live cashout toast feed -->
+              <div class="crash-live-toasts" id="crash-live-toasts"></div>
+
+              <!-- Dynamic Flight HUD Overlay -->
+              <div class="crash-hud-overlay" id="crash-hud-overlay">
+                <div class="crash-multiplier-val waiting" id="crash-mult-display">1.00x</div>
+                <div class="crash-status-sub" id="crash-status-sub">ČEKA SE SLEDEĆI LET...</div>
+
+                <!-- Countdown progress bar -->
+                <div class="crash-countdown-wrap" id="crash-countdown-wrap" style="display: none;">
+                  <div class="crash-countdown-fill" id="crash-countdown-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
           </main>
 
           <!-- 3. RIGHT WING: Results & Multiplier History Sidebar (Desktop Side Panel) -->
@@ -763,6 +766,18 @@
 
             <!-- Flight Record & Average Multiplier Stats -->
             <div class="crash-results-stats" id="crash-results-stats">
+              <div class="cr-stat-box">
+                <span class="cr-stat-lbl">REKORD</span>
+                <span class="cr-stat-val gold" id="crash-stat-max">--</span>
+              </div>
+              <div class="cr-stat-box">
+                <span class="cr-stat-lbl">PROSEK</span>
+                <span class="cr-stat-val" id="crash-stat-avg">--</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
               <div class="cr-stat-box">
                 <span class="cr-stat-lbl">REKORD</span>
                 <span class="cr-stat-val gold" id="crash-stat-max">--</span>
