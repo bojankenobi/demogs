@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=114">
+  <link rel="stylesheet" href="css/style.css?v=115">
   <link rel="stylesheet" href="css/grand-hub.css?v=101">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -1235,14 +1235,15 @@
               <span class="holdem-sub-silver">Diler se kvalifikuje sa parom 4-ki ili jače • Ante plaća do 100:1</span>
             </div>
 
-            <!-- Dealer Hand Area (Top) -->
+            <!-- Dealer Hand Area (Top - Permanent Reserved Card Slots) -->
             <div class="holdem-dealer-section">
               <div class="holdem-section-header">
                 <span class="holdem-label">DILER</span>
                 <span class="bj-score-badge" id="ch-dealer-score" style="display: none;">0</span>
               </div>
               <div class="ch-cards-row ch-dealer-cards" id="ch-dealer-cards">
-                <!-- 2 Dealer cards rendered dynamically -->
+                <div class="ch-card-placeholder"></div>
+                <div class="ch-card-placeholder"></div>
               </div>
             </div>
 
@@ -1268,8 +1269,13 @@
               <!-- Seat 0: Companion AI (Marko V.) -->
               <div class="holdem-seat" id="ch-seat-0">
                 <div class="ch-seat-avatar">👤 Marko V.</div>
-                <div class="ch-seat-cards" id="ch-seat-0-cards"></div>
-                <div class="ch-seat-hand-badge" id="ch-seat-0-hand-badge" style="display: none;"></div>
+                <div class="ch-seat-cards" id="ch-seat-0-cards">
+                  <div class="ch-card-placeholder small"></div>
+                  <div class="ch-card-placeholder small"></div>
+                </div>
+                <div class="ch-seat-badge-slot">
+                  <div class="ch-seat-hand-badge" id="ch-seat-0-hand-badge" style="display: none;"></div>
+                </div>
                 <div class="ch-seat-bets">
                   <span class="ch-bet-chip">A: <strong id="ch-seat-0-ante-val">20</strong></span>
                   <span class="ch-bet-chip call" id="ch-seat-0-call-badge" style="display: none;">C: <strong id="ch-seat-0-call-val">0</strong></span>
@@ -1279,8 +1285,13 @@
               <!-- Seat 1: The Main Player (You) -->
               <div class="holdem-seat player-seat active" id="ch-seat-1">
                 <div class="ch-seat-avatar gold-star">⭐ TI (IGRAČ)</div>
-                <div class="ch-seat-cards" id="ch-seat-1-cards"></div>
-                <div class="ch-seat-hand-badge player-badge" id="ch-seat-1-hand-badge" style="display: none;"></div>
+                <div class="ch-seat-cards" id="ch-seat-1-cards">
+                  <div class="ch-card-placeholder"></div>
+                  <div class="ch-card-placeholder"></div>
+                </div>
+                <div class="ch-seat-badge-slot">
+                  <div class="ch-seat-hand-badge player-badge" id="ch-seat-1-hand-badge" style="display: none;"></div>
+                </div>
                 <div class="ch-seat-bets player-bets">
                   <span class="ch-bet-chip ante-chip">ANTE: <strong id="ch-seat-1-ante-val">20</strong></span>
                   <span class="ch-bet-chip call-chip" id="ch-seat-1-call-badge" style="display: none;">CALL: <strong id="ch-seat-1-call-val">40</strong></span>
@@ -1290,8 +1301,13 @@
               <!-- Seat 2: Companion AI (Stefan K.) -->
               <div class="holdem-seat" id="ch-seat-2">
                 <div class="ch-seat-avatar">👤 Stefan K.</div>
-                <div class="ch-seat-cards" id="ch-seat-2-cards"></div>
-                <div class="ch-seat-hand-badge" id="ch-seat-2-hand-badge" style="display: none;"></div>
+                <div class="ch-seat-cards" id="ch-seat-2-cards">
+                  <div class="ch-card-placeholder small"></div>
+                  <div class="ch-card-placeholder small"></div>
+                </div>
+                <div class="ch-seat-badge-slot">
+                  <div class="ch-seat-hand-badge" id="ch-seat-2-hand-badge" style="display: none;"></div>
+                </div>
                 <div class="ch-seat-bets">
                   <span class="ch-bet-chip">A: <strong id="ch-seat-2-ante-val">20</strong></span>
                   <span class="ch-bet-chip call" id="ch-seat-2-call-badge" style="display: none;">C: <strong id="ch-seat-2-call-val">0</strong></span>
@@ -1300,11 +1316,11 @@
             </div>
           </div>
 
-          <!-- Casino Hold'em Control Deck (Rock-solid constant height, zero jump/bounce) -->
+          <!-- Casino Hold'em Control Deck (Unified Compact Console & Stable Zero-Jump Dock) -->
           <div class="holdem-control-deck">
-            <!-- Stable Betting Rack: always preserves position and height -->
+            <!-- Unified Compact Betting Console: Stepper + Authentic Chips + Multipliers in one sleek bar -->
             <div class="ch-bet-rack-wrap" id="ch-bet-rack-wrap">
-              <div class="ch-bet-row-controls">
+              <div class="ch-bet-unified-console">
                 <div class="ch-bet-stepper-wrap">
                   <button type="button" class="ch-step-btn" id="ch-bet-minus" aria-label="Smanji Ante ulog">−</button>
                   <div class="ch-bet-val-box">
@@ -1312,6 +1328,15 @@
                     <span class="ch-bet-amount" id="ch-bet-val">20</span>
                   </div>
                   <button type="button" class="ch-step-btn" id="ch-bet-plus" aria-label="Povećaj Ante ulog">+</button>
+                </div>
+
+                <!-- 5-Chip Authentic Casino Float -->
+                <div class="ch-chips-strip">
+                  <button type="button" class="ch-chip-btn chip-10" data-amt="10" title="+10 ZLT"><span class="chip-val">10</span></button>
+                  <button type="button" class="ch-chip-btn chip-20" data-amt="20" title="+20 ZLT"><span class="chip-val">20</span></button>
+                  <button type="button" class="ch-chip-btn chip-50" data-amt="50" title="+50 ZLT"><span class="chip-val">50</span></button>
+                  <button type="button" class="ch-chip-btn chip-100" data-amt="100" title="+100 ZLT"><span class="chip-val">100</span></button>
+                  <button type="button" class="ch-chip-btn chip-500" data-amt="500" title="+500 ZLT"><span class="chip-val">500</span></button>
                 </div>
 
                 <div class="ch-bet-quick-actions">
@@ -1323,18 +1348,9 @@
                   </button>
                 </div>
               </div>
-
-              <!-- 5-Chip Casino Rack -->
-              <div class="ch-chips-strip">
-                <button type="button" class="ch-chip-btn chip-10" data-amt="10" title="+10 ZLT"><span class="chip-val">10</span></button>
-                <button type="button" class="ch-chip-btn chip-20" data-amt="20" title="+20 ZLT"><span class="chip-val">20</span></button>
-                <button type="button" class="ch-chip-btn chip-50" data-amt="50" title="+50 ZLT"><span class="chip-val">50</span></button>
-                <button type="button" class="ch-chip-btn chip-100" data-amt="100" title="+100 ZLT"><span class="chip-val">100</span></button>
-                <button type="button" class="ch-chip-btn chip-500" data-amt="500" title="+500 ZLT"><span class="chip-val">500</span></button>
-              </div>
             </div>
 
-            <!-- Dynamic Action Bar: Exactly 48px high in all phases -->
+            <!-- Dynamic Action Bar: Exactly 44px high in all phases with rock-solid screen stability -->
             <div class="ch-action-bar-wrap">
               <!-- Phase 1: Deal Button -->
               <div class="ch-action-phase" id="ch-ctrls-deal">
@@ -1360,7 +1376,7 @@
               <div class="ch-action-phase" id="ch-ctrls-round-over" style="display: none;">
                 <button type="button" class="btn-ch-main btn-ch-rebet" id="btn-ch-rebet">
                   <span class="btn-ch-icon">🔄</span>
-                  <span class="btn-ch-text">ISTI ULOG & DELI</span>
+                  <span class="btn-ch-text">ISTI ULOG &amp; DELI</span>
                 </button>
                 <button type="button" class="btn-ch-main btn-ch-new" id="btn-ch-new-round">
                   <span class="btn-ch-icon">✨</span>
@@ -3526,7 +3542,7 @@
   <script src="js/games/plinko/plinko.js?v=97"></script>
   <script src="js/games/blackjack/blackjack.js?v=97"></script>
   <script src="js/games/video-poker/video-poker.js?v=102"></script>
-  <script src="js/games/casino-holdem/casino-holdem.js?v=103"></script>
+  <script src="js/games/casino-holdem/casino-holdem.js?v=104"></script>
 
   <!-- Application Controller -->
   <script src="js/app.js?v=110"></script>

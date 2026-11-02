@@ -707,7 +707,12 @@ class RoyalCasinoHoldemGame {
   clearCardDisplays() {
     const dealerContainer = document.getElementById('ch-dealer-cards');
     const communityContainer = document.getElementById('ch-community-cards');
-    if (dealerContainer) dealerContainer.innerHTML = '';
+    if (dealerContainer) {
+      dealerContainer.innerHTML = `
+        <div class="ch-card-placeholder"></div>
+        <div class="ch-card-placeholder"></div>
+      `;
+    }
     if (communityContainer) {
       communityContainer.innerHTML = `
         <div class="ch-card-placeholder"></div>
@@ -723,9 +728,24 @@ class RoyalCasinoHoldemGame {
 
     for (let i = 0; i < 3; i++) {
       const container = document.getElementById(`ch-seat-${i}-cards`);
-      if (container) container.innerHTML = '';
+      if (container) {
+        if (i === 1) {
+          container.innerHTML = `
+            <div class="ch-card-placeholder"></div>
+            <div class="ch-card-placeholder"></div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="ch-card-placeholder small"></div>
+            <div class="ch-card-placeholder small"></div>
+          `;
+        }
+      }
       const badge = document.getElementById(`ch-seat-${i}-hand-badge`);
-      if (badge) badge.style.display = 'none';
+      if (badge) {
+        badge.style.display = 'none';
+        badge.textContent = '';
+      }
     }
   }
 
