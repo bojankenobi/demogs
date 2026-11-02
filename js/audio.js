@@ -1,16 +1,684 @@
 /**
- * Happy Hour Slot - Web Audio API Synthesizer
- * Produces crisp, casino-grade sound effects without external audio files.
+ * Grand Slot Club - Web Audio API Synthesizer & Background Music Engine
+ * Produces crisp casino sound effects, streaming jazz playlists, and procedural synth jazz.
  */
+
+/**
+ * Grand Slot Club - Background Music & Procedural Jazz Engine
+ */
+class BgmController {
+  constructor(slotAudio) {
+    this.slotAudio = slotAudio;
+    this.audio = null;
+
+    // Casino Salon tracks (Shuffle & Repeat)
+    this.casinoPlaylist = [
+      'Grand Slot Club.mp3',
+      'Smotryshka.mp3',
+      'Smotryshka1.mp3'
+    ];
+    this.currentTrackIndex = -1;
+
+    // Active mode: 'casino' | 'vault' | 'royale' | 'crash'
+    this.mode = 'casino';
+
+    // Volume configurations
+    this.baseVolume = 0.38;
+    this.currentVolume = 0.38;
+    this.targetVolume = 0.38;
+    this.isDucked = false;
+    this.isDeepDucked = false;
+    this.duckTimer = null;
+    this.fadeRaf = null;
+
+    // Playback state
+    this.isPlaying = false;
+    this.hasUserInteracted = false;
+    this.isMuted = false;
+
+    // Procedural Synth state
+    this.synthMasterGain = null;
+    this.synthInterval = null;
+    this.synthStep = 0;
+    this.crashMultiplier = 1.0;
+
+    // Check saved mute state
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage.getItem('grandslot_bgm_muted') === '1') {
+        this.isMuted = true;
+      }
+    } catch (e) {}
+
+    this.initAudioElement();
+    this.setupUserInteractionListener();
+    this.setupVisibilityListener();
+  }
+
+  initAudioElement() {
+    try {
+      if (typeof Audio === 'undefined') return;
+      this.audio = new Audio();
+      this.audio.preload = 'auto';
+      this.audio.volume = this.currentVolume;
+
+      this.audio.addEventListener('ended', () => {
+        if (this.mode === 'casino' && !this.isMuted) {
+          this.playNextCasinoTrack();
+        }
+      });
+
+      this.audio.addEventListener('error', (err) => {
+        console.warn('[BgmController] Audio playback warning:', err);
+      });
+    } catch (e) {
+      console.warn('[BgmController] HTML5 Audio element unavailable:', e);
+    }
+  }
+
+  setupUserInteractionListener() {
+    if (typeof window === 'undefined') return;
+    const onFirstInteract = () => {
+      this.hasUserInteracted = true;
+      if (this.slotAudio && typeof this.slotAudio.ensureAudio === 'function') {
+        this.slotAudio.ensureAudio();
+      }
+      if (!this.isMuted && !this.isPlaying) {
+        this.playForCurrentMode();
+      }
+      window.removeEventListener('pointerdown', onFirstInteract);
+      window.removeEventListener('touchstart', onFirstInteract);
+      window.removeEventListener('keydown', onFirstInteract);
+      window.removeEventListener('click', onFirstInteract);
+    };
+
+    window.addEventListener('pointerdown', onFirstInteract, { once: true, passive: true });
+    window.addEventListener('touchstart', onFirstInteract, { once: true, passive: true });
+    window.addEventListener('keydown', onFirstInteract, { once: true, passive: true });
+    window.addEventListener('click', onFirstInteract, { once: true, passive: true });
+  }
+
+  setupVisibilityListener() {
+    if (typeof document === 'undefined') return;
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        this.pause();
+      } else {
+        if (!this.isMuted && this.hasUserInteracted) {
+          this.resume();
+        }
+      }
+    });
+  }
+
+  getNextCasinoTrack() {
+    if (this.casinoPlaylist.length === 0) return null;
+    if (this.casinoPlaylist.length === 1) return this.casinoPlaylist[0];
+
+    let nextIdx;
+    do {
+      nextIdx = Math.floor(Math.random() * this.casinoPlaylist.length);
+    } while (nextIdx === this.currentTrackIndex);
+
+    this.currentTrackIndex = nextIdx;
+    return this.casinoPlaylist[nextIdx];
+  }
+
+  playNextCasinoTrack() {
+    if (this.isMuted || !this.audio) return;
+    const track = this.getNextCasinoTrack();
+    if (!track) return;
+
+    const trackUrl = 'assets/audio/music/' + encodeURIComponent(track);
+    this.audio.src = trackUrl;
+    this.audio.volume = this.currentVolume;
+
+    const promise = this.audio.play();
+    if (promise !== undefined) {
+      promise
+        .then(() => {
+          this.isPlaying = true;
+        })
+        .catch(() => {
+          this.isPlaying = false;
+        });
+    }
+  }
+
+  playForCurrentMode() {
+    if (this.isMuted) return;
+    if (this.mode === 'casino') {
+      this.stopSynthGroove();
+      this.playNextCasinoTrack();
+    } else if (this.mode === 'vault') {
+      this.pauseAudioElement();
+      this.startVaultGroove();
+    } else if (this.mode === 'royale') {
+      this.pauseAudioElement();
+      this.startRoyaleGroove();
+    } else if (this.mode === 'crash') {
+      this.pauseAudioElement();
+      this.startCrashGroove();
+    }
+  }
+
+  setMode(newMode) {
+    if (this.mode === newMode && this.isPlaying) return;
+    const prevMode = this.mode;
+    this.mode = newMode;
+
+    // Crossfade exit current music
+    if (prevMode === 'casino') {
+      this.fadeVolumeAudio(0, 350, () => {
+        this.pauseAudioElement();
+      });
+    } else {
+      this.stopSynthGroove(350);
+    }
+
+    if (this.isMuted || !this.hasUserInteracted) return;
+
+    // Smoothly start new music mode
+    setTimeout(() => {
+      if (this.isMuted) return;
+      if (newMode === 'casino') {
+        this.playNextCasinoTrack();
+        this.fadeVolumeAudio(this.isDucked ? 0.12 : this.baseVolume, 450);
+      } else if (newMode === 'vault') {
+        this.startVaultGroove();
+      } else if (newMode === 'royale') {
+        this.startRoyaleGroove();
+      } else if (newMode === 'crash') {
+        this.startCrashGroove();
+      }
+    }, 380);
+  }
+
+  pauseAudioElement() {
+    if (this.audio) {
+      try {
+        this.audio.pause();
+      } catch (e) {}
+    }
+  }
+
+  pause() {
+    this.isPlaying = false;
+    this.pauseAudioElement();
+    this.stopSynthGroove(150);
+  }
+
+  resume() {
+    if (this.isMuted) return;
+    this.playForCurrentMode();
+  }
+
+  setMuted(muted) {
+    this.isMuted = muted;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('grandslot_bgm_muted', muted ? '1' : '0');
+      }
+    } catch (e) {}
+
+    if (muted) {
+      this.pause();
+    } else {
+      if (this.hasUserInteracted) {
+        this.resume();
+      }
+    }
+  }
+
+  // Audio Ducking Core
+  duck(target = 0.12, duration = 250) {
+    this.isDucked = true;
+    if (this.duckTimer) clearTimeout(this.duckTimer);
+    this.rampVolume(target, duration);
+  }
+
+  deepDuck(target = 0.04, duration = 150) {
+    this.isDeepDucked = true;
+    if (this.duckTimer) clearTimeout(this.duckTimer);
+    this.rampVolume(target, duration);
+  }
+
+  unduck(duration = 600, delay = 0) {
+    if (this.duckTimer) clearTimeout(this.duckTimer);
+    this.duckTimer = setTimeout(() => {
+      this.isDucked = false;
+      this.isDeepDucked = false;
+      this.rampVolume(this.baseVolume, duration);
+    }, delay);
+  }
+
+  rampVolume(targetVol, duration = 300) {
+    this.targetVolume = targetVol;
+    // Ramp HTML5 audio
+    this.fadeVolumeAudio(targetVol, duration);
+
+    // Ramp procedural synth master gain
+    if (this.synthMasterGain && this.slotAudio && this.slotAudio.ctx) {
+      try {
+        const now = this.slotAudio.ctx.currentTime;
+        this.synthMasterGain.gain.cancelScheduledValues(now);
+        this.synthMasterGain.gain.linearRampToValueAtTime(targetVol, now + duration / 1000);
+      } catch (e) {}
+    }
+  }
+
+  fadeVolumeAudio(targetVol, duration = 300, onComplete = null) {
+    if (!this.audio) {
+      if (onComplete) onComplete();
+      return;
+    }
+
+    if (typeof requestAnimationFrame === 'undefined') {
+      try { this.audio.volume = targetVol; } catch (e) {}
+      if (onComplete) onComplete();
+      return;
+    }
+
+    if (this.fadeRaf) cancelAnimationFrame(this.fadeRaf);
+
+    const startVol = this.audio.volume;
+    const startTime = performance.now();
+
+    const step = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      const ease = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+      const current = startVol + (targetVol - startVol) * ease;
+      this.currentVolume = Math.max(0, Math.min(1, current));
+      try {
+        this.audio.volume = this.currentVolume;
+      } catch (e) {}
+
+      if (progress < 1) {
+        this.fadeRaf = requestAnimationFrame(step);
+      } else {
+        this.currentVolume = targetVol;
+        try {
+          this.audio.volume = targetVol;
+        } catch (e) {}
+        this.fadeRaf = null;
+        if (onComplete) onComplete();
+      }
+    };
+
+    this.fadeRaf = requestAnimationFrame(step);
+  }
+
+  // --- PROCEDURAL JAZZ SYNTHESIZERS ---
+
+  ensureSynthMasterGain() {
+    if (!this.slotAudio || !this.slotAudio.ctx) return null;
+    if (!this.synthMasterGain) {
+      this.synthMasterGain = this.slotAudio.ctx.createGain();
+      this.synthMasterGain.connect(this.slotAudio.ctx.destination);
+    }
+    this.synthMasterGain.gain.setValueAtTime(this.currentVolume, this.slotAudio.ctx.currentTime);
+    return this.synthMasterGain;
+  }
+
+  stopSynthGroove(fadeMs = 200) {
+    if (this.synthInterval) {
+      clearInterval(this.synthInterval);
+      this.synthInterval = null;
+    }
+    if (this.synthMasterGain && this.slotAudio && this.slotAudio.ctx && fadeMs > 0) {
+      try {
+        const now = this.slotAudio.ctx.currentTime;
+        this.synthMasterGain.gain.cancelScheduledValues(now);
+        this.synthMasterGain.gain.linearRampToValueAtTime(0.001, now + fadeMs / 1000);
+      } catch (e) {}
+    }
+  }
+
+  // 1. Trezor Provala: Stealth Heist Jazz (Pink Panther / Ocean's 11 mood)
+  startVaultGroove() {
+    this.stopSynthGroove();
+    if (this.slotAudio) this.slotAudio.ensureAudio();
+    if (!this.slotAudio || !this.slotAudio.ctx || this.isMuted) return;
+
+    const master = this.ensureSynthMasterGain();
+    if (!master) return;
+    this.isPlaying = true;
+
+    // D Dorian / D Minor Walking Bassline (92 BPM = ~652ms per beat)
+    const bpm = 92;
+    const beatMs = (60 / bpm) * 1000;
+    const bassline = [
+      73.42,  // D2
+      87.31,  // F2
+      98.00,  // G2
+      103.83, // Ab2 (blues passing note)
+      110.00, // A2
+      130.81, // C3
+      146.83, // D3
+      123.47, // B2
+      73.42,  // D2
+      82.41,  // E2
+      87.31,  // F2
+      98.00,  // G2
+      110.00, // A2
+      98.00,  // G2
+      87.31,  // F2
+      65.41   // C2
+    ];
+
+    const chords = [
+      [146.83, 174.61, 220.00, 261.63], // Dm7
+      [196.00, 246.94, 293.66, 349.23], // G7
+      [116.54, 146.83, 174.61, 220.00], // Bbmaj7
+      [110.00, 138.59, 196.00, 277.18]  // A7#9
+    ];
+
+    this.synthStep = 0;
+    this.synthInterval = setInterval(() => {
+      if (this.isMuted || !this.slotAudio || !this.slotAudio.ctx) return;
+      const ctx = this.slotAudio.ctx;
+      const now = ctx.currentTime;
+
+      // 1. Acoustic Upright Walking Bass Note
+      const noteFreq = bassline[this.synthStep % bassline.length];
+      const bassOsc = ctx.createOscillator();
+      const subOsc = ctx.createOscillator();
+      const bassFilter = ctx.createBiquadFilter();
+      const bassGain = ctx.createGain();
+
+      bassOsc.type = 'triangle';
+      bassOsc.frequency.setValueAtTime(noteFreq, now);
+
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(noteFreq * 0.5, now);
+
+      bassFilter.type = 'lowpass';
+      bassFilter.frequency.setValueAtTime(280, now);
+      bassFilter.Q.setValueAtTime(2.5, now);
+
+      bassGain.gain.setValueAtTime(0.001, now);
+      bassGain.gain.linearRampToValueAtTime(0.24, now + 0.015);
+      bassGain.gain.exponentialRampToValueAtTime(0.06, now + 0.35);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + (beatMs / 1000) * 0.95);
+
+      bassOsc.connect(bassFilter);
+      subOsc.connect(bassFilter);
+      bassFilter.connect(bassGain);
+      bassGain.connect(master);
+
+      bassOsc.start(now);
+      subOsc.start(now);
+      bassOsc.stop(now + (beatMs / 1000));
+      subOsc.stop(now + (beatMs / 1000));
+
+      // 2. Soft Brushed Swing Cymbal
+      const beatInBar = this.synthStep % 4;
+      if (beatInBar === 1 || beatInBar === 3) {
+        this.triggerBrushHit(now, 0.045);
+        this.triggerBrushHit(now + (beatMs / 1000) * 0.66, 0.025);
+      }
+
+      // 3. Ambient Jazz Chord Swell
+      if (beatInBar === 0) {
+        const barIdx = Math.floor(this.synthStep / 4) % chords.length;
+        this.triggerJazzChord(chords[barIdx], now, 0.035, (beatMs * 3.5) / 1000);
+      }
+
+      this.synthStep++;
+    }, beatMs);
+  }
+
+  // 2. Battle Royale: Warzone Big Band Swing Groove
+  startRoyaleGroove() {
+    this.stopSynthGroove();
+    if (this.slotAudio) this.slotAudio.ensureAudio();
+    if (!this.slotAudio || !this.slotAudio.ctx || this.isMuted) return;
+
+    const master = this.ensureSynthMasterGain();
+    if (!master) return;
+    this.isPlaying = true;
+
+    // Fast 122 BPM Swing Rhythm (~491ms per beat)
+    const bpm = 122;
+    const beatMs = (60 / bpm) * 1000;
+    const bassline = [
+      65.41,  // C2
+      77.78,  // Eb2
+      87.31,  // F2
+      92.50,  // F#2
+      98.00,  // G2
+      116.54, // Bb2
+      123.47, // B2
+      130.81  // C3
+    ];
+
+    const brassChords = [
+      [261.63, 311.13, 392.00, 466.16], // Cm7
+      [220.00, 277.18, 329.63, 392.00]  // A7
+    ];
+
+    this.synthStep = 0;
+    this.synthInterval = setInterval(() => {
+      if (this.isMuted || !this.slotAudio || !this.slotAudio.ctx) return;
+      const ctx = this.slotAudio.ctx;
+      const now = ctx.currentTime;
+
+      // 1. Driving Punchy Bass
+      const noteFreq = bassline[this.synthStep % bassline.length];
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(noteFreq, now);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(320, now);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.20, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + (beatMs / 1000) * 0.85);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+
+      osc.start(now);
+      osc.stop(now + (beatMs / 1000));
+
+      // 2. Crisp Ride Cymbal Swing
+      this.triggerBrushHit(now, 0.038);
+      const beatInBar = this.synthStep % 4;
+      if (beatInBar === 1 || beatInBar === 3) {
+        this.triggerBrushHit(now + (beatMs / 1000) * 0.62, 0.030);
+      }
+
+      // 3. Muted Brass Stabs on Off-beats (beat 2 and 4)
+      if (beatInBar === 1 || beatInBar === 3) {
+        const chord = brassChords[Math.floor(this.synthStep / 4) % brassChords.length];
+        this.triggerBrassStab(chord, now, 0.032);
+      }
+
+      this.synthStep++;
+    }, beatMs);
+  }
+
+  // 3. Grand Crash: Electro-Jazz Ascent
+  startCrashGroove() {
+    this.stopSynthGroove();
+    if (this.slotAudio) this.slotAudio.ensureAudio();
+    if (!this.slotAudio || !this.slotAudio.ctx || this.isMuted) return;
+
+    const master = this.ensureSynthMasterGain();
+    if (!master) return;
+    this.isPlaying = true;
+
+    // 108 BPM (~555ms per beat)
+    const bpm = 108;
+    const beatMs = (60 / bpm) * 1000;
+    const arpNotes = [
+      110.00, // A2
+      130.81, // C3
+      164.81, // E3
+      196.00, // G3
+      220.00, // A3
+      196.00, // G3
+      164.81, // E3
+      130.81  // C3
+    ];
+
+    this.synthStep = 0;
+    this.synthInterval = setInterval(() => {
+      if (this.isMuted || !this.slotAudio || !this.slotAudio.ctx) return;
+      const ctx = this.slotAudio.ctx;
+      const now = ctx.currentTime;
+
+      // Pulse Arp with dynamic filter based on crash multiplier
+      const noteFreq = arpNotes[this.synthStep % arpNotes.length];
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(noteFreq, now);
+
+      const cutoff = Math.min(2400, 320 + (this.crashMultiplier - 1) * 200);
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(cutoff, now);
+      filter.Q.setValueAtTime(3.0, now);
+
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + (beatMs / 1000) * 0.9);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+
+      osc.start(now);
+      osc.stop(now + (beatMs / 1000));
+
+      // Hi-hat tick
+      this.triggerBrushHit(now, 0.025);
+
+      this.synthStep++;
+    }, beatMs / 2); // 8th note arp
+  }
+
+  setCrashMultiplier(mult) {
+    this.crashMultiplier = Math.max(1, mult || 1);
+  }
+
+  // Synthesis Helpers
+  triggerBrushHit(time, volume = 0.04) {
+    if (!this.slotAudio || !this.slotAudio.ctx) return;
+    const ctx = this.slotAudio.ctx;
+    const master = this.synthMasterGain;
+    if (!master) return;
+
+    try {
+      const bufferSize = Math.floor(ctx.sampleRate * 0.05);
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(7000, time);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(volume, time);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.045);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+
+      noise.start(time);
+      noise.stop(time + 0.05);
+    } catch (e) {}
+  }
+
+  triggerJazzChord(frequencies, time, volume = 0.03, duration = 1.5) {
+    if (!this.slotAudio || !this.slotAudio.ctx) return;
+    const ctx = this.slotAudio.ctx;
+    const master = this.synthMasterGain;
+    if (!master) return;
+
+    frequencies.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, time);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(650, time);
+
+      gain.gain.setValueAtTime(0.0001, time);
+      gain.gain.linearRampToValueAtTime(volume, time + 0.12);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+
+      osc.start(time);
+      osc.stop(time + duration);
+    });
+  }
+
+  triggerBrassStab(frequencies, time, volume = 0.03) {
+    if (!this.slotAudio || !this.slotAudio.ctx) return;
+    const ctx = this.slotAudio.ctx;
+    const master = this.synthMasterGain;
+    if (!master) return;
+
+    frequencies.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const filter = ctx.createBiquadFilter();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(freq, time);
+
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(950, time);
+      filter.Q.setValueAtTime(2.0, time);
+
+      gain.gain.setValueAtTime(0.001, time);
+      gain.gain.linearRampToValueAtTime(volume, time + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.14);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(master);
+
+      osc.start(time);
+      osc.stop(time + 0.15);
+    });
+  }
+}
+
 class SlotAudio {
   constructor() {
     this.ctx = null;
     this.isMuted = false;
     this.spinInterval = null;
+    this.rollupInterval = null;
+
+    // Background Music & Procedural Jazz Engine
+    this.bgm = new BgmController(this);
   }
 
   initContext() {
-    if (!this.ctx && (window.AudioContext || window.webkitAudioContext)) {
+    if (!this.ctx && (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined')) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioCtx();
     }
@@ -21,11 +689,23 @@ class SlotAudio {
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
     }
+    if (this.bgm && !this.bgm.isPlaying && !this.isMuted && this.bgm.hasUserInteracted) {
+      this.bgm.resume();
+    }
   }
 
   toggleMute() {
     this.isMuted = !this.isMuted;
+    if (this.bgm) {
+      this.bgm.setMuted(this.isMuted);
+    }
     return this.isMuted;
+  }
+
+  setBgmMode(mode) {
+    if (this.bgm) {
+      this.bgm.setMode(mode);
+    }
   }
 
   // Click / Beep for buttons
@@ -80,6 +760,7 @@ class SlotAudio {
 
   // Continuous spinning reel sound
   startSpinningSound() {
+    if (this.bgm) this.bgm.duck(0.12, 220);
     if (this.isMuted) return;
     this.ensureAudio();
     if (!this.ctx) return;
@@ -112,6 +793,9 @@ class SlotAudio {
     if (this.spinInterval) {
       clearInterval(this.spinInterval);
       this.spinInterval = null;
+    }
+    if (this.bgm && !this.rollupInterval) {
+      this.bgm.unduck(500, 300);
     }
   }
 
@@ -171,6 +855,12 @@ class SlotAudio {
 
   // Win chime
   playWin() {
+    if (this.bgm) {
+      this.bgm.duck(0.08, 180);
+      setTimeout(() => {
+        if (!this.rollupInterval && this.bgm) this.bgm.unduck(600);
+      }, 1400);
+    }
     if (this.isMuted) return;
     this.ensureAudio();
     if (!this.ctx) return;
@@ -199,6 +889,12 @@ class SlotAudio {
 
   // Jackpot / Huge Win fanfare & coins
   playJackpot() {
+    if (this.bgm) {
+      this.bgm.deepDuck(0.03, 150);
+      setTimeout(() => {
+        if (!this.rollupInterval && this.bgm) this.bgm.unduck(1000);
+      }, 3800);
+    }
     if (this.isMuted) return;
     this.ensureAudio();
     if (!this.ctx) return;
@@ -615,6 +1311,7 @@ class SlotAudio {
 
   // Rapid Coin Roll-up Counter Sound (Loop)
   startRollupSound() {
+    if (this.bgm) this.bgm.deepDuck(0.03, 120);
     if (this.isMuted || this.rollupInterval) return;
     this.ensureAudio();
     if (!this.ctx) return;
@@ -642,10 +1339,14 @@ class SlotAudio {
       clearInterval(this.rollupInterval);
       this.rollupInterval = null;
     }
+    if (this.bgm) {
+      this.bgm.unduck(1200, 100);
+    }
   }
 
   // Big Win / Mega Win / Epic Win Fanfare
   playBigWinCheer(tier = 'big') {
+    if (this.bgm) this.bgm.deepDuck(0.03, 150);
     if (this.isMuted) return;
     this.ensureAudio();
     if (!this.ctx) return;

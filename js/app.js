@@ -781,6 +781,9 @@ class IGTApp {
     });
 
     this.currentGrandMode = mode;
+    if (window.slotAudio && typeof window.slotAudio.setBgmMode === 'function') {
+      window.slotAudio.setBgmMode(mode);
+    }
     if (typeof document !== 'undefined' && document.body) {
       document.body.classList.remove('theme-casino', 'theme-vault', 'theme-royale');
       document.body.classList.add(`theme-${mode}`);

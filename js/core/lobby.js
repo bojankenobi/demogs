@@ -194,6 +194,15 @@ class CasinoLobby {
     this.activeGameId = gameId;
     this.activeGame = this.games[gameId];
 
+    if (window.slotAudio && typeof window.slotAudio.setBgmMode === 'function') {
+      if (gameId === 'crash') {
+        window.slotAudio.setBgmMode('crash');
+      } else {
+        const targetMode = (window.slotApp && window.slotApp.currentGrandMode) ? window.slotApp.currentGrandMode : 'casino';
+        window.slotAudio.setBgmMode(targetMode);
+      }
+    }
+
     if (this.activeGame && typeof this.activeGame.mount === 'function') {
       this.activeGame.mount();
       setTimeout(() => {

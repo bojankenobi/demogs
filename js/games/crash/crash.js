@@ -631,6 +631,9 @@ class GrandCrashGame {
     if (window.slotAudio && window.slotAudio.playClick) {
       window.slotAudio.playClick();
     }
+    if (window.slotAudio?.bgm?.duck) {
+      window.slotAudio.bgm.duck(0.18, 300);
+    }
 
     this.roundPlayers.forEach(p => {
       if (p.state === 'waiting') p.state = 'flying';
@@ -655,6 +658,10 @@ class GrandCrashGame {
     // Audio explosion
     if (window.slotAudio && window.slotAudio.playMineExplode) {
       window.slotAudio.playMineExplode();
+    }
+    if (window.slotAudio?.bgm?.deepDuck) {
+      window.slotAudio.bgm.deepDuck(0.04, 150);
+      window.slotAudio.bgm.unduck(800, 2000);
     }
 
     // Prepend to history
@@ -959,6 +966,9 @@ class GrandCrashGame {
       // Exponential curve formula: e^(0.065 * t)
       const calculatedMult = Math.pow(Math.E, 0.065 * elapsedSec * 1.6);
       this.currentMultiplier = Math.max(1.0, Math.round(calculatedMult * 100) / 100);
+      if (window.slotAudio?.bgm?.setCrashMultiplier) {
+        window.slotAudio.bgm.setCrashMultiplier(this.currentMultiplier);
+      }
 
       // Check multiplayer competitors cashouts
       this.checkMultiplayerCashouts();
