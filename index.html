@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=117">
+  <link rel="stylesheet" href="css/style.css?v=118">
   <link rel="stylesheet" href="css/grand-hub.css?v=101">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -63,23 +63,30 @@
   <main class="game-container">
     <!-- Header Section: Grand Slot Logo & Quick Navigation -->
     <header class="header-section">
-      <div class="brand-logo-wrap">
-        <img src="assets/logo.svg" alt="grandslot" class="main-brand-logo">
-      </div>
-      <div class="header-quick-nav">
-        <button type="button" class="btn-header-nav btn-header-tier tier-silver-glow" id="btn-header-tier" title="Status Nivo &amp; XP Progres (Silver, Gold, VIP)">
-          <span class="nav-icon" id="header-tier-icon">🥈</span>
-          <span class="nav-label" id="header-tier-label">SILVER</span>
-        </button>
-        <button type="button" class="btn-header-nav btn-header-lobby" id="btn-header-lobby" title="Otvori Lobi sa svim igrama">
-          <span class="nav-icon">🏛️</span>
-          <span class="nav-label">IZBOR IGARA</span>
-        </button>
-        <button type="button" class="btn-header-nav btn-header-vouchers" id="btn-header-vouchers" title="Moji Vaučeri &amp; VIP Tiketi">
-          <span class="nav-icon">🎟️</span>
-          <span class="nav-label">VAUČERI</span>
-          <span class="header-voucher-counter" id="header-voucher-counter">1</span>
-        </button>
+      <!-- Symmetrical Luxury Header Top Bar: Tier Status (Left), Brand Logo (Center), Quick Actions (Right) -->
+      <div class="header-top-bar">
+        <div class="header-top-left">
+          <button type="button" class="btn-header-nav btn-header-tier tier-silver-glow" id="btn-header-tier" title="Status Nivo &amp; XP Progres (Silver, Gold, VIP)">
+            <span class="nav-icon" id="header-tier-icon">🥈</span>
+            <span class="nav-label" id="header-tier-label">SILVER</span>
+          </button>
+        </div>
+        <div class="brand-logo-wrap">
+          <img src="assets/logo.svg" alt="grandslot" class="main-brand-logo">
+        </div>
+        <div class="header-top-right">
+          <div class="header-quick-nav">
+            <button type="button" class="btn-header-nav btn-header-lobby" id="btn-header-lobby" title="Otvori Lobi sa svim igrama">
+              <span class="nav-icon">🏛️</span>
+              <span class="nav-label">IZBOR IGARA</span>
+            </button>
+            <button type="button" class="btn-header-nav btn-header-vouchers" id="btn-header-vouchers" title="Moji Vaučeri &amp; VIP Tiketi">
+              <span class="nav-icon">🎟️</span>
+              <span class="nav-label">VAUČERI</span>
+              <span class="header-voucher-counter" id="header-voucher-counter">1</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Grand Mode Hub Navigation (Pure Luxury Typography, No Low-Grade Icons) -->
