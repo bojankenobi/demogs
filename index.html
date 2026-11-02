@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=113">
+  <link rel="stylesheet" href="css/style.css?v=114">
   <link rel="stylesheet" href="css/grand-hub.css?v=101">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -1708,6 +1708,7 @@
           <div class="egt-card-ribbon ribbon-gold">RETRO CLASSIC</div>
           
           <div class="grand-card-poster poster-classic">
+            <div class="poster-classic-beam"></div>
             <div class="poster-symbols-cluster">
               <img src="assets/symbols/seven.svg" alt="Seven" class="poster-hero-sym" />
               <img src="assets/symbols/bar.svg" alt="Bar" class="poster-sub-sym sym-left" />
@@ -1731,6 +1732,7 @@
           <div class="egt-card-ribbon ribbon-red">HOT 5 LINES</div>
           
           <div class="grand-card-poster poster-royal">
+            <div class="poster-royal-beams"></div>
             <div class="poster-symbols-cluster">
               <img src="assets/symbols/crown.svg" alt="Crown" class="poster-hero-sym" />
               <img src="assets/symbols/seven.svg" alt="Seven" class="poster-sub-sym sym-left" />
@@ -1802,8 +1804,10 @@
           <div class="grand-card-poster poster-crash">
             <div class="poster-symbols-cluster">
               <div class="poster-crash-art">
-                <span class="poster-rocket-icon">🚀</span>
+                <div class="poster-crash-vector-curve"></div>
                 <div class="poster-radar-glow"></div>
+                <span class="poster-rocket-icon">🚀</span>
+                <span class="poster-crash-multiplier-tag">1000x</span>
               </div>
             </div>
           </div>
@@ -1826,9 +1830,16 @@
           <div class="grand-card-poster poster-plinko">
             <div class="poster-symbols-cluster">
               <div class="poster-plinko-art">
-                <span class="poster-plinko-orb">🔴</span>
-                <div class="poster-plinko-pegs">
-                  <span>•</span><span>•</span><span>•</span>
+                <div class="poster-plinko-pyramid-grid">
+                  <div class="plinko-peg-row"><span class="plinko-peg"></span></div>
+                  <div class="plinko-peg-row"><span class="plinko-peg"></span><span class="plinko-peg"></span></div>
+                  <div class="plinko-peg-row"><span class="plinko-peg"></span><span class="plinko-peg"></span><span class="plinko-peg"></span></div>
+                  <div class="plinko-peg-row"><span class="plinko-peg"></span><span class="plinko-peg"></span><span class="plinko-peg"></span><span class="plinko-peg"></span></div>
+                  <div class="plinko-peg-row"><span class="plinko-peg"></span><span class="plinko-peg"></span><span class="plinko-peg"></span><span class="plinko-peg"></span><span class="plinko-peg"></span></div>
+                </div>
+                <div class="poster-plinko-orb poster-plinko-orb-ball"></div>
+                <div class="poster-plinko-slots">
+                  <span>100x</span><span>29x</span><span>1000x</span>
                 </div>
               </div>
             </div>
@@ -1852,8 +1863,12 @@
           <div class="grand-card-poster poster-blackjack">
             <div class="poster-symbols-cluster">
               <div class="poster-card-fan">
-                <div class="poster-mini-card card-spade-a">A♠</div>
-                <div class="poster-mini-card card-jack-j">J♦</div>
+                <div class="poster-mini-card card-spade-a"><span class="card-corner">A♠</span><span class="card-suit-center">♠</span></div>
+                <div class="poster-mini-card card-jack-j"><span class="card-corner">J♦</span><span class="card-suit-center">♦</span></div>
+              </div>
+              <div class="poster-bj-chips">
+                <span class="bj-chip-mini chip-100">100</span>
+                <span class="bj-chip-mini chip-500">500</span>
               </div>
             </div>
           </div>
@@ -1874,10 +1889,11 @@
           <div class="egt-card-ribbon ribbon-gold">800× APARAT</div>
           
           <div class="grand-card-poster poster-videopoker">
+            <div class="poster-crt-scanlines"></div>
             <div class="poster-symbols-cluster">
               <div class="poster-card-fan">
-                <div class="poster-mini-card card-royal-k">K♠</div>
-                <div class="poster-mini-card card-royal-a">A♠</div>
+                <div class="poster-mini-card card-royal-k"><span class="card-corner">K♠</span><span class="card-suit-center">♠</span></div>
+                <div class="poster-mini-card card-royal-a"><span class="card-corner">A♠</span><span class="card-suit-center">♠</span></div>
               </div>
               <img src="assets/symbols/crown.svg" alt="Crown" class="poster-poker-crown" />
             </div>
@@ -1899,10 +1915,11 @@
           <div class="egt-card-ribbon ribbon-gold">VIP STO • 100:1</div>
           
           <div class="grand-card-poster poster-holdem">
+            <div class="poster-poker-oval"></div>
             <div class="poster-symbols-cluster">
               <div class="poster-card-fan">
-                <div class="poster-mini-card card-table-a">A♥</div>
-                <div class="poster-mini-card card-table-k">K♥</div>
+                <div class="poster-mini-card card-table-a"><span class="card-corner">A♥</span><span class="card-suit-center">♥</span></div>
+                <div class="poster-mini-card card-table-k"><span class="card-corner">K♥</span><span class="card-suit-center">♥</span></div>
               </div>
               <div class="poster-table-chip">VIP</div>
             </div>
