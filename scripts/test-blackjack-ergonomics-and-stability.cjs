@@ -73,9 +73,19 @@ console.log('✓ Uniform 42px button height verified across all phases (Betting/
 
 // --- TEST 6: Cache Busters Bumped ---
 console.log('\n--- TEST 6: Cache Busters Bumped ---');
-assert(/style\.css\?v=(11[6-9]|1[2-9]\d)/.test(html), 'style.css version must be >= 116');
-assert(/blackjack\.js\?v=(10[5-9]|1[1-9]\d)/.test(html), 'blackjack.js version must be >= 105');
-console.log('✓ Cache busters verified (style.css?v=116, blackjack.js?v=105)');
+assert(/style\.css\?v=(11[7-9]|1[2-9]\d)/.test(html), 'style.css version must be >= 117');
+assert(/blackjack\.js\?v=(10[6-9]|1[1-9]\d)/.test(html), 'blackjack.js version must be >= 106');
+console.log('✓ Cache busters verified (style.css?v=117, blackjack.js?v=106)');
+
+// --- TEST 7: Desktop Anti-Collision & Viewport Zero-Overflow Architecture ---
+console.log('\n--- TEST 7: Desktop Anti-Collision & Viewport Zero-Overflow ---');
+assert(!css.includes('.blackjack-table {\n    min-height: 480px;'), 'Rigid 480px table height must be eliminated on tablet');
+assert(!css.includes('.blackjack-table {\n    min-height: 540px;'), 'Rigid 540px table height must be eliminated on desktop');
+assert(!css.includes('.blackjack-rules-inscription {\n    top: 34%;'), 'Rules inscription must not be shoved down to 34% (colliding with dealer cards)');
+assert(css.includes('.game-container.in-blackjack-mode .brand-logo-wrap'), 'Must suppress brand logo in blackjack mode to protect top navigation');
+assert(css.includes('.bj-act-icon {\n    font-size: 0.95rem !important;'), 'Action button icons must be clamped to 0.95rem on desktop to prevent clipped icons');
+assert(css.includes('z-index: 20;'), 'Footer system bar must be locked with z-index: 20 against control deck overlap');
+console.log('✓ Desktop anti-collision, responsive table flex, and footer protection verified');
 
 console.log('\n======================================================');
 console.log('🎉 ALL BLACKJACK ERGONOMICS & STABILITY TESTS PASSED! 🎉');
