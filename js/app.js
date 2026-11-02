@@ -530,6 +530,9 @@ class IGTApp {
 
   openMainModeModal() {
     this.closeCasinoStyleModal();
+    if (this.lobby && typeof this.lobby.closeModal === 'function') {
+      this.lobby.closeModal();
+    }
     const modal = document.getElementById('main-mode-select-modal');
     if (modal) {
       modal.classList.remove('is-hidden');
@@ -1948,7 +1951,6 @@ class IGTApp {
             window.updateHeaderProfile();
           }
           if (loginModal) loginModal.classList.remove('active');
-          if (this.lobby) this.lobby.openModal();
           return;
         }
       } catch (err) {

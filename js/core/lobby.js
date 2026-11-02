@@ -72,9 +72,7 @@ class CasinoLobby {
       { id: 'plinko', el: document.getElementById('egt-opt-plinko') },
       { id: 'blackjack', el: document.getElementById('egt-opt-blackjack') },
       { id: 'videopoker', el: document.getElementById('egt-opt-videopoker') },
-      { id: 'holdem', el: document.getElementById('egt-opt-holdem') },
-      { id: 'vault', el: document.getElementById('egt-opt-vault') },
-      { id: 'royale', el: document.getElementById('egt-opt-royale') }
+      { id: 'holdem', el: document.getElementById('egt-opt-holdem') }
     ];
 
     const boundCards = new Set();
@@ -249,9 +247,7 @@ class CasinoLobby {
       plinko: document.getElementById('egt-opt-plinko'),
       blackjack: document.getElementById('egt-opt-blackjack'),
       videopoker: document.getElementById('egt-opt-videopoker'),
-      holdem: document.getElementById('egt-opt-holdem'),
-      vault: document.getElementById('egt-opt-vault'),
-      royale: document.getElementById('egt-opt-royale')
+      holdem: document.getElementById('egt-opt-holdem')
     };
 
     const activeText = window.i18n ? window.i18n.t('egtActiveTag') : 'AKTIVNA IGRA';

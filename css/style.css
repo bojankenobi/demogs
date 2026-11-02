@@ -663,11 +663,15 @@ body {
    IGT AUTHENTIC CABINET LOBBY
    ============================================================ */
 .egt-lobby-overlay {
-  display: flex !important;
+  display: none;
   background: radial-gradient(circle at center, rgba(28, 16, 4, 0.97) 0%, rgba(9, 10, 15, 0.99) 100%) !important;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 1000 !important;
+}
+
+.egt-lobby-overlay.active:not(.is-hidden) {
+  display: flex !important;
 }
 
 .egt-lobby-overlay.is-hidden {

@@ -43,15 +43,15 @@ const expectedGameIds = [
   'egt-opt-plinko',
   'egt-opt-blackjack',
   'egt-opt-videopoker',
-  'egt-opt-holdem',
-  'egt-opt-vault',
-  'egt-opt-royale'
+  'egt-opt-holdem'
 ];
 
 expectedGameIds.forEach(id => {
   assert(htmlContent.includes(`id="${id}"`), `index.html must include game card #${id}`);
 });
-console.log('✓ All 11 games present in lobby with category tags');
+assert(!htmlContent.includes('id="egt-opt-vault"'), 'Casino lobby must not include Trezor card (handled in pillar hub)');
+assert(!htmlContent.includes('id="egt-opt-royale"'), 'Casino lobby must not include Royale card (handled in pillar hub)');
+console.log('✓ All 9 pure Casino games present in lobby; Trezor & Royale cleanly separated into their own pillars');
 
 // --- TEST 4: Dedicated "Moji Vaučeri" Modal ---
 console.log('\n--- TEST 4: Dedicated "Moji Vaučeri" Management Modal ---');
