@@ -6,7 +6,14 @@
   <title>Grand Slot Club - Verifikator & Skener Vaučera</title>
   
   <link rel="icon" type="image/png" href="assets/icons/favicon.png">
-  <link rel="stylesheet" href="css/scanner.css">
+  <link rel="manifest" href="manifest-scanner.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GSC Skener">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#0e121c">
+  <link rel="stylesheet" href="css/scanner.css?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
@@ -23,9 +30,14 @@
         <span>Osoblje • Skener Vaučera</span>
       </div>
     </div>
-    <div class="scanner-status-indicator">
-      <span class="status-live-dot"></span>
-      <span class="status-live-text">OPERATIVNO</span>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <button type="button" class="btn-install-pwa" id="btn-install-pwa" title="Instaliraj skener kao samostalnu aplikaciju">
+        📥 Instaliraj
+      </button>
+      <div class="scanner-status-indicator">
+        <span class="status-live-dot"></span>
+        <span class="status-live-text" id="header-status-indicator">OPERATIVNO</span>
+      </div>
     </div>
   </header>
 
@@ -35,9 +47,13 @@
     <div class="shift-card">
       <div>
         <div class="shift-info-lbl">Aktivni Operater & Lokacija</div>
-        <div class="shift-operator-name" id="display-operator-info">Marko (Šank 1) • Beograd</div>
+        <div class="shift-operator-name" id="display-operator-info">
+          <span id="shift-operator-name">Marko Petrović</span>
+          <span id="shift-operator-role" class="badge-role">Šank 1</span>
+          <div id="shift-location-name" style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal; margin-top: 2px;">Grand Slot Beograd - Centar</div>
+        </div>
       </div>
-      <button type="button" class="btn-edit-shift" id="btn-edit-operator">Izmeni</button>
+      <button type="button" class="btn-logout-shift" id="btn-staff-logout" title="Odjavi se i završi smenu">Kraj Smene 🔒</button>
     </div>
 
     <!-- Camera Viewport Card -->
@@ -112,6 +128,58 @@
       </ul>
     </section>
 
+    <!-- Staff Auth Gate Overlay (Mandatory PIN Verification to Prevent Abuse) -->
+    <div class="staff-auth-overlay" id="staff-auth-modal" style="display: none;">
+      <div class="staff-auth-card">
+        <img src="assets/symbols/crystal-spade-clean.png" alt="Grand Slot Club" class="staff-auth-logo">
+        <h2 class="staff-auth-title">STAFF AUTORIZACIJA</h2>
+        <p class="staff-auth-sub">Prijava ovlašćenog operatera za verifikaciju i isplatu vaučera</p>
+
+        <form id="staff-auth-form" onsubmit="return false;">
+          <div class="auth-form-group">
+            <label class="auth-label" for="auth-select-location">Izaberite Lokal / Klub:</label>
+            <select id="auth-select-location" class="auth-select">
+              <option value="" disabled selected>Učitavanje lokala...</option>
+            </select>
+          </div>
+
+          <div class="auth-form-group">
+            <label class="auth-label" for="auth-select-operator">Izaberite Operatera:</label>
+            <select id="auth-select-operator" class="auth-select">
+              <option value="" disabled selected>Prvo izaberite lokal...</option>
+            </select>
+          </div>
+
+          <div class="auth-form-group">
+            <label class="auth-label" for="auth-input-pin">Unesite Vaš Sigurnosni PIN:</label>
+            <input type="password" id="auth-input-pin" class="auth-pin-input" placeholder="••••" maxlength="6" inputmode="numeric" autocomplete="off" readonly>
+          </div>
+
+          <!-- Quick Touch Numeric Keypad -->
+          <div class="auth-pin-keypad">
+            <button type="button" class="pin-btn" data-key="1">1</button>
+            <button type="button" class="pin-btn" data-key="2">2</button>
+            <button type="button" class="pin-btn" data-key="3">3</button>
+            <button type="button" class="pin-btn" data-key="4">4</button>
+            <button type="button" class="pin-btn" data-key="5">5</button>
+            <button type="button" class="pin-btn" data-key="6">6</button>
+            <button type="button" class="pin-btn" data-key="7">7</button>
+            <button type="button" class="pin-btn" data-key="8">8</button>
+            <button type="button" class="pin-btn" data-key="9">9</button>
+            <button type="button" class="pin-btn action-clear" data-key="clear">C</button>
+            <button type="button" class="pin-btn" data-key="0">0</button>
+            <button type="button" class="pin-btn action-back" data-key="back">⌫</button>
+          </div>
+
+          <button type="button" class="btn-auth-submit" id="btn-staff-login">
+            🔑 PRIJAVI SE NA SMENU
+          </button>
+
+          <div class="auth-error-msg" id="auth-error-msg"></div>
+        </form>
+      </div>
+    </div>
+
   </main>
 
   <script>
@@ -127,18 +195,18 @@
         this.verifCard = document.getElementById('verification-card');
         this.currentInspectedVoucher = null;
         this.shiftScans = [];
-        this.isScanning = true;
+        this.isScanning = false;
         this.currentStream = null;
         this.facingMode = 'environment';
         this.scanLoopActive = false;
 
-        this.operatorName = localStorage.getItem('gsc_scanner_operator') || 'Marko (Šank 1)';
-        this.location = localStorage.getItem('gsc_scanner_location') || 'Grand Slot Club Beograd';
+        this.session = null;
+        this.availableLocations = [];
+        this.availableOperators = [];
 
         this.initAudio();
-        this.updateOperatorDisplay();
         this.initControls();
-        this.startCamera();
+        this.checkAuthSession();
       }
 
       initAudio() {
@@ -174,26 +242,232 @@
         this.playTone(180, 'sawtooth', 0.35);
       }
 
+      checkAuthSession() {
+        try {
+          const raw = sessionStorage.getItem('gsc_staff_session') || localStorage.getItem('gsc_staff_session');
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.id && parsed.pin) {
+              this.session = parsed;
+              this.updateOperatorDisplay();
+              this.isScanning = true;
+              this.startCamera();
+              return;
+            }
+          }
+        } catch (e) {}
+
+        this.showAuthModal();
+      }
+
       updateOperatorDisplay() {
-        const el = document.getElementById('display-operator-info');
-        if (el) el.textContent = `${this.operatorName} • ${this.location}`;
+        const nameEl = document.getElementById('shift-operator-name');
+        const roleEl = document.getElementById('shift-operator-role');
+        const locEl = document.getElementById('shift-location-name');
+
+        if (this.session) {
+          if (nameEl) nameEl.textContent = this.session.full_name;
+          if (roleEl) roleEl.textContent = this.session.role || 'Šank';
+          if (locEl) locEl.textContent = this.session.location_name;
+        } else {
+          if (nameEl) nameEl.textContent = 'Nije prijavljen';
+          if (roleEl) roleEl.textContent = 'NEAKTIVAN';
+          if (locEl) locEl.textContent = 'Izaberite lokal za prijavu';
+        }
+      }
+
+      async showAuthModal() {
+        const modal = document.getElementById('staff-auth-modal');
+        if (modal) modal.style.display = 'flex';
+        await this.loadLocationsAndOperators();
+      }
+
+      async loadLocationsAndOperators() {
+        const locSelect = document.getElementById('auth-select-location');
+        const opSelect = document.getElementById('auth-select-operator');
+
+        try {
+          const res = await fetch('/api/scanner/locations');
+          const data = await res.json();
+
+          if (data && data.success && Array.isArray(data.locations)) {
+            this.availableLocations = data.locations;
+            this.availableOperators = data.operators || [];
+          } else {
+            throw new Error('Fallback required');
+          }
+        } catch (err) {
+          this.availableLocations = [
+            { id: 'loc_bg_centar', name: 'Grand Slot Beograd - Centar', address: 'Kralja Milana 12' },
+            { id: 'loc_bg_nbg', name: 'Grand Slot Novi Beograd', address: 'Bulevar Mihajla Pupina 10' },
+            { id: 'loc_ns_centar', name: 'Grand Slot Novi Sad', address: 'Zmaj Jovina 8' },
+            { id: 'loc_nis_centar', name: 'Grand Slot Niš', address: 'Obrenovićeva 22' }
+          ];
+          this.availableOperators = [
+            { id: 'op_bg1_marko', location_id: 'loc_bg_centar', full_name: 'Marko Petrović', role: 'Šank 1' },
+            { id: 'op_bg1_jelena', location_id: 'loc_bg_centar', full_name: 'Jelena Jovanović', role: 'Glavna Blagajna' },
+            { id: 'op_bg2_nikola', location_id: 'loc_bg_nbg', full_name: 'Nikola Stanković', role: 'Slot Sala' },
+            { id: 'op_ns1_milan', location_id: 'loc_ns_centar', full_name: 'Milan Popović', role: 'Šank & Kasa' }
+          ];
+        }
+
+        if (locSelect) {
+          locSelect.innerHTML = '<option value="" disabled selected>-- Izaberite Lokal / Kazino Klub --</option>' +
+            this.availableLocations.map(l => `<option value="${l.id}">${l.name} (${l.address || ''})</option>`).join('');
+        }
+
+        if (opSelect) {
+          opSelect.innerHTML = '<option value="" disabled selected>-- Prvo izaberite lokal iznad --</option>';
+        }
+      }
+
+      onLocationChange(locationId) {
+        const opSelect = document.getElementById('auth-select-operator');
+        if (!opSelect) return;
+
+        const filtered = this.availableOperators.filter(o => o.location_id === locationId);
+        if (filtered.length === 0) {
+          opSelect.innerHTML = '<option value="" disabled selected>Nema registrovanih operatera za ovaj lokal</option>';
+        } else {
+          opSelect.innerHTML = '<option value="" disabled selected>-- Izaberite Vaše Ime --</option>' +
+            filtered.map(o => `<option value="${o.id}">${o.full_name} (${o.role || 'Šank'})</option>`).join('');
+        }
+      }
+
+      async handleStaffLogin() {
+        const locSelect = document.getElementById('auth-select-location');
+        const opSelect = document.getElementById('auth-select-operator');
+        const pinInput = document.getElementById('auth-input-pin');
+        const errorBox = document.getElementById('auth-error-msg');
+        const submitBtn = document.getElementById('btn-staff-login');
+
+        const locationId = locSelect ? locSelect.value : '';
+        const operatorId = opSelect ? opSelect.value : '';
+        const pinCode = pinInput ? pinInput.value.trim() : '';
+
+        if (!locationId) {
+          this.showAuthError('Molimo izaberite lokal / kazino klub.');
+          return;
+        }
+        if (!operatorId) {
+          this.showAuthError('Molimo izaberite ime operatera sa spiska.');
+          return;
+        }
+        if (!pinCode || pinCode.length < 4) {
+          this.showAuthError('Unesite vaš četvorocifreni ili šestocifreni PIN.');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Provera autorizacije...';
+        if (errorBox) errorBox.style.display = 'none';
+
+        try {
+          const res = await fetch('/api/scanner/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ locationId, operatorId, pinCode })
+          });
+
+          const data = await res.json();
+
+          if (data && data.success && data.operator) {
+            this.session = {
+              ...data.operator,
+              pin: pinCode,
+              login_time: new Date().toISOString()
+            };
+
+            sessionStorage.setItem('gsc_staff_session', JSON.stringify(this.session));
+            localStorage.setItem('gsc_staff_session', JSON.stringify(this.session));
+
+            this.updateOperatorDisplay();
+            document.getElementById('staff-auth-modal').style.display = 'none';
+            this.playSuccessSound();
+
+            this.isScanning = true;
+            this.startCamera();
+          } else {
+            this.showAuthError(data.error || 'Pogrešan PIN ili niste ovlašćeni za ovaj lokal.');
+            this.playErrorSound();
+          }
+        } catch (err) {
+          this.showAuthError('Greška u komunikaciji sa serverom autorizacije.');
+          this.playErrorSound();
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '🔑 PRIJAVI SE NA SMENU';
+        }
+      }
+
+      showAuthError(msg) {
+        const errorBox = document.getElementById('auth-error-msg');
+        if (errorBox) {
+          errorBox.textContent = msg;
+          errorBox.style.display = 'block';
+        }
+      }
+
+      handleStaffLogout() {
+        if (!confirm('Da li ste sigurni da želite da se odjavite i zaključate skener?')) return;
+
+        this.session = null;
+        sessionStorage.removeItem('gsc_staff_session');
+        localStorage.removeItem('gsc_staff_session');
+
+        if (this.currentStream) {
+          try {
+            this.currentStream.getTracks().forEach(t => t.stop());
+          } catch (e) {}
+          this.currentStream = null;
+        }
+
+        this.isScanning = false;
+        if (this.statusText) {
+          this.statusText.textContent = 'Skener je zaključan. Potrebna je autorizacija.';
+        }
+
+        this.updateOperatorDisplay();
+        this.showAuthModal();
       }
 
       initControls() {
-        // Edit operator info
-        document.getElementById('btn-edit-operator').addEventListener('click', () => {
-          const name = prompt('Unesite vaše ime i radno mesto:', this.operatorName);
-          if (name && name.trim()) {
-            this.operatorName = name.trim();
-            localStorage.setItem('gsc_scanner_operator', this.operatorName);
-          }
-          const loc = prompt('Unesite naziv lokala / kluba:', this.location);
-          if (loc && loc.trim()) {
-            this.location = loc.trim();
-            localStorage.setItem('gsc_scanner_location', this.location);
-          }
-          this.updateOperatorDisplay();
+        // Logout shift button
+        const btnLogout = document.getElementById('btn-staff-logout');
+        if (btnLogout) {
+          btnLogout.addEventListener('click', () => this.handleStaffLogout());
+        }
+
+        // Location dropdown change
+        const locSelect = document.getElementById('auth-select-location');
+        if (locSelect) {
+          locSelect.addEventListener('change', (e) => this.onLocationChange(e.target.value));
+        }
+
+        // Numeric Keypad handlers
+        const pinInput = document.getElementById('auth-input-pin');
+        document.querySelectorAll('.pin-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-key');
+            if (!pinInput) return;
+
+            if (key === 'clear') {
+              pinInput.value = '';
+            } else if (key === 'back') {
+              pinInput.value = pinInput.value.slice(0, -1);
+            } else {
+              if (pinInput.value.length < 6) {
+                pinInput.value += key;
+              }
+            }
+          });
         });
+
+        // Submit Login button
+        const submitBtn = document.getElementById('btn-staff-login');
+        if (submitBtn) {
+          submitBtn.addEventListener('click', () => this.handleStaffLogin());
+        }
 
         // Flip camera toggle
         const btnFlip = document.getElementById('btn-camera-flip');
@@ -408,10 +682,17 @@
       }
 
       async inspectVoucherCode(code) {
+        if (!this.session) {
+          this.showAuthModal();
+          return;
+        }
+
         this.verifCard.style.display = 'block';
-        this.verifCard.className = 'verification-card';
-        document.getElementById('verif-badge').textContent = 'PROVERA U BAZI...';
+        this.verifCard.className = 'verification-card inspecting';
+        document.getElementById('verif-badge').textContent = 'PROVERA U TOKU...';
         document.getElementById('verif-player-name').textContent = 'Učitavanje...';
+        document.getElementById('verif-reward-value').textContent = '...';
+        document.getElementById('verif-reward-title').textContent = 'Povezivanje sa bazom...';
         document.getElementById('verif-vip-badge').style.display = 'none';
         document.getElementById('verif-error-msg').style.display = 'none';
         document.getElementById('btn-confirm-redeem').style.display = 'none';
@@ -422,8 +703,10 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               voucherCode: code,
-              operatorName: this.operatorName,
-              location: this.location,
+              operatorId: this.session.id,
+              operatorName: this.session.full_name,
+              location: this.session.location_name,
+              locationId: this.session.location_id,
               confirm: false
             })
           });
@@ -444,7 +727,7 @@
 
             document.getElementById('verif-reward-value').textContent = Number(data.voucher.reward_value).toLocaleString() + ' ZLT';
             document.getElementById('verif-reward-title').textContent = data.voucher.title || 'Promo Tiket';
-            document.getElementById('verif-location').textContent = data.voucher.location || this.location;
+            document.getElementById('verif-location').textContent = data.voucher.location || this.session.location_name;
             
             const expDate = new Date(data.voucher.expires_at).toLocaleString('sr-RS');
             document.getElementById('verif-expires').textContent = expDate;
@@ -482,9 +765,14 @@
       }
 
       async executeRedeem(code) {
+        if (!this.session) {
+          this.showAuthModal();
+          return;
+        }
+
         const btnConfirm = document.getElementById('btn-confirm-redeem');
         btnConfirm.disabled = true;
-        btnConfirm.textContent = '⏳ Evidentiranje...';
+        btnConfirm.textContent = '⏳ Evidentiranje i autorizacija...';
 
         try {
           const res = await fetch('/api/vouchers/redeem', {
@@ -492,8 +780,11 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               voucherCode: code,
-              operatorName: this.operatorName,
-              location: this.location,
+              operatorId: this.session.id,
+              operatorPin: this.session.pin,
+              operatorName: this.session.full_name,
+              locationId: this.session.location_id,
+              location: this.session.location_name,
               confirm: true
             })
           });
@@ -509,7 +800,7 @@
             const errMsg = document.getElementById('verif-error-msg');
             errMsg.style.display = 'block';
             errMsg.style.color = 'var(--color-success)';
-            errMsg.textContent = `Izdat fizički vaučer igraču. Evidentirao: ${this.operatorName}`;
+            errMsg.textContent = `Izdat fizički vaučer igraču. Evidentirao: ${this.session.full_name} (${this.session.role || 'Šank'})`;
 
             // Add to shift history
             this.recordShiftScan({
@@ -529,8 +820,8 @@
                   if ((v.voucher_code || '').trim().toUpperCase() === code.trim().toUpperCase()) {
                     v.status = 'redeemed';
                     v.redeemed_at = new Date().toLocaleString('sr-RS');
-                    v.redeemed_by_operator = this.operatorName;
-                    v.redeemed_location = this.location;
+                    v.redeemed_by_operator = this.session.full_name;
+                    v.redeemed_location = this.session.location_name;
                     changed = true;
                   }
                 });
@@ -545,7 +836,7 @@
                 if ((active.voucher_code || '').trim().toUpperCase() === code.trim().toUpperCase()) {
                   active.status = 'REDEEMED';
                   active.redeemed_at = new Date().toISOString();
-                  active.redeemed_by_operator = this.operatorName;
+                  active.redeemed_by_operator = this.session.full_name;
                   localStorage.setItem('gsc_active_voucher', JSON.stringify(active));
                 }
               }
@@ -553,7 +844,7 @@
               // Fire storage key for open player tabs
               localStorage.setItem('gsc_last_redeemed_voucher', JSON.stringify({
                 code: code,
-                operator: this.operatorName,
+                operator: this.session.full_name,
                 time: Date.now()
               }));
             } catch (e) {}
@@ -565,7 +856,7 @@
                 bc.postMessage({
                   type: 'VOUCHER_REDEEMED',
                   code: code,
-                  operator: this.operatorName,
+                  operator: this.session.full_name,
                   time: new Date().toISOString()
                 });
                 bc.close();
@@ -591,7 +882,7 @@
             this.playErrorSound();
             btnConfirm.disabled = false;
             btnConfirm.textContent = 'Pokušaj ponovo';
-            alert(data.error || 'Greška pri potvrdi izdavanja.');
+            alert(data.error || 'Greška pri potvrdi izdavanja vaučera.');
           }
 
         } catch (e) {
@@ -619,8 +910,8 @@
             title: item.title || 'VIP Promo Tiket',
             reward_value: item.value,
             reward_type: 'cash',
-            redeemed_by_operator: this.operatorName,
-            redeemed_location: this.location,
+            redeemed_by_operator: this.session ? `${this.session.full_name} (${this.session.role || 'Šank'})` : 'Operater',
+            redeemed_location: this.session ? this.session.location_name : 'Grand Slot Club',
             redeemed_at: new Date().toISOString()
           });
           localStorage.setItem('gsc_redeemed_scans_demo', JSON.stringify(listArr.slice(0, 50)));
@@ -640,6 +931,36 @@
         }
       }
     }
+
+    // Standalone Scanner Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw-scanner.js', { scope: './scanner.html' })
+          .then(reg => console.log('Scanner PWA Service Worker active:', reg.scope))
+          .catch(err => console.warn('Scanner SW registration:', err));
+      });
+    }
+
+    // Standalone Scanner PWA Install Prompt
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      const btnInstall = document.getElementById('btn-install-pwa');
+      if (btnInstall) {
+        btnInstall.style.display = 'inline-flex';
+        btnInstall.onclick = async () => {
+          if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            const { outcome } = await deferredInstallPrompt.userChoice;
+            if (outcome === 'accepted') {
+              btnInstall.style.display = 'none';
+            }
+            deferredInstallPrompt = null;
+          }
+        };
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       window.staffScanner = new StaffVoucherScanner();

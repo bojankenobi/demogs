@@ -15,6 +15,8 @@ export default async function handler(req, res) {
 
   const {
     voucherCode,
+    operatorId,
+    operatorPin,
     operatorName = 'Operater',
     location = 'Grand Slot Club',
     confirm = false
@@ -88,7 +90,7 @@ export default async function handler(req, res) {
         redeemed_by_operator: operatorName,
         redeemed_location: location
       },
-      message: `✅ Uspešno izdat fizički vaučer! Operater: ${operatorName}`
+      message: `✅ Uspešno izdat fizički vaučer! Operater: ${verifiedOperatorName}`
     });
   }
 
@@ -159,14 +161,51 @@ export default async function handler(req, res) {
       });
     }
 
-    // 3. Confirm and execute atomic redemption
+    // 3. Confirm and execute atomic redemption with operator security check
+    let verifiedOperatorName = operatorName;
+    let verifiedLocationName = location;
+
+    if (operatorId) {
+      const opCheck = await sql`
+        SELECT o.*, l.name as loc_name, l.is_active as loc_active
+        FROM scanner_operators o
+        LEFT JOIN scanner_locations l ON o.location_id = l.id
+        WHERE o.id = ${operatorId}
+        LIMIT 1;
+      `;
+      if (opCheck && opCheck.length > 0) {
+        const op = opCheck[0];
+        if (!op.is_active || (op.loc_active === false)) {
+          return res.status(403).json({
+            success: false,
+            error: 'Zloupotreba sprečena: Nalog operatera ili izabrani lokal je blokiran od strane menadžmenta.'
+          });
+        }
+        if (operatorPin && op.pin_code !== String(operatorPin).trim()) {
+          return res.status(401).json({
+            success: false,
+            error: 'Neispravan PIN operatera. Autorizacija isplate vaučera je odbijena.'
+          });
+        }
+        verifiedOperatorName = `${op.full_name} (${op.role || 'Šank'})`;
+        if (op.loc_name) verifiedLocationName = op.loc_name;
+
+        // Increment operator's scan counter
+        await sql`
+          UPDATE scanner_operators 
+          SET total_scans = total_scans + 1, last_active_at = NOW() 
+          WHERE id = ${op.id};
+        `;
+      }
+    }
+
     const updated = await sql`
       UPDATE vouchers
       SET 
         status = 'REDEEMED',
         redeemed_at = NOW(),
-        redeemed_by_operator = ${operatorName},
-        redeemed_location = ${location}
+        redeemed_by_operator = ${verifiedOperatorName},
+        redeemed_location = ${verifiedLocationName}
       WHERE id = ${v.id} AND status = 'ACTIVE'
       RETURNING *;
     `;
@@ -187,7 +226,7 @@ export default async function handler(req, res) {
         nickname: v.nickname || 'Gost',
         vip_tier: v.vip_tier || 'STANDARD'
       },
-      message: `✅ Uspešno izdat fizički vaučer! Operater: ${operatorName}`
+      message: `✅ Uspešno izdat fizički vaučer! Operater: ${verifiedOperatorName}`
     });
 
   } catch (error) {

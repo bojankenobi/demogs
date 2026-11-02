@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=80">
+  <link rel="stylesheet" href="css/admin.css?v=81">
 </head>
 <body class="admin-body">
 
@@ -135,6 +135,7 @@
       <button type="button" class="dash-tab-btn" data-tab="triggers">Daljinska Kontrola</button>
       <button type="button" class="dash-tab-btn" data-tab="crm">CRM & Baza Igrača</button>
       <button type="button" class="dash-tab-btn" data-tab="vouchers">Dnevnik Vaučera</button>
+      <button type="button" class="dash-tab-btn" data-tab="operators">🏢 Lokali & Operateri</button>
       <button type="button" class="dash-tab-btn" data-tab="push">Promocije & Smart Vaučeri</button>
       <button type="button" class="dash-tab-btn" data-tab="leaderboards">Kuća Slavnih & Sezone 🏆</button>
       <button type="button" class="dash-tab-btn" data-tab="info">Sistemska Dijagnostika</button>
@@ -577,6 +578,104 @@
       </div>
     </section>
 
+    <!-- TAB: LOKALI & OPERATERI SKENERA -->
+    <section class="tab-pane" id="pane-operators">
+      <div class="pane-intro-box">
+        <div class="pane-header-row">
+          <div>
+            <h2 class="pane-title">🏢 Lokali &amp; Ovlašćeni Operateri Skenera</h2>
+            <p class="pane-desc">Stroga kontrola pristupa mobilnom skeneru za izdavanje vaučera. Sprečavanje zloupotrebe i neovlašćene isplate novca kroz dodelu operatera po lokalu i autorizaciju preko sigurnosnog PIN-a.</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn-trigger-action" id="btn-admin-add-loc">+ Dodaj Lokal</button>
+            <button type="button" class="btn-trigger-action gold" id="btn-admin-add-op">+ Registruj Operatera</button>
+            <button type="button" class="btn-trigger-action" id="btn-admin-op-refresh">🔄 Osveži</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="operators-summary-grid">
+        <div class="operator-stat-card">
+          <span class="operator-stat-lbl">Aktivnih Lokala (Klubova)</span>
+          <span class="operator-stat-val" id="stat-active-locations">4</span>
+        </div>
+        <div class="operator-stat-card">
+          <span class="operator-stat-lbl">Ovlašćenih Operatera</span>
+          <span class="operator-stat-val" id="stat-active-operators">4</span>
+        </div>
+        <div class="operator-stat-card">
+          <span class="operator-stat-lbl">Ukupno Izvršenih Isplata</span>
+          <span class="operator-stat-val" id="stat-total-operator-scans">0</span>
+        </div>
+        <div class="operator-stat-card security">
+          <span class="operator-stat-lbl">Zaštita od Zloupotrebe</span>
+          <span class="operator-stat-val" style="color: #4ade80; font-size: 1rem;">🛡️ AKTIVNA (PIN-GATED)</span>
+        </div>
+      </div>
+
+      <!-- Section 1: Lokali / Kazino Klubovi -->
+      <div style="margin-bottom: 28px;">
+        <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+          📍 Registrovani Lokali Kazina
+        </h3>
+        <div class="crm-table-box">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Kod Lokala</th>
+                <th>Naziv Kluba</th>
+                <th>Adresa</th>
+                <th>Grad</th>
+                <th>Operatera</th>
+                <th>Status</th>
+                <th>Akcije</th>
+              </tr>
+            </thead>
+            <tbody id="admin-locations-tbody">
+              <tr><td colspan="7" class="table-loading-cell">Učitavanje lokala...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 2: Operateri po Lokalu -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin: 0; display: flex; align-items: center; gap: 6px;">
+            👤 Ovlašćeni Operateri sa Pravom Skeniranja
+          </h3>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="admin-filter-op-location" style="font-size: 0.75rem; color: var(--text-tertiary);">Filter Lokala:</label>
+            <select id="admin-filter-op-location" class="admin-form-select" style="width: auto; padding: 4px 8px; font-size: 0.78rem;">
+              <option value="all">Svi Lokali</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="crm-table-box">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Ime i Prezime</th>
+                <th>Korisničko Ime</th>
+                <th>Dodeljeni Lokal</th>
+                <th>Radno Mesto / Uloga</th>
+                <th>Sigurnosni PIN</th>
+                <th>Ukupno Isplata</th>
+                <th>Zadnja Aktivnost</th>
+                <th>Status</th>
+                <th>Akcije Upravljanja</th>
+              </tr>
+            </thead>
+            <tbody id="admin-operators-tbody">
+              <tr><td colspan="9" class="table-loading-cell">Učitavanje operatera...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- TAB 6: PROMOTIVNI HUB & SMART VAUČERI -->
     <section class="tab-pane" id="pane-push">
       <div class="pane-intro-box">
@@ -964,6 +1063,78 @@
         </div>
       </div>
     </section>
+    <!-- Modal: Dodaj Novi Lokal -->
+    <div class="admin-modal-overlay" id="modal-add-location" style="display: none;">
+      <div class="admin-modal-box">
+        <div class="admin-modal-head">
+          <h3 class="admin-modal-title">📍 Dodavanje Novog Lokala</h3>
+          <button type="button" class="admin-modal-close" id="btn-close-modal-loc">✕</button>
+        </div>
+        <form id="form-add-location" onsubmit="return false;">
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="loc-input-name">Naziv Lokala / Kluba:</label>
+            <input type="text" id="loc-input-name" class="admin-form-input" placeholder="npr. Grand Slot Zemun" required>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="loc-input-code">Jedinstveni Kod Lokala:</label>
+            <input type="text" id="loc-input-code" class="admin-form-input" placeholder="npr. BG-03" required>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="loc-input-address">Adresa:</label>
+            <input type="text" id="loc-input-address" class="admin-form-input" placeholder="npr. Glavna 15">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="loc-input-city">Grad:</label>
+            <input type="text" id="loc-input-city" class="admin-form-input" value="Beograd">
+          </div>
+          <div class="admin-modal-actions">
+            <button type="button" class="btn-trigger-action" id="btn-cancel-add-loc">Otkaži</button>
+            <button type="button" class="btn-trigger-action gold" id="btn-submit-add-loc">Sačuvaj Lokal</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Registruj Novog Operatera -->
+    <div class="admin-modal-overlay" id="modal-add-operator" style="display: none;">
+      <div class="admin-modal-box">
+        <div class="admin-modal-head">
+          <h3 class="admin-modal-title">👤 Registracija Novog Operatera</h3>
+          <button type="button" class="admin-modal-close" id="btn-close-modal-op">✕</button>
+        </div>
+        <form id="form-add-operator" onsubmit="return false;">
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="op-select-loc">Izaberite Dodeljeni Lokal:</label>
+            <select id="op-select-loc" class="admin-form-select" required></select>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="op-input-fullname">Ime i Prezime Operatera:</label>
+            <input type="text" id="op-input-fullname" class="admin-form-input" placeholder="npr. Petar Petrović" required>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="op-input-username">Korisničko Ime (Username):</label>
+            <input type="text" id="op-input-username" class="admin-form-input" placeholder="npr. petar.p" required>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="op-input-role">Radno Mesto / Uloga:</label>
+            <select id="op-input-role" class="admin-form-select">
+              <option value="Šank / Bar">Šank / Bar</option>
+              <option value="Glavna Blagajna">Glavna Blagajna</option>
+              <option value="Slot Sala">Slot Sala</option>
+              <option value="Menadžer Smene">Menadžer Smene</option>
+            </select>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label" for="op-input-pin">Sigurnosni PIN (4-6 cifara):</label>
+            <input type="text" id="op-input-pin" class="admin-form-input" placeholder="npr. 5566" maxlength="6" inputmode="numeric" required>
+          </div>
+          <div class="admin-modal-actions">
+            <button type="button" class="btn-trigger-action" id="btn-cancel-add-op">Otkaži</button>
+            <button type="button" class="btn-trigger-action gold" id="btn-submit-add-op">Registruj Operatera</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </main>
 
   <!-- Scripts -->
@@ -972,6 +1143,6 @@
   <script src="js/core/math-manager.js?v=80"></script>
   <script src="js/core/daily-access-manager.js?v=99"></script>
   <script src="js/core/prestige-manager.js?v=1"></script>
-  <script src="js/admin-dashboard.js?v=99"></script>
+  <script src="js/admin-dashboard.js?v=100"></script>
 </body>
 </html>

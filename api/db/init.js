@@ -106,7 +106,70 @@ export default async function handler(req, res) {
     await sql`CREATE INDEX IF NOT EXISTS idx_vouchers_status ON vouchers (status);`;
     await sql`CREATE INDEX IF NOT EXISTS idx_vouchers_redeemed ON vouchers (redeemed_at DESC);`;
 
-    // 5. Seed God Tier Operator Account
+    // 5. Create scanner_locations table
+    await sql`
+      CREATE TABLE IF NOT EXISTS scanner_locations (
+        id VARCHAR(64) PRIMARY KEY,
+        name VARCHAR(128) NOT NULL,
+        code VARCHAR(32) UNIQUE NOT NULL,
+        address VARCHAR(255) NULL,
+        city VARCHAR(64) DEFAULT 'Beograd',
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `;
+
+    await sql`CREATE INDEX IF NOT EXISTS idx_scanner_loc_active ON scanner_locations (is_active);`;
+
+    // 6. Create scanner_operators table
+    await sql`
+      CREATE TABLE IF NOT EXISTS scanner_operators (
+        id VARCHAR(64) PRIMARY KEY,
+        location_id VARCHAR(64) REFERENCES scanner_locations(id) ON DELETE CASCADE,
+        full_name VARCHAR(128) NOT NULL,
+        username VARCHAR(64) UNIQUE NOT NULL,
+        pin_code VARCHAR(32) NOT NULL,
+        role VARCHAR(64) DEFAULT 'Šank / Bar',
+        is_active BOOLEAN DEFAULT TRUE,
+        total_scans INTEGER DEFAULT 0,
+        last_active_at TIMESTAMPTZ NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `;
+
+    await sql`CREATE INDEX IF NOT EXISTS idx_scanner_op_loc ON scanner_operators (location_id);`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_scanner_op_user ON scanner_operators (username);`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_scanner_op_active ON scanner_operators (is_active);`;
+
+    // 7. Seed Initial Locations
+    await sql`
+      INSERT INTO scanner_locations (id, name, code, address, city, is_active)
+      VALUES 
+        ('loc_bg_centar', 'Grand Slot Beograd - Centar', 'BG-01', 'Kralja Milana 12, Beograd', 'Beograd', TRUE),
+        ('loc_bg_nbg', 'Grand Slot Novi Beograd', 'BG-02', 'Bulevar Mihajla Pupina 10, Novi Beograd', 'Beograd', TRUE),
+        ('loc_ns_centar', 'Grand Slot Novi Sad', 'NS-01', 'Zmaj Jovina 8, Novi Sad', 'Novi Sad', TRUE),
+        ('loc_nis_centar', 'Grand Slot Niš', 'NI-01', 'Obrenovićeva 22, Niš', 'Niš', TRUE)
+      ON CONFLICT (id) DO UPDATE SET
+        name = EXCLUDED.name,
+        code = EXCLUDED.code,
+        address = EXCLUDED.address,
+        city = EXCLUDED.city;
+    `;
+
+    // 8. Seed Initial Operators per Location
+    await sql`
+      INSERT INTO scanner_operators (id, location_id, full_name, username, pin_code, role, is_active)
+      VALUES
+        ('op_bg1_marko', 'loc_bg_centar', 'Marko Petrović', 'marko.bg1', '1234', 'Šank 1', TRUE),
+        ('op_bg1_jelena', 'loc_bg_centar', 'Jelena Jovanović', 'jelena.bg1', '4321', 'Glavna Blagajna', TRUE),
+        ('op_bg2_nikola', 'loc_bg_nbg', 'Nikola Stanković', 'nikola.nbg', '2580', 'Slot Sala', TRUE),
+        ('op_ns1_milan', 'loc_ns_centar', 'Milan Popović', 'milan.ns', '9876', 'Šank & Kasa', TRUE)
+      ON CONFLICT (id) DO UPDATE SET
+        full_name = EXCLUDED.full_name,
+        role = EXCLUDED.role;
+    `;
+
+    // 9. Seed God Tier Operator Account
     await sql`
       INSERT INTO players (
         id, username, nickname, balance_rsd, vip_tier, total_turnover, total_spins, total_wins
@@ -119,7 +182,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       success: true,
-      message: 'Neon PostgreSQL šema je uspešno inicijalizovana (players, push_campaigns, vouchers).'
+      message: 'Neon PostgreSQL šema je uspešno inicijalizovana (players, push_campaigns, vouchers, scanner_locations, scanner_operators).'
     });
   } catch (error) {
     console.error('Database init error:', error);

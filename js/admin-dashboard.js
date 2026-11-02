@@ -545,6 +545,7 @@ class AdminDashboard {
     // Initial load
     this.fetchCrmPlayers();
     this.fetchVoucherScans();
+    this.initScannerOperatorsManagement();
   }
 
   /* ==========================================================================
@@ -1912,6 +1913,423 @@ class AdminDashboard {
   }
 
   /* ==========================================================================
+     Staff Scanner Locations & Operators Management (Anti-Abuse Gating)
+     ========================================================================== */
+
+  initScannerOperatorsManagement() {
+    this.adminLocations = [];
+    this.adminOperators = [];
+
+    // Refresh button
+    const btnRefresh = document.getElementById('btn-admin-op-refresh');
+    if (btnRefresh) {
+      btnRefresh.addEventListener('click', () => {
+        this.fetchScannerOperators();
+        this.showToast('Podaci o lokalima i operaterima su osveženi');
+      });
+    }
+
+    // Modal: Add Location
+    const btnAddLoc = document.getElementById('btn-admin-add-loc');
+    const modalLoc = document.getElementById('modal-add-location');
+    const btnCloseLoc = document.getElementById('btn-close-modal-loc');
+    const btnCancelLoc = document.getElementById('btn-cancel-add-loc');
+    const btnSubmitLoc = document.getElementById('btn-submit-add-loc');
+
+    if (btnAddLoc && modalLoc) {
+      btnAddLoc.addEventListener('click', () => {
+        modalLoc.style.display = 'flex';
+        const nameInput = document.getElementById('loc-input-name');
+        if (nameInput) nameInput.focus();
+      });
+    }
+    const hideLocModal = () => { if (modalLoc) modalLoc.style.display = 'none'; };
+    if (btnCloseLoc) btnCloseLoc.addEventListener('click', hideLocModal);
+    if (btnCancelLoc) btnCancelLoc.addEventListener('click', hideLocModal);
+
+    if (btnSubmitLoc) {
+      btnSubmitLoc.addEventListener('click', async () => {
+        const name = (document.getElementById('loc-input-name')?.value || '').trim();
+        const code = (document.getElementById('loc-input-code')?.value || '').trim().toUpperCase();
+        const address = (document.getElementById('loc-input-address')?.value || '').trim();
+        const city = (document.getElementById('loc-input-city')?.value || '').trim();
+
+        if (!name || !code) {
+          alert('Naziv i kod lokala su obavezni!');
+          return;
+        }
+
+        await this.handleCreateLocation({ name, code, address, city });
+        hideLocModal();
+      });
+    }
+
+    // Modal: Add Operator
+    const btnAddOp = document.getElementById('btn-admin-add-op');
+    const modalOp = document.getElementById('modal-add-operator');
+    const btnCloseOp = document.getElementById('btn-close-modal-op');
+    const btnCancelOp = document.getElementById('btn-cancel-add-op');
+    const btnSubmitOp = document.getElementById('btn-submit-add-op');
+
+    if (btnAddOp && modalOp) {
+      btnAddOp.addEventListener('click', () => {
+        const selLoc = document.getElementById('op-select-loc');
+        if (selLoc) {
+          selLoc.innerHTML = this.adminLocations.map(l => `
+            <option value="${l.id}">${l.name} (${l.city})</option>
+          `).join('');
+        }
+        modalOp.style.display = 'flex';
+      });
+    }
+    const hideOpModal = () => { if (modalOp) modalOp.style.display = 'none'; };
+    if (btnCloseOp) btnCloseOp.addEventListener('click', hideOpModal);
+    if (btnCancelOp) btnCancelOp.addEventListener('click', hideOpModal);
+
+    if (btnSubmitOp) {
+      btnSubmitOp.addEventListener('click', async () => {
+        const location_id = document.getElementById('op-select-loc')?.value || '';
+        const full_name = (document.getElementById('op-input-fullname')?.value || '').trim();
+        const username = (document.getElementById('op-input-username')?.value || '').trim().toLowerCase();
+        const role = document.getElementById('op-input-role')?.value || 'Šank';
+        const pin_code = (document.getElementById('op-input-pin')?.value || '').trim();
+
+        if (!location_id || !full_name || !username || !pin_code) {
+          alert('Sva polja su obavezna!');
+          return;
+        }
+        if (pin_code.length < 4) {
+          alert('Sigurnosni PIN mora imati najmanje 4 cifre!');
+          return;
+        }
+
+        await this.handleCreateOperator({ location_id, full_name, username, role, pin_code });
+        hideOpModal();
+      });
+    }
+
+    // Filter location dropdown
+    const filterSelect = document.getElementById('admin-filter-op-location');
+    if (filterSelect) {
+      filterSelect.addEventListener('change', (e) => {
+        this.renderOperatorsTable(e.target.value);
+      });
+    }
+
+    // Initial fetch
+    this.fetchScannerOperators();
+  }
+
+  async fetchScannerOperators() {
+    try {
+      const res = await fetch('/api/scanner/locations?all=true');
+      const data = await res.json();
+
+      if (data && data.success) {
+        this.adminLocations = data.locations || [];
+        this.adminOperators = data.operators || [];
+      } else {
+        throw new Error('API failed, use defaults');
+      }
+    } catch (e) {
+      // Fallback defaults
+      this.adminLocations = [
+        { id: 'loc_bg_centar', name: 'Grand Slot Beograd - Centar', code: 'BG-01', address: 'Kralja Milana 12', city: 'Beograd', is_active: true },
+        { id: 'loc_bg_nbg', name: 'Grand Slot Novi Beograd', code: 'BG-02', address: 'Bulevar Mihajla Pupina 10', city: 'Beograd', is_active: true },
+        { id: 'loc_ns_centar', name: 'Grand Slot Novi Sad', code: 'NS-01', address: 'Zmaj Jovina 8', city: 'Novi Sad', is_active: true },
+        { id: 'loc_nis_centar', name: 'Grand Slot Niš', code: 'NI-01', address: 'Obrenovićeva 22', city: 'Niš', is_active: true }
+      ];
+      this.adminOperators = [
+        { id: 'op_bg1_marko', location_id: 'loc_bg_centar', location_name: 'Grand Slot Beograd - Centar', full_name: 'Marko Petrović', username: 'marko.bg1', pin_code: '1234', role: 'Šank 1', is_active: true, total_scans: 28, last_active_at: new Date().toISOString() },
+        { id: 'op_bg1_jelena', location_id: 'loc_bg_centar', location_name: 'Grand Slot Beograd - Centar', full_name: 'Jelena Jovanović', username: 'jelena.bg1', pin_code: '4321', role: 'Glavna Blagajna', is_active: true, total_scans: 45, last_active_at: new Date().toISOString() },
+        { id: 'op_bg2_nikola', location_id: 'loc_bg_nbg', location_name: 'Grand Slot Novi Beograd', full_name: 'Nikola Stanković', username: 'nikola.nbg', pin_code: '2580', role: 'Slot Sala', is_active: true, total_scans: 19, last_active_at: new Date().toISOString() },
+        { id: 'op_ns1_milan', location_id: 'loc_ns_centar', location_name: 'Grand Slot Novi Sad', full_name: 'Milan Popović', username: 'milan.ns', pin_code: '9876', role: 'Šank & Kasa', is_active: true, total_scans: 31, last_active_at: new Date().toISOString() }
+      ];
+    }
+
+    // Update KPI badges
+    const activeLocs = this.adminLocations.filter(l => l.is_active).length;
+    const activeOps = this.adminOperators.filter(o => o.is_active).length;
+    const totalScans = this.adminOperators.reduce((acc, o) => acc + (Number(o.total_scans) || 0), 0);
+
+    const elLocCount = document.getElementById('stat-active-locations');
+    const elOpCount = document.getElementById('stat-active-operators');
+    const elTotalScans = document.getElementById('stat-total-operator-scans');
+
+    if (elLocCount) elLocCount.textContent = activeLocs;
+    if (elOpCount) elOpCount.textContent = activeOps;
+    if (elTotalScans) elTotalScans.textContent = totalScans.toLocaleString('sr-RS');
+
+    // Update filter dropdown
+    const filterSelect = document.getElementById('admin-filter-op-location');
+    if (filterSelect) {
+      const cur = filterSelect.value;
+      filterSelect.innerHTML = '<option value="all">Svi Lokali (Svi Klubovi)</option>' +
+        this.adminLocations.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+      if (cur) filterSelect.value = cur;
+    }
+
+    this.renderLocationsTable();
+    this.renderOperatorsTable(filterSelect ? filterSelect.value : 'all');
+  }
+
+  renderLocationsTable() {
+    const tbody = document.getElementById('admin-locations-tbody');
+    if (!tbody) return;
+
+    if (this.adminLocations.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px; color: var(--text-muted);">Nema registrovanih lokala.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = this.adminLocations.map(l => {
+      const opCount = this.adminOperators.filter(o => o.location_id === l.id).length;
+      const statusPill = l.is_active
+        ? '<span class="badge-status-active">🟢 Aktivan</span>'
+        : '<span class="badge-status-blocked">🔴 Deaktiviran</span>';
+
+      const toggleBtn = l.is_active
+        ? `<button type="button" class="btn-tbl-action btn-tbl-danger" data-action="toggle-loc" data-id="${l.id}" data-active="0">Deaktiviraj</button>`
+        : `<button type="button" class="btn-tbl-action btn-tbl-gold" data-action="toggle-loc" data-id="${l.id}" data-active="1">Aktiviraj</button>`;
+
+      return `
+        <tr>
+          <td><strong style="color: var(--accent-gold);">${l.code || 'N/A'}</strong></td>
+          <td style="font-weight: 700;">${l.name}</td>
+          <td style="color: #cbd5e1; font-size: 0.8rem;">${l.address || '-'}</td>
+          <td>${l.city || 'Beograd'}</td>
+          <td><span style="font-weight: 800; color: #fff;">${opCount}</span> operatera</td>
+          <td>${statusPill}</td>
+          <td>${toggleBtn}</td>
+        </tr>
+      `;
+    }).join('');
+
+    tbody.querySelectorAll('[data-action="toggle-loc"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        const makeActive = btn.getAttribute('data-active') === '1';
+        await this.handleToggleLocation(id, makeActive);
+      });
+    });
+  }
+
+  renderOperatorsTable(selectedLocationId = 'all') {
+    const tbody = document.getElementById('admin-operators-tbody');
+    if (!tbody) return;
+
+    const filtered = (selectedLocationId === 'all')
+      ? this.adminOperators
+      : this.adminOperators.filter(o => o.location_id === selectedLocationId);
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding: 20px; color: var(--text-muted);">Nema registrovanih operatera za ovaj izbor.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(o => {
+      const loc = this.adminLocations.find(l => l.id === o.location_id);
+      const locName = o.location_name || (loc ? loc.name : 'Nepoznat lokal');
+      const statusPill = o.is_active
+        ? '<span class="badge-status-active">🟢 Aktivan</span>'
+        : '<span class="badge-status-blocked">🔴 Blokiran</span>';
+
+      const toggleAction = o.is_active
+        ? `<button type="button" class="btn-tbl-action btn-tbl-danger" data-action="toggle-op" data-id="${o.id}" data-active="0" title="Blokiraj pristup skeneru">Blokiraj</button>`
+        : `<button type="button" class="btn-tbl-action btn-tbl-gold" data-action="toggle-op" data-id="${o.id}" data-active="1" title="Aktiviraj pristup">Aktiviraj</button>`;
+
+      const pinDisplay = o.pin_code
+        ? `<span style="font-family: monospace; letter-spacing: 2px;">••••</span> <button type="button" class="btn-tbl-action" data-action="show-pin" data-pin="${o.pin_code}" style="padding: 1px 4px; font-size: 0.65rem;">👁️</button>`
+        : `<span style="font-family: monospace;">••••</span>`;
+
+      const lastActive = o.last_active_at ? this.formatRelativeTime(o.last_active_at) : 'Nema prijave';
+
+      return `
+        <tr>
+          <td style="font-weight: 700; color: #fff;">${o.full_name}</td>
+          <td><code style="color: #93c5fd;">@${o.username}</code></td>
+          <td style="font-size: 0.8rem; color: #cbd5e1;">${locName}</td>
+          <td><span style="font-weight: 600; color: var(--accent-gold);">${o.role || 'Šank'}</span></td>
+          <td>${pinDisplay}</td>
+          <td><strong style="color: #38bdf8;">${o.total_scans || 0}</strong></td>
+          <td style="font-size: 0.78rem; color: #94a3b8;">${lastActive}</td>
+          <td>${statusPill}</td>
+          <td>
+            ${toggleAction}
+            <button type="button" class="btn-tbl-action" data-action="change-pin" data-id="${o.id}" data-name="${o.full_name}">Promeni PIN</button>
+            <button type="button" class="btn-tbl-action btn-tbl-danger" data-action="delete-op" data-id="${o.id}" data-name="${o.full_name}">✕</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    // Wire table button actions
+    tbody.querySelectorAll('[data-action="toggle-op"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        const makeActive = btn.getAttribute('data-active') === '1';
+        await this.handleToggleOperator(id, makeActive);
+      });
+    });
+
+    tbody.querySelectorAll('[data-action="show-pin"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pin = btn.getAttribute('data-pin');
+        alert(`Sigurnosni PIN za ovog operatera je: [ ${pin} ]`);
+      });
+    });
+
+    tbody.querySelectorAll('[data-action="change-pin"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        const newPin = prompt(`Unesite novi 4-6 cifreni PIN za operatera: ${name}`);
+        if (newPin && newPin.trim().length >= 4) {
+          await this.handleUpdatePin(id, newPin.trim());
+        } else if (newPin !== null) {
+          alert('PIN mora imati najmanje 4 cifre.');
+        }
+      });
+    });
+
+    tbody.querySelectorAll('[data-action="delete-op"]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        if (confirm(`Da li ste sigurni da želite da trajno obrišete operatera: ${name}?`)) {
+          await this.handleDeleteOperator(id);
+        }
+      });
+    });
+  }
+
+  async handleToggleLocation(locationId, makeActive) {
+    try {
+      await fetch('/api/scanner/locations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'toggle_location',
+          payload: { locationId, is_active: makeActive }
+        })
+      });
+
+      const loc = this.adminLocations.find(l => l.id === locationId);
+      if (loc) loc.is_active = makeActive;
+
+      this.showToast(`Lokal ${makeActive ? 'aktiviran' : 'deaktiviran'}`);
+      this.fetchScannerOperators();
+    } catch (e) {
+      console.error(e);
+      alert('Greška pri izmeni statusa lokala.');
+    }
+  }
+
+  async handleToggleOperator(operatorId, makeActive) {
+    try {
+      await fetch('/api/scanner/locations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'toggle_operator',
+          payload: { operatorId, is_active: makeActive }
+        })
+      });
+
+      const op = this.adminOperators.find(o => o.id === operatorId);
+      if (op) op.is_active = makeActive;
+
+      this.showToast(`Operater ${makeActive ? 'odblokiran i aktiviran' : 'blokiran radi sprečavanja zloupotrebe'}`);
+      this.fetchScannerOperators();
+    } catch (e) {
+      console.error(e);
+      alert('Greška pri promeni statusa operatera.');
+    }
+  }
+
+  async handleUpdatePin(operatorId, newPin) {
+    try {
+      await fetch('/api/scanner/locations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_pin',
+          payload: { operatorId, new_pin: newPin }
+        })
+      });
+
+      const op = this.adminOperators.find(o => o.id === operatorId);
+      if (op) op.pin_code = newPin;
+
+      this.showToast(`PIN operatera je uspešno promenjen.`);
+      this.fetchScannerOperators();
+    } catch (e) {
+      console.error(e);
+      alert('Greška pri ažuriranju PIN-a.');
+    }
+  }
+
+  async handleDeleteOperator(operatorId) {
+    try {
+      await fetch('/api/scanner/locations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_operator',
+          payload: { operatorId }
+        })
+      });
+
+      this.adminOperators = this.adminOperators.filter(o => o.id !== operatorId);
+      this.showToast('Operater uspešno uklonjen.');
+      this.fetchScannerOperators();
+    } catch (e) {
+      console.error(e);
+      alert('Greška pri brisanju operatera.');
+    }
+  }
+
+  async handleCreateLocation(payload) {
+    try {
+      const res = await fetch('/api/scanner/locations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_location', payload })
+      });
+      const data = await res.json();
+      if (data && data.success) {
+        this.showToast(`Lokal [${payload.name}] uspešno kreiran!`);
+        this.fetchScannerOperators();
+      } else {
+        alert(data.error || 'Greška pri kreiranju lokala.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Greška pri komunikaciji sa serverom.');
+    }
+  }
+
+  async handleCreateOperator(payload) {
+    try {
+      const res = await fetch('/api/scanner/locations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_operator', payload })
+      });
+      const data = await res.json();
+      if (data && data.success) {
+        this.showToast(`Operater [${payload.full_name}] uspešno registrovan!`);
+        this.fetchScannerOperators();
+      } else {
+        alert(data.error || 'Greška pri registraciji operatera.');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Greška pri komunikaciji sa serverom.');
+    }
+  }
+
+  /* ==========================================================================
      Tabs & Toast Helpers
      ========================================================================== */
 
@@ -1931,6 +2349,8 @@ class AdminDashboard {
           this.fetchCrmPlayers();
         } else if (target === 'vouchers') {
           this.fetchVoucherScans();
+        } else if (target === 'operators') {
+          this.fetchScannerOperators();
         }
       });
     });

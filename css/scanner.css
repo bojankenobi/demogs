@@ -469,3 +469,252 @@ body {
   color: var(--text-muted);
   font-size: 0.7rem;
 }
+
+/* PWA Installation & Header Action */
+.btn-install-pwa {
+  display: none;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(255, 215, 0, 0.4));
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-install-pwa:hover {
+  background: var(--accent-gold);
+  color: #000;
+}
+
+/* Logout / Change shift button */
+.btn-logout-shift {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-logout-shift:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fff;
+  border-color: #ef4444;
+}
+
+.badge-role {
+  display: inline-block;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: var(--accent-gold);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  text-transform: uppercase;
+}
+
+/* Staff Auth Gate Overlay */
+.staff-auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 12, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.staff-auth-card {
+  background: linear-gradient(180deg, #151a26, #0e121c);
+  border: 1.5px solid var(--accent-gold);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(212, 175, 55, 0.2);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  padding: 24px 20px;
+  color: #fff;
+  text-align: center;
+  animation: authCardPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes authCardPop {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.staff-auth-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  margin: 0 auto 10px;
+  filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
+}
+
+.staff-auth-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.2rem;
+  color: var(--accent-gold);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.staff-auth-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.auth-form-group {
+  text-align: left;
+  margin-bottom: 14px;
+}
+
+.auth-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.auth-select {
+  width: 100%;
+  background: #090c13;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #fff;
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.auth-select:focus {
+  border-color: var(--accent-gold);
+}
+
+.auth-pin-input {
+  width: 100%;
+  background: #090c13;
+  border: 1.5px solid #334155;
+  border-radius: 8px;
+  color: var(--accent-gold);
+  padding: 12px;
+  font-size: 1.3rem;
+  letter-spacing: 8px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-weight: 900;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-pin-input:focus {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+}
+
+/* Quick Touch PIN Keypad */
+.auth-pin-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.pin-btn {
+  background: #1e2638;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 12px 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pin-btn:hover {
+  background: #2a344d;
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.pin-btn:active {
+  transform: scale(0.94);
+  background: rgba(212, 175, 55, 0.3);
+}
+
+.pin-btn.action-clear {
+  color: #f87171;
+  font-size: 0.95rem;
+}
+
+.pin-btn.action-back {
+  color: var(--accent-gold);
+  font-size: 1rem;
+}
+
+.btn-auth-submit {
+  width: 100%;
+  background: linear-gradient(135deg, #d4af37, #f7d070);
+  border: none;
+  border-radius: 8px;
+  color: #000;
+  font-size: 0.95rem;
+  font-weight: 900;
+  padding: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-auth-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+}
+
+.btn-auth-submit:active {
+  transform: translateY(0);
+}
+
+.auth-error-msg {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 12px;
+  display: none;
+  animation: shakeError 0.3s ease;
+}
+
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
