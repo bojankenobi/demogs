@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=81">
+  <link rel="stylesheet" href="css/admin.css?v=82">
 </head>
 <body class="admin-body">
 
@@ -542,55 +542,37 @@
       </div>
     </section>
 
-    <!-- TAB 5: DNEVNIK VAUČERA (VOUCHER AUDIT TRAIL) -->
+    <!-- TAB 5: VAUČERI, LOKALI & OPERATERI (UNIFIED CONTROL CENTER) -->
     <section class="tab-pane" id="pane-vouchers">
       <div class="pane-intro-box">
         <div class="pane-header-row">
           <div>
-            <h2 class="pane-title">Dnevnik Izdatih Vaučera u Kazinu (Audit Trail)</h2>
-            <p class="pane-desc">Zvanična evidencija svih dolazaka i fizički izdatih vaučera koje su terenski operateri (šankeri, blagajnici) verifikovali putem mobilnog skenera.</p>
-          </div>
-          <button type="button" class="btn-trigger-action" id="btn-crm-scans-refresh">Osveži Dnevnik</button>
-        </div>
-      </div>
-
-      <!-- Voucher Audit Table -->
-      <div class="crm-table-box">
-        <table class="crm-table">
-          <thead>
-            <tr>
-              <th>Vreme Overe</th>
-              <th>Igrač / Gost</th>
-              <th>Kod Vaučera</th>
-              <th>Naziv Promocije / Nagrada</th>
-              <th>Vrednost</th>
-              <th>Operater / Smena</th>
-              <th>Lokacija Kluba</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="crm-scans-table-body">
-            <tr>
-              <td colspan="8" class="table-loading-cell">Učitavanje dnevnika overenih vaučera...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TAB: LOKALI & OPERATERI SKENERA -->
-    <section class="tab-pane" id="pane-operators">
-      <div class="pane-intro-box">
-        <div class="pane-header-row">
-          <div>
-            <h2 class="pane-title">🏢 Lokali &amp; Ovlašćeni Operateri Skenera</h2>
-            <p class="pane-desc">Stroga kontrola pristupa mobilnom skeneru za izdavanje vaučera. Sprečavanje zloupotrebe i neovlašćene isplate novca kroz dodelu operatera po lokalu i autorizaciju preko sigurnosnog PIN-a.</p>
+            <h2 class="pane-title">🎫 Vaučeri, Lokali &amp; Ovlašćeni Operateri Skenera</h2>
+            <p class="pane-desc">Kompletno upravljanje terenskom isplatom vaučera. Dodelite operatere po klubovima, postavite njihove sigurnosne PIN kodove radi sprečavanja zloupotrebe i pratite kompletan audit dnevnik realizacija.</p>
           </div>
           <div style="display: flex; gap: 8px;">
             <button type="button" class="btn-trigger-action" id="btn-admin-add-loc">+ Dodaj Lokal</button>
             <button type="button" class="btn-trigger-action gold" id="btn-admin-add-op">+ Registruj Operatera</button>
-            <button type="button" class="btn-trigger-action" id="btn-admin-op-refresh">🔄 Osveži</button>
+            <button type="button" class="btn-trigger-action" id="btn-admin-op-refresh">🔄 Osveži Sve</button>
           </div>
+        </div>
+      </div>
+
+      <!-- Dedicated PWA Scanner App Banner -->
+      <div class="scanner-pwa-banner" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(15, 23, 42, 0.95)); border: 1.5px solid var(--accent-gold); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+        <div>
+          <div style="font-weight: 800; color: var(--accent-gold); font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+            📱 ZASEBNA PWA APLIKACIJA ZA OSOBLJE (STAFF SKENER)
+            <span style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); font-size: 0.68rem; padding: 2px 8px; border-radius: 10px;">SEPARACIONI DEO • SAMOSTALNA INSTALACIJA</span>
+          </div>
+          <p style="margin: 4px 0 0; font-size: 0.78rem; color: #cbd5e1; max-width: 650px;">
+            Mobilni skener je potpuno odvojen od igre i admina. Nalazi se na putanji <code>/scanner/</code>, ima svoj nezavisni Service Worker i manifest. Osoblje na terenu otvara ovaj link na telefonu i bira <strong>"Dodaj na početni ekran" (Install App)</strong>.
+          </p>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <a href="./scanner/" target="_blank" class="btn-trigger-action gold" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 800;">
+            🚀 Otvori Skener (/scanner/) ↗
+          </a>
         </div>
       </div>
 
@@ -614,41 +596,29 @@
         </div>
       </div>
 
-      <!-- Section 1: Lokali / Kazino Klubovi -->
-      <div style="margin-bottom: 28px;">
-        <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-          📍 Registrovani Lokali Kazina
-        </h3>
-        <div class="crm-table-box">
-          <table class="crm-table">
-            <thead>
-              <tr>
-                <th>Kod Lokala</th>
-                <th>Naziv Kluba</th>
-                <th>Adresa</th>
-                <th>Grad</th>
-                <th>Operatera</th>
-                <th>Status</th>
-                <th>Akcije</th>
-              </tr>
-            </thead>
-            <tbody id="admin-locations-tbody">
-              <tr><td colspan="7" class="table-loading-cell">Učitavanje lokala...</td></tr>
-            </tbody>
-          </table>
-        </div>
+      <!-- Sub-Tabs Navigation for Instant Switch -->
+      <div class="voucher-subtabs-nav" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid #334155; padding-bottom: 12px; flex-wrap: wrap;">
+        <button type="button" class="btn-subtab active" data-vsub="operators" id="btn-subtab-operators">
+          👤 Ovlašćeni Operateri po Lokalu (Autorizacija &amp; PIN)
+        </button>
+        <button type="button" class="btn-subtab" data-vsub="locations" id="btn-subtab-locations">
+          🏢 Registrovani Lokali (Kazino Klubovi)
+        </button>
+        <button type="button" class="btn-subtab" data-vsub="audit" id="btn-subtab-audit">
+          📜 Dnevnik Izdatih Vaučera (Audit Trail)
+        </button>
       </div>
 
-      <!-- Section 2: Operateri po Lokalu -->
-      <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <!-- SUB-PANE 1: Operateri po Lokalu (Default Active) -->
+      <div class="vsub-pane active" id="vsub-pane-operators">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
           <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin: 0; display: flex; align-items: center; gap: 6px;">
-            👤 Ovlašćeni Operateri sa Pravom Skeniranja
+            👤 Spisak Ovlašćenih Operatera sa Pravom Skeniranja
           </h3>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <label for="admin-filter-op-location" style="font-size: 0.75rem; color: var(--text-tertiary);">Filter Lokala:</label>
+            <label for="admin-filter-op-location" style="font-size: 0.75rem; color: var(--text-tertiary);">Filter po Lokalu:</label>
             <select id="admin-filter-op-location" class="admin-form-select" style="width: auto; padding: 4px 8px; font-size: 0.78rem;">
-              <option value="all">Svi Lokali</option>
+              <option value="all">Svi Lokali (Svi Klubovi)</option>
             </select>
           </div>
         </div>
@@ -669,10 +639,78 @@
               </tr>
             </thead>
             <tbody id="admin-operators-tbody">
-              <tr><td colspan="9" class="table-loading-cell">Učitavanje operatera...</td></tr>
+              <tr><td colspan="9" class="table-loading-cell">Učitavanje ovlašćenih operatera...</td></tr>
             </tbody>
           </table>
         </div>
+      </div>
+
+      <!-- SUB-PANE 2: Registrovani Lokali Kazina -->
+      <div class="vsub-pane" id="vsub-pane-locations">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin: 0; display: flex; align-items: center; gap: 6px;">
+            📍 Registrovani Lokali i Poslovnice Kazina
+          </h3>
+        </div>
+
+        <div class="crm-table-box">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Kod Lokala</th>
+                <th>Naziv Kluba</th>
+                <th>Adresa</th>
+                <th>Grad</th>
+                <th>Operatera</th>
+                <th>Status</th>
+                <th>Akcije</th>
+              </tr>
+            </thead>
+            <tbody id="admin-locations-tbody">
+              <tr><td colspan="7" class="table-loading-cell">Učitavanje lokala...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUB-PANE 3: Dnevnik Izdatih Vaučera (Audit Trail) -->
+      <div class="vsub-pane" id="vsub-pane-audit">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="color: var(--accent-gold); font-size: 0.95rem; margin: 0; display: flex; align-items: center; gap: 6px;">
+            📜 Hronološki Dnevnik Overenih i Isplaćenih Vaučera
+          </h3>
+          <button type="button" class="btn-trigger-action" id="btn-crm-scans-refresh">Osveži Dnevnik</button>
+        </div>
+
+        <div class="crm-table-box">
+          <table class="crm-table">
+            <thead>
+              <tr>
+                <th>Vreme Overe</th>
+                <th>Igrač / Gost</th>
+                <th>Kod Vaučera</th>
+                <th>Naziv Promocije / Nagrada</th>
+                <th>Vrednost</th>
+                <th>Operater / Smena</th>
+                <th>Lokacija Kluba</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="crm-scans-table-body">
+              <tr>
+                <td colspan="8" class="table-loading-cell">Učitavanje dnevnika overenih vaučera...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB: LOKALI & OPERATERI SKENERA -->
+    <section class="tab-pane" id="pane-operators">
+      <div class="pane-intro-box">
+        <p class="pane-desc">Sekcija za upravljanje lokalima i operaterima je integrisana u centralni panel iznad.</p>
       </div>
     </section>
 
@@ -1143,6 +1181,6 @@
   <script src="js/core/math-manager.js?v=80"></script>
   <script src="js/core/daily-access-manager.js?v=99"></script>
   <script src="js/core/prestige-manager.js?v=1"></script>
-  <script src="js/admin-dashboard.js?v=100"></script>
+  <script src="js/admin-dashboard.js?v=101"></script>
 </body>
 </html>

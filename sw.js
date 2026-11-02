@@ -1,12 +1,11 @@
 /**
  * IGT 3D Casino Slot - PWA Service Worker
  */
-const CACHE_NAME = 'grandslot-v18';
+const CACHE_NAME = 'grandslot-v19';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './admin.html',
-  './scanner.html',
   './css/style.css',
   './css/admin.css',
   './css/grand-hub.css',
@@ -88,7 +87,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   const url = new URL(event.request.url);
-  if (url.pathname.startsWith('/api/') || !event.request.url.startsWith(self.location.origin)) {
+  // NEVER intercept scanner PWA (separate application) or API routes
+  if (url.pathname.startsWith('/api/') || 
+      url.pathname.startsWith('/scanner/') || 
+      url.pathname.startsWith('/scanner.html') || 
+      !event.request.url.startsWith(self.location.origin)) {
     return;
   }
 

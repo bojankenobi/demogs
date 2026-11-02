@@ -1920,12 +1920,33 @@ class AdminDashboard {
     this.adminLocations = [];
     this.adminOperators = [];
 
+    // Sub-tab navigation in unified Voucher & Scanner center
+    const subTabBtns = document.querySelectorAll('.btn-subtab');
+    subTabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetSub = btn.getAttribute('data-vsub');
+        subTabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.querySelectorAll('.vsub-pane').forEach(p => p.classList.remove('active'));
+        const pane = document.getElementById(`vsub-pane-${targetSub}`);
+        if (pane) pane.classList.add('active');
+
+        if (targetSub === 'audit') {
+          this.fetchVoucherScans();
+        } else {
+          this.fetchScannerOperators();
+        }
+      });
+    });
+
     // Refresh button
     const btnRefresh = document.getElementById('btn-admin-op-refresh');
     if (btnRefresh) {
       btnRefresh.addEventListener('click', () => {
         this.fetchScannerOperators();
-        this.showToast('Podaci o lokalima i operaterima su osveženi');
+        this.fetchVoucherScans();
+        this.showToast('Podaci o lokalima, operaterima i vaučerima su osveženi');
       });
     }
 
@@ -2342,15 +2363,23 @@ class AdminDashboard {
         btn.classList.add('active');
 
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        const pane = document.getElementById(`pane-${target}`);
-        if (pane) pane.classList.add('active');
+        if (target === 'operators') {
+          // Both tabs open the unified center!
+          const vouchersPane = document.getElementById('pane-vouchers');
+          if (vouchersPane) vouchersPane.classList.add('active');
+          document.getElementById('btn-subtab-operators')?.click();
+          this.fetchScannerOperators();
+          this.fetchVoucherScans();
+        } else {
+          const pane = document.getElementById(`pane-${target}`);
+          if (pane) pane.classList.add('active');
+        }
 
         if (target === 'crm') {
           this.fetchCrmPlayers();
         } else if (target === 'vouchers') {
-          this.fetchVoucherScans();
-        } else if (target === 'operators') {
           this.fetchScannerOperators();
+          this.fetchVoucherScans();
         }
       });
     });

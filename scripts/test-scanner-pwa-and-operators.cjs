@@ -1,52 +1,67 @@
 /**
- * Test Suite: Scanner PWA Isolation & Multi-Venue Staff Operator Authorization
- * Verifies standalone PWA configuration, database schema, anti-abuse PIN gating,
- * and admin management for venues and operators.
+ * Test Suite: Scanner Dedicated PWA Isolation & Multi-Venue Staff Operator Authorization
+ * Verifies standalone PWA configuration in /scanner/, database schema, anti-abuse PIN gating,
+ * root SW isolation, and unified admin management for venues and operators.
  */
 
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 
-console.log('🧪 Running Scanner PWA & Staff Operators Authorization tests...\n');
+console.log('🧪 Running Dedicated /scanner/ PWA & Staff Operators Authorization tests...\n');
 
 const rootDir = path.resolve(__dirname, '..');
+const scannerDir = path.join(rootDir, 'scanner');
 
-// 1. Standalone PWA Manifest Verification
-console.log('--- TEST 1: Scanner PWA Manifest Isolation ---');
-const manifestPath = path.join(rootDir, 'manifest-scanner.webmanifest');
-assert(fs.existsSync(manifestPath), 'manifest-scanner.webmanifest must exist');
+// 1. Dedicated Scanner PWA Directory & Manifest Verification
+console.log('--- TEST 1: Dedicated Scanner PWA Directory & Manifest Isolation ---');
+assert(fs.existsSync(scannerDir), '/scanner/ directory must exist as a dedicated application');
+
+const manifestPath = path.join(scannerDir, 'manifest.json');
+assert(fs.existsSync(manifestPath), 'scanner/manifest.json must exist');
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-assert.strictEqual(manifest.start_url, './scanner.html', 'start_url must point to scanner.html');
-assert.strictEqual(manifest.scope, './scanner.html', 'scope must isolate scanner from game');
+assert.strictEqual(manifest.start_url, './', 'start_url must point to ./');
+assert.strictEqual(manifest.scope, './', 'scope must isolate scanner PWA to ./');
 assert.strictEqual(manifest.display, 'standalone', 'display must be standalone');
+assert.strictEqual(manifest.id, '/scanner/', 'PWA id must be /scanner/');
 assert(manifest.name.includes('Skener'), 'name must identify as Scanner');
-console.log('  ✅ manifest-scanner.webmanifest configured for standalone PWA isolation.');
+console.log('  ✅ scanner/manifest.json properly configured with isolated scope and id.');
 
-// 2. Standalone Service Worker Verification
-console.log('\n--- TEST 2: Standalone Service Worker (sw-scanner.js) ---');
-const swPath = path.join(rootDir, 'sw-scanner.js');
-assert(fs.existsSync(swPath), 'sw-scanner.js must exist');
-const swContent = fs.readFileSync(swPath, 'utf8');
-assert(swContent.includes('gsc-scanner-'), 'sw-scanner.js must have dedicated scanner cache namespace');
-assert(swContent.includes('scanner.html'), 'sw-scanner.js must cache scanner.html');
-assert(swContent.includes('jsQR.js'), 'sw-scanner.js must cache jsQR.js');
-console.log('  ✅ sw-scanner.js provides dedicated offline caching for scanner shell.');
+// 2. Standalone Service Worker (scanner/sw.js) & Root SW Bypass
+console.log('\n--- TEST 2: Dedicated Service Worker & Root SW Bypass ---');
+const scannerSwPath = path.join(scannerDir, 'sw.js');
+assert(fs.existsSync(scannerSwPath), 'scanner/sw.js must exist');
+const scannerSwContent = fs.readFileSync(scannerSwPath, 'utf8');
+assert(scannerSwContent.includes('gsc-staff-scanner-pwa-'), 'scanner/sw.js must have dedicated scanner cache namespace');
+assert(scannerSwContent.includes('index.html'), 'scanner/sw.js must cache standalone index.html');
+assert(scannerSwContent.includes('jsQR.js'), 'scanner/sw.js must cache jsQR.js');
 
-// 3. Scanner HTML UI, Auth Gate & PWA Integration
-console.log('\n--- TEST 3: Scanner UI, Auth Gate & PWA Hooks ---');
-const scannerHtml = fs.readFileSync(path.join(rootDir, 'scanner.html'), 'utf8');
-assert(scannerHtml.includes('manifest-scanner.webmanifest'), 'scanner.html must link scanner manifest');
-assert(scannerHtml.includes('sw-scanner.js'), 'scanner.html must register sw-scanner.js');
-assert(scannerHtml.includes('btn-install-pwa'), 'scanner.html must have PWA install button');
-assert(scannerHtml.includes('staff-auth-modal'), 'scanner.html must have staff authentication modal');
-assert(scannerHtml.includes('auth-select-location'), 'scanner.html must have venue selection');
-assert(scannerHtml.includes('auth-select-operator'), 'scanner.html must have operator selection');
-assert(scannerHtml.includes('auth-input-pin'), 'scanner.html must have PIN input');
-assert(scannerHtml.includes('auth-pin-keypad'), 'scanner.html must have tactile numeric keypad');
-assert(scannerHtml.includes('btn-staff-logout'), 'scanner.html must have logout / end shift button');
-assert(scannerHtml.includes('checkAuthSession'), 'scanner.html must verify session before starting camera');
-console.log('  ✅ scanner.html contains complete PWA install hooks and staff authentication gate.');
+const rootSwPath = path.join(rootDir, 'sw.js');
+const rootSwContent = fs.readFileSync(rootSwPath, 'utf8');
+assert(rootSwContent.includes("url.pathname.startsWith('/scanner/')"), 'root sw.js must explicitly bypass /scanner/ PWA');
+assert(!rootSwContent.includes("'./scanner.html'"), 'root sw.js must NOT precache scanner.html');
+console.log('  ✅ scanner/sw.js is fully independent and root sw.js strictly bypasses scanner traffic.');
+
+// 3. Scanner HTML UI, Auth Gate & PWA Hooks in scanner/index.html
+console.log('\n--- TEST 3: Dedicated Scanner UI, Auth Gate & PWA Hooks (/scanner/index.html) ---');
+const scannerHtmlPath = path.join(scannerDir, 'index.html');
+assert(fs.existsSync(scannerHtmlPath), 'scanner/index.html must exist');
+const scannerHtml = fs.readFileSync(scannerHtmlPath, 'utf8');
+assert(scannerHtml.includes('manifest.json'), 'scanner/index.html must link scanner manifest');
+assert(scannerHtml.includes('sw.js'), 'scanner/index.html must register isolated ./sw.js');
+assert(scannerHtml.includes('btn-install-pwa'), 'scanner/index.html must have PWA install button');
+assert(scannerHtml.includes('staff-auth-modal'), 'scanner/index.html must have staff authentication modal');
+assert(scannerHtml.includes('auth-select-location'), 'scanner/index.html must have venue selection');
+assert(scannerHtml.includes('auth-select-operator'), 'scanner/index.html must have operator selection');
+assert(scannerHtml.includes('auth-input-pin'), 'scanner/index.html must have PIN input');
+assert(scannerHtml.includes('auth-pin-keypad'), 'scanner/index.html must have tactile numeric keypad');
+assert(scannerHtml.includes('btn-staff-logout'), 'scanner/index.html must have logout / end shift button');
+assert(scannerHtml.includes('checkAuthSession'), 'scanner/index.html must verify session before starting camera');
+
+// Backward compatibility redirect in root scanner.html
+const legacyScannerHtml = fs.readFileSync(path.join(rootDir, 'scanner.html'), 'utf8');
+assert(legacyScannerHtml.includes('./scanner/'), 'legacy scanner.html must redirect to ./scanner/');
+console.log('  ✅ Dedicated /scanner/ UI contains complete staff auth gate, and scanner.html seamlessly redirects.');
 
 // 4. Database Schema: Venues & Operators in api/db/init.js
 console.log('\n--- TEST 4: Database Schema & Seeding (api/db/init.js) ---');
@@ -86,15 +101,20 @@ assert(redeemJs.includes('Zloupotreba sprečena'), 'redeem.js must block inactiv
 assert(redeemJs.includes('total_scans = total_scans + 1'), 'redeem.js must increment operator audit scan count');
 console.log('  ✅ Voucher redemption strictly validates operator authority to prevent financial abuse.');
 
-// 7. Admin Dashboard: Venues & Operators UI & Logic
-console.log('\n--- TEST 7: Admin Dashboard Venues & Operators UI & Logic ---');
+// 7. Admin Dashboard: Unified Control Center & Sub-tabs
+console.log('\n--- TEST 7: Admin Dashboard Unified Vouchers, Locations & Operators Center ---');
 const adminHtml = fs.readFileSync(path.join(rootDir, 'admin.html'), 'utf8');
+assert(adminHtml.includes('data-tab="vouchers"'), 'admin.html must have tab for vouchers');
 assert(adminHtml.includes('data-tab="operators"'), 'admin.html must have tab for operators');
-assert(adminHtml.includes('id="pane-operators"'), 'admin.html must have pane-operators section');
+assert(adminHtml.includes('id="pane-vouchers"'), 'admin.html must have pane-vouchers section');
+assert(adminHtml.includes('id="vsub-pane-operators"'), 'admin.html must have vsub-pane-operators subtab');
+assert(adminHtml.includes('id="vsub-pane-locations"'), 'admin.html must have vsub-pane-locations subtab');
 assert(adminHtml.includes('admin-locations-tbody'), 'admin.html must have locations table tbody');
 assert(adminHtml.includes('admin-operators-tbody'), 'admin.html must have operators table tbody');
+assert(adminHtml.includes('crm-scans-table-body'), 'admin.html must have vouchers audit table tbody');
 assert(adminHtml.includes('modal-add-location'), 'admin.html must have add location modal');
 assert(adminHtml.includes('modal-add-operator'), 'admin.html must have add operator modal');
+assert(adminHtml.includes('/scanner/'), 'admin.html must have prominent banner link to /scanner/');
 
 const adminJs = fs.readFileSync(path.join(rootDir, 'js', 'admin-dashboard.js'), 'utf8');
 assert(adminJs.includes('initScannerOperatorsManagement'), 'admin-dashboard.js must implement initScannerOperatorsManagement');
@@ -103,8 +123,8 @@ assert(adminJs.includes('renderLocationsTable'), 'admin-dashboard.js must implem
 assert(adminJs.includes('renderOperatorsTable'), 'admin-dashboard.js must implement renderOperatorsTable');
 assert(adminJs.includes('handleToggleOperator'), 'admin-dashboard.js must handle operator deactivation/blocking');
 assert(adminJs.includes('handleUpdatePin'), 'admin-dashboard.js must handle PIN updates');
-console.log('  ✅ Admin dashboard UI and JavaScript fully wired for venue & staff management.');
+console.log('  ✅ Admin dashboard UI and JavaScript fully wired for venue & staff management in unified center.');
 
 console.log('\n========================================================================');
-console.log('🎉 ALL SCANNER PWA & VENUE/OPERATOR AUTHORIZATION TESTS PASSED 100%! 🎉');
+console.log('🎉 ALL DEDICATED SCANNER PWA & VENUE/OPERATOR TESTS PASSED 100%! 🎉');
 console.log('========================================================================\n');

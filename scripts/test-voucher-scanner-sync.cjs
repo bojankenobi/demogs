@@ -20,19 +20,23 @@ assert(jsqrContent.length > 50000, 'jsQR.js must have substantive content');
 assert(jsqrContent.includes('jsQR'), 'jsQR.js must define or export jsQR');
 console.log('  ✅ 1. Local jsQR library is present and valid.');
 
-// 2. Verify scanner.html has jsQR, camera flip, and multi-channel sync
-const scannerHtmlPath = path.join(rootDir, 'scanner.html');
+// 2. Verify scanner/index.html has jsQR, camera flip, and multi-channel sync
+const scannerHtmlPath = path.join(rootDir, 'scanner', 'index.html');
 const scannerHtml = fs.readFileSync(scannerHtmlPath, 'utf8');
 
-assert(scannerHtml.includes('<script src="js/lib/jsQR.js"></script>'), 'scanner.html must include js/lib/jsQR.js');
-assert(scannerHtml.includes('id="btn-camera-flip"'), 'scanner.html must have camera flip button');
-assert(scannerHtml.includes('jsQR('), 'scanner.html must call jsQR function');
-assert(scannerHtml.includes('inversionAttempts'), 'scanner.html must support inverted QR code scanning');
-assert(scannerHtml.includes('gsc_my_vouchers_list'), 'scanner.html must sync gsc_my_vouchers_list in localStorage');
-assert(scannerHtml.includes('gsc_last_redeemed_voucher'), 'scanner.html must set gsc_last_redeemed_voucher');
-assert(scannerHtml.includes('gsc_vouchers_channel'), 'scanner.html must broadcast on gsc_vouchers_channel');
-assert(scannerHtml.includes('gsc_voucher_redeemed'), 'scanner.html must dispatch gsc_voucher_redeemed event');
-console.log('  ✅ 2. scanner.html has jsQR integration, camera flip, and cross-tab/storage broadcasting.');
+assert(scannerHtml.includes('js/lib/jsQR.js'), 'scanner/index.html must include js/lib/jsQR.js');
+assert(scannerHtml.includes('id="btn-camera-flip"'), 'scanner/index.html must have camera flip button');
+assert(scannerHtml.includes('jsQR('), 'scanner/index.html must call jsQR function');
+assert(scannerHtml.includes('inversionAttempts'), 'scanner/index.html must support inverted QR code scanning');
+assert(scannerHtml.includes('gsc_my_vouchers_list'), 'scanner/index.html must sync gsc_my_vouchers_list in localStorage');
+assert(scannerHtml.includes('gsc_last_redeemed_voucher'), 'scanner/index.html must set gsc_last_redeemed_voucher');
+assert(scannerHtml.includes('gsc_vouchers_channel'), 'scanner/index.html must broadcast on gsc_vouchers_channel');
+assert(scannerHtml.includes('gsc_voucher_redeemed'), 'scanner/index.html must dispatch gsc_voucher_redeemed event');
+
+// Also verify legacy scanner.html redirect
+const legacyScannerHtml = fs.readFileSync(path.join(rootDir, 'scanner.html'), 'utf8');
+assert(legacyScannerHtml.includes('./scanner/'), 'legacy scanner.html must redirect to ./scanner/');
+console.log('  ✅ 2. scanner/index.html has jsQR integration, camera flip, and cross-tab/storage broadcasting.');
 
 // 3. Verify api/vouchers/my.js supports query by codes
 const apiMyPath = path.join(rootDir, 'api', 'vouchers', 'my.js');
