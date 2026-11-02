@@ -10098,11 +10098,15 @@ body {
    18+ MANDATORY DEMO LOGIN MODAL / AGE GATE
    ============================================================ */
 .login-gate-overlay {
-  z-index: 2000 !important;
+  z-index: 999990 !important;
+  position: fixed;
+  inset: 0;
   background: radial-gradient(circle at center, rgba(28, 16, 4, 0.98) 0%, rgba(9, 10, 15, 0.99) 100%) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   display: none;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-gate-overlay.active {

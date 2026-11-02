@@ -120,6 +120,12 @@ class CasinoLobby {
   }
 
   openModal() {
+    if (window.slotApp && window.slotApp.playerTracker && !window.slotApp.playerTracker.profile.isLoggedIn) {
+      const loginModal = document.getElementById('login-modal');
+      if (loginModal) loginModal.classList.add('active');
+      if (typeof window.switchAuthTab === 'function') window.switchAuthTab('login');
+      return;
+    }
     if (window.slotApp && (window.slotApp.currentGrandMode === 'vault' || window.slotApp.currentGrandMode === 'royale')) {
       if (window.slotNotifications && typeof window.slotNotifications.show === 'function') {
         window.slotNotifications.show('🔒 U ovom režimu je zaključan isključivo Royal 3x3 slot za sve borbe!', 'info');

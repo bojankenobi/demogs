@@ -377,7 +377,7 @@ class IGTApp {
     this.initControls();
 
     // 5. Check Player Session & Prompt Auth
-    this.initPlayerSession();
+    this.sessionCheckPromise = this.initPlayerSession();
 
     // 5.5 Notification Manager
     if (window.NotificationManager) {
@@ -529,6 +529,12 @@ class IGTApp {
   }
 
   openMainModeModal() {
+    if (this.playerTracker && !this.playerTracker.profile.isLoggedIn) {
+      const loginModal = document.getElementById('login-modal');
+      if (loginModal) loginModal.classList.add('active');
+      if (typeof window.switchAuthTab === 'function') window.switchAuthTab('login');
+      return;
+    }
     this.closeCasinoStyleModal();
     if (this.lobby && typeof this.lobby.closeModal === 'function') {
       this.lobby.closeModal();
@@ -549,6 +555,12 @@ class IGTApp {
   }
 
   openCasinoStyleModal() {
+    if (this.playerTracker && !this.playerTracker.profile.isLoggedIn) {
+      const loginModal = document.getElementById('login-modal');
+      if (loginModal) loginModal.classList.add('active');
+      if (typeof window.switchAuthTab === 'function') window.switchAuthTab('login');
+      return;
+    }
     this.closeMainModeModal();
     const modal = document.getElementById('casino-style-select-modal');
     if (modal) {
@@ -1036,15 +1048,8 @@ class IGTApp {
     }
 
     this.setActivePromotion(promo, false);
-
-    // Auto-popup if player has not seen this promotion yet
-    const lastSeenId = localStorage.getItem('gsc_last_seen_promo_id');
-    if (promo && promo.status === 'ACTIVE' && lastSeenId !== promo.id) {
-      setTimeout(() => {
-        localStorage.setItem('gsc_last_seen_promo_id', promo.id);
-        this.openPromotionModal(promo);
-      }, 1400);
-    }
+    // Note: Promotions are accessible via the header "VAUČERI" badge or "Moji Vaučeri" modal,
+    // avoiding uninvited popups during launch or mode selection.
   }
 
   setActivePromotion(promo, shouldStore = true) {
@@ -1954,14 +1959,14 @@ class IGTApp {
             window.updateHeaderProfile();
           }
           if (loginModal) loginModal.classList.remove('active');
-          return;
+          return true;
         }
       } catch (err) {
         console.warn('Init session check error:', err);
       }
     }
 
-    if (loginModal) loginModal.classList.add('active');
+    return false;
   }
 
   initControls() {
@@ -2774,7 +2779,11 @@ document.addEventListener('DOMContentLoaded', () => {
           if (loginModal) loginModal.classList.remove('active');
           if (btnLoginSubmit) btnLoginSubmit.disabled = false;
           if (btnLoginText) btnLoginText.textContent = 'PRIJAVI SE';
-          if (app.lobby) app.lobby.openModal();
+          if (app && typeof app.openMainModeModal === 'function') {
+            app.openMainModeModal();
+          } else if (app.lobby) {
+            app.lobby.openModal();
+          }
           app.showMessage(`✨ Dobrodošli nazad, ${res.player.username}!`, 'info');
         }, 500);
 
@@ -2835,7 +2844,11 @@ document.addEventListener('DOMContentLoaded', () => {
           if (loginModal) loginModal.classList.remove('active');
           if (btnRegisterSubmit) btnRegisterSubmit.disabled = false;
           if (btnRegText) btnRegText.textContent = 'REGISTRUJ SE I UZMI 1.000 ZLATNIKA';
-          if (app.lobby) app.lobby.openModal();
+          if (app && typeof app.openMainModeModal === 'function') {
+            app.openMainModeModal();
+          } else if (app.lobby) {
+            app.lobby.openModal();
+          }
           app.showMessage(`🎁 Čestitamo ${res.player.username}! 1.000 Zlatnika je spremno!`, 'jackpot');
         }, 800);
 
@@ -2995,6 +3008,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       closeProfileModal();
       updateHeaderProfile();
+      if (app && typeof app.closeMainModeModal === 'function') app.closeMainModeModal();
+      if (app && typeof app.closeCasinoStyleModal === 'function') app.closeCasinoStyleModal();
+      if (app && app.lobby && typeof app.lobby.closeModal === 'function') app.lobby.closeModal();
+      if (app && typeof app.closeVoucherModal === 'function') app.closeVoucherModal();
+
       if (typeof switchAuthTab === 'function') {
         switchAuthTab('login');
       }
@@ -3093,24 +3111,50 @@ document.addEventListener('DOMContentLoaded', () => {
     app.updateVouchersCounter();
   }
 
-  // 2-Second Grand Slot VIP Splash Screen
+  // 2-Second Grand Slot VIP Splash Screen & Auth Gating
   const splashEl = document.getElementById('grand-splash-screen');
+  const proceedAfterSplash = async () => {
+    let isLoggedIn = false;
+    if (app && app.sessionCheckPromise) {
+      try {
+        isLoggedIn = await app.sessionCheckPromise;
+      } catch (_) {}
+    }
+    if (!isLoggedIn && app && app.playerTracker && app.playerTracker.profile) {
+      isLoggedIn = !!app.playerTracker.profile.isLoggedIn;
+    }
+
+    if (!isLoggedIn) {
+      // Unauthenticated or logged out: Open VIP Authentication Modal immediately
+      const loginModal = document.getElementById('login-modal');
+      if (loginModal) {
+        loginModal.classList.add('active');
+      }
+      if (typeof window.switchAuthTab === 'function') {
+        window.switchAuthTab('login');
+      }
+      if (app && typeof app.closeMainModeModal === 'function') app.closeMainModeModal();
+      if (app && typeof app.closeCasinoStyleModal === 'function') app.closeCasinoStyleModal();
+      if (app && app.lobby && typeof app.lobby.closeModal === 'function') app.lobby.closeModal();
+      if (app && typeof app.closeVoucherModal === 'function') app.closeVoucherModal();
+    } else {
+      // Authenticated player: Proceed to 3 Pillars Mode Selection (Kazino Salon, Trezor Provala, Battle Royale)
+      if (app && typeof app.openMainModeModal === 'function') {
+        app.openMainModeModal();
+      }
+    }
+  };
+
   if (splashEl) {
     setTimeout(() => {
       splashEl.classList.add('fade-out');
       setTimeout(() => {
         splashEl.style.display = 'none';
-
-        // Nakon 2 sekunde pojavljuju se tri stavke za izbor: Kazino, Trezor, Battle Royale
-        if (app && typeof app.openMainModeModal === 'function') {
-          app.openMainModeModal();
-        }
+        proceedAfterSplash();
       }, 500);
     }, 2000);
   } else {
-    if (app && typeof app.openMainModeModal === 'function') {
-      app.openMainModeModal();
-    }
+    proceedAfterSplash();
   }
 
   // PWA Service Worker

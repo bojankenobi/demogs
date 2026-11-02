@@ -113,6 +113,15 @@ assert(appJsContent.includes('forfeitRun'), 'app.js must call forfeitRun if exit
 assert(appJsContent.includes('forfeitMatch'), 'app.js must call forfeitMatch if exiting royale early');
 console.log('✓ Royal 3x3 slot lock and early exit forfeit logic verified');
 
+// --- TEST 10: Splash-to-Auth Immediate Gating & Stacking ---
+console.log('\n--- TEST 10: Splash-to-Auth Immediate Gating & Stacking ---');
+assert(cssContent.includes('.login-gate-overlay') && cssContent.includes('z-index: 999990 !important;'), 'login-gate-overlay must have z-index 999990 !important to sit cleanly above pillars and lobby');
+assert(appJsContent.includes('proceedAfterSplash'), 'app.js must define proceedAfterSplash for post-splash auth gating');
+assert(appJsContent.includes('!isLoggedIn') && appJsContent.includes("loginModal.classList.add('active')"), 'app.js must open login modal if user is not logged in after splash');
+assert(!appJsContent.includes('this.openPromotionModal(promo); \n      }, 1400);'), 'app.js must not contain uninvited 1400ms voucher auto-popup timer');
+assert(appJsContent.includes('profileLogoutBtn'), 'app.js must wire profileLogoutBtn');
+console.log('✓ Splash-to-Auth immediate gating, high z-index layering, and clean voucher handling verified');
+
 console.log('\n======================================================================');
-console.log('🎉 ALL 9 SPLASH SCREEN, 3 PILLARS, LOBBY & FORFEIT TESTS PASSED! 🎉');
+console.log('🎉 ALL 10 SPLASH SCREEN, AUTH GATING, 3 PILLARS & LOBBY TESTS PASSED! 🎉');
 console.log('======================================================================');
