@@ -72,10 +72,16 @@ class GrandCrashGame {
     this.stars = [];
     this.explosionParticles = [];
 
+    // Official GrandSlot Flower Logo Image for Golden Rocket
+    this.logoImg = new Image();
+    this.logoImg.src = 'assets/symbols/logo-flower.svg';
+
     // DOM references
     this.viewContainer = document.getElementById('crash-game-view');
     this.canvasEl = document.getElementById('crash-canvas');
     this.historyStrip = document.getElementById('crash-history-strip');
+    this.statMaxEl = document.getElementById('crash-stat-max');
+    this.statAvgEl = document.getElementById('crash-stat-avg');
     this.multDisplay = document.getElementById('crash-mult-display');
     this.statusSub = document.getElementById('crash-status-sub');
     this.countdownWrap = document.getElementById('crash-countdown-wrap');
@@ -889,14 +895,22 @@ class GrandCrashGame {
   }
 
   renderHistory() {
-    if (!this.historyStrip) return;
-    this.historyStrip.innerHTML = this.history.map(mult => {
-      let tierClass = 'blue';
-      if (mult >= 10.0) tierClass = 'gold';
-      else if (mult >= 2.0) tierClass = 'purple';
+    if (this.historyStrip) {
+      this.historyStrip.innerHTML = this.history.map(mult => {
+        let tierClass = 'blue';
+        if (mult >= 10.0) tierClass = 'gold';
+        else if (mult >= 2.0) tierClass = 'purple';
 
-      return `<span class="crash-pill ${tierClass}">${mult.toFixed(2)}x</span>`;
-    }).join('');
+        return `<span class="crash-pill ${tierClass}">${mult.toFixed(2)}x</span>`;
+      }).join('');
+    }
+
+    if (this.history && this.history.length > 0) {
+      const maxM = Math.max(...this.history);
+      const avgM = this.history.reduce((a, b) => a + b, 0) / this.history.length;
+      if (this.statMaxEl) this.statMaxEl.textContent = `${maxM.toFixed(2)}x`;
+      if (this.statAvgEl) this.statAvgEl.textContent = `${avgM.toFixed(2)}x`;
+    }
   }
 
   triggerExplosion() {
@@ -1068,21 +1082,22 @@ class GrandCrashGame {
 
     // 6. Draw Rocket and Exhaust Flame
     if (this.gameState === 'flying') {
-      // Spawn exhaust particles
-      if (Math.random() > 0.3) {
+      // Spawn golden exhaust stardust particles
+      if (Math.random() > 0.25) {
+        const goldColors = ['#ffd700', '#f59e0b', '#fbbf24', '#fff5a0', '#ffffff'];
         this.particles.push({
-          x: rocketX - 10,
-          y: rocketY + 6,
-          vx: -(Math.random() * 3 + 2),
-          vy: Math.random() * 2 - 1,
-          radius: Math.random() * 3 + 1.5,
-          color: Math.random() > 0.5 ? '#f59e0b' : '#ef4444',
-          alpha: 0.9,
+          x: rocketX - 12,
+          y: rocketY + 8,
+          vx: -(Math.random() * 3.5 + 2.5),
+          vy: Math.random() * 2.2 - 1.1,
+          radius: Math.random() * 3.5 + 1.5,
+          color: goldColors[Math.floor(Math.random() * goldColors.length)],
+          alpha: 0.95,
           decay: 0.04
         });
       }
 
-      // Draw jet exhaust particles
+      // Draw jet exhaust stardust particles
       for (let i = this.particles.length - 1; i >= 0; i--) {
         const p = this.particles[i];
         p.x += p.vx;
@@ -1100,71 +1115,168 @@ class GrandCrashGame {
         ctx.globalAlpha = 1.0;
       }
 
-      // Draw stylized rocket icon (Enlarged & high-contrast)
+      // Draw stylized Golden GrandSlot Rocket
       ctx.save();
       ctx.translate(rocketX, rocketY);
-      // Angle tangent to flight path
-      const angle = -Math.PI / 4 + Math.sin(performance.now() * 0.008) * 0.06;
+      // Angle tangent to flight path with subtle organic aerodynamic sway
+      const angle = -Math.PI / 4 + Math.sin(performance.now() * 0.008) * 0.05;
       ctx.rotate(angle);
 
-      const rocketScale = Math.min(1.4, Math.max(1.0, (w || 480) / 540));
+      const rocketScale = Math.min(1.45, Math.max(1.05, (w || 480) / 520));
       ctx.scale(rocketScale, rocketScale);
 
-      // Rocket body glow (Gold chrome space shuttle)
-      ctx.shadowBlur = 16;
+      // 1. Golden Aura Glow
+      ctx.shadowBlur = 18;
       ctx.shadowColor = '#ffd700';
 
-      // Fuselage
-      ctx.fillStyle = '#ffffff';
+      // 2. Upper and Lower Gold Delta Wings (Fins)
+      // Upper Wing
+      const upperWingGrad = ctx.createLinearGradient(-12, -18, -12, 0);
+      upperWingGrad.addColorStop(0, '#ffe875');
+      upperWingGrad.addColorStop(0.5, '#ffd700');
+      upperWingGrad.addColorStop(1, '#92400e');
+      ctx.fillStyle = upperWingGrad;
       ctx.beginPath();
-      ctx.ellipse(0, 0, 24, 9, 0, 0, Math.PI * 2);
+      ctx.moveTo(-8, -4);
+      ctx.lineTo(-24, -16);
+      ctx.lineTo(-18, -1);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#fff2a8';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      // Lower Wing
+      const lowerWingGrad = ctx.createLinearGradient(-12, 0, -12, 18);
+      lowerWingGrad.addColorStop(0, '#ffd700');
+      lowerWingGrad.addColorStop(0.5, '#d97706');
+      lowerWingGrad.addColorStop(1, '#78350f');
+      ctx.fillStyle = lowerWingGrad;
+      ctx.beginPath();
+      ctx.moveTo(-8, 4);
+      ctx.lineTo(-24, 16);
+      ctx.lineTo(-18, 1);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      // 3. Gold Thruster Engine Nozzle
+      const nozzleGrad = ctx.createLinearGradient(-22, -6, -16, 6);
+      nozzleGrad.addColorStop(0, '#78350f');
+      nozzleGrad.addColorStop(0.5, '#f59e0b');
+      nozzleGrad.addColorStop(1, '#451a03');
+      ctx.fillStyle = nozzleGrad;
+      ctx.fillRect(-22, -5, 6, 10);
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(-22, -5, 6, 10);
+
+      // 4. Main Fuselage (Solid 24K Gold Chrome Body)
+      const bodyGrad = ctx.createLinearGradient(-20, -10, 26, 10);
+      bodyGrad.addColorStop(0, '#fffbe6'); // Specular ridge
+      bodyGrad.addColorStop(0.2, '#fff099'); // Pale gold
+      bodyGrad.addColorStop(0.45, '#ffd700'); // Vibrant 24k gold
+      bodyGrad.addColorStop(0.75, '#d97706'); // Deep amber gold
+      bodyGrad.addColorStop(1, '#78350f'); // Shadowed gold hull
+      ctx.fillStyle = bodyGrad;
+
+      ctx.beginPath();
+      // Aerodynamic pointed nose cone and sleek space fuselage
+      ctx.moveTo(-18, -7);
+      ctx.quadraticCurveTo(0, -9, 20, -4);
+      ctx.quadraticCurveTo(28, 0, 20, 4);
+      ctx.quadraticCurveTo(0, 9, -18, 7);
+      ctx.closePath();
       ctx.fill();
 
-      // Gold chrome accent band
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(-6, -8, 4, 16);
+      // Gold hull metallic border
+      ctx.strokeStyle = '#fff5a0';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
 
-      // Cockpit dome (cyan glow)
-      ctx.shadowBlur = 12;
+      // 5. Aerospace Canopy (Dark obsidian visor with gold/cyan reflection)
+      ctx.shadowBlur = 8;
       ctx.shadowColor = '#38bdf8';
-      ctx.fillStyle = '#38bdf8';
+      const canopyGrad = ctx.createLinearGradient(6, -5, 18, 1);
+      canopyGrad.addColorStop(0, '#0f172a');
+      canopyGrad.addColorStop(0.5, '#1e293b');
+      canopyGrad.addColorStop(1, '#0284c7');
+      ctx.fillStyle = canopyGrad;
       ctx.beginPath();
-      ctx.ellipse(7, -2, 6, 4, 0, 0, Math.PI * 2);
+      ctx.ellipse(11, -1.5, 6.5, 3.5, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 0.9;
+      ctx.stroke();
+
+      // Visor specular glint
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.beginPath();
+      ctx.ellipse(12, -2.5, 2.5, 1, 0.1, 0, Math.PI * 2);
       ctx.fill();
 
-      // Red fins
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = '#dc2626';
+      // 6. OFFICIAL GRANDSLOT FLOWER LOGO EMBLEM ON FUSELAGE
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#ffd700';
+
+      // Emblem circular base
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
       ctx.beginPath();
-      ctx.moveTo(-12, -5);
-      ctx.lineTo(-24, -14);
-      ctx.lineTo(-18, 0);
+      ctx.arc(-2, 0, 6.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      // Draw SVG logo image if loaded
+      if (this.logoImg && this.logoImg.complete && this.logoImg.naturalWidth > 0) {
+        ctx.drawImage(this.logoImg, -7.5, -5.5, 11, 11);
+      } else {
+        // High-precision vector fallback of GrandSlot Flower
+        // 8 radiating diamond petals
+        for (let p = 0; p < 8; p++) {
+          const a = (p * Math.PI) / 4;
+          const px = -2 + Math.cos(a) * 4.5;
+          const py = Math.sin(a) * 4.5;
+          ctx.fillStyle = '#ffd700';
+          ctx.beginPath();
+          ctx.arc(px, py, 1.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // Center 4-point sparkle star
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-2, 0, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 7. Jet Exhaust Plasma Flame (Electric Gold & White Core)
+      ctx.shadowBlur = 16;
+      ctx.shadowColor = '#f59e0b';
+      const flameLen = 20 + Math.random() * 14;
+
+      // Outer golden-amber plasma plume
+      const flameGrad = ctx.createLinearGradient(-22, 0, -22 - flameLen, 0);
+      flameGrad.addColorStop(0, '#fff4b8');
+      flameGrad.addColorStop(0.3, '#ffd700');
+      flameGrad.addColorStop(0.7, '#f59e0b');
+      flameGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+      ctx.fillStyle = flameGrad;
+      ctx.beginPath();
+      ctx.moveTo(-22, -4);
+      ctx.lineTo(-22 - flameLen, 0);
+      ctx.lineTo(-22, 4);
       ctx.closePath();
       ctx.fill();
 
-      ctx.beginPath();
-      ctx.moveTo(-12, 5);
-      ctx.lineTo(-24, 14);
-      ctx.lineTo(-18, 0);
-      ctx.closePath();
-      ctx.fill();
-
-      // Tail flame (dual inner white/cyan and outer gold/orange)
-      const flameLength = 18 + Math.random() * 12;
-      ctx.fillStyle = '#f59e0b';
-      ctx.beginPath();
-      ctx.moveTo(-18, -4);
-      ctx.lineTo(-18 - flameLength, 0);
-      ctx.lineTo(-18, 4);
-      ctx.closePath();
-      ctx.fill();
-
-      // Inner white-hot flame core
+      // Inner white-hot electric core
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.moveTo(-18, -2);
-      ctx.lineTo(-18 - (flameLength * 0.55), 0);
-      ctx.lineTo(-18, 2);
+      ctx.moveTo(-22, -2);
+      ctx.lineTo(-22 - (flameLen * 0.5), 0);
+      ctx.lineTo(-22, 2);
       ctx.closePath();
       ctx.fill();
 

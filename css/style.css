@@ -5250,7 +5250,53 @@ body {
   gap: 6px;
 }
 
-/* History Bar & Live Multiplayer Counter */
+/* Crash Center Arena (Canvas + Controls) */
+.crash-center-arena {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  order: 2;
+}
+
+/* History Bar & Results Deck */
+.crash-results-sidebar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  order: 1;
+  padding: 4px 8px;
+  background: rgba(6, 9, 15, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.crash-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.crash-results-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.crash-results-stats {
+  display: none; /* Desktop only mini card */
+}
+
+/* Top Multiplier History Bar legacy fallback */
 .crash-top-bar {
   display: flex;
   align-items: center;
@@ -5786,6 +5832,7 @@ body {
   border-radius: 10px;
   overflow: hidden;
   margin-top: 4px;
+  order: 3;
   transition: all 0.25s ease;
 }
 
@@ -14047,70 +14094,70 @@ body.free-spins-active .slot-cylinder-replica {
   }
 
   /* --------------------------------------------------------------------------
-     3. GRAND CRASH (RAKETA) DESKTOP FLIGHT ARENA
+     3. GRAND CRASH (RAKETA) TABLET & COMPACT ARENA
      -------------------------------------------------------------------------- */
   .crash-cabinet-panel {
-    padding: 18px 22px;
-    gap: 14px;
-    border-radius: 20px;
+    padding: 12px 16px;
+    gap: 10px;
+    border-radius: 18px;
   }
 
   .crash-canvas-wrap {
-    height: 420px;
-    border-radius: 16px;
-  }
-
-  .crash-multiplier-val {
-    font-size: 5rem;
-  }
-
-  .crash-status-sub {
-    font-size: 1.15rem;
-    letter-spacing: 1.5px;
-  }
-
-  .crash-bet-box {
-    height: 48px;
-    min-width: 180px;
-  }
-
-  .crash-bet-amount {
-    font-size: 1.2rem;
-  }
-
-  .crash-step-btn {
-    width: 46px;
-    font-size: 1.35rem;
-  }
-
-  .crash-chip-btn {
-    height: 42px;
-    min-width: 48px;
-    font-size: 0.9rem;
-  }
-
-  .btn-crash-action {
-    padding: 18px 24px;
-    font-size: 1.25rem;
+    height: 280px;
     border-radius: 14px;
   }
 
-  .crash-action-title {
+  .crash-multiplier-val {
+    font-size: 3.6rem;
+  }
+
+  .crash-status-sub {
+    font-size: 1.05rem;
+    letter-spacing: 1.2px;
+  }
+
+  .crash-bet-box {
+    height: 44px;
+    min-width: 160px;
+  }
+
+  .crash-bet-amount {
     font-size: 1.15rem;
   }
 
+  .crash-step-btn {
+    width: 42px;
+    font-size: 1.25rem;
+  }
+
+  .crash-chip-btn {
+    height: 38px;
+    min-width: 44px;
+    font-size: 0.85rem;
+  }
+
+  .btn-crash-action {
+    padding: 14px 20px;
+    font-size: 1.15rem;
+    border-radius: 12px;
+  }
+
+  .crash-action-title {
+    font-size: 1.05rem;
+  }
+
   .crash-action-sub {
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }
 
   .crash-auto-row {
-    padding: 10px 16px;
+    padding: 8px 14px;
     border-radius: 12px;
   }
 
   .crash-preset-btn {
-    padding: 6px 14px;
-    font-size: 0.88rem;
+    padding: 5px 12px;
+    font-size: 0.85rem;
   }
 }
 
@@ -14314,16 +14361,238 @@ body.free-spins-active .slot-cylinder-replica {
     width: 100%;
   }
 
-  /* 2. Crash Desktop Expansion */
-  .crash-stage-view {
-    max-width: 1080px;
-    width: 100%;
+  /* 2. Crash Desktop Cockpit (Widescreen 3-Column Zero-Scroll Layout) */
+  .game-container.in-crash-mode {
+    max-width: 1240px;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
   }
-  .crash-cabinet-panel {
-    max-width: 1080px;
+
+  .crash-stage-view {
+    max-width: 1220px;
     width: 100%;
-    padding: 22px 28px;
-    border-radius: 24px;
+    margin: 0 auto;
+    padding: 0 4px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .crash-cabinet-panel {
+    display: grid;
+    grid-template-columns: 290px 1fr 240px;
+    gap: 14px;
+    padding: 12px 16px;
+    border-radius: 20px;
+    max-width: 1220px;
+    width: 100%;
+    height: 520px;
+    max-height: calc(100vh - 160px);
+    overflow: hidden;
+    align-items: stretch;
+    box-sizing: border-box;
+  }
+
+  /* Left Wing: Multiplayer Leaderboard & Live Bets */
+  .crash-multiplayer-deck {
+    order: 1;
+    height: 100%;
+    max-height: 100%;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(8, 12, 22, 0.95);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  }
+
+  .crash-mp-header {
+    flex-shrink: 0;
+    padding: 8px 10px;
+    background: rgba(14, 20, 36, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .crash-mp-toggle-btn {
+    display: none; /* Always expanded on desktop */
+  }
+
+  .crash-mp-body {
+    flex: 1;
+    max-height: none;
+    overflow-y: auto;
+    padding: 6px 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+  }
+
+  /* Center Stage: Radar Canvas Arena & Bet Controls */
+  .crash-center-arena {
+    order: 2;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 8px;
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .crash-canvas-wrap {
+    flex: 1;
+    min-height: 250px;
+    max-height: 330px;
+    height: auto;
+    border-radius: 14px;
+  }
+
+  .crash-multiplier-val {
+    font-size: 4rem;
+  }
+
+  .crash-status-sub {
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .crash-control-deck {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    gap: 7px;
+    background: rgba(8, 12, 22, 0.92);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  }
+
+  .crash-bet-box {
+    height: 42px;
+    min-width: 150px;
+  }
+
+  .crash-bet-amount {
+    font-size: 1.1rem;
+  }
+
+  .crash-step-btn {
+    width: 40px;
+    font-size: 1.2rem;
+  }
+
+  .crash-chip-btn {
+    height: 36px;
+    min-width: 42px;
+    font-size: 0.85rem;
+  }
+
+  .crash-auto-row {
+    padding: 6px 12px;
+    border-radius: 10px;
+  }
+
+  .crash-preset-btn {
+    padding: 4px 10px;
+    font-size: 0.82rem;
+  }
+
+  .btn-crash-action {
+    padding: 12px 18px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+  }
+
+  .crash-action-title {
+    font-size: 1.05rem;
+  }
+
+  .crash-action-sub {
+    font-size: 0.85rem;
+  }
+
+  /* Right Wing: Results & Multiplier History Sidebar */
+  .crash-results-sidebar {
+    order: 3;
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: rgba(8, 12, 22, 0.95);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 14px;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+  }
+
+  .crash-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+  }
+
+  .crash-results-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #ffd700;
+    letter-spacing: 0.8px;
+  }
+
+  .crash-results-sidebar .crash-history-strip {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    overflow-y: auto;
+    padding: 8px 2px;
+    align-content: flex-start;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+  }
+
+  .crash-results-stats {
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .cr-stat-box {
+    background: rgba(18, 25, 42, 0.85);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-radius: 8px;
+    padding: 5px 6px;
+    text-align: center;
+  }
+
+  .cr-stat-lbl {
+    display: block;
+    font-size: 0.62rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .cr-stat-val {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 900;
+    color: #f1f5f9;
+  }
+
+  .cr-stat-val.gold {
+    color: #ffd700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
   }
 
   /* 3. Plinko Desktop Expansion */
