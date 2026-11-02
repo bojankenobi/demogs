@@ -2007,29 +2007,7 @@
     width: 100% !important;
   }
 
-  /* Compact brand logo & header */
-  .game-container.in-vault-mode .brand-logo-wrap,
-  .game-container.in-royale-mode .brand-logo-wrap {
-    max-width: 160px !important;
-    margin: 0 auto 2px auto !important;
-  }
-  .game-container.in-vault-mode .main-brand-logo,
-  .game-container.in-royale-mode .main-brand-logo {
-    max-height: 26px !important;
-  }
-  .game-container.in-vault-mode .grand-mode-hub,
-  .game-container.in-royale-mode .grand-mode-hub {
-    margin: 0 auto 3px auto !important;
-    padding: 2px 4px !important;
-    max-width: 480px !important;
-    gap: 3px !important;
-  }
-  .game-container.in-vault-mode .hub-mode-tab,
-  .game-container.in-royale-mode .hub-mode-tab {
-    padding: 4px 6px !important;
-    min-height: 28px !important;
-    font-size: 0.65rem !important;
-  }
+  /* Header & Grand Mode Hub share the unified luxury styling across all modes */
 
   /* Flatten intermediate containers so direct flex order applies */
   .game-container.in-vault-mode .stage-area,
@@ -2629,24 +2607,7 @@
     justify-content: flex-start !important;
   }
 
-  /* Compact header to maximize vertical screen space */
-  .game-container.in-vault-mode .brand-logo-wrap {
-    max-width: 180px !important;
-    margin: 0 auto 2px auto !important;
-  }
-  .game-container.in-vault-mode .main-brand-logo {
-    max-height: 32px !important;
-  }
-  .game-container.in-vault-mode .grand-mode-hub {
-    margin: 0 auto 4px auto !important;
-    padding: 3px 10px !important;
-    max-width: 660px !important;
-  }
-  .game-container.in-vault-mode .hub-mode-tab {
-    padding: 6px 14px !important;
-    min-height: 36px !important;
-    font-size: 0.78rem !important;
-  }
+  /* Unified luxury header - suppress daily missions bar in solo crawler */
   .game-container.in-vault-mode .daily-missions-ticker-bar {
     display: none !important;
   }
@@ -2669,7 +2630,7 @@
   /* Flanking 3-Column Wings Cockpit */
   .game-container.in-vault-mode #vault-crawler-view {
     position: absolute !important;
-    top: 74px !important;
+    top: 130px !important;
     bottom: 8px !important;
     left: 16px !important;
     right: 16px !important;
@@ -2751,24 +2712,7 @@
     justify-content: flex-start !important;
   }
 
-  /* Compact header to maximize vertical screen space */
-  .game-container.in-royale-mode .brand-logo-wrap {
-    max-width: 180px !important;
-    margin: 0 auto 2px auto !important;
-  }
-  .game-container.in-royale-mode .main-brand-logo {
-    max-height: 32px !important;
-  }
-  .game-container.in-royale-mode .grand-mode-hub {
-    margin: 0 auto 4px auto !important;
-    padding: 3px 10px !important;
-    max-width: 660px !important;
-  }
-  .game-container.in-royale-mode .hub-mode-tab {
-    padding: 6px 14px !important;
-    min-height: 36px !important;
-    font-size: 0.78rem !important;
-  }
+  /* Unified luxury header - suppress daily missions bar in tournament combat */
   .game-container.in-royale-mode .daily-missions-ticker-bar {
     display: none !important;
   }
@@ -2791,7 +2735,7 @@
   /* Flanking 3-Column Wings Cockpit */
   .game-container.in-royale-mode #battle-royale-view {
     position: absolute !important;
-    top: 74px !important;
+    top: 130px !important;
     bottom: 8px !important;
     left: 16px !important;
     right: 16px !important;
