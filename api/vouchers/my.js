@@ -9,11 +9,15 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const { playerId } = req.query || {};
+  const { playerId, codes } = req.query || {};
 
-  if (!playerId) {
-    return res.status(400).json({ error: 'playerId je obavezan parametar.' });
+  if (!playerId && !codes) {
+    return res.status(400).json({ error: 'playerId ili codes parametar je obavezan.' });
   }
+
+  const codeList = codes
+    ? codes.split(',').map(c => c.trim().toUpperCase()).filter(Boolean)
+    : [];
 
   if (!isDbConfigured()) {
     // Demo fallback: client uses local vouchers
@@ -28,19 +32,40 @@ export default async function handler(req, res) {
 
   try {
     // Automatically update expired vouchers
-    await sql`
-      UPDATE vouchers 
-      SET status = 'EXPIRED'
-      WHERE player_id = ${playerId} AND status = 'ACTIVE' AND expires_at < NOW();
-    `;
+    if (playerId) {
+      await sql`
+        UPDATE vouchers 
+        SET status = 'EXPIRED'
+        WHERE player_id = ${playerId} AND status = 'ACTIVE' AND expires_at < NOW();
+      `;
+    }
 
-    const list = await sql`
-      SELECT * FROM vouchers 
-      WHERE player_id = ${playerId}
-      ORDER BY 
-        CASE WHEN status = 'ACTIVE' THEN 1 WHEN status = 'REDEEMED' THEN 2 ELSE 3 END,
-        created_at DESC;
-    `;
+    let list = [];
+    if (playerId && codeList.length > 0) {
+      list = await sql`
+        SELECT * FROM vouchers 
+        WHERE player_id = ${playerId} OR voucher_code = ANY(${codeList})
+        ORDER BY 
+          CASE WHEN status = 'ACTIVE' THEN 1 WHEN status = 'REDEEMED' THEN 2 ELSE 3 END,
+          created_at DESC;
+      `;
+    } else if (playerId) {
+      list = await sql`
+        SELECT * FROM vouchers 
+        WHERE player_id = ${playerId}
+        ORDER BY 
+          CASE WHEN status = 'ACTIVE' THEN 1 WHEN status = 'REDEEMED' THEN 2 ELSE 3 END,
+          created_at DESC;
+      `;
+    } else if (codeList.length > 0) {
+      list = await sql`
+        SELECT * FROM vouchers 
+        WHERE voucher_code = ANY(${codeList})
+        ORDER BY 
+          CASE WHEN status = 'ACTIVE' THEN 1 WHEN status = 'REDEEMED' THEN 2 ELSE 3 END,
+          created_at DESC;
+      `;
+    }
 
     return res.status(200).json({
       success: true,

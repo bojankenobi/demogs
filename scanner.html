@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  <script src="js/lib/jsQR.js"></script>
 </head>
 <body>
 
@@ -42,6 +43,7 @@
     <!-- Camera Viewport Card -->
     <div class="camera-box" id="camera-box">
       <video id="scanner-video" playsinline muted autoplay></video>
+      <button type="button" class="btn-camera-flip" id="btn-camera-flip" title="Promeni kameru (Prednja / Zadnja)" aria-label="Promeni kameru">📷 ⇄</button>
       
       <!-- Targeting Reticle Overlay -->
       <div class="reticle-overlay">
@@ -115,6 +117,7 @@
   <script>
     /**
      * Grand Slot Club - Mobile Staff Scanner Controller
+     * High-speed QR engine with universal jsQR + BarcodeDetector fallback and live database sync
      */
     class StaffVoucherScanner {
       constructor() {
@@ -125,7 +128,9 @@
         this.currentInspectedVoucher = null;
         this.shiftScans = [];
         this.isScanning = true;
-        this.isBarcodeDetecting = false;
+        this.currentStream = null;
+        this.facingMode = 'environment';
+        this.scanLoopActive = false;
 
         this.operatorName = localStorage.getItem('gsc_scanner_operator') || 'Marko (Šank 1)';
         this.location = localStorage.getItem('gsc_scanner_location') || 'Grand Slot Club Beograd';
@@ -190,6 +195,18 @@
           this.updateOperatorDisplay();
         });
 
+        // Flip camera toggle
+        const btnFlip = document.getElementById('btn-camera-flip');
+        if (btnFlip) {
+          btnFlip.addEventListener('click', () => {
+            this.facingMode = (this.facingMode === 'environment') ? 'user' : 'environment';
+            if (this.statusText) {
+              this.statusText.textContent = `Prebacivanje kamere (${this.facingMode === 'environment' ? 'Zadnja' : 'Prednja'})...`;
+            }
+            this.startCamera();
+          });
+        }
+
         // Manual submit
         document.getElementById('btn-submit-manual').addEventListener('click', () => {
           const input = document.getElementById('input-manual-voucher-code');
@@ -211,6 +228,9 @@
           this.verifCard.style.display = 'none';
           this.isScanning = true;
           this.currentInspectedVoucher = null;
+          if (this.statusText) {
+            this.statusText.textContent = 'Uperite kameru ka QR kodu gosta';
+          }
         });
 
         // Confirm redemption
@@ -228,72 +248,160 @@
           return;
         }
 
+        if (this.currentStream) {
+          try {
+            this.currentStream.getTracks().forEach(t => t.stop());
+          } catch (e) {}
+          this.currentStream = null;
+        }
+
         try {
           const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+            video: {
+              facingMode: { ideal: this.facingMode },
+              width: { ideal: 1280 },
+              height: { ideal: 720 }
+            }
           });
+          this.currentStream = stream;
           this.video.srcObject = stream;
+          this.video.setAttribute('playsinline', 'true');
           await this.video.play();
           if (this.statusText) {
             this.statusText.textContent = 'Uperite kameru ka QR kodu gosta';
           }
           this.startQrDetectionLoop();
         } catch (err) {
-          console.warn('Camera access denied or unavailable:', err);
-          if (this.statusText) {
-            this.statusText.textContent = 'Kamera nije dostupna. Unesite kod vaučera ručno ispod.';
+          console.warn('FacingMode camera error, falling back to basic camera:', err);
+          try {
+            const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            this.currentStream = fallbackStream;
+            this.video.srcObject = fallbackStream;
+            this.video.setAttribute('playsinline', 'true');
+            await this.video.play();
+            if (this.statusText) {
+              this.statusText.textContent = 'Uperite kameru ka QR kodu gosta';
+            }
+            this.startQrDetectionLoop();
+          } catch (e2) {
+            console.error('All camera attempts failed:', e2);
+            if (this.statusText) {
+              this.statusText.textContent = 'Kamera nije dostupna. Unesite kod vaučera ručno ispod.';
+            }
           }
         }
       }
 
-      async startQrDetectionLoop() {
-        if ('BarcodeDetector' in window) {
-          try {
-            const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
-            
-            const scanFrame = async () => {
-              if (this.isScanning && this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
-                try {
-                  const barcodes = await barcodeDetector.detect(this.video);
-                  if (barcodes.length > 0) {
-                    const rawValue = barcodes[0].rawValue;
-                    if (rawValue) {
-                      this.handleDetectedQr(rawValue);
-                    }
-                  }
-                } catch (e) {}
-              }
-              requestAnimationFrame(scanFrame);
-            };
+      startQrDetectionLoop() {
+        if (this.scanLoopActive) return;
+        this.scanLoopActive = true;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        let isDetecting = false;
+
+        const scanFrame = async () => {
+          if (!this.isScanning) {
             requestAnimationFrame(scanFrame);
             return;
-          } catch (e) {
-            console.warn('BarcodeDetector initialization fallback:', e);
           }
-        }
 
-        // Fallback: Poll video on canvas if needed
+          if (this.video && this.video.readyState === this.video.HAVE_ENOUGH_DATA && !isDetecting) {
+            isDetecting = true;
+            try {
+              const vW = this.video.videoWidth;
+              const vH = this.video.videoHeight;
+
+              if (vW > 0 && vH > 0) {
+                // Keep dimensions optimal for 60fps scanning speed
+                const maxDim = 640;
+                let scale = 1;
+                if (vW > maxDim || vH > maxDim) {
+                  scale = Math.min(maxDim / vW, maxDim / vH);
+                }
+                const cW = Math.floor(vW * scale);
+                const cH = Math.floor(vH * scale);
+
+                if (canvas.width !== cW || canvas.height !== cH) {
+                  canvas.width = cW;
+                  canvas.height = cH;
+                }
+
+                ctx.drawImage(this.video, 0, 0, cW, cH);
+                const imgData = ctx.getImageData(0, 0, cW, cH);
+
+                // 1. Primary: jsQR (Pure JS, supports all mobile & desktop browsers)
+                let detectedValue = null;
+                if (typeof jsQR !== 'undefined') {
+                  const code = jsQR(imgData.data, imgData.width, imgData.height, {
+                    inversionAttempts: 'attemptBoth'
+                  });
+                  if (code && code.data) {
+                    detectedValue = code.data;
+                  }
+                }
+
+                // 2. Secondary fallback: native BarcodeDetector if available
+                if (!detectedValue && 'BarcodeDetector' in window) {
+                  try {
+                    if (!this.barcodeDetector) {
+                      this.barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+                    }
+                    const barcodes = await this.barcodeDetector.detect(canvas);
+                    if (barcodes.length > 0 && barcodes[0].rawValue) {
+                      detectedValue = barcodes[0].rawValue;
+                    }
+                  } catch (be) {}
+                }
+
+                if (detectedValue) {
+                  this.handleDetectedQr(detectedValue);
+                }
+              }
+            } catch (err) {
+              // Frame dropped, proceed gracefully
+            } finally {
+              isDetecting = false;
+            }
+          }
+
+          requestAnimationFrame(scanFrame);
+        };
+
+        requestAnimationFrame(scanFrame);
       }
 
       handleDetectedQr(rawText) {
         if (!this.isScanning) return;
         this.isScanning = false;
 
-        // Play beep
+        // Play alert tone
         this.playTone(800, 'sine', 0.1);
 
-        let code = rawText.trim();
-        // If QR contains JSON: { "code": "GSC-..." } or URL: "...?code=GSC-..."
+        let code = (rawText || '').trim();
+
+        // If QR contains URL: "...?code=GSC-..."
         if (code.includes('code=')) {
           try {
             const u = new URL(code);
             code = u.searchParams.get('code') || code;
-          } catch (e) {}
-        } else if (code.startsWith('{')) {
+          } catch (e) {
+            const match = code.match(/code=([^&]+)/);
+            if (match) code = decodeURIComponent(match[1]);
+          }
+        } 
+        // If QR contains JSON: { "code": "GSC-..." }
+        else if (code.startsWith('{')) {
           try {
             const parsed = JSON.parse(code);
             code = parsed.voucher_code || parsed.code || code;
           } catch (e) {}
+        }
+
+        code = code.trim().toUpperCase();
+
+        if (this.statusText) {
+          this.statusText.textContent = `Detektovan QR kod: ${code}`;
         }
 
         this.inspectVoucherCode(code);
@@ -411,12 +519,73 @@
               time: new Date().toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })
             });
 
+            // Instant LocalStorage synchronization with player app
+            try {
+              const rawList = localStorage.getItem('gsc_my_vouchers_list');
+              if (rawList) {
+                const list = JSON.parse(rawList);
+                let changed = false;
+                list.forEach(v => {
+                  if ((v.voucher_code || '').trim().toUpperCase() === code.trim().toUpperCase()) {
+                    v.status = 'redeemed';
+                    v.redeemed_at = new Date().toLocaleString('sr-RS');
+                    v.redeemed_by_operator = this.operatorName;
+                    v.redeemed_location = this.location;
+                    changed = true;
+                  }
+                });
+                if (changed) {
+                  localStorage.setItem('gsc_my_vouchers_list', JSON.stringify(list));
+                }
+              }
+
+              const rawActive = localStorage.getItem('gsc_active_voucher');
+              if (rawActive) {
+                const active = JSON.parse(rawActive);
+                if ((active.voucher_code || '').trim().toUpperCase() === code.trim().toUpperCase()) {
+                  active.status = 'REDEEMED';
+                  active.redeemed_at = new Date().toISOString();
+                  active.redeemed_by_operator = this.operatorName;
+                  localStorage.setItem('gsc_active_voucher', JSON.stringify(active));
+                }
+              }
+
+              // Fire storage key for open player tabs
+              localStorage.setItem('gsc_last_redeemed_voucher', JSON.stringify({
+                code: code,
+                operator: this.operatorName,
+                time: Date.now()
+              }));
+            } catch (e) {}
+
+            // BroadcastChannel for instant inter-tab communication
+            try {
+              if (typeof BroadcastChannel !== 'undefined') {
+                const bc = new BroadcastChannel('gsc_vouchers_channel');
+                bc.postMessage({
+                  type: 'VOUCHER_REDEEMED',
+                  code: code,
+                  operator: this.operatorName,
+                  time: new Date().toISOString()
+                });
+                bc.close();
+              }
+            } catch (e) {}
+
+            // Window custom event
+            try {
+              window.dispatchEvent(new CustomEvent('gsc_voucher_redeemed', { detail: { code } }));
+            } catch (e) {}
+
             setTimeout(() => {
               this.verifCard.style.display = 'none';
               this.isScanning = true;
               this.currentInspectedVoucher = null;
               btnConfirm.disabled = false;
-            }, 3500);
+              if (this.statusText) {
+                this.statusText.textContent = 'Uperite kameru ka QR kodu gosta';
+              }
+            }, 3000);
 
           } else {
             this.playErrorSound();

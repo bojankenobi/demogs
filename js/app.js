@@ -1223,24 +1223,115 @@ class IGTApp {
   }
 
   async syncPlayerVouchers() {
-    const playerId = this.playerTracker ? this.playerTracker.profile.id : null;
-    if (!playerId || typeof fetch === 'undefined') return;
+    const playerId = (this.playerTracker && this.playerTracker.profile && this.playerTracker.profile.id)
+      ? this.playerTracker.profile.id
+      : (localStorage.getItem('gsc_player_id') || 'gsc_player_1');
+
+    if (typeof fetch === 'undefined') return;
+
+    const localList = this.getMyVouchersList();
+    const localCodes = localList.map(v => v.voucher_code).filter(Boolean);
 
     try {
-      const res = await fetch(`/api/vouchers/my?playerId=${encodeURIComponent(playerId)}`);
+      let queryUrl = `/api/vouchers/my?playerId=${encodeURIComponent(playerId)}`;
+      if (localCodes.length > 0) {
+        queryUrl += `&codes=${encodeURIComponent(localCodes.join(','))}`;
+      }
+
+      const res = await fetch(queryUrl);
       const data = await res.json();
+
       if (data && data.success && Array.isArray(data.vouchers)) {
+        let hasChanges = false;
+
+        data.vouchers.forEach(dbV => {
+          const dbCode = (dbV.voucher_code || '').trim().toUpperCase();
+          const dbStatus = (dbV.status || '').toLowerCase(); // 'active', 'redeemed', 'expired'
+          const localItem = localList.find(v => (v.voucher_code || '').trim().toUpperCase() === dbCode || v.id === dbV.id);
+
+          if (localItem) {
+            if (localItem.status !== dbStatus) {
+              localItem.status = dbStatus;
+              hasChanges = true;
+            }
+            if (dbV.redeemed_at) {
+              const formattedRedeemedAt = new Date(dbV.redeemed_at).toLocaleString('sr-RS');
+              if (localItem.redeemed_at !== formattedRedeemedAt) {
+                localItem.redeemed_at = formattedRedeemedAt;
+                hasChanges = true;
+              }
+            }
+            if (dbV.redeemed_by_operator) {
+              localItem.redeemed_by_operator = dbV.redeemed_by_operator;
+            }
+            if (dbV.redeemed_location) {
+              localItem.redeemed_location = dbV.redeemed_location;
+            }
+          } else {
+            // New voucher found in database for this player
+            localList.unshift({
+              id: dbV.id || ('v_' + Date.now()),
+              title: dbV.title || 'VIP Promo Vaučer',
+              reward_value: dbV.reward_value || 1000,
+              reward_text: dbV.reward_text || (dbV.reward_value ? `${Number(dbV.reward_value).toLocaleString()} ZLT` : '1.000 ZLT'),
+              desc: dbV.description || 'VIP Promo Vaučer u klubu',
+              voucher_code: dbV.voucher_code,
+              location: dbV.location || 'Grand Slot Club',
+              status: dbStatus || 'active',
+              expires_at: dbV.expires_at || new Date(Date.now() + 48 * 3600000).toISOString(),
+              redeemed_at: dbV.redeemed_at ? new Date(dbV.redeemed_at).toLocaleString('sr-RS') : null,
+              redeemed_by_operator: dbV.redeemed_by_operator || null,
+              redeemed_location: dbV.redeemed_location || null,
+              created_at: dbV.created_at ? new Date(dbV.created_at).toLocaleDateString('sr-RS') : new Date().toLocaleDateString('sr-RS')
+            });
+            hasChanges = true;
+          }
+        });
+
+        if (hasChanges) {
+          try {
+            localStorage.setItem('gsc_my_vouchers_list', JSON.stringify(localList));
+          } catch (e) {}
+        }
+
+        // Also update active voucher reference
         const active = data.vouchers.find(v => v.status === 'ACTIVE' && new Date(v.expires_at) > new Date());
         if (active) {
           this.activeVoucher = active;
-          localStorage.setItem('gsc_active_voucher', JSON.stringify(active));
+          try { localStorage.setItem('gsc_active_voucher', JSON.stringify(active)); } catch (e) {}
         } else if (data.vouchers.length > 0) {
           this.activeVoucher = data.vouchers[0];
-          localStorage.setItem('gsc_active_voucher', JSON.stringify(data.vouchers[0]));
+          try { localStorage.setItem('gsc_active_voucher', JSON.stringify(data.vouchers[0])); } catch (e) {}
         }
+
+        this.updateVouchersCounter();
+
+        // If the My Vouchers modal is currently open on screen, live-refresh the active tab!
+        const myVouchersModal = document.getElementById('my-vouchers-modal');
+        if (myVouchersModal && myVouchersModal.classList.contains('active')) {
+          const currentTabBtn = myVouchersModal.querySelector('.voucher-tab-btn.active');
+          const currentTab = currentTabBtn ? currentTabBtn.getAttribute('data-vtab') : 'active';
+          this.renderMyVouchersList(currentTab);
+        }
+
+        // If a voucher card is open and was redeemed, update its pill live
+        const ticketModal = document.getElementById('vip-voucher-modal');
+        if (ticketModal && ticketModal.classList.contains('active') && this.activeVoucher) {
+          const updatedActive = localList.find(v => v.voucher_code === this.activeVoucher.voucher_code);
+          if (updatedActive && updatedActive.status === 'redeemed') {
+            const statusPill = document.getElementById('ticket-status-pill');
+            if (statusPill) {
+              statusPill.textContent = '📜 ISKORIŠĆEN';
+              statusPill.className = 'ticket-status-pill redeemed';
+            }
+          }
+        }
+
         this.updateVoucherBadge();
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn('syncPlayerVouchers error:', e);
+    }
   }
 
   showVoucherTicket(voucher) {
@@ -1419,6 +1510,7 @@ class IGTApp {
       if (data && data.success && data.voucher) {
         this.activeVoucher = data.voucher;
         localStorage.setItem('gsc_active_voucher', JSON.stringify(data.voucher));
+        this.saveVoucherToMyList(data.voucher);
 
         if (window.slotAudio && window.slotAudio.playBigWin) window.slotAudio.playBigWin();
         if (window.particleEngine && window.particleEngine.burst) window.particleEngine.burst(300, 250);
@@ -1441,6 +1533,7 @@ class IGTApp {
       };
       this.activeVoucher = fakeVoucher;
       localStorage.setItem('gsc_active_voucher', JSON.stringify(fakeVoucher));
+      this.saveVoucherToMyList(fakeVoucher);
       this.renderVoucherCard(fakeVoucher);
       this.switchVoucherView('card');
       this.updateVoucherBadge();
@@ -1638,13 +1731,16 @@ class IGTApp {
     if (countExpired) countExpired.textContent = expiredCount;
   }
 
-  openMyVouchersModal(tab = 'active') {
+  async openMyVouchersModal(tab = 'active') {
     const modal = document.getElementById('my-vouchers-modal');
     if (!modal) return;
 
     if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
     this.renderMyVouchersList(tab);
     modal.classList.add('active');
+
+    // Trigger instant background sync with database to ensure latest redemption status
+    await this.syncPlayerVouchers();
   }
 
   closeMyVouchersModal() {
@@ -3136,9 +3232,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Initial update of vouchers counter badge
+  // Initial update of vouchers counter badge & real-time scanner sync
   if (app && typeof app.updateVouchersCounter === 'function') {
     app.updateVouchersCounter();
+  }
+
+  if (app && typeof app.syncPlayerVouchers === 'function') {
+    // Initial sync with backend
+    app.syncPlayerVouchers();
+
+    // BroadcastChannel sync across tabs
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        const voucherBc = new BroadcastChannel('gsc_vouchers_channel');
+        voucherBc.onmessage = (event) => {
+          if (event.data && event.data.type === 'VOUCHER_REDEEMED') {
+            app.syncPlayerVouchers();
+          }
+        };
+      }
+    } catch (e) {}
+
+    // Storage event sync across windows
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'gsc_last_redeemed_voucher' || e.key === 'gsc_my_vouchers_list') {
+        app.syncPlayerVouchers();
+      }
+    });
+
+    // Window custom event sync
+    window.addEventListener('gsc_voucher_redeemed', () => {
+      app.syncPlayerVouchers();
+    });
+
+    // Sync on tab focus / visibility change
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        app.syncPlayerVouchers();
+      }
+    });
+
+    // Periodic live sync every 12 seconds
+    setInterval(() => {
+      app.syncPlayerVouchers();
+    }, 12000);
   }
 
   // 2-Second Grand Slot VIP Splash Screen & Auth Gating

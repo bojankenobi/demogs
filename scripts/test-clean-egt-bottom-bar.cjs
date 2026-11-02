@@ -66,7 +66,7 @@ console.log('✓ JavaScript menu actions, lobby trigger, and voucher modal routi
 console.log('\n--- TEST 4: Cache Busters in index.html ---');
 assert(/style\.css\?v=(11[2-9]|1[2-9]\d)/.test(indexHtml), 'style.css bumped to v>=112');
 assert(indexHtml.includes('lobby.js?v=108'), 'lobby.js bumped to v=108');
-assert(indexHtml.includes('app.js?v=110'), 'app.js bumped to v=110');
+assert(/app\.js\?v=(11[0-9]|1[2-9]\d)/.test(indexHtml), 'app.js bumped to v>=110');
 console.log('✓ Cache busters correctly bumped');
 
 console.log('\n============================================================');
