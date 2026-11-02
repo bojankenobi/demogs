@@ -664,8 +664,8 @@ class GrandXtensionGame {
     if (window.slotApp) {
       window.slotApp.showMessage(
         isGrandWin 
-          ? `👑 GRAND JACKPOT OSVOJEN! +${finalWin.toLocaleString()} RSD!` 
-          : `💰 XTENSION LINK ISPLATIO +${finalWin.toLocaleString()} RSD!`,
+          ? `👑 GRAND JACKPOT OSVOJEN! +${finalWin.toLocaleString()} KREDITA!` 
+          : `💰 XTENSION LINK ISPLATIO +${finalWin.toLocaleString()} KREDITA!`,
         'jackpot'
       );
       if (window.slotApp.gamble) {

@@ -163,8 +163,8 @@ class AdminPanel {
               <div class="trigger-group">
                 <div class="trigger-group-title">💰 Novčanik & Krediti</div>
                 <div class="trigger-btns-row">
-                  <button class="admin-btn-trigger" id="btn-trigger-add-10k">➕ Dodaj +10.000 RSD</button>
-                  <button class="admin-btn-trigger" id="btn-trigger-reset-1k">🔄 Postavi na 1.000 RSD</button>
+                  <button class="admin-btn-trigger" id="btn-trigger-add-10k">➕ Dodaj +10.000 ZLT</button>
+                  <button class="admin-btn-trigger" id="btn-trigger-reset-1k">🔄 Postavi na 1.000 ZLT</button>
                   <button class="admin-btn-trigger" id="btn-trigger-reset-stats">🧹 Resetuj istoriju sesije</button>
                 </div>
               </div>
@@ -278,7 +278,7 @@ class AdminPanel {
     const triggerSilver = document.getElementById('btn-trigger-silver');
     if (triggerSilver) triggerSilver.addEventListener('click', () => {
       this.app.jackpots.awardJackpot('silver', (t, p, m) => {
-        this.app.showMessage(`🥈 DEMO: SILVER JACKPOT +${p.toLocaleString()} RSD!`, 'jackpot');
+        this.app.showMessage(`🥈 DEMO: SILVER JACKPOT +${p.toLocaleString()} KREDITA!`, 'jackpot');
       });
       this.close();
     });
@@ -286,7 +286,7 @@ class AdminPanel {
     const triggerGold = document.getElementById('btn-trigger-gold');
     if (triggerGold) triggerGold.addEventListener('click', () => {
       this.app.jackpots.awardJackpot('gold', (t, p, m) => {
-        this.app.showMessage(`🏆 DEMO: GOLD JACKPOT +${p.toLocaleString()} RSD!`, 'jackpot');
+        this.app.showMessage(`🏆 DEMO: GOLD JACKPOT +${p.toLocaleString()} KREDITA!`, 'jackpot');
       });
       this.close();
     });
@@ -294,7 +294,7 @@ class AdminPanel {
     const triggerDiamond = document.getElementById('btn-trigger-diamond');
     if (triggerDiamond) triggerDiamond.addEventListener('click', () => {
       this.app.jackpots.awardJackpot('diamond', (t, p, m) => {
-        this.app.showMessage(`💎 DEMO: DIAMOND JACKPOT +${p.toLocaleString()} RSD!`, 'jackpot');
+        this.app.showMessage(`💎 DEMO: DIAMOND JACKPOT +${p.toLocaleString()} KREDITA!`, 'jackpot');
       });
       this.close();
     });
@@ -334,7 +334,7 @@ class AdminPanel {
     const triggerAdd10k = document.getElementById('btn-trigger-add-10k');
     if (triggerAdd10k) triggerAdd10k.addEventListener('click', () => {
       this.app.wallet.addFictionalRsd(10000);
-      this.app.showMessage('💰 +10.000 RSD DODATO NA RAČUN!', 'win');
+      this.app.showMessage('💰 +10.000 ZLT DODATO NA RAČUN!', 'win');
     });
 
     const triggerReset1k = document.getElementById('btn-trigger-reset-1k');
@@ -342,7 +342,7 @@ class AdminPanel {
       this.app.wallet.rsdBalance = 1000;
       this.app.wallet.saveState();
       this.app.wallet.updateUI();
-      this.app.showMessage('🔄 STANJE POSTAVLJENO NA 1.000 RSD', 'info');
+      this.app.showMessage('🔄 STANJE POSTAVLJENO NA 1.000 ZLT', 'info');
       if (window.slotAudio) window.slotAudio.playClick();
     });
 
@@ -437,7 +437,7 @@ class AdminPanel {
         document.getElementById('sim-res-rtp').textContent = `${res.rtp}%`;
         document.getElementById('sim-res-hitrate').textContent = `${res.hitRate}%`;
         document.getElementById('sim-res-maxwin').textContent = `${res.maxWinMult}x`;
-        document.getElementById('sim-res-betwin').textContent = `${res.totalBet.toLocaleString()} / ${res.totalWon.toLocaleString()} RSD`;
+        document.getElementById('sim-res-betwin').textContent = `${res.totalBet.toLocaleString()} / ${res.totalWon.toLocaleString()} KREDITA`;
       }
     }, 40);
   }

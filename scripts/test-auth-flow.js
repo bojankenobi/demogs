@@ -90,12 +90,12 @@ async function runTest() {
   }
 
   if (Number(regData.player.balance_rsd) !== 1000) {
-    throw new Error(`Početni balans nije 1.000 RSD! Dobijeno: ${regData.player.balance_rsd}`);
+    throw new Error(`Početni balans nije 1.000 ZLT! Dobijeno: ${regData.player.balance_rsd}`);
   }
 
   testPlayerId = regData.player.id;
   testToken = regData.token;
-  console.log('✅ Registracija uspešna! Balans: 1.000 RSD, ID:', testPlayerId);
+  console.log('✅ Registracija uspešna! Balans: 1.000 ZLT, ID:', testPlayerId);
 
   // 2. Test Prijave (Login)
   console.log('\n2️⃣ Test prijave sa novim nalogom...');
@@ -131,7 +131,7 @@ async function runTest() {
   if (meCode !== 200 || !meData || !meData.success) {
     throw new Error('Provera sesije nije uspela: ' + JSON.stringify(meData));
   }
-  console.log('✅ Sesija validna! Igrač:', meData.player.username, 'Balans:', meData.player.balance_rsd, 'RSD');
+  console.log('✅ Sesija validna! Igrač:', meData.player.username, 'Balans:', meData.player.balance_rsd, 'ZLT');
 
   // 4. Test Sinhronizacije balansa i statistike (api/players/sync)
   console.log('\n4️⃣ Test sinhronizacije promenjenog balansa (nakon dobitka)...');
@@ -165,9 +165,9 @@ async function runTest() {
 
   console.log('Podaci iz Neon DB-a:', checkRows[0]);
   if (Number(checkRows[0].balance_rsd) !== 1450) {
-    throw new Error('Balans u Neon DB nije ažuriran na 1450 RSD!');
+    throw new Error('Balans u Neon DB nije ažuriran na 1450 ZLT!');
   }
-  console.log('✅ Sinhronizacija u Neon DB uspešna! Balans sačuvan: 1450 RSD');
+  console.log('✅ Sinhronizacija u Neon DB uspešna! Balans sačuvan: 1450 ZLT');
 
   // 6. Cleanup test playera
   await sql`DELETE FROM players WHERE id = ${testPlayerId};`;

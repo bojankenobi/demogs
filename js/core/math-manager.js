@@ -20,7 +20,7 @@ class SlotMathManager {
         hitRateTarget: 0.25,
         allowTwoSymbolPay: ['coin'], // Only coin gives small consolation on 2
         payout3Multiplier: 1.0,
-        meterTurnoverRequired: { cards: 450, mines: 600, wheel: 850 }, // in RSD
+        meterTurnoverRequired: { cards: 450, mines: 600, wheel: 850 }, // in ZLT
         minesHouseEdge: 0.04,
         forceWin: false,
         weights: {

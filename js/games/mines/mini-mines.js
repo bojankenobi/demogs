@@ -77,7 +77,7 @@ class MiniMinesBonus {
     this.updateUI();
 
     if (this.statusText) {
-      this.statusText.textContent = window.i18n ? window.i18n.t('miniMinesStart', { starter: starterPrize }) : `OSVOJENO ZA START: +${starterPrize} RSD! OTVARAJTE POLJA ILI UZMITE DOBITAK!`;
+      this.statusText.textContent = window.i18n ? window.i18n.t('miniMinesStart', { starter: starterPrize }) : `OSVOJENO ZA START: +${starterPrize} KREDITA! OTVARAJTE POLJA ILI UZMITE DOBITAK!`;
       this.statusText.className = 'mini-mines-status-tag highlight';
     }
 
@@ -86,7 +86,7 @@ class MiniMinesBonus {
       this.cashoutBtn.innerHTML = `
         <span class="btn-cashout-icon">💰</span>
         <span class="btn-cashout-label">UZMI DOBITAK (TAKE WIN)</span>
-        <span class="btn-cashout-val">${this.totalWin.toLocaleString()} RSD</span>
+        <span class="btn-cashout-val">${this.totalWin.toLocaleString()} KR</span>
       `;
     }
 
@@ -162,7 +162,7 @@ class MiniMinesBonus {
     if (this.statusText) {
       this.statusText.textContent = window.i18n 
         ? window.i18n.t('miniHitStatus', { win: tileWin, mult: pickMultiplier })
-        : `POGODAK! +${tileWin} RSD (${pickMultiplier}x)`;
+        : `POGODAK! +${tileWin} KREDITA (${pickMultiplier}x)`;
       this.statusText.className = 'mini-mines-status-tag success';
     }
 
@@ -172,7 +172,7 @@ class MiniMinesBonus {
       this.cashoutBtn.innerHTML = `
         <span class="btn-cashout-icon">💰</span>
         <span class="btn-cashout-label">${cashoutLabel}</span>
-        <span class="btn-cashout-val">${this.totalWin.toLocaleString()} RSD</span>
+        <span class="btn-cashout-val">${this.totalWin.toLocaleString()} KR</span>
       `;
     }
 
@@ -250,7 +250,7 @@ class MiniMinesBonus {
     if (this.statusText) {
       this.statusText.textContent = window.i18n 
         ? window.i18n.t('miniMinesWipedOut')
-        : '💥 MINA EKSPLODIRALA! IZGUBLJEN SAV DOBITAK (0 RSD)!';
+        : '💥 MINA EKSPLODIRALA! IZGUBLJEN SAV DOBITAK (0 KREDITA)!';
       this.statusText.classList.add('alert-danger');
     }
 

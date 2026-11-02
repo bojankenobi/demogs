@@ -148,8 +148,8 @@ class AdminBridge {
           this.app.jackpots.awardJackpot(data.tier, (tier, pot) => {
             const isEn = window.i18n && window.i18n.currentLang === 'en';
             const title = isEn 
-              ? `🏆 ${tier.toUpperCase()} JACKPOT +${pot.toLocaleString()} RSD!`
-              : `🏆 ${tier.toUpperCase()} DŽEKPOT +${pot.toLocaleString()} RSD!`;
+              ? `🏆 ${tier.toUpperCase()} JACKPOT +${pot.toLocaleString()} KREDITA!`
+              : `🏆 ${tier.toUpperCase()} DŽEKPOT +${pot.toLocaleString()} KREDITA!`;
             this.app.showMessage(title, 'jackpot');
           });
           this.broadcastState();
@@ -178,7 +178,7 @@ class AdminBridge {
       case 'WALLET_ADD':
         if (this.app.wallet && typeof data.amount === 'number') {
           this.app.wallet.addFictionalRsd(data.amount);
-          this.app.showMessage(`💰 +${data.amount.toLocaleString()} RSD!`, 'win');
+          this.app.showMessage(`💰 +${data.amount.toLocaleString()} ZLT!`, 'win');
           this.broadcastState();
         }
         break;

@@ -137,7 +137,7 @@ class FreeSpinsManager {
       const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
       const rsdTotal = (this.totalWon * denom).toLocaleString();
       const creditsLabel = window.i18n ? window.i18n.t('credits').toUpperCase() : 'KREDITA';
-      this.summaryWonEl.textContent = `+${this.totalWon.toLocaleString()} ${creditsLabel} (${rsdTotal} RSD)`;
+      this.summaryWonEl.textContent = `+${this.totalWon.toLocaleString()} ${creditsLabel} (≈ ${rsdTotal} ZLT)`;
       this.summaryModal.classList.add('active');
       if (window.slotAudio) window.slotAudio.playBigWinCheer('mega');
       if (window.particleEngine) window.particleEngine.spawnCelebration(true);
@@ -220,8 +220,8 @@ class BigWinCelebrator {
 
       if (this.counterEl) {
         const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
-        const rsd = (current * denom).toLocaleString();
-        this.counterEl.textContent = `${current.toLocaleString()} (${rsd} RSD)`;
+        const zlt = (current * denom).toLocaleString();
+        this.counterEl.textContent = `${current.toLocaleString()} KREDITA (≈ ${zlt} ZLT)`;
       }
 
       if (progress < 1) {

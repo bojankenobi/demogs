@@ -4,9 +4,9 @@
  */
 class CasinoWallet {
   constructor(initialRsdBalance = 1000, initialBetCredits = 20) {
-    // Denomination settings: 0.2, 0.5, 1, 2, 4 RSD per credit
+    // Denomination settings: 0.2, 0.5, 1, 2, 4 ZLT per credit
     this.denominations = [0.2, 0.5, 1, 2, 4];
-    this.activeDenom = 1; // Default: 1 RSD = 1 Credit
+    this.activeDenom = 1; // Default: 1 KR = 1 ZLT
 
     // Try loading saved denomination
     try {
@@ -59,7 +59,7 @@ class CasinoWallet {
     this.betRsdEl = document.getElementById('hud-bet-rsd');
   }
 
-  // Dynamic Credits balance calculated from real RSD and active denomination
+  // Dynamic Credits balance calculated from real ZLT and active denomination
   get balance() {
     return Math.floor(this.rsdBalance / this.activeDenom);
   }

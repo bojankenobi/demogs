@@ -232,8 +232,8 @@ class NotificationManager {
     const title = isEn ? '⚡ MEGA JACKPOT ALERT!' : '⚡ GRANDSLOT DŽEKPOT ALARM!';
     const tierName = jackpotTier.toUpperCase();
     const body = isEn 
-      ? `The ${tierName} JACKPOT is hot! Current prize pool is over 180,000 RSD!`
-      : `Džekpot fond (${tierName}) je dostigao vrhunac! Osvojite preko 180.000 RSD na sledećem spinu!`;
+      ? `The ${tierName} JACKPOT is hot! Current prize pool is over 180,000 CREDITS!`
+      : `Džekpot fond (${tierName}) je dostigao vrhunac! Osvojite preko 180.000 KREDITA na sledećem spinu!`;
 
     this.sendPushNotification(title, body);
 

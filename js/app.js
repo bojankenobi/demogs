@@ -33,7 +33,7 @@ class IGTApp {
         this.showMessage(window.i18n ? window.i18n.t('miniMinesFinished', { amount: totalWin }) : `💣 ZAVRŠEN MINES BONUS: +${totalWin}!`, 'jackpot');
         this.gamble.showTrigger(totalWin);
       } else {
-        this.showMessage('💥 MINA EKSPLODIRALA! IZGUBLJEN SAV BONUS DOBITAK (0 RSD)!', 'normal');
+        this.showMessage('💥 MINA EKSPLODIRALA! IZGUBLJEN SAV BONUS DOBITAK (0 KREDITA)!', 'normal');
         this.gamble.hideTrigger();
       }
       this.wallet.updateUI();
@@ -1253,7 +1253,7 @@ class IGTApp {
       this.switchVoucherView('card');
     } else {
       this.setupPromoViewData({
-        title: 'VIP Promo Tiket 1.000 RSD',
+        title: 'VIP Promo Tiket 1.000 ZLT',
         description: 'Prijavite se za ekskluzivni vikend bonus i preuzmite lični VIP QR vaučer za igru na slot aparatima u Grand Slot Club-u!',
         rewardValue: 1000,
         rewardType: 'club_ticket',
@@ -1900,10 +1900,10 @@ class IGTApp {
         this.playerTracker.recordJackpot(tier, prize);
       }
       const defaultMsg = tier === 'diamond' 
-        ? `💎 DIAMOND JACKPOT! +${prize.toLocaleString()} RSD! 💎`
+        ? `💎 DIAMOND JACKPOT! +${prize.toLocaleString()} KREDITA! 💎`
         : (tier === 'gold' 
-          ? `🏆 GOLD JACKPOT! +${prize.toLocaleString()} RSD! 🏆`
-          : `🥈 SILVER JACKPOT! +${prize.toLocaleString()} RSD! 🥈`);
+          ? `🏆 GOLD JACKPOT! +${prize.toLocaleString()} KREDITA! 🏆`
+          : `🥈 SILVER JACKPOT! +${prize.toLocaleString()} KREDITA! 🥈`);
       this.showMessage(window.i18n ? window.i18n.t(msgKey, { amount: prize.toLocaleString() }) : defaultMsg, 'jackpot');
       this.gamble.showTrigger(prize);
     });
@@ -1988,7 +1988,7 @@ class IGTApp {
     if (hudDenomToggle) {
       hudDenomToggle.addEventListener('click', () => {
         this.wallet.cycleDenomination();
-        const msg = `DENOMINACIJA: 1 KR = ${this.wallet.activeDenom} RSD`;
+        const msg = `DENOMINACIJA: 1 KR = ${this.wallet.activeDenom} ZLT`;
         this.showMessage(msg, 'info');
       });
     }

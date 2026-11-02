@@ -225,7 +225,7 @@ class MinesGame {
       const label = window.i18n ? window.i18n.t('minesBetBtn') : 'BET';
       this.btnMainAction.innerHTML = `
         <span class="action-top">${label}</span>
-        <span class="action-val">${this.currentBet} RSD</span>
+        <span class="action-val">${this.currentBet} KR</span>
       `;
       this.btnMainAction.disabled = false;
     }
@@ -269,7 +269,7 @@ class MinesGame {
       const cashoutLabel = window.i18n ? window.i18n.t('minesCashoutBtn') : 'ISPLATA';
       this.btnMainAction.innerHTML = `
         <span class="action-top">${cashoutLabel}</span>
-        <span class="action-val">0 RSD</span>
+        <span class="action-val">0 KR</span>
       `;
     }
 
@@ -329,14 +329,14 @@ class MinesGame {
       const cashoutLabel = window.i18n ? window.i18n.t('minesCashoutBtn') : 'ISPLATA';
       this.btnMainAction.innerHTML = `
         <span class="action-top">${cashoutLabel} (${this.currentMultiplier.toFixed(2)}x)</span>
-        <span class="action-val">${currentWin.toLocaleString()} RSD</span>
+        <span class="action-val">${currentWin.toLocaleString()} KR</span>
       `;
     }
 
     if (this.statusBanner) {
       const msg = window.i18n 
         ? window.i18n.t('minesHitStatus', { mult: `${this.currentMultiplier.toFixed(2)}x`, win: currentWin })
-        : `POGODAK! MNOŽILAC: ${this.currentMultiplier.toFixed(2)}x (${currentWin} RSD)`;
+        : `POGODAK! MNOŽILAC: ${this.currentMultiplier.toFixed(2)}x (${currentWin.toLocaleString()} KREDITA)`;
       this.statusBanner.textContent = msg;
     }
 
@@ -389,7 +389,7 @@ class MinesGame {
       const label = window.i18n ? window.i18n.t('minesNewGameBtn') : 'NOVA IGRA';
       this.btnMainAction.innerHTML = `
         <span class="action-top">${label}</span>
-        <span class="action-val">${this.currentBet} RSD</span>
+        <span class="action-val">${this.currentBet} KR</span>
       `;
     }
   }
@@ -410,8 +410,8 @@ class MinesGame {
 
     if (this.statusBanner) {
       this.statusBanner.textContent = allCleared 
-        ? (window.i18n ? window.i18n.t('minesAllCleared', { win: winAmount.toLocaleString() }) : `👑 SVA POLJA OČIŠĆENA! OSVOJENO: ${winAmount} RSD!`)
-        : (window.i18n ? window.i18n.t('minesCashedOut', { win: winAmount.toLocaleString(), mult: `${this.currentMultiplier.toFixed(2)}x` }) : `💰 ISPLAĆENO: ${winAmount.toLocaleString()} RSD (${this.currentMultiplier.toFixed(2)}x)`);
+        ? (window.i18n ? window.i18n.t('minesAllCleared', { win: winAmount.toLocaleString() }) : `👑 SVA POLJA OČIŠĆENA! OSVOJENO: ${winAmount.toLocaleString()} KREDITA!`)
+        : (window.i18n ? window.i18n.t('minesCashedOut', { win: winAmount.toLocaleString(), mult: `${this.currentMultiplier.toFixed(2)}x` }) : `💰 ISPLAĆENO: ${winAmount.toLocaleString()} KREDITA (${this.currentMultiplier.toFixed(2)}x)`);
       this.statusBanner.className = 'mines-status-text win';
     }
 
@@ -436,7 +436,7 @@ class MinesGame {
       const label = window.i18n ? window.i18n.t('minesNewGameBtn') : 'NOVA IGRA';
       this.btnMainAction.innerHTML = `
         <span class="action-top">${label}</span>
-        <span class="action-val">${this.currentBet} RSD</span>
+        <span class="action-val">${this.currentBet} KR</span>
       `;
     }
 
@@ -470,7 +470,7 @@ class MinesGame {
         if (this.statusBanner) {
           this.statusBanner.textContent = window.i18n 
             ? window.i18n.t('minesHitStatus', { mult: `${this.currentMultiplier.toFixed(2)}x`, win: currentWin })
-            : `POGODAK! MNOŽILAC: ${this.currentMultiplier.toFixed(2)}x (${currentWin} RSD)`;
+            : `POGODAK! MNOŽILAC: ${this.currentMultiplier.toFixed(2)}x (${currentWin.toLocaleString()} KREDITA)`;
         }
         if (this.btnMainAction) {
           const cashoutLabel = window.i18n ? window.i18n.t('minesCashoutBtn') : 'ISPLATA';
@@ -492,7 +492,7 @@ class MinesGame {
       if (this.statusBanner) {
         this.statusBanner.textContent = window.i18n 
           ? window.i18n.t('minesCashedOut', { win: winAmount.toLocaleString(), mult: `${this.currentMultiplier.toFixed(2)}x` })
-          : `💰 ISPLAĆENO: ${winAmount.toLocaleString()} RSD (${this.currentMultiplier.toFixed(2)}x)`;
+          : `💰 ISPLAĆENO: ${winAmount.toLocaleString()} KREDITA (${this.currentMultiplier.toFixed(2)}x)`;
       }
       if (this.btnMainAction) {
         const label = window.i18n ? window.i18n.t('minesNewGameBtn') : 'NOVA IGRA';

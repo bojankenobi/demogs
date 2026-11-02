@@ -1222,10 +1222,10 @@ class SlotGame3D {
     if (window.particleEngine) window.particleEngine.spawnCelebration(true);
 
     const defaultMsg = tier === 'diamond' 
-      ? `💎 DIAMOND JACKPOT! +${prize.toLocaleString()} RSD! 💎`
+      ? `💎 DIAMOND JACKPOT! +${prize.toLocaleString()} KREDITA! 💎`
       : (tier === 'gold' 
-        ? `🏆 GOLD JACKPOT! +${prize.toLocaleString()} RSD! 🏆`
-        : `🥈 SILVER JACKPOT! +${prize.toLocaleString()} RSD! 🥈`);
+        ? `🏆 GOLD JACKPOT! +${prize.toLocaleString()} KREDITA! 🏆`
+        : `🥈 SILVER JACKPOT! +${prize.toLocaleString()} KREDITA! 🥈`);
 
     this.showMessage(window.i18n ? window.i18n.t(msgKey, { amount: prize.toLocaleString() }) : defaultMsg, 'jackpot');
     this.showGambleTrigger(prize);
