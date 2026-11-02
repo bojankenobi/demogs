@@ -615,28 +615,69 @@ class AdminDashboard {
   loadOperatorLimitsIntoUI() {
     if (!this.dailyAccessManager) return;
     const limits = this.dailyAccessManager.getLimits();
-    const vaultInput = document.getElementById('input-limit-vault');
-    const royaleInput = document.getElementById('input-limit-royale');
-    const grantInput = document.getElementById('input-daily-grant-zlt');
+
+    const grantSilver = document.getElementById('input-daily-grant-silver');
+    const vaultSilver = document.getElementById('input-limit-vault-silver');
+    const royaleSilver = document.getElementById('input-limit-royale-silver');
+
+    const grantGold = document.getElementById('input-daily-grant-gold');
+    const vaultGold = document.getElementById('input-limit-vault-gold');
+    const royaleGold = document.getElementById('input-limit-royale-gold');
+
+    const grantVip = document.getElementById('input-daily-grant-vip');
+    const vaultVip = document.getElementById('input-limit-vault-vip');
+    const royaleVip = document.getElementById('input-limit-royale-vip');
+
     const reasonInput = document.getElementById('input-lock-reason');
 
-    if (vaultInput && limits.vaultDailyLimit !== undefined) vaultInput.value = limits.vaultDailyLimit;
-    if (royaleInput && limits.royaleDailyLimit !== undefined) royaleInput.value = limits.royaleDailyLimit;
-    if (grantInput && limits.dailyLoginGrantZlt !== undefined) grantInput.value = limits.dailyLoginGrantZlt;
+    if (grantSilver) grantSilver.value = limits.dailyGrant_silver !== undefined ? limits.dailyGrant_silver : 100;
+    if (vaultSilver) vaultSilver.value = limits.vaultLimit_silver !== undefined ? limits.vaultLimit_silver : 2;
+    if (royaleSilver) royaleSilver.value = limits.royaleLimit_silver !== undefined ? limits.royaleLimit_silver : 1;
+
+    if (grantGold) grantGold.value = limits.dailyGrant_gold !== undefined ? limits.dailyGrant_gold : 200;
+    if (vaultGold) vaultGold.value = limits.vaultLimit_gold !== undefined ? limits.vaultLimit_gold : 3;
+    if (royaleGold) royaleGold.value = limits.royaleLimit_gold !== undefined ? limits.royaleLimit_gold : 2;
+
+    if (grantVip) grantVip.value = limits.dailyGrant_vip !== undefined ? limits.dailyGrant_vip : 400;
+    if (vaultVip) vaultVip.value = limits.vaultLimit_vip !== undefined ? limits.vaultLimit_vip : 4;
+    if (royaleVip) royaleVip.value = limits.royaleLimit_vip !== undefined ? limits.royaleLimit_vip : 3;
+
     if (reasonInput && limits.lockReasonText) reasonInput.value = limits.lockReasonText;
   }
 
   saveOperatorLimitsFromUI() {
     if (!this.dailyAccessManager) return;
-    const vaultInput = document.getElementById('input-limit-vault');
-    const royaleInput = document.getElementById('input-limit-royale');
-    const grantInput = document.getElementById('input-daily-grant-zlt');
+    const grantSilver = document.getElementById('input-daily-grant-silver');
+    const vaultSilver = document.getElementById('input-limit-vault-silver');
+    const royaleSilver = document.getElementById('input-limit-royale-silver');
+
+    const grantGold = document.getElementById('input-daily-grant-gold');
+    const vaultGold = document.getElementById('input-limit-vault-gold');
+    const royaleGold = document.getElementById('input-limit-royale-gold');
+
+    const grantVip = document.getElementById('input-daily-grant-vip');
+    const vaultVip = document.getElementById('input-limit-vault-vip');
+    const royaleVip = document.getElementById('input-limit-royale-vip');
+
     const reasonInput = document.getElementById('input-lock-reason');
 
     const newLimits = {
-      vaultDailyLimit: vaultInput ? Math.max(1, parseInt(vaultInput.value, 10) || 2) : 2,
-      royaleDailyLimit: royaleInput ? Math.max(1, parseInt(royaleInput.value, 10) || 1) : 1,
-      dailyLoginGrantZlt: grantInput ? Math.max(0, parseInt(grantInput.value, 10) || 100) : 100,
+      dailyGrant_silver: grantSilver ? parseInt(grantSilver.value, 10) || 100 : 100,
+      vaultLimit_silver: vaultSilver ? parseInt(vaultSilver.value, 10) || 2 : 2,
+      royaleLimit_silver: royaleSilver ? parseInt(royaleSilver.value, 10) || 1 : 1,
+
+      dailyGrant_gold: grantGold ? parseInt(grantGold.value, 10) || 200 : 200,
+      vaultLimit_gold: vaultGold ? parseInt(vaultGold.value, 10) || 3 : 3,
+      royaleLimit_gold: royaleGold ? parseInt(royaleGold.value, 10) || 2 : 2,
+
+      dailyGrant_vip: grantVip ? parseInt(grantVip.value, 10) || 400 : 400,
+      vaultLimit_vip: vaultVip ? parseInt(vaultVip.value, 10) || 4 : 4,
+      royaleLimit_vip: royaleVip ? parseInt(royaleVip.value, 10) || 3 : 3,
+
+      dailyLoginGrantZlt: grantSilver ? parseInt(grantSilver.value, 10) || 100 : 100,
+      vaultDailyLimit: vaultSilver ? parseInt(vaultSilver.value, 10) || 2 : 2,
+      royaleDailyLimit: royaleSilver ? parseInt(royaleSilver.value, 10) || 1 : 1,
+
       lockReasonText: reasonInput ? reasonInput.value.trim() : 'Dnevna kvota ekskluzivnih ulazaka je iskorišćena.'
     };
 
@@ -646,7 +687,7 @@ class AdminDashboard {
       limits: newLimits
     });
 
-    this.showToast('🛡️ Operaterska pravila pristupa i dnevni limiti su sačuvani i primenjeni!');
+    this.showToast('🛡️ Pravila pristupa i dnevni limiti za Silver, Gold i VIP su sačuvani!');
     this.renderOnlinePlayers();
   }
 
@@ -1677,7 +1718,8 @@ class AdminDashboard {
       }
 
       tableBody.innerHTML = players.map(p => {
-        const isVip = (p.vip_tier || 'STANDARD') !== 'STANDARD';
+        const tier = (p.vip_tier === 'STANDARD' || !p.vip_tier) ? 'SILVER' : p.vip_tier;
+        const tierBadgeClass = tier === 'VIP' ? 'vip' : (tier === 'GOLD' ? 'gold' : 'standard');
         const formattedDate = this.formatRelativeTime(p.last_seen_at);
         const turnover = Number(p.total_turnover || 0).toLocaleString();
         const spins = Number(p.total_spins || 0).toLocaleString();
@@ -1688,11 +1730,11 @@ class AdminDashboard {
             <td><code style="color: var(--accent-gold);">${p.id}</code></td>
             <td><strong>${p.nickname || 'Gost'}</strong></td>
             <td>
-              <span class="badge-vip-pill ${isVip ? 'vip' : 'standard'}" 
+              <span class="badge-vip-pill ${tierBadgeClass}" 
                     data-player-id="${p.id}" 
-                    data-vip="${p.vip_tier || 'STANDARD'}" 
-                    title="Kliknite za promenu VIP statusa">
-                ${isVip ? 'VIP' : 'STANDARD'}
+                    data-vip="${tier}" 
+                    title="Kliknite za promenu statusa (Silver -> Gold -> VIP)">
+                ${tier}
               </span>
             </td>
             <td>${turnover} ZLT</td>
@@ -1802,12 +1844,13 @@ class AdminDashboard {
   }
 
   bindCrmRowEvents() {
-    // 1. VIP Pill Toggle
+    // 1. VIP Pill Toggle (Cycles SILVER -> GOLD -> VIP -> SILVER)
     document.querySelectorAll('.badge-vip-pill').forEach(pill => {
       pill.addEventListener('click', async () => {
         const playerId = pill.getAttribute('data-player-id');
-        const currentTier = pill.getAttribute('data-vip');
-        const newTier = currentTier === 'VIP' ? 'STANDARD' : 'VIP';
+        const currentTier = pill.getAttribute('data-vip') || 'SILVER';
+        const cycleMap = { SILVER: 'GOLD', STANDARD: 'GOLD', GOLD: 'VIP', VIP: 'SILVER', GOD: 'SILVER' };
+        const newTier = cycleMap[currentTier] || 'GOLD';
 
         try {
           await fetch('/api/players/list', {

@@ -823,6 +823,11 @@ class GrandCrashGame {
       window.dailyMissionsManager.recordArcadeWin(finalMult);
     }
 
+    // High multiplier Status XP bonus (5.00x+)
+    if (finalMult >= 5.0 && window.slotTierManager && typeof window.slotTierManager.addXP === 'function') {
+      window.slotTierManager.addXP(20, `Crash let ${finalMult.toFixed(2)}x`);
+    }
+
     if (finalMult >= 2.5 && window.particleEngine) {
       window.particleEngine.spawnCelebration(true);
     }

@@ -65,7 +65,13 @@ export default async function handler(req, res) {
       targetRows = await sql`
         SELECT id, push_subscription 
         FROM players 
-        WHERE vip_tier != 'STANDARD' AND is_push_enabled = true AND push_subscription IS NOT NULL;
+        WHERE vip_tier = 'VIP' AND is_push_enabled = true AND push_subscription IS NOT NULL;
+      `;
+    } else if (targetType === 'gold_vip') {
+      targetRows = await sql`
+        SELECT id, push_subscription 
+        FROM players 
+        WHERE (vip_tier = 'GOLD' OR vip_tier = 'VIP') AND is_push_enabled = true AND push_subscription IS NOT NULL;
       `;
     } else if (targetType === 'inactive') {
       targetRows = await sql`

@@ -362,30 +362,62 @@
           </div>
         </div>
 
-        <div class="access-control-grid">
-          <div class="access-control-field">
-            <label for="input-limit-vault">Dnevni limit za Trezor (Vault Crawler):</label>
-            <input type="number" id="input-limit-vault" class="push-input-text font-mono" min="1" max="50" value="2">
-            <span class="field-hint">Maksimalan broj ulazaka po igraču dnevno (Podrazumevano: 2)</span>
+        <div class="access-control-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+          <!-- SILVER TIER -->
+          <div class="tier-admin-box" style="background: rgba(30, 41, 59, 0.4); border: 1px solid #64748b; border-radius: 12px; padding: 14px;">
+            <h4 style="color: #cbd5e1; margin-bottom: 10px;">🥈 SILVER TIER (Početni)</h4>
+            <div class="access-control-field" style="margin-bottom: 8px;">
+              <label for="input-daily-grant-silver" style="font-size: 0.75rem;">Dnevni Grant (ZLT):</label>
+              <input type="number" id="input-daily-grant-silver" class="push-input-text font-mono" value="100" min="0" max="5000">
+            </div>
+            <div class="access-control-field" style="margin-bottom: 8px;">
+              <label for="input-limit-vault-silver" style="font-size: 0.75rem;">Trezor ulaza/dan:</label>
+              <input type="number" id="input-limit-vault-silver" class="push-input-text font-mono" value="2" min="1" max="20">
+            </div>
+            <div class="access-control-field">
+              <label for="input-limit-royale-silver" style="font-size: 0.75rem;">Royale ulaza/dan:</label>
+              <input type="number" id="input-limit-royale-silver" class="push-input-text font-mono" value="1" min="1" max="20">
+            </div>
           </div>
 
-          <div class="access-control-field">
-            <label for="input-limit-royale">Dnevni limit za Battle Royale:</label>
-            <input type="number" id="input-limit-royale" class="push-input-text font-mono" min="1" max="20" value="1">
-            <span class="field-hint">Maksimalan broj učešća po igraču dnevno (Podrazumevano: 1)</span>
+          <!-- GOLD TIER -->
+          <div class="tier-admin-box" style="background: rgba(120, 53, 15, 0.25); border: 1px solid #f59e0b; border-radius: 12px; padding: 14px;">
+            <h4 style="color: #fcd34d; margin-bottom: 10px;">🥇 GOLD TIER (2.500 XP + 5.000 ZLT)</h4>
+            <div class="access-control-field" style="margin-bottom: 8px;">
+              <label for="input-daily-grant-gold" style="font-size: 0.75rem;">Dnevni Grant (ZLT):</label>
+              <input type="number" id="input-daily-grant-gold" class="push-input-text font-mono" value="200" min="0" max="10000">
+            </div>
+            <div class="access-control-field" style="margin-bottom: 8px;">
+              <label for="input-limit-vault-gold" style="font-size: 0.75rem;">Trezor ulaza/dan (+1):</label>
+              <input type="number" id="input-limit-vault-gold" class="push-input-text font-mono" value="3" min="1" max="30">
+            </div>
+            <div class="access-control-field">
+              <label for="input-limit-royale-gold" style="font-size: 0.75rem;">Royale ulaza/dan (+1):</label>
+              <input type="number" id="input-limit-royale-gold" class="push-input-text font-mono" value="2" min="1" max="30">
+            </div>
           </div>
 
-          <div class="access-control-field">
-            <label for="input-daily-grant-zlt">Dnevni Bonus za Prijavu (ZLT):</label>
-            <input type="number" id="input-daily-grant-zlt" class="push-input-text font-mono" min="0" max="10000" step="10" value="100">
-            <span class="field-hint">Zlatnici koji se automatski dodeljuju u novčanik pri prvoj dnevnoj poseti (Podrazumevano: 100)</span>
+          <!-- VIP TIER -->
+          <div class="tier-admin-box" style="background: rgba(153, 27, 27, 0.25); border: 1px solid #ef4444; border-radius: 12px; padding: 14px;">
+            <h4 style="color: #fca5a5; margin-bottom: 10px;">👑 VIP ELITA (15.000 XP + 25.000 ZLT)</h4>
+            <div class="access-control-field" style="margin-bottom: 8px;">
+              <label for="input-daily-grant-vip" style="font-size: 0.75rem;">Dnevni Grant (ZLT):</label>
+              <input type="number" id="input-daily-grant-vip" class="push-input-text font-mono" value="400" min="0" max="25000">
+            </div>
+            <div class="access-control-field" style="margin-bottom: 8px;">
+              <label for="input-limit-vault-vip" style="font-size: 0.75rem;">Trezor ulaza/dan (+2):</label>
+              <input type="number" id="input-limit-vault-vip" class="push-input-text font-mono" value="4" min="1" max="50">
+            </div>
+            <div class="access-control-field">
+              <label for="input-limit-royale-vip" style="font-size: 0.75rem;">Royale ulaza/dan (+2):</label>
+              <input type="number" id="input-limit-royale-vip" class="push-input-text font-mono" value="3" min="1" max="50">
+            </div>
           </div>
+        </div>
 
-          <div class="access-control-field">
-            <label for="input-lock-reason">Tekst Ekskluzivnog Zaključavanja:</label>
-            <input type="text" id="input-lock-reason" class="push-input-text" value="Dnevna kvota ekskluzivnih ulazaka je iskorišćena.">
-            <span class="field-hint">Prikazuje se igraču na ekskluzivnom zaključanom ekranu sa tajmerom</span>
-          </div>
+        <div style="margin-top: 14px;">
+          <label for="input-lock-reason" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Tekst Ekskluzivnog Zaključavanja:</label>
+          <input type="text" id="input-lock-reason" class="push-input-text" value="Dnevna kvota ekskluzivnih ulazaka je iskorišćena." style="margin-top: 4px;">
         </div>
       </div>
 
@@ -600,7 +632,8 @@
                 <label for="select-push-target">Ciljni Segment:</label>
                 <select id="select-push-target" class="push-select-dropdown">
                   <option value="all">Svi Igrači u Kazinu</option>
-                  <option value="vip">Samo VIP Klub Igrači</option>
+                  <option value="gold_vip">🥇 Gold &amp; 👑 VIP Članovi (Ekskluzivno)</option>
+                  <option value="vip">👑 Samo VIP Klub Igrači (Elitno)</option>
                   <option value="inactive">Neaktivni Igrači (&gt;3 dana)</option>
                   <option value="single">Specifičan Korisnik (ID)</option>
                 </select>

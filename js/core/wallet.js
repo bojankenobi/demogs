@@ -254,6 +254,10 @@ class CasinoWallet {
     if (this.denomValEl) {
       this.denomValEl.textContent = `${this.activeDenom} ZLT`;
     }
+
+    if (window.slotTierManager && typeof window.slotTierManager.checkTierProgression === 'function') {
+      window.slotTierManager.checkTierProgression(this.rsdBalance);
+    }
     if (this.denomSubEl) {
       this.denomSubEl.textContent = `1 KR = ${this.activeDenom} ZLT`;
     }

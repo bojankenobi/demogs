@@ -60,7 +60,10 @@ class PlayerTracker {
       id: persistentId,
       username: '',
       phone: '',
-      vipTier: 'STANDARD',
+      vipTier: 'SILVER',
+      xp: 0,
+      claimedTiers: { GOLD: false, VIP: false },
+      gracePeriod: { active: false, expiresAt: null, originalTier: null },
       balance_rsd: 1000.00,
       pin: '',
       isVerified18: false,
@@ -97,6 +100,13 @@ class PlayerTracker {
       const saved = localStorage.getItem(this.storageKey) || localStorage.getItem('maxbet_player_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (parsed.vipTier === 'STANDARD' || !parsed.vipTier) {
+          parsed.vipTier = 'SILVER';
+        }
+        if (typeof parsed.xp !== 'number') parsed.xp = 0;
+        if (!parsed.claimedTiers) parsed.claimedTiers = { GOLD: false, VIP: false };
+        if (!parsed.gracePeriod) parsed.gracePeriod = { active: false, expiresAt: null, originalTier: null };
+
         return {
           ...defaultProfile,
           ...parsed,
@@ -155,7 +165,7 @@ class PlayerTracker {
         this.profile.id = data.player.id;
         this.profile.username = data.player.username || data.player.nickname;
         this.profile.phone = data.player.phone || null;
-        this.profile.vipTier = data.player.vip_tier || 'STANDARD';
+        this.profile.vipTier = (!data.player.vip_tier || data.player.vip_tier === 'STANDARD') ? 'SILVER' : data.player.vip_tier;
         this.profile.balance_rsd = Number(data.player.balance_rsd != null ? data.player.balance_rsd : 1000.00);
         this.profile.isLoggedIn = true;
         this.profile.isVerified18 = true;
@@ -193,7 +203,7 @@ class PlayerTracker {
           nickname: nickname || username,
           phone: phone,
           balance_rsd: 1000.00,
-          vip_tier: 'STANDARD'
+          vip_tier: 'SILVER'
         };
 
         this.setAuthToken(localToken, true);
@@ -234,7 +244,7 @@ class PlayerTracker {
       this.profile.id = data.player.id;
       this.profile.username = data.player.username || username;
       this.profile.phone = data.player.phone || phone;
-      this.profile.vipTier = data.player.vip_tier || 'STANDARD';
+      this.profile.vipTier = (!data.player.vip_tier || data.player.vip_tier === 'STANDARD') ? 'SILVER' : data.player.vip_tier;
       this.profile.balance_rsd = Number(data.player.balance_rsd != null ? data.player.balance_rsd : 1000.00);
       this.profile.isLoggedIn = true;
       this.profile.isVerified18 = true;
@@ -334,7 +344,7 @@ class PlayerTracker {
           nickname: username,
           phone: this.profile.phone || null,
           balance_rsd: this.profile.balance_rsd || 1000.00,
-          vip_tier: this.profile.vipTier || 'STANDARD'
+          vip_tier: this.profile.vipTier || 'SILVER'
         };
 
         this.setAuthToken(localToken, rememberMe);
@@ -372,7 +382,7 @@ class PlayerTracker {
       this.profile.id = data.player.id;
       this.profile.username = data.player.username || username;
       this.profile.phone = data.player.phone || null;
-      this.profile.vipTier = data.player.vip_tier || 'STANDARD';
+      this.profile.vipTier = (!data.player.vip_tier || data.player.vip_tier === 'STANDARD') ? 'SILVER' : data.player.vip_tier;
       this.profile.balance_rsd = Number(data.player.balance_rsd != null ? data.player.balance_rsd : 1000.00);
       this.profile.isLoggedIn = true;
       this.profile.isVerified18 = true;
@@ -467,6 +477,16 @@ class PlayerTracker {
     }
   }
 
+  addXP(amount, reason = '') {
+    if (!this.profile.isLoggedIn) return;
+    if (window.slotTierManager && typeof window.slotTierManager.addXP === 'function') {
+      window.slotTierManager.addXP(amount, reason);
+    } else {
+      this.profile.xp = (this.profile.xp || 0) + Math.round(amount);
+      this.saveProfile();
+    }
+  }
+
   recordSpin(gameId, betAmount, winAmount = 0) {
     if (!this.profile.isLoggedIn) return;
 
@@ -483,6 +503,10 @@ class PlayerTracker {
     if (winAmount > this.profile.stats.biggestWin) {
       this.profile.stats.biggestWin = winAmount;
     }
+
+    // Award XP based on turnover: +1 XP per 10 ZLT bet
+    const earnedXp = Math.max(1, Math.floor(betAmount / 10));
+    this.addXP(earnedXp, 'Spin ' + (gameId || 'slot'));
 
     this.saveProfile();
 

@@ -67,9 +67,32 @@ class DailyAccessManager {
     return this.getOperatorLimits();
   }
 
-  getLimit(mode) {
-    const limits = this.getOperatorLimits();
-    return mode === 'vault' ? limits.vaultDailyLimit : limits.royaleDailyLimit;
+  getPlayerTier(playerId = null) {
+    if (this.isGodPlayer(playerId)) return 'GOD';
+    try {
+      const stored = localStorage.getItem('gsc_player_profile') || localStorage.getItem('igt_player_profile');
+      if (stored) {
+        const p = JSON.parse(stored);
+        if (p && p.vipTier) return p.vipTier;
+      }
+    } catch (_) {}
+    return 'SILVER';
+  }
+
+  getLimit(mode, playerId = null) {
+    if (this.isGodPlayer(playerId)) return 999;
+    const tier = this.getPlayerTier(playerId);
+    if (window.slotTierManager && typeof window.slotTierManager.getEffectiveLimits === 'function') {
+      const eff = window.slotTierManager.getEffectiveLimits(tier);
+      return mode === 'vault' ? eff.vaultLimit : eff.royaleLimit;
+    }
+    const baseLimits = this.getOperatorLimits();
+    if (tier === 'VIP') {
+      return mode === 'vault' ? (baseLimits.vaultLimit + 2) : (baseLimits.royaleLimit + 2);
+    } else if (tier === 'GOLD') {
+      return mode === 'vault' ? (baseLimits.vaultLimit + 1) : (baseLimits.royaleLimit + 1);
+    }
+    return mode === 'vault' ? baseLimits.vaultLimit : baseLimits.royaleLimit;
   }
 
   saveOperatorLimits(limits) {
@@ -124,7 +147,7 @@ class DailyAccessManager {
     if (this.isGodPlayer(playerId)) {
       return 999;
     }
-    const limit = this.getLimit(mode);
+    const limit = this.getLimit(mode, playerId);
     const usage = this.getUsage(playerId, mode);
     return Math.max(0, limit - usage);
   }
@@ -198,7 +221,7 @@ class DailyAccessManager {
     const access = this.getPlayerAccess(playerId);
     const isVault = mode === 'vault';
     const current = isVault ? (access.vaultEntries || 0) : (access.royaleEntries || 0);
-    const max = isVault ? limits.vaultLimit : limits.royaleLimit;
+    const max = this.getLimit(mode, playerId);
 
     if (current >= max) {
       const now = new Date();
@@ -248,8 +271,16 @@ class DailyAccessManager {
   }
 
   checkAndClaimDailyGrant(playerId, username = '') {
-    const limits = this.getOperatorLimits();
-    const grantAmount = Number(limits.dailyGrant) || 100;
+    const tier = this.getPlayerTier(playerId);
+    let grantAmount = 100;
+    if (window.slotTierManager && typeof window.slotTierManager.getEffectiveLimits === 'function') {
+      grantAmount = window.slotTierManager.getEffectiveLimits(tier).dailyGrant;
+    } else {
+      const limits = this.getOperatorLimits();
+      if (tier === 'VIP') grantAmount = limits.dailyGrantVip !== undefined ? limits.dailyGrantVip : 400;
+      else if (tier === 'GOLD') grantAmount = limits.dailyGrantGold !== undefined ? limits.dailyGrantGold : 200;
+      else grantAmount = Number(limits.dailyGrant) || 100;
+    }
     const access = this.getPlayerAccess(playerId);
 
     if (!access.dailyGrantClaimed) {

@@ -416,6 +416,13 @@ class IGTApp {
       this.dailyMissionsManager = new window.DailyMissionsManager();
       window.dailyMissionsManager = this.dailyMissionsManager;
     }
+
+    // 8.7 Tier & Loyalty Progression Manager (Silver, Gold, VIP)
+    if (window.TierManager) {
+      this.tierManager = new window.TierManager(this);
+      window.slotTierManager = this.tierManager;
+      this.tierManager.init(this);
+    }
     this.sessionStartTime = Date.now();
     this.currentGrandMode = 'casino';
     this.casinoStyle = 'daily';
@@ -651,7 +658,7 @@ class IGTApp {
       } else {
         vaultPill.classList.remove('god-quota-pill');
         const rem = this.dailyAccessManager.getRemaining(playerId, 'vault');
-        const lim = this.dailyAccessManager.getLimit('vault');
+        const lim = this.dailyAccessManager.getLimit('vault', playerId);
         vaultPill.textContent = `${rem}/${lim}`;
         vaultPill.classList.toggle('exhausted', rem <= 0);
         vaultPill.title = `Preostalo ulazaka u Trezor danas: ${rem} od ${lim}`;
@@ -668,7 +675,7 @@ class IGTApp {
       } else {
         royalePill.classList.remove('god-quota-pill');
         const rem = this.dailyAccessManager.getRemaining(playerId, 'royale');
-        const lim = this.dailyAccessManager.getLimit('royale');
+        const lim = this.dailyAccessManager.getLimit('royale', playerId);
         royalePill.textContent = `${rem}/${lim}`;
         royalePill.classList.toggle('exhausted', rem <= 0);
         royalePill.title = `Preostalo učešća u Battle Royale danas: ${rem} od ${lim}`;
@@ -2703,6 +2710,7 @@ document.addEventListener('DOMContentLoaded', () => {
       profileTag.textContent = isGod ? '⚡ GOD OPERATOR (Super Admin)' : (profile.username || 'Demo Player');
     }
     app.updateModeQuotaPills();
+    if (app.tierManager) app.tierManager.updateUI();
   }
   window.updateHeaderProfile = updateHeaderProfile;
 
@@ -2977,6 +2985,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (loginModal) loginModal.classList.add('active');
     } else {
       renderProfileStats();
+      if (app.tierManager) app.tierManager.updateUI();
       if (profileModal) profileModal.classList.add('active');
     }
   };

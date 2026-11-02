@@ -72,7 +72,7 @@ export default async function handler(req, res) {
         nickname: cleanNick,
         phone: cleanPhone,
         balance_rsd: 1000.00,
-        vip_tier: 'STANDARD'
+        vip_tier: 'SILVER'
       },
       message: 'Uspešna registracija (demo mod)! Dobili ste 1.000 Zlatnika bonusa.'
     });

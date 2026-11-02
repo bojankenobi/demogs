@@ -813,6 +813,11 @@ class SlotBattleRoyale {
         window.prestigeManager.recordRoyaleMatch(this.playerRank, killsEstimate, isWin);
       }
 
+      if (window.slotTierManager && typeof window.slotTierManager.addXP === 'function') {
+        const earnedXp = (this.playerRank === 1) ? 250 : ((this.playerRank <= 3) ? 100 : 20);
+        window.slotTierManager.addXP(earnedXp, (this.playerRank === 1) ? 'Battle Royale: #1 Victory Royale!' : `Battle Royale: #${this.playerRank} plasman`);
+      }
+
       if (this.playerRank === 1) {
         // VICTORY ROYALE! Top 1 prize: 1.000 ZLT + Finale Ticket + VIP Voucher
         if (this.wallet && typeof this.wallet.addFictionalRsd === 'function') {

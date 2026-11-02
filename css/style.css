@@ -17724,3 +17724,400 @@ body.theme-royale .stage-bezel {
   filter: grayscale(0.6);
   cursor: not-allowed;
 }
+
+/* ==========================================================================
+   MULTI-TIER PROGRESSION & LOYALTY SYSTEM (SILVER, GOLD, VIP)
+   ========================================================================== */
+
+/* Header Tier Button */
+.btn-header-tier {
+  background: linear-gradient(135deg, rgba(30, 25, 20, 0.95), rgba(15, 12, 10, 0.95));
+  border: 1.5px solid #a0a5ad;
+  border-radius: 999px;
+  color: #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  transition: all 0.25s ease;
+}
+
+.btn-header-tier:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+}
+
+.btn-header-tier.tier-silver-glow {
+  border-color: #cbd5e1;
+  color: #f1f5f9;
+  box-shadow: 0 0 10px rgba(203, 213, 225, 0.35);
+}
+
+.btn-header-tier.tier-gold-glow {
+  border-color: #ffd700;
+  color: #ffd700;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.45);
+}
+
+.btn-header-tier.tier-vip-glow {
+  border-color: #ff3366;
+  background: linear-gradient(135deg, rgba(40, 10, 25, 0.95), rgba(20, 5, 15, 0.95));
+  color: #ff80aa;
+  box-shadow: 0 0 18px rgba(255, 51, 102, 0.6);
+  animation: vipPulseGlow 2.5s infinite ease-in-out;
+}
+
+.btn-header-tier.tier-god-glow {
+  border-color: #00e5ff;
+  background: linear-gradient(135deg, rgba(10, 35, 45, 0.95), rgba(5, 20, 30, 0.95));
+  color: #80f0ff;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.7);
+  animation: godPulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes vipPulseGlow {
+  0%, 100% { box-shadow: 0 0 14px rgba(255, 51, 102, 0.45); border-color: #ff3366; }
+  50% { box-shadow: 0 0 24px rgba(255, 51, 102, 0.85); border-color: #ff80aa; }
+}
+
+@keyframes godPulseGlow {
+  0%, 100% { box-shadow: 0 0 14px rgba(0, 229, 255, 0.5); }
+  50% { box-shadow: 0 0 26px rgba(0, 229, 255, 0.95); }
+}
+
+/* Profile Tier Hub Container */
+.profile-tier-hub {
+  background: linear-gradient(180deg, rgba(32, 20, 10, 0.95) 0%, rgba(14, 9, 5, 0.98) 100%);
+  border: 1.5px solid rgba(255, 215, 0, 0.35);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.tier-hub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tier-current-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tier-title-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #94a3b8;
+}
+
+.tier-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+
+.tier-pill-badge.tier-silver {
+  background: linear-gradient(135deg, #475569 0%, #1e293b 100%);
+  border: 1px solid #94a3b8;
+  color: #f1f5f9;
+  box-shadow: 0 0 8px rgba(148, 163, 184, 0.3);
+}
+
+.tier-pill-badge.tier-gold {
+  background: linear-gradient(135deg, #b45309 0%, #78350f 100%);
+  border: 1px solid #ffd700;
+  color: #fffbeb;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.45);
+}
+
+.tier-pill-badge.tier-vip {
+  background: linear-gradient(135deg, #991b1b 0%, #4c0519 100%);
+  border: 1.5px solid #ff3366;
+  color: #fff;
+  box-shadow: 0 0 16px rgba(255, 51, 102, 0.6);
+  animation: vipPulseGlow 2.5s infinite ease-in-out;
+}
+
+.tier-pill-badge.tier-god {
+  background: linear-gradient(135deg, #0e7490 0%, #083344 100%);
+  border: 1.5px solid #00e5ff;
+  color: #e0f2fe;
+  box-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
+}
+
+.tier-xp-counter {
+  font-family: monospace;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #ffd700;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+}
+
+.tier-progression-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tier-target-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #f6c845;
+  letter-spacing: 0.5px;
+}
+
+.tier-progress-track {
+  width: 100%;
+  height: 9px;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+}
+
+.tier-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #ffd700 100%);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7);
+}
+
+.tier-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  color: #cbd5e1;
+}
+
+.tier-progress-meta .req-met {
+  color: #4ade80;
+  font-weight: 700;
+}
+
+.tier-progress-meta .req-missing {
+  color: #fb7185;
+  font-weight: 700;
+}
+
+/* Grace Period Banner */
+.tier-grace-alert {
+  background: linear-gradient(90deg, rgba(153, 27, 27, 0.95), rgba(88, 28, 28, 0.95));
+  border: 1px solid #f87171;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: gracePulse 2s infinite ease-in-out;
+}
+
+@keyframes gracePulse {
+  0%, 100% { border-color: #f87171; box-shadow: 0 0 8px rgba(248, 113, 113, 0.3); }
+  50% { border-color: #ef4444; box-shadow: 0 0 16px rgba(239, 68, 68, 0.6); }
+}
+
+.tier-grace-alert .grace-alert-icon {
+  font-size: 1.2rem;
+}
+
+.tier-grace-alert .grace-alert-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.72rem;
+  color: #fecaca;
+  line-height: 1.25;
+}
+
+.tier-grace-alert .grace-alert-text strong {
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+/* Perks Preview */
+.tier-perks-preview {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.68rem;
+  color: #cbd5e1;
+  margin-top: 2px;
+}
+
+.tier-perks-preview .perks-preview-tag {
+  color: #ffd700;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Level-Up Celebration Modal */
+.tier-celebration-overlay {
+  z-index: 999995 !important;
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(20, 10, 4, 0.96) 0%, rgba(5, 4, 3, 0.99) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.tier-celebration-card {
+  width: 92%;
+  max-width: 480px;
+  background: linear-gradient(180deg, #241407 0%, #0d0702 100%);
+  border: 2px solid #ffd700;
+  border-radius: 24px;
+  padding: 30px 24px 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.95), 0 0 40px rgba(255, 215, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+  animation: celebrationCardPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes celebrationCardPop {
+  0% { transform: scale(0.7) translateY(40px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.celebration-trophy-icon {
+  font-size: 3.5rem;
+  margin-bottom: 8px;
+  animation: trophyBounce 1.5s infinite ease-in-out;
+}
+
+@keyframes trophyBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.08); }
+}
+
+.celebration-badge {
+  display: inline-block;
+  padding: 5px 16px;
+  border-radius: 999px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.celebration-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.celebration-desc {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+.celebration-bonus-box {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(180, 83, 9, 0.25));
+  border: 1.5px dashed #ffd700;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.bonus-box-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fcd34d;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.bonus-box-amount {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #ffd700;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+.celebration-perks-list {
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 0.78rem;
+  color: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.celebration-perk-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.celebration-perk-item strong {
+  color: #ffd700;
+}
+
+.btn-celebration-claim {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(180deg, #ffe066 0%, #f6c845 50%, #d49a1d 100%);
+  border: 1.5px solid #fff;
+  border-radius: 14px;
+  color: #1a0f00;
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(246, 200, 69, 0.45);
+  transition: all 0.2s ease;
+}
+
+.btn-celebration-claim:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 30px rgba(246, 200, 69, 0.6);
+}
+
+.btn-celebration-claim:active {
+  transform: translateY(1px);
+}

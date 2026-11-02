@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=110">
+  <link rel="stylesheet" href="css/style.css?v=111">
   <link rel="stylesheet" href="css/grand-hub.css?v=100">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -67,6 +67,10 @@
         <img src="assets/logo.svg" alt="grandslot" class="main-brand-logo">
       </div>
       <div class="header-quick-nav">
+        <button type="button" class="btn-header-nav btn-header-tier tier-silver-glow" id="btn-header-tier" title="Status Nivo &amp; XP Progres (Silver, Gold, VIP)">
+          <span class="nav-icon" id="header-tier-icon">🥈</span>
+          <span class="nav-label" id="header-tier-label">SILVER</span>
+        </button>
         <button type="button" class="btn-header-nav btn-header-lobby" id="btn-header-lobby" title="Otvori Lobi sa svim igrama">
           <span class="nav-icon">🏛️</span>
           <span class="nav-label">IZBOR IGARA</span>
@@ -2459,6 +2463,44 @@
       </div>
 
       <div class="profile-body-stats">
+        <!-- VIP Tier Status & Progression Hub -->
+        <div class="profile-tier-hub" id="profile-tier-hub">
+          <div class="tier-hub-header">
+            <div class="tier-current-wrap">
+              <span class="tier-title-label">TRENUTNI STATUS:</span>
+              <div class="tier-badge-container" id="profile-tier-badge-container">
+                <span class="tier-pill-badge tier-silver" id="profile-tier-pill">🥈 SILVER ČLAN</span>
+              </div>
+            </div>
+            <div class="tier-xp-counter" id="profile-xp-counter">0 XP</div>
+          </div>
+
+          <!-- Progress Bar & Target Requirements -->
+          <div class="tier-progression-body" id="tier-progression-body">
+            <div class="tier-target-title" id="tier-target-title">Sledeći nivo: 🥇 GOLD (+500 ZLT Bonus)</div>
+            <div class="tier-progress-track">
+              <div class="tier-progress-fill" id="tier-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="tier-progress-meta">
+              <span id="tier-xp-progress-txt">XP: 0 / 2,500 XP (0%)</span>
+              <span id="tier-zlt-requirement-txt">Zahtev: 1,000 / 5,000 ZLT</span>
+            </div>
+            <!-- Grace Period Alert Banner (if active) -->
+            <div class="tier-grace-alert" id="tier-grace-alert" style="display: none;">
+              <span class="grace-alert-icon">⚠️</span>
+              <div class="grace-alert-text">
+                <strong>STATUS U RIZIKU!</strong>
+                <span id="tier-grace-timer-txt">Preostalo 71h 59m da dopunite ZLT</span>
+              </div>
+            </div>
+            <!-- Perks of next tier -->
+            <div class="tier-perks-preview" id="tier-perks-preview">
+              <span class="perks-preview-tag">🎁 OTKLJUČAVA:</span>
+              <span id="tier-perks-preview-txt">+1 ulaz u Trezor i Royale, 200 ZLT dnevni grant, ekskluzivne vaučere</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Highlights Cluster -->
         <div class="profile-highlights-grid">
           <div class="profile-stat-box highlight-box">
@@ -3430,17 +3472,40 @@
     </div>
   </div>
 
+  <!-- Tier Level-Up Celebration Modal -->
+  <div class="modal-overlay tier-celebration-overlay" id="tier-celebration-modal" style="display: none;">
+    <div class="tier-celebration-card">
+      <div class="celebration-particles-halo"></div>
+      <div class="celebration-trophy-icon" id="celebration-trophy-icon">🥇</div>
+      <div class="celebration-badge tier-gold" id="celebration-tier-badge">NOVI STATUS: GOLD ČLAN!</div>
+      <h2 class="celebration-title" id="celebration-title">ČESTITAMO!</h2>
+      <p class="celebration-desc" id="celebration-desc">Dostigli ste novi nivo statusa u Grand Slot Clubu!</p>
+      
+      <div class="celebration-bonus-box">
+        <span class="bonus-box-label">LEVEL-UP PREMIJA:</span>
+        <span class="bonus-box-amount" id="celebration-bonus-amount">+500 ZLT</span>
+      </div>
+
+      <div class="celebration-perks-list" id="celebration-perks-list"></div>
+
+      <button type="button" class="btn-celebration-claim" id="btn-celebration-claim">
+        PREUZMI NAGRADU I NASTAVI
+      </button>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/audio.js?v=71"></script>
   <script src="js/i18n.js?v=71"></script>
   <script src="js/particles.js?v=70"></script>
   
   <!-- Core Platform Modules -->
-  <script src="js/core/player-tracker.js?v=82"></script>
-  <script src="js/core/wallet.js?v=90"></script>
-  <script src="js/core/daily-access-manager.js?v=99"></script>
+  <script src="js/core/player-tracker.js?v=84"></script>
+  <script src="js/core/wallet.js?v=91"></script>
+  <script src="js/core/daily-access-manager.js?v=101"></script>
   <script src="js/core/prestige-manager.js?v=1"></script>
-  <script src="js/core/daily-missions-manager.js?v=1"></script>
+  <script src="js/core/daily-missions-manager.js?v=3"></script>
+  <script src="js/core/tier-manager.js?v=2"></script>
   <script src="js/core/jackpots-v2.js?v=80"></script>
   <script src="js/core/meters.js?v=75"></script>
   <script src="js/core/wheel.js?v=76"></script>
@@ -3470,6 +3535,6 @@
   <script src="js/games/casino-holdem/casino-holdem.js?v=103"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=108"></script>
+  <script src="js/app.js?v=109"></script>
 </body>
 </html>

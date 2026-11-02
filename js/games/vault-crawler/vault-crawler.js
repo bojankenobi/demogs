@@ -970,6 +970,11 @@ class VaultCrawler {
     const isFloorBoss = (this.nodeIndex >= 4);
     const cfg = this.FLOOR_CONFIG[this.floor - 1];
 
+    if (window.slotTierManager && typeof window.slotTierManager.addXP === 'function') {
+      const earnedXp = isFloorBoss ? 150 : 25;
+      window.slotTierManager.addXP(earnedXp, isFloorBoss ? `Poražen Boss Sprata ${this.floor}` : `Pređena soba ${this.nodeIndex + 1}`);
+    }
+
     // Record Vault progression in Prestige Manager
     if (window.prestigeManager) {
       window.prestigeManager.recordVaultProgress(this.floor, isFloorBoss, keysWon, lootWon);

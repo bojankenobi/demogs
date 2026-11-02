@@ -247,6 +247,21 @@ class DailyMissionsManager {
       window.igtApp.wallet.addFictionalRsd(task.reward);
     }
 
+    // Award Status Points (XP)
+    const xpReward = Math.max(50, Math.round((task.reward || 20) * 2.5));
+    if (window.slotTierManager && typeof window.slotTierManager.addXP === 'function') {
+      window.slotTierManager.addXP(xpReward, 'Rešena misija: ' + task.title);
+      // All 3 missions completed bonus (+250 XP)
+      if (this.state.missions.every(m => m.claimed)) {
+        setTimeout(() => {
+          window.slotTierManager.addXP(250, 'Sve 3 dnevne misije rešene!');
+          if (window.igtApp && window.igtApp.showMessage) {
+            window.igtApp.showMessage('🏆 SVE DNEVNE MISIJE ZAVRŠENE! +250 XP EKSTRA BONUS!', 'jackpot');
+          }
+        }, 600);
+      }
+    }
+
     if (window.slotAudio && window.slotAudio.playBigWin) {
       window.slotAudio.playBigWin();
     }
@@ -286,6 +301,13 @@ class DailyMissionsManager {
       window.wallet.addFictionalRsd(rewardZlt);
     } else if (window.igtApp && window.igtApp.wallet) {
       window.igtApp.wallet.addFictionalRsd(rewardZlt);
+    }
+
+    // Award Streak XP (25 to 150 XP)
+    const streakXpTable = [25, 35, 50, 75, 100, 125, 150];
+    const earnedStreakXp = streakXpTable[currentDay - 1] || 25;
+    if (window.slotTierManager && typeof window.slotTierManager.addXP === 'function') {
+      window.slotTierManager.addXP(earnedStreakXp, `Dnevni Login Dan ${currentDay}/7`);
     }
 
     if (window.slotAudio && window.slotAudio.playBigWin) {
