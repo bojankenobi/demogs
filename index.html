@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=103">
+  <link rel="stylesheet" href="css/style.css?v=104">
   <link rel="stylesheet" href="css/grand-hub.css?v=99">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -45,6 +45,24 @@
   </script>
 </head>
 <body>
+  <!-- Grand Slot VIP Splash Screen (2-Second Brand Intro) -->
+  <div class="grand-splash-screen" id="grand-splash-screen">
+    <div class="splash-center-content">
+      <div class="splash-flower-wrap">
+        <img src="assets/symbols/logo-flower.svg" alt="GrandSlot Cvet" class="splash-flower-logo">
+        <div class="splash-flower-halo"></div>
+      </div>
+      <div class="splash-brand-wrap">
+        <img src="assets/logo.svg" alt="Grand Slot Club" class="splash-brand-logo">
+        <span class="splash-vip-tag">VIP CASINO &amp; CLUB TERMINAL</span>
+      </div>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-progress"></div>
+      </div>
+      <div class="splash-status-note">UČITAVANJE KAZINO SALONA...</div>
+    </div>
+  </div>
+
   <!-- Ambient Gold Rays Background -->
   <div class="bg-rays"></div>
   
@@ -52,10 +70,21 @@
   <canvas id="fx-canvas"></canvas>
 
   <main class="game-container">
-    <!-- Header Section: Grand Slot Logo (100% Clean Header) & Player Profile Button -->
+    <!-- Header Section: Grand Slot Logo & Quick Navigation -->
     <header class="header-section">
       <div class="brand-logo-wrap">
         <img src="assets/logo.svg" alt="grandslot" class="main-brand-logo">
+        <div class="header-quick-nav">
+          <button type="button" class="btn-header-nav btn-header-lobby" id="btn-header-lobby" title="Otvori Lobi sa svim igrama">
+            <span class="nav-icon">🏛️</span>
+            <span class="nav-label">IZBOR IGARA</span>
+          </button>
+          <button type="button" class="btn-header-nav btn-header-vouchers" id="btn-header-vouchers" title="Moji Vaučeri &amp; VIP Tiketi">
+            <span class="nav-icon">🎟️</span>
+            <span class="nav-label">VAUČERI</span>
+            <span class="header-voucher-counter" id="header-voucher-counter">1</span>
+          </button>
+        </div>
       </div>
 
       <!-- Grand Mode Hub Navigation (3 Central Experience Modes) -->
@@ -1569,40 +1598,40 @@
         </div>
       </div>
 
-      <!-- Interactive Weekly / Monthly Promo Banner in Cabinet Lobby -->
-      <div class="lobby-promo-banner-wrap" id="lobby-promo-banner-wrap">
-        <div class="lobby-promo-banner" id="lobby-promo-banner">
-          <div class="promo-banner-poster-col">
-            <img src="assets/promotions/promo_weekend_vip.svg" alt="Promocija" class="promo-banner-img" id="lobby-promo-img">
-            <div class="promo-banner-pulse-flag">⭐ AKTUELNA PROMOCIJA</div>
-          </div>
-          <div class="promo-banner-info-col">
-            <div class="promo-banner-top-row">
-              <span class="promo-banner-badge" id="lobby-promo-badge">EKSKLUZIVNA NEDELJNA PONUDA</span>
-              <span class="promo-banner-countdown" id="lobby-promo-countdown">⏳ Ističe za: 7 dana</span>
-            </div>
-            <h3 class="promo-banner-title" id="lobby-promo-title">VIP VIKEND RELOAD TIKET</h3>
-            <p class="promo-banner-desc" id="lobby-promo-desc">Preuzmite svoj VIP vaučer za igru na slot aparatima u našem klubu i duplirajte uzbuđenje!</p>
-            <div class="promo-banner-bottom-row">
-              <span class="promo-banner-reward-pill" id="lobby-promo-reward-pill">🎟️ 1.000 ZLT VAUČER</span>
-              <button type="button" class="btn-lobby-promo-cta" id="btn-lobby-promo-open">
-                POGLEDAJ I PREUZMI VAUČER ›
-              </button>
-            </div>
-          </div>
-        </div>
+      <!-- Lobby Subheader & Category Filter Bar -->
+      <div class="egt-cabinet-subheader">
+        <div class="egt-sub-title" data-i18n="egtLobbyTitle">KAZINO LOBI - IZBOR IGARA</div>
+        <div class="egt-sub-desc" data-i18n="egtLobbySub">DODIRNITE IGRU ZA POKRETANJE • EKSKLUZIVNA GRAND SLOT KOLEKCIJA</div>
       </div>
 
-      <!-- IGT Subheader / Prompt banner -->
-      <div class="egt-cabinet-subheader">
-        <div class="egt-sub-title" data-i18n="egtLobbyTitle">IZBOR IGARA</div>
-        <div class="egt-sub-desc" data-i18n="egtLobbySub">DODIRNITE IGRU ZA POKRETANJE</div>
+      <!-- Lobby Category Filter Bar -->
+      <div class="lobby-category-bar">
+        <button type="button" class="lobby-cat-tab active" data-category="all">
+          <span class="cat-icon">🌟</span>
+          <span class="cat-name">SVE IGRE (11)</span>
+        </button>
+        <button type="button" class="lobby-cat-tab" data-category="slots">
+          <span class="cat-icon">🎰</span>
+          <span class="cat-name">SLOTOVI</span>
+        </button>
+        <button type="button" class="lobby-cat-tab" data-category="tables">
+          <span class="cat-icon">♠️</span>
+          <span class="cat-name">STOLOVI &amp; POKER</span>
+        </button>
+        <button type="button" class="lobby-cat-tab" data-category="quick">
+          <span class="cat-icon">⚡</span>
+          <span class="cat-name">BRZE IGRE</span>
+        </button>
+        <button type="button" class="lobby-cat-tab" data-category="specials">
+          <span class="cat-icon">🏆</span>
+          <span class="cat-name">SPECIJALI</span>
+        </button>
       </div>
 
       <!-- Games Showcase Grid -->
       <div class="egt-games-grid">
         <!-- Game 1: 1-Line Classic -->
-        <div class="egt-game-card active" id="egt-opt-classic" data-game="classic">
+        <div class="egt-game-card active" id="egt-opt-classic" data-game="classic" data-category="slots">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">RETRO CLASSIC</div>
@@ -1626,7 +1655,7 @@
         </div>
 
         <!-- Game 2: Royal 3x3 -->
-        <div class="egt-game-card" id="egt-opt-royal" data-game="royal3x3">
+        <div class="egt-game-card" id="egt-opt-royal" data-game="royal3x3" data-category="slots">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-red">HOT 5 LINES</div>
@@ -1650,7 +1679,7 @@
         </div>
 
         <!-- Game 3: Full Focus -->
-        <div class="egt-game-card" id="egt-opt-fullfocus" data-game="fullfocus">
+        <div class="egt-game-card" id="egt-opt-fullfocus" data-game="fullfocus" data-category="slots">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-cyan">FULL SCREEN</div>
@@ -1674,7 +1703,7 @@
         </div>
 
         <!-- Game 4: IGT Mines X -->
-        <div class="egt-game-card" id="egt-opt-mines" data-game="mines">
+        <div class="egt-game-card" id="egt-opt-mines" data-game="mines" data-category="quick">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-green">MINES X</div>
@@ -1690,7 +1719,7 @@
 
           <div class="egt-card-details">
             <h3 class="egt-card-title" data-i18n="gameMines">GRAND MINES X</h3>
-            <p class="egt-card-sub" data-i18n="egtMinesDesc">Podesiva Mreža & Broj Mina • Multiplier Traka • Instant Isplata</p>
+            <p class="egt-card-sub" data-i18n="egtMinesDesc">Podesiva Mreža &amp; Broj Mina • Multiplier Traka • Instant Isplata</p>
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status" data-i18n="egtSelectTag">IGRAJ SADA</span>
@@ -1698,7 +1727,7 @@
         </div>
 
         <!-- Game 5: Grand Crash (Aviator) -->
-        <div class="egt-game-card" id="egt-opt-crash" data-game="crash">
+        <div class="egt-game-card" id="egt-opt-crash" data-game="crash" data-category="quick">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-red">AVIATOR HOT</div>
@@ -1721,7 +1750,7 @@
         </div>
 
         <!-- Game 6: Plinko Deluxe -->
-        <div class="egt-game-card" id="egt-opt-plinko" data-game="plinko">
+        <div class="egt-game-card" id="egt-opt-plinko" data-game="plinko" data-category="quick">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">1000x JACKPOT</div>
@@ -1744,7 +1773,7 @@
         </div>
 
         <!-- Game 7: Royal Blackjack (21 Royale) -->
-        <div class="egt-game-card" id="egt-opt-blackjack" data-game="blackjack">
+        <div class="egt-game-card" id="egt-opt-blackjack" data-game="blackjack" data-category="tables">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">3:2 BLACKJACK</div>
@@ -1754,12 +1783,12 @@
               <span class="poster-card-ace">🂡</span>
               <span class="poster-card-jack">🂫</span>
             </div>
-            <div class="poster-specs-tag">VEGAS RULES • 3:2 • SPLIT & DOUBLE</div>
+            <div class="poster-specs-tag">VEGAS RULES • 3:2 • SPLIT &amp; DOUBLE</div>
           </div>
 
           <div class="egt-card-details">
             <h3 class="egt-card-title">ROYAL BLACKJACK</h3>
-            <p class="egt-card-sub">Vegas Strip Pravila • 3D Karte • Split, Double Down & Osiguranje</p>
+            <p class="egt-card-sub">Vegas Strip Pravila • 3D Karte • Split, Double Down &amp; Osiguranje</p>
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
@@ -1767,7 +1796,7 @@
         </div>
 
         <!-- Game 8: Royal Video Poker (Retro Aparat) -->
-        <div class="egt-game-card" id="egt-opt-videopoker" data-game="videopoker">
+        <div class="egt-game-card" id="egt-opt-videopoker" data-game="videopoker" data-category="tables">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">800× APARAT</div>
@@ -1790,7 +1819,7 @@
         </div>
 
         <!-- Game 9: Royal Casino Hold'em (Table Poker) -->
-        <div class="egt-game-card" id="egt-opt-holdem" data-game="holdem">
+        <div class="egt-game-card" id="egt-opt-holdem" data-game="holdem" data-category="tables">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">VIP STO • 100:1</div>
@@ -1805,10 +1834,56 @@
 
           <div class="egt-card-details">
             <h3 class="egt-card-title">CASINO HOLD'EM</h3>
-            <p class="egt-card-sub">Stolski Poker Protiv Dilera • 3 Sedišta • Flop, Turn & River</p>
+            <p class="egt-card-sub">Stolski Poker Protiv Dilera • 3 Sedišta • Flop, Turn &amp; River</p>
           </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
+          </div>
+        </div>
+
+        <!-- Game 10: Trezor Provala (Rogue-like Heist) -->
+        <div class="egt-game-card" id="egt-opt-vault" data-game="vault" data-category="specials">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-red">ROGUE HEIST</div>
+          
+          <div class="grand-card-poster poster-vault">
+            <div class="poster-symbols-cluster">
+              <span class="poster-special-icon">🏛️</span>
+              <span class="poster-special-sub">🗝️</span>
+            </div>
+            <div class="poster-specs-tag">ROGUE-LIKE • ČUVARI • TALENTI</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">TREZOR PROVALA</h3>
+            <p class="egt-card-sub">Rogue-like Pljačka Sefova • RPG Talenti • Boss Borbe • Crno Tržište</p>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">IGRAJ PROVALU</span>
+          </div>
+        </div>
+
+        <!-- Game 11: Battle Royale (Multiplayer 120s Arena) -->
+        <div class="egt-game-card" id="egt-opt-royale" data-game="royale" data-category="specials">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-gold">MULTIPLAYER LIVE</div>
+          
+          <div class="grand-card-poster poster-royale">
+            <div class="poster-symbols-cluster">
+              <span class="poster-special-icon">⚔️</span>
+              <span class="poster-special-sub">👑</span>
+            </div>
+            <div class="poster-specs-tag">120s ARENA • PVP NAPADI • TOP 3</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">BATTLE ROYALE</h3>
+            <p class="egt-card-sub">Multiplayer 120s Arena • Zaledi &amp; Dimna Bomba • Live Rivali</p>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">ULAZAK U ARENU</span>
           </div>
         </div>
       </div>
@@ -2439,6 +2514,7 @@
       </div>
 
       <div class="profile-footer-actions">
+        <button type="button" class="btn-profile-vouchers" id="btn-profile-my-vouchers">🎟️ MOJI VAUČERI</button>
         <button class="btn-profile-logout" id="profile-logout-btn" data-i18n="profileLogoutBtn">ODJAVI SE</button>
         <button class="btn-profile-close" id="profile-close-btn" data-i18n="profileCloseBtn">ZATVORI</button>
       </div>
@@ -2818,6 +2894,42 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Dedicated My Vouchers Management Modal (Moji Vaučeri: Aktivni, Iskorišćeni, Istekli) -->
+  <div class="modal-overlay my-vouchers-overlay" id="my-vouchers-modal">
+    <div class="my-vouchers-card">
+      <div class="my-vouchers-header">
+        <div class="my-vouchers-title-wrap">
+          <div class="my-vouchers-badge">🎟️ GRAND VIP KLUBSKI TIKETI</div>
+          <h2 class="my-vouchers-title">MOJI VAUČERI</h2>
+          <p class="my-vouchers-sub">Pregledajte Vaše osvojene i preuzete vaučere, iskorišćene nagrade i istorijat promocija.</p>
+        </div>
+        <button type="button" class="my-vouchers-close-btn" id="btn-close-my-vouchers" aria-label="Zatvori">✕</button>
+      </div>
+
+      <!-- Voucher Category Filter Tabs -->
+      <div class="voucher-filter-tabs">
+        <button type="button" class="voucher-tab-btn active" data-vtab="active" id="tab-vouchers-active">
+          🟢 Aktivni (<span id="count-vouchers-active">1</span>)
+        </button>
+        <button type="button" class="voucher-tab-btn" data-vtab="redeemed" id="tab-vouchers-redeemed">
+          🔵 Iskorišćeni (<span id="count-vouchers-redeemed">1</span>)
+        </button>
+        <button type="button" class="voucher-tab-btn" data-vtab="expired" id="tab-vouchers-expired">
+          ⚪ Istekli (<span id="count-vouchers-expired">1</span>)
+        </button>
+      </div>
+
+      <!-- Dynamic Voucher Cards List -->
+      <div class="my-vouchers-list" id="my-vouchers-list">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+
+      <div class="my-vouchers-footer">
+        <button type="button" class="btn-voucher-action secondary" id="btn-my-vouchers-close">ZATVORI</button>
+      </div>
     </div>
   </div>
 
@@ -3278,7 +3390,7 @@
   <script src="js/lib/peerjs.min.js"></script>
   <script src="js/lib/qrcode.min.js"></script>
   <script src="js/core/admin-bridge-v2.js?v=80"></script>
-  <script src="js/core/lobby.js?v=101"></script>
+  <script src="js/core/lobby.js?v=104"></script>
 
   <!-- Game Modules -->
   <script src="js/games/classic/symbols.js?v=75"></script>
@@ -3296,6 +3408,6 @@
   <script src="js/games/casino-holdem/casino-holdem.js?v=103"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=102"></script>
+  <script src="js/app.js?v=104"></script>
 </body>
 </html>

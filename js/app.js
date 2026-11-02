@@ -971,7 +971,18 @@ class IGTApp {
     if (closeBtn) closeBtn.addEventListener('click', () => this.closeVoucherModal());
 
     const doneBtn = document.getElementById('btn-done-voucher-card');
-    if (doneBtn) doneBtn.addEventListener('click', () => this.closeVoucherModal());
+    if (doneBtn) {
+      doneBtn.addEventListener('click', () => {
+        try {
+          localStorage.setItem('gsc_vip_voucher_claimed', 'true');
+        } catch (e) {}
+        if (this.activeVoucher) {
+          this.saveVoucherToMyList(this.activeVoucher);
+        }
+        this.closeVoucherModal();
+        this.showMessage('🎟️ VIP VAUČER SAČUVAN U "MOJI VAUČERI"!', 'win');
+      });
+    }
 
     const backBtn = document.getElementById('btn-back-to-promo-view');
     if (backBtn) {
@@ -984,6 +995,12 @@ class IGTApp {
     if (claimBtn) {
       claimBtn.addEventListener('click', async () => {
         await this.claimActivePromoVoucher();
+        try {
+          localStorage.setItem('gsc_vip_voucher_claimed', 'true');
+        } catch (e) {}
+        if (this.activeVoucher) {
+          this.saveVoucherToMyList(this.activeVoucher);
+        }
       });
     }
 
@@ -1316,6 +1333,214 @@ class IGTApp {
 
     updateTimer();
     this.voucherCountdownInterval = setInterval(updateTimer, 1000);
+  }
+
+  // =========================================================================
+  // DEDICATED "MOJI VAUČERI" MANAGEMENT SYSTEM
+  // =========================================================================
+  getMyVouchersList() {
+    try {
+      const stored = localStorage.getItem('gsc_my_vouchers_list');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+
+    // Initial default seed so the player immediately has rich data
+    const defaults = [
+      {
+        id: 'v_halloween_vip',
+        title: 'VIP VIKEND RELOAD TIKET',
+        reward_value: 1000,
+        reward_text: '1.000 ZLT VAUČER',
+        desc: 'Fizički VIP tiket za slot aparate u našem klubu',
+        voucher_code: 'GSC-7842-VIP',
+        location: 'Grand Slot Club Banovo Brdo, Kirovljeva 14',
+        status: 'active',
+        expires_at: new Date(Date.now() + 5 * 24 * 3600000).toISOString(),
+        created_at: '01.11.2026'
+      },
+      {
+        id: 'v_welcome_cocktail',
+        title: 'PREMIUM KOKTEL DOBRODOŠLICE',
+        reward_value: 0,
+        reward_text: 'GRATIS PIĆE',
+        desc: 'Besplatno piće na šanku kluba za VIP člana',
+        voucher_code: 'GSC-KOKTEL-81',
+        location: 'Grand Slot Club Banovo Brdo',
+        status: 'redeemed',
+        redeemed_at: '28.10.2026 21:30',
+        created_at: '28.10.2026'
+      },
+      {
+        id: 'v_oct_slots',
+        title: 'OKTOBARSKI RELOAD VAUČER',
+        reward_value: 500,
+        reward_text: '500 ZLT VAUČER',
+        desc: 'Promotivni bonus tiket za automate',
+        voucher_code: 'GSC-OCT-1029',
+        location: 'Grand Slot Club Beograd',
+        status: 'expired',
+        expires_at: '20.10.2026',
+        created_at: '15.10.2026'
+      }
+    ];
+
+    try {
+      localStorage.setItem('gsc_my_vouchers_list', JSON.stringify(defaults));
+    } catch (e) {}
+    return defaults;
+  }
+
+  saveVoucherToMyList(voucher) {
+    if (!voucher) return;
+    const list = this.getMyVouchersList();
+    const existingIdx = list.findIndex(v => v.voucher_code === voucher.voucher_code || v.id === voucher.id);
+    const formatted = {
+      id: voucher.id || ('v_' + Date.now()),
+      title: voucher.title || 'VIP Promo Vaučer',
+      reward_value: voucher.reward_value || 1000,
+      reward_text: voucher.reward_text || (voucher.reward_value ? `${Number(voucher.reward_value).toLocaleString()} ZLT` : '1.000 ZLT'),
+      desc: voucher.description || voucher.desc || 'Fizički VIP tiket za slot aparate u našem klubu',
+      voucher_code: voucher.voucher_code || ('GSC-' + Math.floor(1000 + Math.random() * 9000) + '-VIP'),
+      location: voucher.location || 'Grand Slot Club Banovo Brdo',
+      status: voucher.status ? voucher.status.toLowerCase() : 'active',
+      expires_at: voucher.expires_at || new Date(Date.now() + 48 * 3600000).toISOString(),
+      created_at: new Date().toLocaleDateString('sr-RS')
+    };
+
+    if (existingIdx >= 0) {
+      list[existingIdx] = { ...list[existingIdx], ...formatted };
+    } else {
+      list.unshift(formatted);
+    }
+
+    try {
+      localStorage.setItem('gsc_my_vouchers_list', JSON.stringify(list));
+    } catch (e) {}
+
+    this.updateVouchersCounter();
+  }
+
+  updateVouchersCounter() {
+    const list = this.getMyVouchersList();
+    const activeCount = list.filter(v => v.status === 'active').length;
+    const redeemedCount = list.filter(v => v.status === 'redeemed').length;
+    const expiredCount = list.filter(v => v.status === 'expired').length;
+
+    const headerCounter = document.getElementById('header-voucher-counter');
+    if (headerCounter) {
+      headerCounter.textContent = activeCount;
+      headerCounter.style.display = activeCount > 0 ? 'inline-flex' : 'none';
+    }
+
+    const countActive = document.getElementById('count-vouchers-active');
+    const countRedeemed = document.getElementById('count-vouchers-redeemed');
+    const countExpired = document.getElementById('count-vouchers-expired');
+
+    if (countActive) countActive.textContent = activeCount;
+    if (countRedeemed) countRedeemed.textContent = redeemedCount;
+    if (countExpired) countExpired.textContent = expiredCount;
+  }
+
+  openMyVouchersModal(tab = 'active') {
+    const modal = document.getElementById('my-vouchers-modal');
+    if (!modal) return;
+
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+    this.renderMyVouchersList(tab);
+    modal.classList.add('active');
+  }
+
+  closeMyVouchersModal() {
+    const modal = document.getElementById('my-vouchers-modal');
+    if (modal) modal.classList.remove('active');
+    if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
+  }
+
+  renderMyVouchersList(filterTab = 'active') {
+    this.updateVouchersCounter();
+
+    // Update active tab button
+    const tabs = document.querySelectorAll('.voucher-tab-btn');
+    tabs.forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-vtab') === filterTab);
+    });
+
+    const listContainer = document.getElementById('my-vouchers-list');
+    if (!listContainer) return;
+
+    const list = this.getMyVouchersList();
+    const filtered = list.filter(v => v.status === filterTab);
+
+    if (filtered.length === 0) {
+      const tabNames = { active: 'aktivnih', redeemed: 'iskorišćenih', expired: 'isteklih' };
+      listContainer.innerHTML = `
+        <div class="my-vouchers-empty-state">
+          <div class="empty-icon">🎟️</div>
+          <h3>Trenutno nema ${tabNames[filterTab] || ''} vaučera</h3>
+          <p>Učestvujte u dnevnim misijama i posetite naš klub za nove VIP kupone!</p>
+        </div>
+      `;
+      return;
+    }
+
+    let html = '';
+    filtered.forEach(v => {
+      const isAct = v.status === 'active';
+      const isRed = v.status === 'redeemed';
+      const isExp = v.status === 'expired';
+
+      let statusBadge = '<span class="voucher-status-pill pill-active">🟢 AKTIVAN</span>';
+      let cardClass = 'voucher-item-card active-ticket';
+      let actionBtn = `<button type="button" class="btn-voucher-item-action primary btn-show-voucher-code" data-code="${v.voucher_code}">👁️ PRIKAŽI KOD &amp; QR</button>`;
+
+      if (isRed) {
+        statusBadge = '<span class="voucher-status-pill pill-redeemed">🔵 ISKORIŠĆENO</span>';
+        cardClass = 'voucher-item-card redeemed-ticket';
+        actionBtn = `<button type="button" class="btn-voucher-item-action secondary" disabled>✔️ ISKORIŠĆENO NA BLAGAJNI</button>`;
+      } else if (isExp) {
+        statusBadge = '<span class="voucher-status-pill pill-expired">⚪ ISTEKLO</span>';
+        cardClass = 'voucher-item-card expired-ticket';
+        actionBtn = `<button type="button" class="btn-voucher-item-action secondary" disabled>⚪ ISTEKAO ROK VAŽENJA</button>`;
+      }
+
+      html += `
+        <div class="${cardClass}">
+          <div class="voucher-item-head">
+            <span class="voucher-item-title">${v.title}</span>
+            ${statusBadge}
+          </div>
+          <div class="voucher-item-value-row">
+            <span class="voucher-item-value">${v.reward_text || (v.reward_value ? v.reward_value + ' ZLT' : '1.000 ZLT')}</span>
+            <span style="font-size: 0.72rem; color: #fbbf24; font-weight: 800; font-family: monospace;">KOD: ${v.voucher_code}</span>
+          </div>
+          <p style="font-size: 0.75rem; color: #cbd5e1; margin: 0;">${v.desc}</p>
+          <div class="voucher-item-meta">
+            <span>📍 ${v.location}</span>
+            <span>⏳ ${isAct ? 'Važi do: ' + new Date(v.expires_at).toLocaleDateString('sr-RS') : (isRed ? (v.redeemed_at || 'Iskorišćeno') : 'Isteklo: ' + (v.expires_at ? new Date(v.expires_at).toLocaleDateString('sr-RS') : 'Ranije'))}</span>
+          </div>
+          <div class="voucher-item-actions">
+            ${actionBtn}
+          </div>
+        </div>
+      `;
+    });
+
+    listContainer.innerHTML = html;
+
+    // Attach click events on "Prikaži Kod & QR"
+    listContainer.querySelectorAll('.btn-show-voucher-code').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.getAttribute('data-code');
+        const voucher = list.find(item => item.voucher_code === code);
+        if (voucher) {
+          this.closeMyVouchersModal();
+          this.showVoucherTicket(voucher);
+        }
+      });
+    });
   }
 
   restoreSlotUI() {
@@ -2639,6 +2864,72 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Dedicated My Vouchers Modal Wiring
+  const btnHeaderVouchers = document.getElementById('btn-header-vouchers');
+  if (btnHeaderVouchers) {
+    btnHeaderVouchers.addEventListener('click', () => {
+      if (app && typeof app.openMyVouchersModal === 'function') {
+        app.openMyVouchersModal('active');
+      }
+    });
+  }
+
+  const btnProfileVouchers = document.getElementById('btn-profile-my-vouchers');
+  if (btnProfileVouchers) {
+    btnProfileVouchers.addEventListener('click', () => {
+      const profileModal = document.getElementById('profile-modal');
+      if (profileModal) profileModal.classList.remove('active');
+      if (app && typeof app.openMyVouchersModal === 'function') {
+        app.openMyVouchersModal('active');
+      }
+    });
+  }
+
+  const closeMyVouchers = document.getElementById('btn-close-my-vouchers');
+  const closeMyVouchersBtn = document.getElementById('btn-my-vouchers-close');
+  const myVouchersModal = document.getElementById('my-vouchers-modal');
+
+  if (closeMyVouchers) closeMyVouchers.addEventListener('click', () => app.closeMyVouchersModal());
+  if (closeMyVouchersBtn) closeMyVouchersBtn.addEventListener('click', () => app.closeMyVouchersModal());
+  if (myVouchersModal) {
+    myVouchersModal.addEventListener('click', (e) => {
+      if (e.target === myVouchersModal) app.closeMyVouchersModal();
+    });
+  }
+
+  document.querySelectorAll('.voucher-tab-btn').forEach(tabBtn => {
+    tabBtn.addEventListener('click', () => {
+      const vtab = tabBtn.getAttribute('data-vtab') || 'active';
+      if (app && typeof app.renderMyVouchersList === 'function') {
+        app.renderMyVouchersList(vtab);
+      }
+    });
+  });
+
+  // Initial update of vouchers counter badge
+  if (app && typeof app.updateVouchersCounter === 'function') {
+    app.updateVouchersCounter();
+  }
+
+  // 2-Second Grand Slot VIP Splash Screen
+  const splashEl = document.getElementById('grand-splash-screen');
+  if (splashEl) {
+    setTimeout(() => {
+      splashEl.classList.add('fade-out');
+      setTimeout(() => {
+        splashEl.style.display = 'none';
+
+        // Check if user has claimed/saved their welcome VIP voucher
+        const isClaimed = localStorage.getItem('gsc_vip_voucher_claimed') === 'true';
+        if (!isClaimed) {
+          if (app && typeof app.openVoucherModal === 'function') {
+            app.openVoucherModal();
+          }
+        }
+      }, 500);
+    }, 2000);
+  }
 
   // PWA Service Worker
   if ('serviceWorker' in navigator) {

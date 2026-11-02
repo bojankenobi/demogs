@@ -30,6 +30,14 @@ class CasinoLobby {
       });
     }
 
+    const headerLobbyBtn = document.getElementById('btn-header-lobby');
+    if (headerLobbyBtn) {
+      headerLobbyBtn.addEventListener('click', () => {
+        if (window.slotAudio) window.slotAudio.playClick();
+        this.openModal();
+      });
+    }
+
     if (this.closeBtn && this.modal) {
       this.closeBtn.addEventListener('click', () => {
         if (window.slotAudio) window.slotAudio.playClick();
@@ -40,6 +48,18 @@ class CasinoLobby {
     if (this.modal) {
       this.modal.addEventListener('click', (e) => {
         if (e.target === this.modal) this.closeModal();
+      });
+
+      // Category filter tabs
+      const catTabs = this.modal.querySelectorAll('.lobby-cat-tab');
+      catTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          if (window.slotAudio) window.slotAudio.playClick();
+          catTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const cat = tab.getAttribute('data-category') || 'all';
+          this.filterCategory(cat);
+        });
       });
     }
 
@@ -52,7 +72,9 @@ class CasinoLobby {
       { id: 'plinko', el: document.getElementById('egt-opt-plinko') },
       { id: 'blackjack', el: document.getElementById('egt-opt-blackjack') },
       { id: 'videopoker', el: document.getElementById('egt-opt-videopoker') },
-      { id: 'holdem', el: document.getElementById('egt-opt-holdem') }
+      { id: 'holdem', el: document.getElementById('egt-opt-holdem') },
+      { id: 'vault', el: document.getElementById('egt-opt-vault') },
+      { id: 'royale', el: document.getElementById('egt-opt-royale') }
     ];
 
     const boundCards = new Set();
@@ -86,6 +108,19 @@ class CasinoLobby {
     }
   }
 
+  filterCategory(category) {
+    if (!this.modal) return;
+    const cards = this.modal.querySelectorAll('.egt-game-card');
+    cards.forEach(card => {
+      const cardCat = card.getAttribute('data-category');
+      if (category === 'all' || cardCat === category) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
   openModal() {
     this.updateLobbyJackpots();
     if (this.modal) {
@@ -108,6 +143,14 @@ class CasinoLobby {
 
   switchGame(gameId) {
     if (this.activeGameId === gameId) return;
+
+    if (gameId === 'vault' || gameId === 'royale') {
+      if (window.slotApp && typeof window.slotApp.switchGrandMode === 'function') {
+        window.slotApp.switchGrandMode(gameId);
+      }
+      this.closeModal();
+      return;
+    }
 
     // If switching to a standalone non-slot game while in Trezor or Battle Royale, automatically return to Casino Salon!
     if (['crash', 'plinko', 'blackjack', 'mines', 'videopoker', 'holdem'].includes(gameId)) {
@@ -188,7 +231,9 @@ class CasinoLobby {
       plinko: document.getElementById('egt-opt-plinko'),
       blackjack: document.getElementById('egt-opt-blackjack'),
       videopoker: document.getElementById('egt-opt-videopoker'),
-      holdem: document.getElementById('egt-opt-holdem')
+      holdem: document.getElementById('egt-opt-holdem'),
+      vault: document.getElementById('egt-opt-vault'),
+      royale: document.getElementById('egt-opt-royale')
     };
 
     const activeText = window.i18n ? window.i18n.t('egtActiveTag') : 'AKTIVNA IGRA';
