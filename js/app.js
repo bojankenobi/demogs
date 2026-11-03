@@ -96,6 +96,7 @@ class IGTApp {
 
     // 4. Lobby
     this.lobby = new window.CasinoLobby(this.wallet, this.jackpots);
+    window.casinoLobby = this.lobby;
     this.lobby.registerGame('classic', {
       mount: () => {
         this.restoreSlotUI();

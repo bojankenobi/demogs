@@ -61,8 +61,8 @@ console.log('✓ Table game modes (Blackjack & Holdem) verified for zero header 
 
 // --- TEST 6: Cache Buster Bump ---
 console.log('\n--- TEST 6: Cache Buster Bump ---');
-assert(html.includes('style.css?v=118'), 'index.html must link style.css?v=118');
-console.log('✓ style.css?v=118 verified');
+assert(/style\.css\?v=(11[8-9]|1[2-9]\d)/.test(html), 'index.html must link style.css?v>=118');
+console.log('✓ style.css?v>=118 verified');
 
 console.log('\n========================================================================');
 console.log('🎉 ALL RESPONSIVE HEADER & NAVIGATION VERIFICATION TESTS PASSED 100%! 🎉');

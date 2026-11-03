@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=118">
+  <link rel="stylesheet" href="css/style.css?v=119">
   <link rel="stylesheet" href="css/grand-hub.css?v=101">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -1718,7 +1718,7 @@
         <div class="egt-sub-desc" data-i18n="egtLobbySub">DODIRNITE IGRU ZA POKRETANJE • EKSKLUZIVNA GRAND SLOT KOLEKCIJA</div>
       </div>
 
-      <!-- Lobby Category Filter Bar (Clean Typography) -->
+      <!-- Lobby Category Filter Bar (Preserved for compatibility) -->
       <div class="lobby-category-bar">
         <button type="button" class="lobby-cat-tab active" data-category="all">
           <span class="cat-name">SVE IGRE (9)</span>
@@ -1737,7 +1737,7 @@
       <!-- Games Showcase Grid -->
       <div class="egt-games-grid">
         <!-- Game 1: 1-Line Classic -->
-        <div class="egt-game-card active" id="egt-opt-classic" data-game="classic" data-category="slots">
+        <div class="egt-game-card active" id="egt-opt-classic" data-game="classic" data-category="slots" data-tags="popular,slots,fruit">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">RETRO CLASSIC</div>
@@ -1755,13 +1755,21 @@
             <h3 class="egt-card-title" data-i18n="gameClassic">1-LINE CLASSIC</h3>
             <p class="egt-card-sub" data-i18n="egtClassicDesc">1 Centralna Linija • Retro Zlatni Cilindar • Autentična Ručica</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">0.10</span>
+            <span class="denom-pill active">0.20</span>
+            <span class="denom-pill">0.50</span>
+            <span class="denom-pill">1.00</span>
+            <span class="denom-pill">2.00</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status" data-i18n="egtActiveTag">AKTIVNA IGRA</span>
           </div>
         </div>
 
         <!-- Game 2: Royal 3x3 -->
-        <div class="egt-game-card" id="egt-opt-royal" data-game="royal3x3" data-category="slots">
+        <div class="egt-game-card" id="egt-opt-royal" data-game="royal3x3" data-category="slots" data-tags="popular,slots,buybonus">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-red">HOT 5 LINES</div>
@@ -1779,13 +1787,21 @@
             <h3 class="egt-card-title" data-i18n="gameRoyal3x3">ROYAL 3x3 (5 LINES)</h3>
             <p class="egt-card-sub" data-i18n="egtRoyalDesc">5 Isplatnih Linija • Grand Mines Bonus • Scatter Dijamanti</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">0.20</span>
+            <span class="denom-pill active">0.50</span>
+            <span class="denom-pill">1.00</span>
+            <span class="denom-pill">2.00</span>
+            <span class="denom-pill">5.00</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status" data-i18n="egtSelectTag">IGRAJ SADA</span>
           </div>
         </div>
 
         <!-- Game 3: Full Focus -->
-        <div class="egt-game-card" id="egt-opt-fullfocus" data-game="fullfocus" data-category="slots">
+        <div class="egt-game-card" id="egt-opt-fullfocus" data-game="fullfocus" data-category="slots" data-tags="slots,fullfocus">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-cyan">FULL SCREEN</div>
@@ -1802,13 +1818,21 @@
             <h3 class="egt-card-title" data-i18n="gameFullFocus">ROYAL 3x3 FULL FOCUS</h3>
             <p class="egt-card-sub" data-i18n="egtFocusDesc">Maksimalan Prikaz • 5 Isplatnih Linija • Specijalno za Mobilni Ekran</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">0.20</span>
+            <span class="denom-pill active">0.50</span>
+            <span class="denom-pill">1.00</span>
+            <span class="denom-pill">2.00</span>
+            <span class="denom-pill">5.00</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status" data-i18n="egtSelectTag">IGRAJ SADA</span>
           </div>
         </div>
 
         <!-- Game 4: IGT Mines X -->
-        <div class="egt-game-card" id="egt-opt-mines" data-game="mines" data-category="quick">
+        <div class="egt-game-card" id="egt-opt-mines" data-game="mines" data-category="quick" data-tags="quick,buybonus,mines">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-green">MINES X</div>
@@ -1825,13 +1849,21 @@
             <h3 class="egt-card-title" data-i18n="gameMines">GRAND MINES X</h3>
             <p class="egt-card-sub" data-i18n="egtMinesDesc">Podesiva Mreža &amp; Broj Mina • Multiplier Traka • Instant Isplata</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">0.50</span>
+            <span class="denom-pill active">1.00</span>
+            <span class="denom-pill">2.00</span>
+            <span class="denom-pill">5.00</span>
+            <span class="denom-pill">10.0</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status" data-i18n="egtSelectTag">IGRAJ SADA</span>
           </div>
         </div>
 
         <!-- Game 5: Grand Crash (Aviator) -->
-        <div class="egt-game-card" id="egt-opt-crash" data-game="crash" data-category="quick">
+        <div class="egt-game-card" id="egt-opt-crash" data-game="crash" data-category="quick" data-tags="popular,quick,crash">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-red">AVIATOR HOT</div>
@@ -1851,13 +1883,21 @@
             <h3 class="egt-card-title">GRAND CRASH</h3>
             <p class="egt-card-sub">Aviator Kriva • Multiplier do 1000x • Isplata Pre Pada</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">0.50</span>
+            <span class="denom-pill active">1.00</span>
+            <span class="denom-pill">2.00</span>
+            <span class="denom-pill">5.00</span>
+            <span class="denom-pill">10.0</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
           </div>
         </div>
 
         <!-- Game 6: Plinko Deluxe -->
-        <div class="egt-game-card" id="egt-opt-plinko" data-game="plinko" data-category="quick">
+        <div class="egt-game-card" id="egt-opt-plinko" data-game="plinko" data-category="quick" data-tags="quick,buybonus,plinko">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">1000x JACKPOT</div>
@@ -1884,13 +1924,21 @@
             <h3 class="egt-card-title">PLINKO DELUXE</h3>
             <p class="egt-card-sub">Piramida Klinova • Podesiv Rizik • Multiplikator do 1000x</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">0.20</span>
+            <span class="denom-pill active">0.50</span>
+            <span class="denom-pill">1.00</span>
+            <span class="denom-pill">2.00</span>
+            <span class="denom-pill">5.00</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
           </div>
         </div>
 
         <!-- Game 7: Royal Blackjack (21 Royale) -->
-        <div class="egt-game-card" id="egt-opt-blackjack" data-game="blackjack" data-category="tables">
+        <div class="egt-game-card" id="egt-opt-blackjack" data-game="blackjack" data-category="tables" data-tags="tables,vip">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">3:2 BLACKJACK</div>
@@ -1912,13 +1960,21 @@
             <h3 class="egt-card-title">ROYAL BLACKJACK</h3>
             <p class="egt-card-sub">Vegas Strip Pravila • 3D Karte • Split, Double Down &amp; Osiguranje</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">10</span>
+            <span class="denom-pill active">20</span>
+            <span class="denom-pill">50</span>
+            <span class="denom-pill">100</span>
+            <span class="denom-pill">500</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
           </div>
         </div>
 
         <!-- Game 8: Royal Video Poker (Retro Aparat) -->
-        <div class="egt-game-card" id="egt-opt-videopoker" data-game="videopoker" data-category="tables">
+        <div class="egt-game-card" id="egt-opt-videopoker" data-game="videopoker" data-category="tables" data-tags="tables,poker">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">800× APARAT</div>
@@ -1938,13 +1994,18 @@
             <h3 class="egt-card-title">ROYAL VIDEO POKER</h3>
             <p class="egt-card-sub">Retro Aparat Poker • 9/6 Tabela • Smart-Hold • Crveno/Crno Kocka</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill active">1 KR (0.2 ZLT)</span>
+            <span class="denom-pill">800× TABELA</span>
+            <span class="denom-cur">VIP</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
           </div>
         </div>
 
         <!-- Game 9: Royal Casino Hold'em (Table Poker) -->
-        <div class="egt-game-card" id="egt-opt-holdem" data-game="holdem" data-category="tables">
+        <div class="egt-game-card" id="egt-opt-holdem" data-game="holdem" data-category="tables" data-tags="popular,tables,poker">
           <div class="egt-card-glow"></div>
           <div class="egt-card-border-gold"></div>
           <div class="egt-card-ribbon ribbon-gold">VIP STO • 100:1</div>
@@ -1964,6 +2025,14 @@
             <h3 class="egt-card-title">CASINO HOLD'EM</h3>
             <p class="egt-card-sub">Stolski Poker Protiv Dilera • 3 Sedišta • Flop, Turn &amp; River</p>
           </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">10</span>
+            <span class="denom-pill active">20</span>
+            <span class="denom-pill">50</span>
+            <span class="denom-pill">100</span>
+            <span class="denom-pill">500</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
           <div class="egt-card-action">
             <span class="egt-badge-status">IGRAJ SADA</span>
           </div>
@@ -1971,12 +2040,67 @@
       </div>
 
       <!-- EGT Cabinet Bottom Control/Exit Bar -->
-      <div class="egt-cabinet-footer">
-        <button class="btn-egt-return" id="close-egt-games">
-          <span class="btn-egt-return-icon">◀</span>
-          <span data-i18n="egtReturnToGame">NAZAD NA IGRU</span>
-        </button>
-      </div>
+      <!-- Authentic EGT Multi-Game Cabinet Task Bar (Grand Slot Obsidian & Gold) -->
+      <footer class="egt-cabinet-taskbar" id="egt-cabinet-taskbar" aria-label="EGT Cabinet Task Bar">
+        <!-- Left Wing: Trapezoid CASH Display & Privacy Eye -->
+        <div class="egt-taskbar-cash-wing" id="egt-taskbar-cash-wing" title="Trenutno stanje novca (CASH)">
+          <div class="egt-cash-wing-inner">
+            <button type="button" class="egt-cash-privacy-btn" id="lobby-cash-privacy-btn" title="Sakrij / Prikaži Saldo">
+              <span id="lobby-cash-eye-icon">👁️</span>
+            </button>
+            <div class="egt-cash-text-block">
+              <span class="egt-cash-label">CASH</span>
+              <span class="egt-cash-val" id="lobby-cash-val">0 ZLT</span>
+              <span class="egt-cash-sub" id="lobby-cash-sub">≈ 0 ZLT</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Bar: Cabinet Category Navigator -->
+        <nav class="egt-taskbar-nav" id="egt-taskbar-nav" aria-label="Lobby Kategorije">
+          <button type="button" class="egt-nav-item btn-lobby-return" id="close-egt-games" title="Zatvori Lobi i vrati se u igru">
+            <span class="nav-item-icon">🏠</span>
+            <span class="nav-item-label">NAZAD</span>
+          </button>
+          <button type="button" class="egt-nav-item lobby-taskbar-tab active" data-category="all" id="tb-cat-all">
+            <span class="nav-item-icon">🎰</span>
+            <span class="nav-item-label">SVE IGRE (9)</span>
+          </button>
+          <button type="button" class="egt-nav-item lobby-taskbar-tab" data-category="popular" id="tb-cat-popular">
+            <span class="nav-item-icon">🔥</span>
+            <span class="nav-item-label">NAJIGRANIJE</span>
+          </button>
+          <button type="button" class="egt-nav-item lobby-taskbar-tab" data-category="slots" id="tb-cat-slots">
+            <span class="nav-item-icon">👑</span>
+            <span class="nav-item-label">SLOTOVI</span>
+          </button>
+          <button type="button" class="egt-nav-item lobby-taskbar-tab" data-category="tables" id="tb-cat-tables">
+            <span class="nav-item-icon">♠️</span>
+            <span class="nav-item-label">STOLOVI</span>
+          </button>
+          <button type="button" class="egt-nav-item lobby-taskbar-tab" data-category="quick" id="tb-cat-quick">
+            <span class="nav-item-icon">⚡</span>
+            <span class="nav-item-label">BRZE IGRE</span>
+          </button>
+          <button type="button" class="egt-nav-item lobby-taskbar-tab" data-category="buybonus" id="tb-cat-buybonus">
+            <span class="nav-item-icon">💰</span>
+            <span class="nav-item-label">KUPI BONUS</span>
+          </button>
+        </nav>
+
+        <!-- Right Wing: Trapezoid Language & Sound Toggle -->
+        <div class="egt-taskbar-meta-wing" id="egt-taskbar-meta-wing">
+          <div class="egt-meta-wing-inner">
+            <button type="button" class="egt-meta-btn" id="lobby-lang-toggle" title="Promeni Jezik (SR / EN)">
+              <span class="meta-lang-code" id="lobby-lang-code">SR</span>
+              <span class="meta-icon">🌐</span>
+            </button>
+            <button type="button" class="egt-meta-btn" id="lobby-sound-toggle" title="Zvuk Uključen / Utišan">
+              <span class="meta-icon" id="lobby-sound-icon">🔊</span>
+            </button>
+          </div>
+        </div>
+      </footer>
     </div>
   </div>
 
@@ -3530,7 +3654,7 @@
   
   <!-- Core Platform Modules -->
   <script src="js/core/player-tracker.js?v=84"></script>
-  <script src="js/core/wallet.js?v=91"></script>
+  <script src="js/core/wallet.js?v=92"></script>
   <script src="js/core/daily-access-manager.js?v=101"></script>
   <script src="js/core/prestige-manager.js?v=1"></script>
   <script src="js/core/daily-missions-manager.js?v=3"></script>
@@ -3546,7 +3670,7 @@
   <script src="js/lib/peerjs.min.js"></script>
   <script src="js/lib/qrcode.min.js"></script>
   <script src="js/core/admin-bridge-v2.js?v=81"></script>
-  <script src="js/core/lobby.js?v=108"></script>
+  <script src="js/core/lobby.js?v=109"></script>
 
   <!-- Game Modules -->
   <script src="js/games/classic/symbols.js?v=75"></script>
@@ -3564,6 +3688,6 @@
   <script src="js/games/casino-holdem/casino-holdem.js?v=104"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=111"></script>
+  <script src="js/app.js?v=112"></script>
 </body>
 </html>

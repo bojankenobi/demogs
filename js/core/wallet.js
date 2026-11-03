@@ -262,6 +262,10 @@ class CasinoWallet {
       this.denomSubEl.textContent = `1 KR = ${this.activeDenom} ZLT`;
     }
 
+    if (window.casinoLobby && typeof window.casinoLobby.updateLobbyCash === 'function') {
+      window.casinoLobby.updateLobbyCash();
+    }
+
     // Golden Bet button sync
     const goldenBtn = document.getElementById('btn-golden-bet');
     if (goldenBtn) {

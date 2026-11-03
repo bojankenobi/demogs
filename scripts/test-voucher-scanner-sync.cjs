@@ -62,7 +62,7 @@ console.log('  ✅ 4. js/app.js implements real-time listeners, codes-based sync
 // 5. Verify index.html references updated app.js version
 const indexHtmlPath = path.join(rootDir, 'index.html');
 const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
-assert(indexHtml.includes('js/app.js?v=111'), 'index.html must have bumped app.js version to 111');
+assert(/js\/app\.js\?v=(11[1-9]|1[2-9]\d)/.test(indexHtml), 'index.html must have bumped app.js version to >= 111');
 console.log('  ✅ 5. index.html cache-buster updated.');
 
 console.log('\n🎉 ALL SCANNER & VOUCHER SYNC CHECKS PASSED SUCCESSFULLY!\n');

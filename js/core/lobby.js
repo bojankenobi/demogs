@@ -15,6 +15,9 @@ class CasinoLobby {
     this.closeBtn = document.getElementById('close-egt-games');
     this.currentLabel = document.getElementById('egt-current-game-label');
 
+    this.isCashHidden = localStorage.getItem('gsc_lobby_cash_hidden') === '1';
+    this.activeCategory = 'all';
+
     this.initUI();
   }
 
@@ -61,7 +64,7 @@ class CasinoLobby {
         if (e.target === this.modal) this.closeModal();
       });
 
-      // Category filter tabs
+      // Legacy Category filter tabs (preserved for compatibility)
       const catTabs = this.modal.querySelectorAll('.lobby-cat-tab');
       catTabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -69,7 +72,80 @@ class CasinoLobby {
           catTabs.forEach(t => t.classList.remove('active'));
           tab.classList.add('active');
           const cat = tab.getAttribute('data-category') || 'all';
+          this.activeCategory = cat;
           this.filterCategory(cat);
+        });
+      });
+
+      // Authentic EGT Cabinet Task Bar category tabs
+      const taskbarTabs = this.modal.querySelectorAll('.lobby-taskbar-tab');
+      taskbarTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          if (window.slotAudio) window.slotAudio.playClick();
+          taskbarTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const cat = tab.getAttribute('data-category') || 'all';
+          this.activeCategory = cat;
+          this.filterCategory(cat);
+        });
+      });
+
+      // Task Bar CASH Privacy toggle
+      const cashPrivacyBtn = this.modal.querySelector('#lobby-cash-privacy-btn');
+      if (cashPrivacyBtn) {
+        cashPrivacyBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (window.slotAudio) window.slotAudio.playClick();
+          this.isCashHidden = !this.isCashHidden;
+          try {
+            localStorage.setItem('gsc_lobby_cash_hidden', this.isCashHidden ? '1' : '0');
+          } catch (err) {}
+          this.updateLobbyCash();
+        });
+      }
+
+      // Task Bar Language toggle
+      const langToggleBtn = this.modal.querySelector('#lobby-lang-toggle');
+      if (langToggleBtn) {
+        langToggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (window.slotAudio) window.slotAudio.playClick();
+          if (window.i18n && typeof window.i18n.toggleLanguage === 'function') {
+            window.i18n.toggleLanguage();
+          } else if (typeof window.toggleLanguage === 'function') {
+            window.toggleLanguage();
+          }
+          this.updateLanguageUI();
+        });
+      }
+
+      // Task Bar Sound toggle
+      const soundToggleBtn = this.modal.querySelector('#lobby-sound-toggle');
+      if (soundToggleBtn) {
+        soundToggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (window.slotAudio) {
+            if (typeof window.slotAudio.toggleMute === 'function') {
+              window.slotAudio.toggleMute();
+            } else if (typeof window.slotAudio.toggleSound === 'function') {
+              window.slotAudio.toggleSound();
+            }
+          }
+          this.updateSoundUI();
+        });
+      }
+
+      // Interactive denomination badges on game cards
+      const denomPills = this.modal.querySelectorAll('.egt-denom-strip .denom-pill');
+      denomPills.forEach(pill => {
+        pill.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (window.slotAudio) window.slotAudio.playClick();
+          const strip = pill.closest('.egt-denom-strip');
+          if (strip) {
+            strip.querySelectorAll('.denom-pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+          }
         });
       });
     }
@@ -121,13 +197,64 @@ class CasinoLobby {
     if (!this.modal) return;
     const cards = this.modal.querySelectorAll('.egt-game-card');
     cards.forEach(card => {
-      const cardCat = card.getAttribute('data-category');
-      if (category === 'all' || cardCat === category) {
+      const cardCat = card.getAttribute('data-category') || '';
+      const cardTags = (card.getAttribute('data-tags') || '').split(',').map(s => s.trim().toLowerCase());
+      if (category === 'all' || cardCat === category || cardTags.includes(category)) {
         card.style.display = '';
       } else {
         card.style.display = 'none';
       }
     });
+  }
+
+  updateLobbyCash() {
+    if (!this.modal) return;
+    const cashValEl = this.modal.querySelector('#lobby-cash-val');
+    const cashSubEl = this.modal.querySelector('#lobby-cash-sub');
+    const eyeIconEl = this.modal.querySelector('#lobby-cash-eye-icon');
+
+    const isHidden = this.isCashHidden;
+    if (eyeIconEl) {
+      eyeIconEl.textContent = isHidden ? '🔒' : '👁️';
+    }
+
+    if (isHidden) {
+      if (cashValEl) cashValEl.textContent = '••••••';
+      if (cashSubEl) cashSubEl.textContent = '••••••';
+      return;
+    }
+
+    let zltAmount = 0;
+    let creditsAmount = 0;
+    if (this.wallet) {
+      zltAmount = typeof this.wallet.rsdBalance === 'number' ? this.wallet.rsdBalance : 0;
+      creditsAmount = typeof this.wallet.balance === 'number' ? this.wallet.balance : Math.floor(zltAmount);
+    }
+
+    if (cashValEl) {
+      cashValEl.textContent = `${zltAmount.toLocaleString()} ZLT`;
+    }
+    if (cashSubEl) {
+      cashSubEl.textContent = `${creditsAmount.toLocaleString()} KR`;
+    }
+  }
+
+  updateLanguageUI() {
+    if (!this.modal) return;
+    const langCodeEl = this.modal.querySelector('#lobby-lang-code');
+    if (langCodeEl) {
+      const curLang = (window.i18n && window.i18n.currentLang ? window.i18n.currentLang : 'sr').toUpperCase();
+      langCodeEl.textContent = curLang;
+    }
+  }
+
+  updateSoundUI() {
+    if (!this.modal) return;
+    const soundIconEl = this.modal.querySelector('#lobby-sound-icon');
+    if (soundIconEl) {
+      const isMuted = window.slotAudio ? !!window.slotAudio.isMuted : false;
+      soundIconEl.textContent = isMuted ? '🔇' : '🔊';
+    }
   }
 
   openModal() {
@@ -144,6 +271,9 @@ class CasinoLobby {
       return;
     }
     this.updateLobbyJackpots();
+    this.updateLobbyCash();
+    this.updateLanguageUI();
+    this.updateSoundUI();
     if (this.modal) {
       this.modal.classList.remove('is-hidden');
       this.modal.classList.add('active');

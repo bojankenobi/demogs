@@ -17690,50 +17690,398 @@ body.theme-royale .stage-bezel {
 }
 
 /* ==========================================================================
-   MODERN LOBBY CATEGORY FILTER BAR & POSTER STYLES
+   AUTHENTIC EGT MULTI-GAME CABINET TASK BAR & DENOMINATION STRIPS
    ========================================================================== */
 .lobby-category-bar {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid rgba(255, 215, 0, 0.18);
-  overflow-x: auto;
-  flex-wrap: wrap;
-  background: rgba(0, 0, 0, 0.35);
+  display: none !important; /* Preserved in DOM for test suite backwards compatibility */
 }
 
-.lobby-cat-tab {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.25);
-  color: #e2e8f0;
-  border-radius: 9999px;
-  padding: 6px 14px;
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
-  font-size: 0.78rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
+.egt-cabinet-taskbar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 12px 8px;
+  background: linear-gradient(180deg, #180e05 0%, #0d0702 40%, #040201 100%);
+  border-top: 2px solid #d49514;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.9), 0 -1px 0 rgba(255, 215, 0, 0.35);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 20;
+  user-select: none;
+}
+
+/* Left Wing: CASH Trapezoid Display */
+.egt-taskbar-cash-wing {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(135deg, #ffd700 0%, #a67313 50%, #ffe082 100%);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+  padding: 1.5px;
+  min-width: 155px;
+  max-width: 210px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.egt-cash-wing-inner {
+  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  padding: 4px 14px 4px 10px;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #221408 0%, #0d0702 100%);
+  clip-path: polygon(0 0, calc(100% - 13px) 0, 100% 100%, 0 100%);
+}
+
+.egt-cash-privacy-btn {
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.15s ease;
+  color: #ffd700;
+}
+
+.egt-cash-privacy-btn:hover {
+  background: rgba(255, 215, 0, 0.25);
+  border-color: #ffd700;
+  transform: scale(1.05);
+}
+
+.egt-cash-text-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
+  overflow: hidden;
+}
+
+.egt-cash-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffd700;
+  text-transform: uppercase;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+}
+
+.egt-cash-val {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
   white-space: nowrap;
 }
 
-.lobby-cat-tab:hover {
-  background: rgba(255, 215, 0, 0.15);
+.egt-cash-sub {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #d4af37;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+/* Center Navigator Bar */
+.egt-taskbar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  padding: 0 4px;
+}
+
+.egt-taskbar-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.egt-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 10px;
+  min-height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #221407 0%, #110903 100%);
+  border: 1px solid rgba(255, 215, 0, 0.28);
+  color: #e2d3be;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.egt-nav-item .nav-item-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+.egt-nav-item .nav-item-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.egt-nav-item:hover {
+  background: linear-gradient(180deg, #361f0a 0%, #1a0d04 100%);
   border-color: #ffd700;
-  color: #fff;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.egt-nav-item:active {
+  transform: translateY(1px);
+}
+
+/* Active Category Tab */
+.egt-nav-item.lobby-taskbar-tab.active {
+  background: linear-gradient(180deg, #ffe57f 0%, #d49514 55%, #8c5b02 100%);
+  border: 1.5px solid #ffffff;
+  color: #0d0702;
+  box-shadow: 
+    0 0 16px rgba(255, 215, 0, 0.75),
+    inset 0 1px 1px rgba(255, 255, 255, 0.7);
   transform: translateY(-1px);
 }
 
-.lobby-cat-tab.active {
-  background: linear-gradient(135deg, #ffd700 0%, #d49514 100%);
+.egt-nav-item.lobby-taskbar-tab.active .nav-item-label {
   color: #0d0702;
-  border-color: #ffffff;
-  box-shadow: 0 0 14px rgba(255, 215, 0, 0.6);
   font-weight: 900;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.egt-nav-item.lobby-taskbar-tab.active .nav-item-icon {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+}
+
+/* Return / Exit Button */
+.egt-nav-item.btn-lobby-return {
+  background: linear-gradient(180deg, #331508 0%, #190903 100%);
+  border-color: rgba(255, 140, 50, 0.45);
+  color: #ffb185;
+}
+
+.egt-nav-item.btn-lobby-return:hover {
+  background: linear-gradient(180deg, #e65100 0%, #8c2400 100%);
+  border-color: #ffe0b2;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(230, 81, 0, 0.6);
+}
+
+/* Right Wing: Meta (Language & Sound) Trapezoid */
+.egt-taskbar-meta-wing {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(135deg, #ffe082 0%, #a67313 50%, #ffd700 100%);
+  clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%);
+  padding: 1.5px;
+  min-width: 110px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.egt-meta-wing-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 10px 4px 16px;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #221408 0%, #0d0702 100%);
+  clip-path: polygon(13px 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.egt-meta-btn {
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.32);
+  border-radius: 6px;
+  padding: 5px 8px;
+  color: #ffd700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.egt-meta-btn:hover {
+  background: rgba(255, 215, 0, 0.22);
+  border-color: #ffd700;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.egt-meta-btn .meta-lang-code {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.egt-meta-btn .meta-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* ==========================================================================
+   AUTHENTIC EGT DENOMINATION STRIPS ON GAME CARDS
+   ========================================================================== */
+.egt-denom-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 6px;
+  background: linear-gradient(180deg, rgba(8, 4, 1, 0.9) 0%, rgba(20, 12, 4, 0.9) 100%);
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+  margin: 6px 0 4px;
+  border-radius: 4px;
+  user-select: none;
+}
+
+.egt-denom-strip .denom-pill {
+  padding: 2px 5px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #c9bca9;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.22);
+  border-radius: 3px;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.egt-denom-strip .denom-pill:hover {
+  border-color: #ffd700;
+  color: #ffffff;
+}
+
+.egt-denom-strip .denom-pill.active {
+  background: linear-gradient(180deg, #ffd700 0%, #c48a0f 100%);
+  color: #0a0602;
+  border-color: #ffffff;
+  font-weight: 900;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+}
+
+.egt-denom-strip .denom-cur {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 0.5px;
+  margin-left: 2px;
+}
+
+/* Responsive Adaptations for EGT Cabinet Task Bar */
+@media (max-width: 900px) {
+  .egt-cabinet-taskbar {
+    padding: 5px 8px 6px;
+    gap: 6px;
+  }
+  .egt-taskbar-cash-wing {
+    min-width: 130px;
+    max-width: 160px;
+  }
+  .egt-cash-val {
+    font-size: 0.85rem;
+  }
+  .egt-cash-sub {
+    font-size: 0.58rem;
+  }
+  .egt-nav-item {
+    padding: 3px 8px;
+    min-height: 40px;
+  }
+  .egt-nav-item .nav-item-icon {
+    font-size: 0.95rem;
+  }
+  .egt-nav-item .nav-item-label {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .egt-cabinet-taskbar {
+    padding: 4px 6px 5px;
+    gap: 4px;
+  }
+  .egt-taskbar-cash-wing {
+    min-width: 105px;
+    max-width: 125px;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
+  }
+  .egt-cash-wing-inner {
+    padding: 2px 10px 2px 6px;
+    gap: 5px;
+    clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 100%, 0 100%);
+  }
+  .egt-cash-label {
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+  }
+  .egt-cash-val {
+    font-size: 0.76rem;
+  }
+  .egt-cash-sub {
+    display: none;
+  }
+  .egt-taskbar-meta-wing {
+    min-width: 85px;
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%);
+  }
+  .egt-meta-wing-inner {
+    padding: 2px 6px 2px 11px;
+    gap: 4px;
+    clip-path: polygon(9px 0, 100% 0, 100% 100%, 0 100%);
+  }
+  .egt-meta-btn {
+    padding: 3px 5px;
+    font-size: 0.65rem;
+  }
+  .egt-nav-item {
+    padding: 3px 6px;
+    min-height: 38px;
+  }
+  .egt-nav-item .nav-item-icon {
+    font-size: 0.88rem;
+  }
+  .egt-nav-item .nav-item-label {
+    font-size: 0.55rem;
+  }
 }
 
 .poster-vault {
