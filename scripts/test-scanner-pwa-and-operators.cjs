@@ -63,9 +63,12 @@ const legacyScannerHtml = fs.readFileSync(path.join(rootDir, 'scanner.html'), 'u
 assert(legacyScannerHtml.includes('./scanner/'), 'legacy scanner.html must redirect to ./scanner/');
 console.log('  ✅ Dedicated /scanner/ UI contains complete staff auth gate, and scanner.html seamlessly redirects.');
 
-// 4. Database Schema: Venues & Operators in api/db/init.js
-console.log('\n--- TEST 4: Database Schema & Seeding (api/db/init.js) ---');
-const dbInit = fs.readFileSync(path.join(rootDir, 'api', 'db', 'init.js'), 'utf8');
+// 4. Database Schema: Venues & Operators in api/db/_init.js
+console.log('\n--- TEST 4: Database Schema & Seeding (api/db/_init.js) ---');
+const initFile = fs.existsSync(path.join(rootDir, 'api', 'db', '_init.js'))
+  ? path.join(rootDir, 'api', 'db', '_init.js')
+  : path.join(rootDir, 'api', 'db', 'init.js');
+const dbInit = fs.readFileSync(initFile, 'utf8');
 assert(dbInit.includes('scanner_locations'), 'init.js must define scanner_locations table');
 assert(dbInit.includes('scanner_operators'), 'init.js must define scanner_operators table');
 assert(dbInit.includes('idx_scanner_loc_active'), 'init.js must index active locations');
