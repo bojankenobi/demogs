@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=119">
+  <link rel="stylesheet" href="css/style.css?v=120">
   <link rel="stylesheet" href="css/grand-hub.css?v=101">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -31,7 +31,7 @@
     if (typeof caches !== 'undefined') {
       caches.keys().then(function(keys) {
         keys.forEach(function(k) {
-          if (k !== 'grandslot-v18') caches.delete(k);
+          if (k !== 'grandslot-v20') caches.delete(k);
         });
       });
     }

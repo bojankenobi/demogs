@@ -4212,6 +4212,10 @@ body {
 .egt-cabinet-frame {
   width: 96%;
   max-width: 1180px;
+  height: 92vh;
+  height: 92dvh;
+  max-height: 92vh;
+  max-height: 92dvh;
   background: radial-gradient(circle at 50% 0%, #1e1208 0%, #0d0a09 60%, #050508 100%);
   border: 1.5px solid rgba(255, 215, 0, 0.45);
   border-radius: 24px;
@@ -4233,6 +4237,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .egt-cabinet-brand {
@@ -4375,6 +4380,7 @@ body {
 .egt-cabinet-subheader {
   padding: 8px 12px 4px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .egt-sub-title {
@@ -4397,9 +4403,9 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  padding: 16px 20px 24px;
-  max-height: 72vh;
-  max-height: 72dvh;
+  padding: 16px 20px 20px;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   align-items: stretch;
