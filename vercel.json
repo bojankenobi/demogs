@@ -1,6 +1,12 @@
 {
   "version": 2,
   "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/vouchers/scans",
+      "destination": "/api/scanner/locations?action=scans"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

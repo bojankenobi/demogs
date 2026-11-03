@@ -1,0 +1,5 @@
+# Vercel Ignore: prevent non-endpoint files from counting towards the 12 Serverless Functions limit (Hobby Plan)
+api/db/init.js
+api/vouchers/scans.js
+scripts/
+tests/

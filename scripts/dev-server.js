@@ -47,7 +47,11 @@ const server = http.createServer(async (req, res) => {
 
   // 1. API Route Dispatcher
   if (pathname.startsWith('/api/')) {
-    const apiRel = pathname.replace(/^\/api\//, '').replace(/\/$/, '');
+    let apiRel = pathname.replace(/^\/api\//, '').replace(/\/$/, '');
+    if (apiRel === 'vouchers/scans') {
+      apiRel = 'scanner/locations';
+      parsedUrl.searchParams.set('action', 'scans');
+    }
     const apiFile = path.join(ROOT_DIR, 'api', `${apiRel}.js`);
 
     if (fs.existsSync(apiFile)) {

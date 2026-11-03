@@ -23,9 +23,73 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // --- GET: Fetch Locations & Operators ---
+  // --- GET: Fetch Locations & Operators or Scans Audit ---
   if (req.method === 'GET') {
-    const { all } = req.query || {};
+    const { action, all, limit = 30 } = req.query || {};
+
+    // Unified Scans Audit Handler to stay strictly under Vercel Hobby 12-function limit
+    if (action === 'scans') {
+      if (!isDbConfigured()) {
+        const now = Date.now();
+        return res.status(200).json({
+          success: true,
+          isLiveDb: false,
+          scans: [
+            {
+              id: 'vch_sc_1',
+              voucher_code: 'GSC-8819-VIP',
+              title: 'VIP Promo Tiket 1.000 ZLT',
+              reward_value: '1000.00',
+              player_id: 'gsc_usr_7891',
+              nickname: 'Bojan K.',
+              vip_tier: 'VIP',
+              redeemed_by_operator: 'Marko - Šank 1',
+              redeemed_location: 'Grand Slot Club - Kralja Milana',
+              redeemed_at: new Date(now - 14 * 60000).toISOString()
+            },
+            {
+              id: 'vch_sc_2',
+              voucher_code: 'GSC-3342-DRK',
+              title: 'VIP Welcome Koktel & Piće',
+              reward_value: '500.00',
+              player_id: 'gsc_usr_3342',
+              nickname: 'Nikola_VIP',
+              vip_tier: 'VIP',
+              redeemed_by_operator: 'Jelena - Blagajna',
+              redeemed_location: 'Grand Slot Club - VIP Salon',
+              redeemed_at: new Date(now - 48 * 60000).toISOString()
+            }
+          ]
+        });
+      }
+
+      const sql = getDb();
+      try {
+        const scans = await sql`
+          SELECT 
+            v.id,
+            v.voucher_code,
+            v.title,
+            v.reward_type,
+            v.reward_value,
+            v.player_id,
+            COALESCE(p.nickname, 'Gost') as nickname,
+            COALESCE(p.vip_tier, 'STANDARD') as vip_tier,
+            v.redeemed_by_operator,
+            v.redeemed_location,
+            v.redeemed_at
+          FROM vouchers v
+          LEFT JOIN players p ON v.player_id = p.id
+          WHERE v.redeemed_at IS NOT NULL
+          ORDER BY v.redeemed_at DESC
+          LIMIT ${Number(limit) || 30};
+        `;
+        return res.status(200).json({ success: true, isLiveDb: true, scans });
+      } catch (err) {
+        return res.status(500).json({ success: false, error: err.message });
+      }
+    }
+
     const showAll = all === 'true' || all === '1';
 
     if (!isDbConfigured()) {
