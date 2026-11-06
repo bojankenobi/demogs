@@ -748,14 +748,16 @@ class IGTApp {
   switchGrandMode(mode) {
     if (window.slotAudio) window.slotAudio.playClick();
 
-    // 1. Forfeit protection: Leaving active Trezor mid-run wipes all heist loot
+    // 1. Forfeit protection: Leaving active Trezor mid-run wipes all heist loot (only if player actually has loot)
     if (this.currentGrandMode === 'vault' && mode !== 'vault') {
       if (this.vaultCrawler && this.vaultCrawler.isActive && !this.vaultCrawler.isRunResolved) {
-        const confirmExit = confirm('⚠️ NAPUŠTANJE TREZORA:\nDa li ste sigurni da želite da izađete pre kraja provale?\n\nIzlazak pre pobede ili poraza briše SVE zlatnike (ZLT) koje ste zaradili tokom ove provale!');
-        if (!confirmExit) {
-          const tabs = document.querySelectorAll('.hub-mode-tab');
-          tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-mode') === 'vault'));
-          return;
+        if (this.vaultCrawler.currentRunLootZlt > 0) {
+          const confirmExit = confirm('⚠️ NAPUŠTANJE TREZORA:\nDa li ste sigurni da želite da izađete pre kraja provale?\n\nIzlazak pre pobede ili poraza briše SVE zlatnike (ZLT) koje ste zaradili tokom ove provale!');
+          if (!confirmExit) {
+            const tabs = document.querySelectorAll('.hub-mode-tab');
+            tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-mode') === 'vault'));
+            return;
+          }
         }
         this.vaultCrawler.forfeitRun();
       }
@@ -794,19 +796,25 @@ class IGTApp {
       }
     }
 
-    // Set active tab in UI
+    // 1. Instant Tab & Theme visual feedback on main UI thread
     const tabs = document.querySelectorAll('.hub-mode-tab');
     tabs.forEach(t => {
       t.classList.toggle('active', t.getAttribute('data-mode') === mode);
     });
 
     this.currentGrandMode = mode;
-    if (window.slotAudio && typeof window.slotAudio.setBgmMode === 'function') {
-      window.slotAudio.setBgmMode(mode);
-    }
     if (typeof document !== 'undefined' && document.body) {
       document.body.classList.remove('theme-casino', 'theme-vault', 'theme-royale');
       document.body.classList.add(`theme-${mode}`);
+    }
+
+    // Temporarily pause canvas ambient rendering to give 100% frame budget to mode transition
+    if (window.particleEngine && typeof window.particleEngine.pauseAmbient === 'function') {
+      window.particleEngine.pauseAmbient(450);
+    }
+
+    if (window.slotAudio && typeof window.slotAudio.setBgmMode === 'function') {
+      window.slotAudio.setBgmMode(mode);
     }
 
     if (window.slotAudio && typeof window.slotAudio.switchProfile === 'function') {
@@ -825,95 +833,98 @@ class IGTApp {
       'mines-game-view'
     ];
 
-    if (mode === 'vault' || mode === 'royale') {
-      // Strict rule: in Trezor and Battle Royale, only Royal 3x3 slot is permitted!
-      if (this.lobby) {
-        if (standaloneGameIds.includes(this.lobby.activeGameId)) {
-          this.savedCasinoGameId = this.lobby.activeGameId;
-          if (this.lobby.activeGame && typeof this.lobby.activeGame.unmount === 'function') {
-            this.lobby.activeGame.unmount();
+    // Defer heavier subgame mounting and layout reflows to next animation frame
+    requestAnimationFrame(() => {
+      if (mode === 'vault' || mode === 'royale') {
+        // Strict rule: in Trezor and Battle Royale, only Royal 3x3 slot is permitted!
+        if (this.lobby) {
+          if (standaloneGameIds.includes(this.lobby.activeGameId)) {
+            this.savedCasinoGameId = this.lobby.activeGameId;
+            if (this.lobby.activeGame && typeof this.lobby.activeGame.unmount === 'function') {
+              this.lobby.activeGame.unmount();
+            }
+          }
+          if (this.lobby.activeGameId !== 'royal3x3') {
+            this.lobby.switchGame('royal3x3');
           }
         }
-        if (this.lobby.activeGameId !== 'royal3x3') {
-          this.lobby.switchGame('royal3x3');
+
+        // Hide all standalone views
+        standaloneViews.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        });
+
+        if (container) {
+          container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode', 'in-videopoker-mode', 'in-holdem-mode');
+          container.classList.toggle('in-vault-mode', mode === 'vault');
+          container.classList.toggle('in-royale-mode', mode === 'royale');
+        }
+
+        // Ensure slot UI is visible and properly scaled for Trezor / Royale combat
+        const stage = document.querySelector('.slot-stage-scaler');
+        if (stage) stage.style.display = 'flex';
+        const controlsPanel = document.querySelector('.controls-panel');
+        if (controlsPanel) controlsPanel.style.display = 'flex';
+        const bannerWrap = document.querySelector('.status-banner-wrap');
+        if (bannerWrap) bannerWrap.style.display = 'block';
+
+        // Hide daily missions bar in Vault and Royale
+        const missionsBar = document.getElementById('daily-missions-bar');
+        if (missionsBar) missionsBar.style.display = 'none';
+
+        if (mode === 'vault') {
+          if (this.battleRoyale) this.battleRoyale.unmount();
+          if (this.vaultCrawler) this.vaultCrawler.mount();
+        } else {
+          if (this.vaultCrawler) this.vaultCrawler.unmount();
+          if (this.battleRoyale) this.battleRoyale.mount();
+        }
+      } else {
+        // Regular Casino Salon
+        if (this.vaultCrawler) this.vaultCrawler.unmount();
+        if (this.battleRoyale) this.battleRoyale.unmount();
+
+        // Ensure subgame mobile action docks are strictly hidden in clean Casino mode
+        const vDock = document.getElementById('vault-mobile-dock');
+        if (vDock) vDock.style.display = 'none';
+        const rDock = document.getElementById('royale-mobile-dock');
+        if (rDock) rDock.style.display = 'none';
+
+        if (container) {
+          container.classList.remove('in-vault-mode', 'in-royale-mode');
+        }
+
+        // Restore daily missions bar according to chosen casino style (casual vs daily)
+        const missionsBar = document.getElementById('daily-missions-bar');
+        if (missionsBar) {
+          missionsBar.style.display = (this.casinoStyle === 'daily') ? 'flex' : 'none';
+        }
+
+        // If user came to Trezor from Crash, Plinko, Blackjack or Mines, restore that game!
+        if (this.savedCasinoGameId) {
+          const restoreId = this.savedCasinoGameId;
+          this.savedCasinoGameId = null;
+          this.lobby.switchGame(restoreId);
+        } else if (this.lobby && standaloneGameIds.includes(this.lobby.activeGameId)) {
+          this.lobby.activeGame.mount();
+        } else {
+          this.restoreSlotUI();
         }
       }
 
-      // Hide all standalone views
-      standaloneViews.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-      });
-
-      if (container) {
-        container.classList.remove('in-mines-mode', 'in-crash-mode', 'in-plinko-mode', 'in-blackjack-mode', 'in-videopoker-mode', 'in-holdem-mode');
-        container.classList.toggle('in-vault-mode', mode === 'vault');
-        container.classList.toggle('in-royale-mode', mode === 'royale');
+      if (this.lobby && typeof this.lobby.updateCurrentLabel === 'function') {
+        this.lobby.updateCurrentLabel();
       }
 
-      // Ensure slot UI is visible and properly scaled for Trezor / Royale combat
-      const stage = document.querySelector('.slot-stage-scaler');
-      if (stage) stage.style.display = 'flex';
-      const controlsPanel = document.querySelector('.controls-panel');
-      if (controlsPanel) controlsPanel.style.display = 'flex';
-      const bannerWrap = document.querySelector('.status-banner-wrap');
-      if (bannerWrap) bannerWrap.style.display = 'block';
-
-      // Hide daily missions bar in Vault and Royale
-      const missionsBar = document.getElementById('daily-missions-bar');
-      if (missionsBar) missionsBar.style.display = 'none';
-
-      if (mode === 'vault') {
-        if (this.battleRoyale) this.battleRoyale.unmount();
-        if (this.vaultCrawler) this.vaultCrawler.mount();
-      } else {
-        if (this.vaultCrawler) this.vaultCrawler.unmount();
-        if (this.battleRoyale) this.battleRoyale.mount();
-      }
-    } else {
-      // Regular Casino Salon
-      if (this.vaultCrawler) this.vaultCrawler.unmount();
-      if (this.battleRoyale) this.battleRoyale.unmount();
-
-      // Ensure subgame mobile action docks are strictly hidden in clean Casino mode
-      const vDock = document.getElementById('vault-mobile-dock');
-      if (vDock) vDock.style.display = 'none';
-      const rDock = document.getElementById('royale-mobile-dock');
-      if (rDock) rDock.style.display = 'none';
-
-      if (container) {
-        container.classList.remove('in-vault-mode', 'in-royale-mode');
+      if (typeof window.updateSlotScale === 'function') {
+        window.updateSlotScale();
       }
 
-      // Restore daily missions bar according to chosen casino style (casual vs daily)
-      const missionsBar = document.getElementById('daily-missions-bar');
-      if (missionsBar) {
-        missionsBar.style.display = (this.casinoStyle === 'daily') ? 'flex' : 'none';
+      if (this.dailyMissionsManager && this.casinoStyle === 'daily' && mode === 'casino') {
+        this.dailyMissionsManager.renderBar();
       }
-
-      // If user came to Trezor from Crash, Plinko, Blackjack or Mines, restore that game!
-      if (this.savedCasinoGameId) {
-        const restoreId = this.savedCasinoGameId;
-        this.savedCasinoGameId = null;
-        this.lobby.switchGame(restoreId);
-      } else if (this.lobby && standaloneGameIds.includes(this.lobby.activeGameId)) {
-        this.lobby.activeGame.mount();
-      } else {
-        this.restoreSlotUI();
-      }
-    }
-
-    if (this.lobby && typeof this.lobby.updateCurrentLabel === 'function') {
-      this.lobby.updateCurrentLabel();
-    }
-
-    if (typeof window.updateSlotScale === 'function') {
-      window.updateSlotScale();
-    }
-
-    if (this.dailyMissionsManager && this.casinoStyle === 'daily' && mode === 'casino') {
-      this.dailyMissionsManager.renderBar();
-    }
+    });
   }
 
   /* ==========================================================================
@@ -1933,9 +1944,31 @@ class IGTApp {
 
   updateSpinButtonState() {
     if (this.spinBtn) {
-      const isSpinning = (this.lobby.activeGame && this.lobby.activeGame.isSpinning) || (this.miniMines && this.miniMines.isActive);
-      this.spinBtn.disabled = isSpinning;
-      this.spinBtn.classList.toggle('disabled', isSpinning);
+      const isSpinning = (this.lobby && this.lobby.activeGame && this.lobby.activeGame.isSpinning) || (this.miniMines && this.miniMines.isActive);
+      this.spinBtn.disabled = !!isSpinning;
+      this.spinBtn.classList.toggle('disabled', !!isSpinning);
+
+      // Mobile Watchdog: if animation dropped or browser tab throttled, force unfreeze
+      if (isSpinning) {
+        if (this.spinWatchdog) clearTimeout(this.spinWatchdog);
+        this.spinWatchdog = setTimeout(() => {
+          if (this.lobby && this.lobby.activeGame) {
+            this.lobby.activeGame.isSpinning = false;
+          }
+          if (this.spinBtn) {
+            this.spinBtn.disabled = false;
+            this.spinBtn.classList.remove('disabled');
+          }
+          if (window.particleEngine && typeof window.particleEngine.resumeAmbient === 'function') {
+            window.particleEngine.resumeAmbient();
+          }
+        }, 4200);
+      } else {
+        if (this.spinWatchdog) {
+          clearTimeout(this.spinWatchdog);
+          this.spinWatchdog = null;
+        }
+      }
     }
   }
 
@@ -2075,7 +2108,24 @@ class IGTApp {
 
   initControls() {
     if (this.spinBtn) {
-      this.spinBtn.addEventListener('click', () => this.spin());
+      let lastTrigger = 0;
+      const doSpin = (e) => {
+        if (e && e.type === 'pointerdown') {
+          // Prevent mobile 300ms delayed click synthesis and accidental gesture scrolling on spin thumb
+          if (e.cancelable) e.preventDefault();
+        }
+        const now = Date.now();
+        if (now - lastTrigger < 320) return; // Debounce double-triggering
+        lastTrigger = now;
+        this.spin();
+      };
+
+      this.spinBtn.addEventListener('click', doSpin);
+      this.spinBtn.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+          doSpin(e);
+        }
+      });
     }
     if (this.autoBtn) {
       this.autoBtn.addEventListener('click', () => this.toggleAutoSpin());

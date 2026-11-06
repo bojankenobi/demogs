@@ -166,23 +166,29 @@ class BgmController {
     const prevMode = this.mode;
     this.mode = newMode;
 
+    if (this.modeTimeout) {
+      clearTimeout(this.modeTimeout);
+      this.modeTimeout = null;
+    }
+
     // Crossfade exit current music
     if (prevMode === 'casino') {
-      this.fadeVolumeAudio(0, 350, () => {
+      this.fadeVolumeAudio(0, 250, () => {
         this.pauseAudioElement();
       });
     } else {
-      this.stopSynthGroove(350);
+      this.stopSynthGroove(250);
     }
 
     if (this.isMuted || !this.hasUserInteracted) return;
 
-    // Smoothly start new music mode
-    setTimeout(() => {
+    // Smoothly start new music mode without overlapping timers
+    this.modeTimeout = setTimeout(() => {
+      this.modeTimeout = null;
       if (this.isMuted) return;
       if (newMode === 'casino') {
         this.playNextCasinoTrack();
-        this.fadeVolumeAudio(this.isDucked ? 0.12 : this.baseVolume, 450);
+        this.fadeVolumeAudio(this.isDucked ? 0.12 : this.baseVolume, 350);
       } else if (newMode === 'vault') {
         this.startVaultGroove();
       } else if (newMode === 'royale') {
@@ -190,7 +196,7 @@ class BgmController {
       } else if (newMode === 'crash') {
         this.startCrashGroove();
       }
-    }, 380);
+    }, 280);
   }
 
   pauseAudioElement() {
@@ -344,6 +350,8 @@ class BgmController {
     if (!master) return;
     this.isPlaying = true;
 
+    const isMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || 'ontouchstart' in window);
+
     // D Dorian / D Minor Walking Bassline (92 BPM = ~652ms per beat)
     const bpm = 92;
     const beatMs = (60 / bpm) * 1000;
@@ -382,15 +390,11 @@ class BgmController {
       // 1. Acoustic Upright Walking Bass Note
       const noteFreq = bassline[this.synthStep % bassline.length];
       const bassOsc = ctx.createOscillator();
-      const subOsc = ctx.createOscillator();
       const bassFilter = ctx.createBiquadFilter();
       const bassGain = ctx.createGain();
 
       bassOsc.type = 'triangle';
       bassOsc.frequency.setValueAtTime(noteFreq, now);
-
-      subOsc.type = 'sine';
-      subOsc.frequency.setValueAtTime(noteFreq * 0.5, now);
 
       bassFilter.type = 'lowpass';
       bassFilter.frequency.setValueAtTime(280, now);
@@ -402,24 +406,33 @@ class BgmController {
       bassGain.gain.exponentialRampToValueAtTime(0.001, now + (beatMs / 1000) * 0.95);
 
       bassOsc.connect(bassFilter);
-      subOsc.connect(bassFilter);
       bassFilter.connect(bassGain);
       bassGain.connect(master);
 
       bassOsc.start(now);
-      subOsc.start(now);
       bassOsc.stop(now + (beatMs / 1000));
-      subOsc.stop(now + (beatMs / 1000));
+
+      // Optional subOsc on desktop only to eliminate dual oscillator allocation on mobile
+      if (!isMobile) {
+        const subOsc = ctx.createOscillator();
+        subOsc.type = 'sine';
+        subOsc.frequency.setValueAtTime(noteFreq * 0.5, now);
+        subOsc.connect(bassFilter);
+        subOsc.start(now);
+        subOsc.stop(now + (beatMs / 1000));
+      }
 
       // 2. Soft Brushed Swing Cymbal
       const beatInBar = this.synthStep % 4;
       if (beatInBar === 1 || beatInBar === 3) {
         this.triggerBrushHit(now, 0.045);
-        this.triggerBrushHit(now + (beatMs / 1000) * 0.66, 0.025);
+        if (!isMobile) {
+          this.triggerBrushHit(now + (beatMs / 1000) * 0.66, 0.025);
+        }
       }
 
-      // 3. Ambient Jazz Chord Swell
-      if (beatInBar === 0) {
+      // 3. Ambient Jazz Chord Swell (desktop only to preserve mobile main-thread responsiveness)
+      if (!isMobile && beatInBar === 0) {
         const barIdx = Math.floor(this.synthStep / 4) % chords.length;
         this.triggerJazzChord(chords[barIdx], now, 0.035, (beatMs * 3.5) / 1000);
       }
@@ -437,6 +450,8 @@ class BgmController {
     const master = this.ensureSynthMasterGain();
     if (!master) return;
     this.isPlaying = true;
+
+    const isMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || 'ontouchstart' in window);
 
     // Fast 122 BPM Swing Rhythm (~491ms per beat)
     const bpm = 122;
@@ -489,12 +504,12 @@ class BgmController {
       // 2. Crisp Ride Cymbal Swing
       this.triggerBrushHit(now, 0.038);
       const beatInBar = this.synthStep % 4;
-      if (beatInBar === 1 || beatInBar === 3) {
+      if (!isMobile && (beatInBar === 1 || beatInBar === 3)) {
         this.triggerBrushHit(now + (beatMs / 1000) * 0.62, 0.030);
       }
 
-      // 3. Muted Brass Stabs on Off-beats (beat 2 and 4)
-      if (beatInBar === 1 || beatInBar === 3) {
+      // 3. Muted Brass Stabs on Off-beats (beat 2 and 4, desktop only)
+      if (!isMobile && (beatInBar === 1 || beatInBar === 3)) {
         const chord = brassChords[Math.floor(this.synthStep / 4) % brassChords.length];
         this.triggerBrassStab(chord, now, 0.032);
       }
@@ -570,6 +585,21 @@ class BgmController {
   }
 
   // Synthesis Helpers
+  getCachedNoiseBuffer(ctx) {
+    if (this.cachedNoiseBuffer && this.cachedNoiseSampleRate === ctx.sampleRate) {
+      return this.cachedNoiseBuffer;
+    }
+    const bufferSize = Math.floor(ctx.sampleRate * 0.05);
+    const buf = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    this.cachedNoiseBuffer = buf;
+    this.cachedNoiseSampleRate = ctx.sampleRate;
+    return buf;
+  }
+
   triggerBrushHit(time, volume = 0.04) {
     if (!this.slotAudio || !this.slotAudio.ctx) return;
     const ctx = this.slotAudio.ctx;
@@ -577,13 +607,7 @@ class BgmController {
     if (!master) return;
 
     try {
-      const bufferSize = Math.floor(ctx.sampleRate * 0.05);
-      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.random() * 2 - 1;
-      }
-
+      const noiseBuffer = this.getCachedNoiseBuffer(ctx);
       const noise = ctx.createBufferSource();
       noise.buffer = noiseBuffer;
 

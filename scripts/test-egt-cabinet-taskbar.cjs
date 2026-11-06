@@ -116,8 +116,8 @@ console.log('\n--- TEST 5: Cache Busters in index.html ---');
 assert(/style\.css\?v=(1[2-9]\d|119)/.test(htmlContent), 'style.css must be >= 119');
 assert(htmlContent.includes('lobby.js?v=109'), 'lobby.js must be v=109');
 assert(htmlContent.includes('wallet.js?v=92'), 'wallet.js must be v=92');
-assert(htmlContent.includes('app.js?v=112'), 'app.js must be v=112');
-console.log('✓ All cache busters verified (style.css?v=119, lobby.js?v=109, wallet.js?v=92, app.js?v=112)');
+assert(/app\.js\?v=(11[2-9]|1[2-9]\d)/.test(htmlContent), 'app.js must be >= 112');
+console.log('✓ All cache busters verified (style.css>=119, lobby.js=109, wallet.js=92, app.js>=112)');
 
 console.log('\n========================================================================');
 console.log('🎉 ALL AUTHENTIC EGT CABINET TASK BAR TESTS PASSED 100%! 🎉');

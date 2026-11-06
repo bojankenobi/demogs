@@ -201,11 +201,16 @@ class Royal3x3Game {
     const isBigCombo = (r0Center.id === r1Center.id && ['flower', 'crown', 'seven', 'bar', 'wheel'].includes(r0Center.id));
     const isNearMiss = isBigCombo || (coinCountFirstTwo >= 2);
 
-    const reel3Duration = isNearMiss ? 3.1 : 1.95;
+    const isMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || 'ontouchstart' in window);
+    const reel3Duration = isNearMiss ? (isMobile ? 2.6 : 3.1) : 1.95;
     const durations = [1.05, 1.45, reel3Duration];
-    const tileCounts = [22, 28, isNearMiss ? 48 : 34];
+    // Optimize mobile DOM: 12-24 tiles per strip instead of 22-48 tiles (saves >50% DOM nodes & GPU memory)
+    const tileCounts = isMobile ? [12, 16, isNearMiss ? 24 : 18] : [22, 28, isNearMiss ? 48 : 34];
 
     this.clearSpinTimeouts();
+    if (window.particleEngine && typeof window.particleEngine.pauseAmbient === 'function') {
+      window.particleEngine.pauseAmbient();
+    }
 
     for (let r = 0; r < 3; r++) {
       const drum = this.drumElements[r];
@@ -236,9 +241,16 @@ class Royal3x3Game {
       const startY = this.restingY - (count - 3) * this.tileHeight;
       drum.style.transition = 'none';
       drum.style.transform = `translateY(${startY}px)`;
-      void drum.offsetWidth;
+    }
 
-      // Phase 1: Staggered mechanical wind-up / solenoid release
+    // Single batched reflow across all 3 drums instead of 3 layout thrashing cycles
+    if (this.drumElements[0]) void this.drumElements[0].offsetWidth;
+
+    for (let r = 0; r < 3; r++) {
+      const drum = this.drumElements[r];
+      const res = targetMatrix[r];
+      const count = tileCounts[r];
+      const startY = this.restingY - (count - 3) * this.tileHeight;
       const windupDelay = r * 30; // 0ms, 30ms, 60ms ripple
       const windupDuration = 110;
       const kickY = startY - 14;
@@ -311,6 +323,9 @@ class Royal3x3Game {
             } catch (e) {}
 
             const tEval = setTimeout(() => {
+              if (window.particleEngine && typeof window.particleEngine.resumeAmbient === 'function') {
+                window.particleEngine.resumeAmbient();
+              }
               // Check Hold & Win condition (3+ coins)
               let totalCoins = 0;
               for (let c = 0; c < 3; c++) {
@@ -341,8 +356,12 @@ class Royal3x3Game {
     const tMax = setTimeout(() => {
       try { if (window.slotAudio) window.slotAudio.stopSpinningSound(); } catch (e) {}
       if (this.viewport3) this.viewport3.classList.remove('near-miss-active');
+      if (window.particleEngine && typeof window.particleEngine.resumeAmbient === 'function') {
+        window.particleEngine.resumeAmbient();
+      }
       if (this.isSpinning) {
         this.isSpinning = false;
+        if (window.slotApp) window.slotApp.updateSpinButtonState();
         if (this.onSpinComplete) this.onSpinComplete(null);
       }
     }, maxSpinTime);
@@ -354,6 +373,9 @@ class Royal3x3Game {
   slamStop() {
     if (!this.isSpinning || !this.currentTargetMatrix) return;
     this.clearSpinTimeouts();
+    if (window.particleEngine && typeof window.particleEngine.resumeAmbient === 'function') {
+      window.particleEngine.resumeAmbient();
+    }
 
     try {
       if (window.slotAudio) window.slotAudio.stopSpinningSound();

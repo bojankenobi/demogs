@@ -1397,6 +1397,17 @@ body {
   will-change: transform, filter;
 }
 
+@media (max-width: 768px) {
+  /* Critical mobile optimization: disable SVG Gaussian blur & heavy drop-shadow filter on spinning reel tiles */
+  .reel-strip.spinning .symbol-img,
+  .reel-3d-drum.spinning .symbol-img {
+    filter: none !important;
+    transform: scaleY(1.08);
+    opacity: 0.92;
+    will-change: transform;
+  }
+}
+
 /* In Classic mode, even during spin, keep top and bottom non-center symbols completely hidden */
 .game-mode-classic .reel-3d-drum.spinning .reel-tile[data-row="top"] .symbol-img,
 .game-mode-classic .reel-3d-drum.spinning .reel-tile[data-row="bottom"] .symbol-img {

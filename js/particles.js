@@ -27,18 +27,48 @@ class ParticleEngine {
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.isRunning = true;
+    this.isAmbientPaused = false;
+    this.pauseTimeout = null;
+    this.isMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || 'ontouchstart' in window);
 
     if (this.canvas) {
       this.resize();
       this.initCoinCache();
-      window.addEventListener('resize', () => this.resize());
+      window.addEventListener('resize', () => {
+        this.isMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || 'ontouchstart' in window);
+        this.resize();
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          this.isAmbientPaused = true;
+        } else {
+          this.isAmbientPaused = false;
+        }
+      });
       this.initAmbient();
       this.animate();
     }
   }
 
+  pauseAmbient(durationMs = 0) {
+    this.isAmbientPaused = true;
+    if (this.pauseTimeout) clearTimeout(this.pauseTimeout);
+    if (durationMs > 0) {
+      this.pauseTimeout = setTimeout(() => {
+        this.isAmbientPaused = false;
+      }, durationMs);
+    }
+  }
+
+  resumeAmbient() {
+    if (this.pauseTimeout) clearTimeout(this.pauseTimeout);
+    this.isAmbientPaused = false;
+  }
+
   resize() {
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // On high-DPI mobile devices, cap DPR to 1.35 to save over 50% fillrate and GPU power
+    const maxDpr = this.isMobile ? 1.35 : 2;
+    this.dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
     this.width = window.innerWidth;
     this.height = window.innerHeight;
     this.canvas.width = Math.round(this.width * this.dpr);
@@ -142,14 +172,13 @@ class ParticleEngine {
 
   initAmbient() {
     this.ambientCoins = [];
-    // Lightweight, calm, high-performance ambient coins (6 on mobile, 8 on desktop)
-    const isMobile = window.innerWidth < 600;
-    const count = isMobile ? 6 : 8;
+    // Lightweight, calm, high-performance ambient coins (2 on mobile, 6 on desktop)
+    const count = this.isMobile ? 2 : 6;
     for (let i = 0; i < count; i++) {
       this.ambientCoins.push({
         x: Math.random() * this.width,
         y: Math.random() * this.height,
-        size: 22 + Math.random() * 22,
+        size: this.isMobile ? (18 + Math.random() * 16) : (22 + Math.random() * 22),
         rotation: Math.random() * Math.PI * 2,
         rotSpeed: (Math.random() - 0.5) * 0.006, // slow, relaxing rotational spin
         tiltAngle: Math.random() * Math.PI * 2,
@@ -164,7 +193,7 @@ class ParticleEngine {
 
   // Spawn celebration explosion of 3D coins and sparks
   spawnCelebration(isJackpot = false) {
-    const count = isJackpot ? 48 : 24;
+    const count = isJackpot ? (this.isMobile ? 24 : 48) : (this.isMobile ? 14 : 24);
     const originX = this.width / 2;
     const originY = this.height * 0.52;
 
@@ -216,16 +245,6 @@ class ParticleEngine {
 
     // 1. Draw 3D Extruded Cylindrical Side Wall (when tilted enough to see the edge)
     if (h > 0.8) {
-      // Horizontal metallic gradient running across the side of the cylinder (-radius to +radius)
-      const edgeGrad = ctx.createLinearGradient(-radius, 0, radius, 0);
-      edgeGrad.addColorStop(0, '#381e00');
-      edgeGrad.addColorStop(0.16, '#8c5400');
-      edgeGrad.addColorStop(0.38, '#f7ca45');
-      edgeGrad.addColorStop(0.55, '#fff9d6');
-      edgeGrad.addColorStop(0.72, '#d99a18');
-      edgeGrad.addColorStop(0.88, '#7a4500');
-      edgeGrad.addColorStop(1, '#2e1800');
-
       ctx.beginPath();
       if (sinT >= 0) {
         // Bottom side visible: connects front face bottom arc with back face bottom arc
@@ -241,7 +260,22 @@ class ParticleEngine {
         ctx.lineTo(-radius, h * 0.5);
       }
       ctx.closePath();
-      ctx.fillStyle = edgeGrad;
+
+      if (this.isMobile) {
+        // High performance solid metallic gold on mobile - avoids heap allocations
+        ctx.fillStyle = '#b8790b';
+      } else {
+        // Horizontal metallic gradient running across the side of the cylinder (-radius to +radius)
+        const edgeGrad = ctx.createLinearGradient(-radius, 0, radius, 0);
+        edgeGrad.addColorStop(0, '#381e00');
+        edgeGrad.addColorStop(0.16, '#8c5400');
+        edgeGrad.addColorStop(0.38, '#f7ca45');
+        edgeGrad.addColorStop(0.55, '#fff9d6');
+        edgeGrad.addColorStop(0.72, '#d99a18');
+        edgeGrad.addColorStop(0.88, '#7a4500');
+        edgeGrad.addColorStop(1, '#2e1800');
+        ctx.fillStyle = edgeGrad;
+      }
       ctx.fill();
     }
 
@@ -256,8 +290,8 @@ class ParticleEngine {
       ctx.restore();
     }
 
-    // 3. Specular Glint Flare on the face edge
-    if (aspect > 0.28) {
+    // 3. Specular Glint Flare on the face edge (desktop only to save mobile GPU cycles)
+    if (!this.isMobile && aspect > 0.28) {
       ctx.save();
       const glintX = -radius * 0.42;
       const glintY = faceY - radius * aspect * 0.42;
@@ -277,11 +311,35 @@ class ParticleEngine {
 
   animate() {
     if (!this.isRunning) return;
+
+    // When ambient is paused (during slot spin or mode switch) and no celebration particles are active, skip work completely
+    if (this.isAmbientPaused && this.particles.length === 0) {
+      requestAnimationFrame(() => this.animate());
+      return;
+    }
+
     this.ctx.clearRect(0, 0, this.width, this.height);
 
     // 1. Render Ambient 3D Coins with Milled Depth
-    for (let i = 0; i < this.ambientCoins.length; i++) {
-      const c = this.ambientCoins[i];
+    if (!this.isAmbientPaused) {
+      for (let i = 0; i < this.ambientCoins.length; i++) {
+        const c = this.ambientCoins[i];
+        c.x += c.speedX;
+        c.y += c.speedY;
+        c.rotation += c.rotSpeed;
+        c.tiltAngle += c.tiltSpeed;
+
+        // Screen wrapping
+        if (c.y < -60) {
+          c.y = this.height + 50;
+          c.x = Math.random() * this.width;
+        }
+        if (c.x < -60) c.x = this.width + 50;
+        if (c.x > this.width + 60) c.x = -50;
+
+        this.draw3DCoin(c.x, c.y, c.size, c.tiltAngle, c.tiltAxis, c.rotation, c.opacity);
+      }
+    }
       c.x += c.speedX;
       c.y += c.speedY;
       c.rotation += c.rotSpeed;
