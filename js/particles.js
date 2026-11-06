@@ -340,21 +340,6 @@ class ParticleEngine {
         this.draw3DCoin(c.x, c.y, c.size, c.tiltAngle, c.tiltAxis, c.rotation, c.opacity);
       }
     }
-      c.x += c.speedX;
-      c.y += c.speedY;
-      c.rotation += c.rotSpeed;
-      c.tiltAngle += c.tiltSpeed;
-
-      // Screen wrapping
-      if (c.y < -60) {
-        c.y = this.height + 50;
-        c.x = Math.random() * this.width;
-      }
-      if (c.x < -60) c.x = this.width + 50;
-      if (c.x > this.width + 60) c.x = -50;
-
-      this.draw3DCoin(c.x, c.y, c.size, c.tiltAngle, c.tiltAxis, c.rotation, c.opacity);
-    }
 
     // 2. Render Explosive Celebration 3D Particles
     for (let i = this.particles.length - 1; i >= 0; i--) {
