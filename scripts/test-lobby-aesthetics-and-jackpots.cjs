@@ -84,8 +84,7 @@ const requiredPosters = [
   'poster-blackjack',
   'poster-videopoker',
   'poster-holdem',
-  'poster-scratch',
-  'poster-roulette'
+  'poster-scratch'
 ];
 requiredPosters.forEach(posterClass => {
   if (!gridContent.includes(posterClass)) {
