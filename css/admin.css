@@ -59,8 +59,13 @@ html {
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  scrollbar-width: thin;
-  scrollbar-color: #d4af37 rgba(16, 21, 34, 0.9);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #d4af37 #101522;
+  }
 }
 
 ::-webkit-scrollbar {

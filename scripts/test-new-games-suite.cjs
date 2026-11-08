@@ -25,6 +25,16 @@ assert(indexHtml.includes('id="roulette-game-view"'), 'FAIL: roulette-game-view 
 assert(indexHtml.includes('id="roulette-wheel-canvas"'), 'FAIL: roulette-wheel-canvas missing in index.html');
 assert(indexHtml.includes('id="btn-roulette-spin"'), 'FAIL: btn-roulette-spin missing in index.html');
 assert(indexHtml.includes('id="btn-roulette-clear"'), 'FAIL: btn-roulette-clear missing in index.html');
+assert(indexHtml.includes('id="btn-roulette-undo"'), 'FAIL: btn-roulette-undo missing in index.html');
+assert(indexHtml.includes('id="roulette-felt-section"'), 'FAIL: roulette-felt-section missing in index.html');
+assert(indexHtml.includes('id="roulette-oval-section"'), 'FAIL: roulette-oval-section missing in index.html');
+assert(indexHtml.includes('id="roulette-racetrack-track"'), 'FAIL: roulette-racetrack-track missing in index.html');
+assert(indexHtml.includes('class="roulette-view-tabs"'), 'FAIL: roulette-view-tabs missing in index.html');
+assert(indexHtml.includes('data-series="mala"'), 'FAIL: Mala Serija call button missing in index.html');
+assert(indexHtml.includes('data-series="velika"'), 'FAIL: Velika Serija call button missing in index.html');
+assert(indexHtml.includes('data-series="nula"'), 'FAIL: Nulta Serija call button missing in index.html');
+assert(indexHtml.includes('data-series="orfelini"'), 'FAIL: Orfelini call button missing in index.html');
+assert(indexHtml.includes('id="roulette-neigh-val"'), 'FAIL: Krunica neighbor display missing in index.html');
 assert(indexHtml.includes('id="egt-opt-roulette"'), 'FAIL: egt-opt-roulette missing in lobby');
 assert(indexHtml.includes('js/games/roulette/roulette.js'), 'FAIL: roulette.js script tag missing in index.html');
 
@@ -41,6 +51,7 @@ global.window = {
 };
 global.document = {
   getElementById() { return null; },
+  querySelector() { return null; },
   querySelectorAll() { return []; }
 };
 
@@ -110,7 +121,27 @@ assert.strictEqual(testRoulettePayout({ dozen_1: 50 }, 7), 150, '1st Dozen on 7 
 // 100 on Red, winNum = 0 (green) -> 0
 assert.strictEqual(testRoulettePayout({ color_red: 100 }, 0), 0, 'Red bet on 0 should pay 0');
 
-console.log('✅ European Roulette Engine verified (Single-zero, color map, 35:1 straight-up & outside payouts).');
+// Test Serbian Call Bets (Francuske Serije & Krunica)
+roulette.bets = {};
+walletMock.balance = 2000;
+roulette.selectedChip = 20;
+
+// Test Krunica (Neighbors ±2 around 0) -> [3, 26, 0, 32, 15]
+const krunica0 = roulette.getWheelNeighbors(0, 2);
+assert.strictEqual(krunica0.length, 5, 'Krunica ±2 must have exactly 5 numbers');
+assert.deepStrictEqual(krunica0, [3, 26, 0, 32, 15], 'Krunica ±2 around 0 sequence mismatch');
+
+// Place Mala Serija (6 split bets = 120 ZLT)
+roulette.placeSeriesBet('mala');
+assert.strictEqual(Object.keys(roulette.bets).length, 6, 'Mala Serija must place exactly 6 split bets');
+assert.strictEqual(walletMock.balance, 2000 - 120, 'Mala Serija cost should be 120 ZLT');
+
+// Test Undo functionality
+roulette.undoLastBet();
+assert.strictEqual(Object.keys(roulette.bets).length, 5, 'Undo should remove last placed split bet');
+assert.strictEqual(walletMock.balance, 2000 - 100, 'Undo should refund last placed chip');
+
+console.log('✅ European Roulette Engine verified (Single-zero, color map, 35:1 straight-up, Serbian Serije & Krunica).');
 
 // 4. Verify GameStageManager Virtual View Integration
 const appCode = fs.readFileSync(path.join(__dirname, '..', 'js', 'app.js'), 'utf8');
@@ -128,5 +159,11 @@ assert(!scratchCode.includes('RSD'), 'FAIL: RSD found in scratch.js');
 assert(!rouletteCode.includes('RSD'), 'FAIL: RSD found in roulette.js');
 
 console.log('✅ Nomenclature strictly ZLT and Anti-freeloader policy compliant.');
+
+// 6. Scrollbar Chromium/Firefox Separation Verification
+const styleCss = fs.readFileSync(path.join(__dirname, '..', 'css', 'style.css'), 'utf8');
+assert(styleCss.includes('@supports not selector(::-webkit-scrollbar)'), 'FAIL: @supports not selector(::-webkit-scrollbar) missing in style.css');
+assert(styleCss.includes('::-webkit-scrollbar-button'), 'FAIL: ::-webkit-scrollbar-button rule missing');
+console.log('✅ Universal Luxury Casino Scrollbar cross-browser isolation verified.');
 
 console.log('\n🎉 ALL NEW GAMES SUITE TESTS PASSED 100%!');

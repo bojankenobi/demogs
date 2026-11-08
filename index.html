@@ -23,8 +23,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=124">
-  <link rel="stylesheet" href="css/grand-hub.css?v=102">
+  <link rel="stylesheet" href="css/style.css?v=125">
+  <link rel="stylesheet" href="css/grand-hub.css?v=103">
 
   <!-- Service Worker / Cache Eviction Helper -->
   <script>
@@ -1481,25 +1481,39 @@
       </div>
 
       <!-- European Royal Roulette (Evropski Rulet) -->
+      <!-- European Royal Roulette (Evropski Rulet Profesional) -->
       <div class="roulette-stage-view" id="roulette-game-view" style="display: none;">
         <div class="roulette-cabinet-panel">
-          <!-- Top Wheel Arena & Status Header -->
+          <!-- View Mode Navigation Tabs -->
+          <div class="roulette-view-tabs" role="tablist">
+            <button type="button" class="roulette-view-tab active" data-tab="table" role="tab" aria-selected="true">
+              📋 STO &amp; ULOZI
+            </button>
+            <button type="button" class="roulette-view-tab" data-tab="oval" role="tab" aria-selected="false">
+              ⭕ FRANCUSKI OVAL &amp; SERIJE
+            </button>
+            <button type="button" class="roulette-view-tab" data-tab="wheel" role="tab" aria-selected="false">
+              🎯 TOČAK UŽIVO
+            </button>
+          </div>
+
+          <!-- Top Status & Canvas Wheel Arena -->
           <div class="roulette-top-row">
             <!-- 3D Canvas Roulette Wheel -->
             <div class="roulette-wheel-box">
-              <canvas id="roulette-wheel-canvas" width="220" height="220"></canvas>
+              <canvas id="roulette-wheel-canvas" width="340" height="340"></canvas>
             </div>
 
             <!-- History & Status Info -->
             <div class="roulette-info-box">
-              <div class="roulette-title-badge">👑 EVROPSKI ROYAL RULET</div>
+              <div class="roulette-title-badge">👑 EVROPSKI ROYAL RULET • 35:1</div>
               <div class="roulette-status-banner normal" id="roulette-status-banner">
-                Postavite uloge na stolu i zavrtite točak!
+                Postavite uloge na stolu ili ovalu i zavrtite točak!
               </div>
 
               <!-- Winning History Marquee -->
               <div class="roulette-history-row">
-                <span class="history-label">POSLEDNJI:</span>
+                <span class="history-label">POSLEDNJI BROJEVI:</span>
                 <div class="roulette-history-list" id="roulette-history-list">
                   <!-- Rendered dynamically -->
                 </div>
@@ -1513,100 +1527,259 @@
             </div>
           </div>
 
-          <!-- European Roulette Betting Felt Layout -->
-          <div class="roulette-table-felt">
-            <!-- Zero Box -->
-            <div class="roulette-zero-col">
-              <button type="button" class="roulette-bet-spot spot-zero" data-spot="num_0">
-                <span class="spot-num">0</span>
-              </button>
+          <!-- SECTION 1: Standard Table Felt (Sto & Ulozi) -->
+          <div class="roulette-felt-container" id="roulette-felt-section">
+            <div class="roulette-table-felt">
+              <!-- Zero Column (0) with Zero-Splits & Trios -->
+              <div class="roulette-zero-col">
+                <button type="button" class="roulette-bet-spot roulette-spot spot-zero" data-spot="num_0" data-type="straight" data-nums="0">
+                  <span class="spot-num">0</span>
+                </button>
+                <div class="zero-specials-sub">
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-trio" data-spot="trio_0_1_2" data-type="trio" data-nums="0,1,2" title="Trio 0-1-2 (11:1)">0-1-2</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-trio" data-spot="trio_0_2_3" data-type="trio" data-nums="0,2,3" title="Trio 0-2-3 (11:1)">0-2-3</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-firstfour" data-spot="firstfour_0_1_2_3" data-type="corner" data-nums="0,1,2,3" title="Prva Četiri 0-1-2-3 (8:1)">0-1-2-3</button>
+                </div>
+              </div>
+
+              <!-- Numbers Grid 1-36 (3 rows x 12 columns) -->
+              <div class="roulette-numbers-grid">
+                <!-- Row 1: 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36 -->
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_3" data-type="straight" data-nums="3"><span class="spot-num">3</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_6" data-type="straight" data-nums="6"><span class="spot-num">6</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_9" data-type="straight" data-nums="9"><span class="spot-num">9</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_12" data-type="straight" data-nums="12"><span class="spot-num">12</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_15" data-type="straight" data-nums="15"><span class="spot-num">15</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_18" data-type="straight" data-nums="18"><span class="spot-num">18</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_21" data-type="straight" data-nums="21"><span class="spot-num">21</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_24" data-type="straight" data-nums="24"><span class="spot-num">24</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_27" data-type="straight" data-nums="27"><span class="spot-num">27</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_30" data-type="straight" data-nums="30"><span class="spot-num">30</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_33" data-type="straight" data-nums="33"><span class="spot-num">33</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_36" data-type="straight" data-nums="36"><span class="spot-num">36</span></button>
+
+                <!-- Row 2: 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35 -->
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_2" data-type="straight" data-nums="2"><span class="spot-num">2</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_5" data-type="straight" data-nums="5"><span class="spot-num">5</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_8" data-type="straight" data-nums="8"><span class="spot-num">8</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_11" data-type="straight" data-nums="11"><span class="spot-num">11</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_14" data-type="straight" data-nums="14"><span class="spot-num">14</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_17" data-type="straight" data-nums="17"><span class="spot-num">17</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_20" data-type="straight" data-nums="20"><span class="spot-num">20</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_23" data-type="straight" data-nums="23"><span class="spot-num">23</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_26" data-type="straight" data-nums="26"><span class="spot-num">26</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_29" data-type="straight" data-nums="29"><span class="spot-num">29</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_32" data-type="straight" data-nums="32"><span class="spot-num">32</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_35" data-type="straight" data-nums="35"><span class="spot-num">35</span></button>
+
+                <!-- Row 3: 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34 -->
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_1" data-type="straight" data-nums="1"><span class="spot-num">1</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_4" data-type="straight" data-nums="4"><span class="spot-num">4</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_7" data-type="straight" data-nums="7"><span class="spot-num">7</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_10" data-type="straight" data-nums="10"><span class="spot-num">10</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_13" data-type="straight" data-nums="13"><span class="spot-num">13</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_16" data-type="straight" data-nums="16"><span class="spot-num">16</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_19" data-type="straight" data-nums="19"><span class="spot-num">19</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_22" data-type="straight" data-nums="22"><span class="spot-num">22</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_25" data-type="straight" data-nums="25"><span class="spot-num">25</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_28" data-type="straight" data-nums="28"><span class="spot-num">28</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-black" data-spot="num_31" data-type="straight" data-nums="31"><span class="spot-num">31</span></button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-red" data-spot="num_34" data-type="straight" data-nums="34"><span class="spot-num">34</span></button>
+              </div>
+
+              <!-- Columns 2:1 -->
+              <div class="roulette-cols-strip">
+                <button type="button" class="roulette-bet-spot roulette-spot spot-col" data-spot="col_3" data-type="column" data-nums="3,6,9,12,15,18,21,24,27,30,33,36">2:1</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-col" data-spot="col_2" data-type="column" data-nums="2,5,8,11,14,17,20,23,26,29,32,35">2:1</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-col" data-spot="col_1" data-type="column" data-nums="1,4,7,10,13,16,19,22,25,28,31,34">2:1</button>
+              </div>
+
+              <!-- Streets (11:1) Bottom Edge Strip -->
+              <div class="roulette-streets-row">
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_1_2_3" data-type="street" data-nums="1,2,3">ST 1-3</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_4_5_6" data-type="street" data-nums="4,5,6">ST 4-6</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_7_8_9" data-type="street" data-nums="7,8,9">ST 7-9</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_10_11_12" data-type="street" data-nums="10,11,12">ST 10-12</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_13_14_15" data-type="street" data-nums="13,14,15">ST 13-15</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_16_17_18" data-type="street" data-nums="16,17,18">ST 16-18</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_19_20_21" data-type="street" data-nums="19,20,21">ST 19-21</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_22_23_24" data-type="street" data-nums="22,23,24">ST 22-24</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_25_26_27" data-type="street" data-nums="25,26,27">ST 25-27</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_28_29_30" data-type="street" data-nums="28,29,30">ST 28-30</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_31_32_33" data-type="street" data-nums="31,32,33">ST 31-33</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-street" data-spot="street_34_35_36" data-type="street" data-nums="34,35,36">ST 34-36</button>
+              </div>
+
+              <!-- Dozens (1st 12, 2nd 12, 3rd 12 - 2:1) -->
+              <div class="roulette-dozens-row">
+                <button type="button" class="roulette-bet-spot roulette-spot spot-dozen" data-spot="dozen_1" data-type="dozen" data-nums="1,2,3,4,5,6,7,8,9,10,11,12">1. TUCE (1-12)</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-dozen" data-spot="dozen_2" data-type="dozen" data-nums="13,14,15,16,17,18,19,20,21,22,23,24">2. TUCE (13-24)</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-dozen" data-spot="dozen_3" data-type="dozen" data-nums="25,26,27,28,29,30,31,32,33,34,35,36">3. TUCE (25-36)</button>
+              </div>
+
+              <!-- Outside Bets (1-18, Even, Red, Black, Odd, 19-36 - 1:1) -->
+              <div class="roulette-outside-row">
+                <button type="button" class="roulette-bet-spot roulette-spot spot-outside" data-spot="low" data-type="outside" data-nums="1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18">1-18</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-outside" data-spot="even" data-type="outside" data-nums="2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36">PAR</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-outside spot-outside-red" data-spot="color_red" data-type="outside" data-nums="1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36">CRVENO</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-outside spot-outside-black" data-spot="color_black" data-type="outside" data-nums="2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35">CRNO</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-outside" data-spot="odd" data-type="outside" data-nums="1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35">NEPAR</button>
+                <button type="button" class="roulette-bet-spot roulette-spot spot-outside" data-spot="high" data-type="outside" data-nums="19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36">19-36</button>
+              </div>
+
+              <!-- Popular Splits, Six-Lines & Corners Quick Panel (Između Polja) -->
+              <div class="roulette-inside-quick-strip">
+                <div class="inside-quick-header">
+                  <span>📐 POPULARNI SPLITOVI &amp; DOUBLE STREET (IZMEĐU POLJA):</span>
+                </div>
+                <div class="inside-quick-buttons">
+                  <!-- Serbian Popular Splits -->
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_0_3" data-type="split" data-nums="0,3">Split 0/3</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_5_8" data-type="split" data-nums="5,8">Split 5/8</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_10_11" data-type="split" data-nums="10,11">Split 10/11</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_12_15" data-type="split" data-nums="12,15">Split 12/15</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_13_16" data-type="split" data-nums="13,16">Split 13/16</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_17_20" data-type="split" data-nums="17,20">Split 17/20</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_23_24" data-type="split" data-nums="23,24">Split 23/24</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_27_30" data-type="split" data-nums="27,30">Split 27/30</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_32_35" data-type="split" data-nums="32,35">Split 32/35</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-split-btn" data-spot="split_33_36" data-type="split" data-nums="33,36">Split 33/36</button>
+                  
+                  <!-- Double Street (Six-Lines - 5:1) -->
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-sixline-btn" data-spot="sixline_1_6" data-type="sixline" data-nums="1,2,3,4,5,6">Line 1-6</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-sixline-btn" data-spot="sixline_7_12" data-type="sixline" data-nums="7,8,9,10,11,12">Line 7-12</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-sixline-btn" data-spot="sixline_13_18" data-type="sixline" data-nums="13,14,15,16,17,18">Line 13-18</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-sixline-btn" data-spot="sixline_19_24" data-type="sixline" data-nums="19,20,21,22,23,24">Line 19-24</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-sixline-btn" data-spot="sixline_25_30" data-type="sixline" data-nums="25,26,27,28,29,30">Line 25-30</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-sixline-btn" data-spot="sixline_31_36" data-type="sixline" data-nums="31,32,33,34,35,36">Line 31-36</button>
+                  
+                  <!-- Popular Corners (Carré - 8:1) -->
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-corner-btn" data-spot="corner_1_2_4_5" data-type="corner" data-nums="1,2,4,5">Corner 1-5</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-corner-btn" data-spot="corner_25_26_28_29" data-type="corner" data-nums="25,26,28,29">Corner 25-29</button>
+                  <button type="button" class="roulette-bet-spot roulette-spot spot-corner-btn" data-spot="corner_32_33_35_36" data-type="corner" data-nums="32,33,35,36">Corner 32-36</button>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <!-- Numbers Grid 1-36 (3 rows x 12 cols) -->
-            <div class="roulette-numbers-grid">
-              <!-- Row 1: 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36 -->
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_3"><span class="spot-num">3</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_6"><span class="spot-num">6</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_9"><span class="spot-num">9</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_12"><span class="spot-num">12</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_15"><span class="spot-num">15</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_18"><span class="spot-num">18</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_21"><span class="spot-num">21</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_24"><span class="spot-num">24</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_27"><span class="spot-num">27</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_30"><span class="spot-num">30</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_33"><span class="spot-num">33</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_36"><span class="spot-num">36</span></button>
+          <!-- SECTION 2: French Racetrack / Oval (Francuski Oval & Serije) -->
+          <div class="roulette-oval-container" id="roulette-oval-section" style="display: none;">
+            <div class="roulette-oval-wrapper">
+              <!-- Series Quick Action Buttons (Mala, Velika, Nulta, Orfelini) -->
+              <div class="roulette-series-grid">
+                <button type="button" class="btn-series-call series-mala" data-series="mala">
+                  <span class="series-badge">12 BROJEVA</span>
+                  <span class="series-name">MALA SERIJA (TIERS)</span>
+                  <span class="series-chips">6 ŽETONA • 5/8, 10/11, 13/16, 23/24, 27/30, 33/36</span>
+                </button>
+                <button type="button" class="btn-series-call series-velika" data-series="velika">
+                  <span class="series-badge">17 BROJEVA</span>
+                  <span class="series-name">VELIKA SERIJA (VOISINS)</span>
+                  <span class="series-chips">9 ŽETONA • Trio 0/2/3, Spl 4/7, 12/15, 18/21, 19/22, Carré 25-29, Spl 32/35</span>
+                </button>
+                <button type="button" class="btn-series-call series-nula" data-series="nula">
+                  <span class="series-badge">7 BROJEVA</span>
+                  <span class="series-name">NULTA SERIJA (ZERO)</span>
+                  <span class="series-chips">4 ŽETONA • Plein 26, Spl 0/3, 12/15, 32/35</span>
+                </button>
+                <button type="button" class="btn-series-call series-orfelini" data-series="orfelini">
+                  <span class="series-badge">8 BROJEVA</span>
+                  <span class="series-name">ORFELINI (ORPHELINS)</span>
+                  <span class="series-chips">5 ŽETONA • Plein 1, Spl 6/9, 14/17, 17/20, 31/34</span>
+                </button>
+              </div>
 
-              <!-- Row 2: 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35 -->
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_2"><span class="spot-num">2</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_5"><span class="spot-num">5</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_8"><span class="spot-num">8</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_11"><span class="spot-num">11</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_14"><span class="spot-num">14</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_17"><span class="spot-num">17</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_20"><span class="spot-num">20</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_23"><span class="spot-num">23</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_26"><span class="spot-num">26</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_29"><span class="spot-num">29</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_32"><span class="spot-num">32</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_35"><span class="spot-num">35</span></button>
+              <!-- Serbian Krunica / Neighbors Stepper Bar -->
+              <div class="roulette-krunica-bar">
+                <div class="krunica-title-block">
+                  <span class="krunica-crown-icon">👑</span>
+                  <div class="krunica-text">
+                    <strong class="krunica-heading">KRUNICE &amp; KOMŠIJE (NEIGHBORS)</strong>
+                    <span class="krunica-hint">Klikom na broj na ovalu ulaže se na taj broj i susedne džepove na točku:</span>
+                  </div>
+                </div>
+                <div class="krunica-stepper">
+                  <button type="button" class="btn-neigh-step" id="roulette-neigh-minus" title="Smanji broj suseda">−</button>
+                  <span class="neigh-val" id="roulette-neigh-val">±2</span>
+                  <button type="button" class="btn-neigh-step" id="roulette-neigh-plus" title="Povećaj broj suseda">+</button>
+                </div>
+              </div>
 
-              <!-- Row 3: 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34 -->
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_1"><span class="spot-num">1</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_4"><span class="spot-num">4</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_7"><span class="spot-num">7</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_10"><span class="spot-num">10</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_13"><span class="spot-num">13</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_16"><span class="spot-num">16</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_19"><span class="spot-num">19</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_22"><span class="spot-num">22</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_25"><span class="spot-num">25</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_28"><span class="spot-num">28</span></button>
-              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_31"><span class="spot-num">31</span></button>
-              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_34"><span class="spot-num">34</span></button>
+              <!-- Racetrack Oval Track with 37 European Wheel Sequence Buttons -->
+              <div class="roulette-racetrack-track" id="roulette-racetrack-track">
+                <!-- 37 Pockets in Clockwise Wheel Sequence -->
+                <button type="button" class="racetrack-number-btn btn-num-green" data-num="0"><span class="rt-num">0</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="32"><span class="rt-num">32</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="15"><span class="rt-num">15</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="19"><span class="rt-num">19</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="4"><span class="rt-num">4</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="21"><span class="rt-num">21</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="2"><span class="rt-num">2</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="25"><span class="rt-num">25</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="17"><span class="rt-num">17</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="34"><span class="rt-num">34</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="6"><span class="rt-num">6</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="27"><span class="rt-num">27</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="13"><span class="rt-num">13</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="36"><span class="rt-num">36</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="11"><span class="rt-num">11</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="30"><span class="rt-num">30</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="8"><span class="rt-num">8</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="23"><span class="rt-num">23</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="10"><span class="rt-num">10</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="5"><span class="rt-num">5</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="24"><span class="rt-num">24</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="16"><span class="rt-num">16</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="33"><span class="rt-num">33</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="1"><span class="rt-num">1</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="20"><span class="rt-num">20</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="14"><span class="rt-num">14</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="31"><span class="rt-num">31</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="9"><span class="rt-num">9</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="22"><span class="rt-num">22</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="18"><span class="rt-num">18</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="29"><span class="rt-num">29</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="7"><span class="rt-num">7</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="28"><span class="rt-num">28</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="12"><span class="rt-num">12</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="35"><span class="rt-num">35</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-red" data-num="3"><span class="rt-num">3</span></button>
+                <button type="button" class="racetrack-number-btn btn-num-black" data-num="26"><span class="rt-num">26</span></button>
+              </div>
             </div>
+          </div>
 
-            <!-- Columns 2:1 -->
-            <div class="roulette-cols-strip">
-              <button type="button" class="roulette-bet-spot spot-col" data-spot="col_3">2:1</button>
-              <button type="button" class="roulette-bet-spot spot-col" data-spot="col_2">2:1</button>
-              <button type="button" class="roulette-bet-spot spot-col" data-spot="col_1">2:1</button>
-            </div>
-
-            <!-- Dozens (1st 12, 2nd 12, 3rd 12) -->
-            <div class="roulette-dozens-row">
-              <button type="button" class="roulette-bet-spot spot-dozen" data-spot="dozen_1">1. TUCE (1-12)</button>
-              <button type="button" class="roulette-bet-spot spot-dozen" data-spot="dozen_2">2. TUCE (13-24)</button>
-              <button type="button" class="roulette-bet-spot spot-dozen" data-spot="dozen_3">3. TUCE (25-36)</button>
-            </div>
-
-            <!-- Outside Bets (1-18, Even, Red, Black, Odd, 19-36) -->
-            <div class="roulette-outside-row">
-              <button type="button" class="roulette-bet-spot spot-outside" data-spot="low">1-18</button>
-              <button type="button" class="roulette-bet-spot spot-outside" data-spot="even">PAR</button>
-              <button type="button" class="roulette-bet-spot spot-outside spot-outside-red" data-spot="color_red">CRVENO</button>
-              <button type="button" class="roulette-bet-spot spot-outside spot-outside-black" data-spot="color_black">CRNO</button>
-              <button type="button" class="roulette-bet-spot spot-outside" data-spot="odd">NEPAR</button>
-              <button type="button" class="roulette-bet-spot spot-outside" data-spot="high">19-36</button>
+          <!-- SECTION 3: Dedicated Fullscreen Live Wheel Zoom (Točak Uživo) -->
+          <div class="roulette-wheel-zoom-container" id="roulette-wheel-zoom-section" style="display: none;">
+            <div class="wheel-zoom-card">
+              <h3 class="wheel-zoom-title">🎯 VELIKI PRIKAZ CILINDRA</h3>
+              <p class="wheel-zoom-sub">Rosewood furnir, 8 mesinganih dijamantskih deflektora i autentična fizika kuglice</p>
+              <div class="wheel-zoom-stage">
+                <!-- Re-uses primary canvas or magnified stream -->
+                <div class="wheel-zoom-hint">Okrenite točak dugmetom ispod za praćenje rotacije u 60 FPS!</div>
+              </div>
             </div>
           </div>
 
           <!-- Roulette Controls & Chip Float Deck -->
           <div class="roulette-control-deck">
-            <!-- 5 Authentic Casino Chips Float -->
+            <!-- 6 Authentic Casino Chips Float (10, 20, 50, 100, 500, 1000) -->
             <div class="roulette-chips-strip">
               <button type="button" class="roulette-chip-opt chip-10" data-value="10"><span>10</span></button>
               <button type="button" class="roulette-chip-opt chip-20 selected" data-value="20"><span>20</span></button>
               <button type="button" class="roulette-chip-opt chip-50" data-value="50"><span>50</span></button>
               <button type="button" class="roulette-chip-opt chip-100" data-value="100"><span>100</span></button>
               <button type="button" class="roulette-chip-opt chip-500" data-value="500"><span>500</span></button>
+              <button type="button" class="roulette-chip-opt chip-1000" data-value="1000"><span>1k</span></button>
             </div>
 
-            <!-- Action Buttons: Spin, Double, Clear, Rebet -->
+            <!-- Action Buttons: Clear, Undo, Double, Rebet, Spin -->
             <div class="roulette-action-buttons">
               <button type="button" class="btn-roulette-action btn-roulette-clear" id="btn-roulette-clear" title="Obriši sve uloge">
                 ✕ OBRIŠI
+              </button>
+              <button type="button" class="btn-roulette-action btn-roulette-undo" id="btn-roulette-undo" title="Poništi poslednji ulog (Undo)">
+                ↩ PONIŠTI
               </button>
               <button type="button" class="btn-roulette-action btn-roulette-double" id="btn-roulette-double" title="Dupliraj sve uloge">
                 2×
@@ -4068,9 +4241,9 @@
   <script src="js/games/video-poker/video-poker.js?v=103"></script>
   <script src="js/games/casino-holdem/casino-holdem.js?v=105"></script>
   <script src="js/games/royal-scratch/royal-scratch.js?v=1"></script>
-  <script src="js/games/roulette/roulette.js?v=1"></script>
+  <script src="js/games/roulette/roulette.js?v=2"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=116"></script>
+  <script src="js/app.js?v=117"></script>
 </body>
 </html>

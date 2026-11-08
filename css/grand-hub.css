@@ -855,9 +855,11 @@
   padding: 2px 1px;
 }
 
-.royale-leaderboard-card .royale-leaderboard-strip {
-  scrollbar-width: thin;
-  scrollbar-color: #ef4444 rgba(20, 8, 10, 0.88);
+@supports not selector(::-webkit-scrollbar) {
+  .royale-leaderboard-card .royale-leaderboard-strip {
+    scrollbar-width: thin;
+    scrollbar-color: #ef4444 #14080a;
+  }
 }
 
 .royale-leaderboard-card .royale-leaderboard-strip::-webkit-scrollbar {
@@ -2674,9 +2676,11 @@
     padding-right: 4px !important;
   }
 
-  .vault-cockpit-wing {
-    scrollbar-width: thin;
-    scrollbar-color: #10b981 rgba(6, 18, 16, 0.88);
+  @supports not selector(::-webkit-scrollbar) {
+    .vault-cockpit-wing {
+      scrollbar-width: thin;
+      scrollbar-color: #10b981 #061210;
+    }
   }
   .vault-cockpit-wing::-webkit-scrollbar {
     width: 6px;
@@ -2794,9 +2798,11 @@
     padding-right: 4px !important;
   }
 
-  .royale-cockpit-wing {
-    scrollbar-width: thin;
-    scrollbar-color: #ef4444 rgba(20, 8, 10, 0.88);
+  @supports not selector(::-webkit-scrollbar) {
+    .royale-cockpit-wing {
+      scrollbar-width: thin;
+      scrollbar-color: #ef4444 #14080a;
+    }
   }
   .royale-cockpit-wing::-webkit-scrollbar {
     width: 6px;
