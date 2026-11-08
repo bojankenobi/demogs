@@ -19,7 +19,8 @@ class GameStageManager {
       blackjack: '#blackjack-game-view',
       videopoker: '#videopoker-game-view',
       holdem: '#casino-holdem-game-view',
-      scratch: '#scratch-game-view'
+      scratch: '#scratch-game-view',
+      superhot: '#superhot-game-view'
     };
 
     Object.entries(viewSelectors).forEach(([key, selector]) => {
@@ -176,6 +177,9 @@ class IGTApp {
     }
     if (window.RoyalScratchGame) {
       this.scratchGame = new window.RoyalScratchGame(this.wallet, this.jackpots);
+    }
+    if (window.GrandSuperHotGame) {
+      this.superHotGame = new window.GrandSuperHotGame(this.wallet, this.jackpots);
     }
 
     // 4. Lobby
@@ -504,6 +508,53 @@ class IGTApp {
         },
         get isSpinning() { return false; },
         gameInstance: this.scratchGame
+      });
+    }
+
+    if (this.superHotGame) {
+      this.lobby.registerGame('superhot', {
+        mount: () => {
+          if (this.stageManager) this.stageManager.mountView('superhot');
+          const stage = document.querySelector('.slot-stage-scaler');
+          if (stage) stage.style.display = 'none';
+
+          const controlsPanel = document.querySelector('.controls-panel');
+          if (controlsPanel) controlsPanel.style.display = 'none';
+
+          const bannerWrap = document.querySelector('.status-banner-wrap');
+          if (bannerWrap) bannerWrap.style.display = 'none';
+
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.add('in-superhot-mode');
+
+          if (this.isAutoSpin) this.toggleAutoSpin(false);
+
+          this.superHotGame.mount();
+        },
+        unmount: () => {
+          this.superHotGame.unmount();
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.remove('in-superhot-mode');
+          this.restoreSlotUI();
+        },
+        forceExit: () => {
+          if (this.superHotGame && typeof this.superHotGame.forceExit === 'function') {
+            this.superHotGame.forceExit();
+          }
+        },
+        spin: () => {
+          if (this.superHotGame) {
+            if (this.superHotGame.isSpinning) {
+              this.superHotGame.slamStop();
+            } else {
+              this.superHotGame.handleSpin();
+            }
+          }
+        },
+        get isSpinning() {
+          return this.superHotGame ? this.superHotGame.isSpinning : false;
+        },
+        gameInstance: this.superHotGame
       });
     }
 

@@ -395,6 +395,8 @@ class CasinoLobby {
         this.currentLabel.textContent = 'CASINO HOLD\'EM';
       } else if (gameId === 'scratch') {
         this.currentLabel.textContent = 'ZLATNA GREBALICA';
+      } else if (gameId === 'superhot') {
+        this.currentLabel.textContent = 'GRAND SUPER HOT';
       } else {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameClassic') : '1-LINE CLASSIC';
       }
@@ -410,7 +412,8 @@ class CasinoLobby {
       blackjack: document.getElementById('egt-opt-blackjack'),
       videopoker: document.getElementById('egt-opt-videopoker'),
       holdem: document.getElementById('egt-opt-holdem'),
-      scratch: document.getElementById('egt-opt-scratch')
+      scratch: document.getElementById('egt-opt-scratch'),
+      superhot: document.getElementById('egt-opt-superhot')
     };
 
     const activeText = window.i18n ? window.i18n.t('egtActiveTag') : 'AKTIVNA IGRA';
