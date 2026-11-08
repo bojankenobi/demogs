@@ -384,7 +384,9 @@ class PlinkoDeluxeGame {
      ========================================================================== */
   playPegPing(highPitch = false) {
     try {
-      if (!this.audioCtx) {
+      if (window.slotAudio && window.slotAudio.ctx) {
+        this.audioCtx = window.slotAudio.ctx;
+      } else if (!this.audioCtx) {
         const AudioClass = window.AudioContext || window.webkitAudioContext;
         if (AudioClass) this.audioCtx = new AudioClass();
       }

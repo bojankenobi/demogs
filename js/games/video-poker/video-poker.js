@@ -827,7 +827,9 @@ class RoyalVideoPokerGame {
      Acoustic Web Audio Synthesizer
      ========================================================================== */
   getAudioContext() {
-    if (!this.audioCtx) {
+    if (window.slotAudio && window.slotAudio.ctx) {
+      this.audioCtx = window.slotAudio.ctx;
+    } else if (!this.audioCtx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (AudioCtx) this.audioCtx = new AudioCtx();
     }

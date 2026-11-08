@@ -986,6 +986,18 @@ body {
   overflow: visible;
 }
 
+/* Dynamic Game Stage Host Container (Virtual View Detachment) */
+.game-stage-host {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 0;
+  flex: 1;
+}
+
 /* ------------------------------------------------------------
    UNIVERSAL RESPONSIVE SCALER & ASSEMBLY WRAPPER
    Guarantees 100% full visibility of cylinder + lever on all mobile screens

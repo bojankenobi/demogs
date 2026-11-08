@@ -1154,6 +1154,11 @@ class RoyalBlackjackGame {
      ========================================================================== */
   ensureAudio() {
     try {
+      if (window.slotAudio && window.slotAudio.ctx) {
+        this.audioCtx = window.slotAudio.ctx;
+        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+        return;
+      }
       if (!this.audioCtx) {
         const AudioClass = window.AudioContext || window.webkitAudioContext;
         if (AudioClass) this.audioCtx = new AudioClass();
