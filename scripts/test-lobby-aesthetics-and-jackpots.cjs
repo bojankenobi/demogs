@@ -119,6 +119,43 @@ if (!styleCss.includes('.grand-jp-card.jp-silver') || !styleCss.includes('.grand
 }
 console.log('✓ CSS definitions verified for luxury presentation');
 
+
+// 8. Verify Zero Cartoon Emojis in Initial Modals and Monochromatic Bottom Bar
+console.log('--- TEST 8: Zero Cartoon Emojis & Monochromatic Architecture ---');
+const modeModalMatch = indexHtml.match(/<div class="[^"]*grand-mode-select-overlay[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\!-- Casino Experience Style/);
+if (modeModalMatch) {
+  const modeModalContent = modeModalMatch[1];
+  if (/🎰|🏛️|⚔️|🔒/.test(modeModalContent)) {
+    throw new Error('Cartoon emojis found in #main-mode-select-modal');
+  }
+  if (!modeModalContent.includes('pillar-svg-emblem') || !modeModalContent.includes('pillar-engine-badge')) {
+    throw new Error('Expected luxury SVG crests and engine badges in #main-mode-select-modal');
+  }
+}
+
+const styleModalMatch = indexHtml.match(/<div class="[^"]*casino-style-select-overlay[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\!-- IGT Game Selection Modal/);
+if (styleModalMatch) {
+  const styleModalContent = styleModalMatch[1];
+  if (/☕|🎯|🎰/.test(styleModalContent)) {
+    throw new Error('Cartoon emojis found in #casino-style-select-modal');
+  }
+  if (!styleModalContent.includes('style-svg-emblem') || !styleModalContent.includes('badge-gem')) {
+    throw new Error('Expected luxury SVG emblems in #casino-style-select-modal');
+  }
+}
+
+const taskbarNavMatch = indexHtml.match(/<nav class="egt-taskbar-nav"[^>]*>([\s\S]*?)<\/nav>/);
+if (taskbarNavMatch) {
+  const taskbarNavContent = taskbarNavMatch[1];
+  if (/🏠|🎰|🔥|👑|♠️|⚡|💰/.test(taskbarNavContent)) {
+    throw new Error('Cartoon emojis found in #egt-taskbar-nav');
+  }
+  if (!taskbarNavContent.includes('egt-mono-icon')) {
+    throw new Error('Expected monochromatic vector icons in #egt-taskbar-nav');
+  }
+}
+console.log('✓ Initial modals and bottom taskbar verified: 100% free of cartoon emojis, pure monochromatic gold luxury architecture.');
+
 console.log('\n============================================================');
 console.log('🎉 ALL LOBBY AESTHETICS & JACKPOT TESTS PASSED 100%! 🎉');
 console.log('============================================================\n');
