@@ -166,4 +166,17 @@ assert(styleCss.includes('@supports not selector(::-webkit-scrollbar)'), 'FAIL: 
 assert(styleCss.includes('::-webkit-scrollbar-button'), 'FAIL: ::-webkit-scrollbar-button rule missing');
 console.log('✅ Universal Luxury Casino Scrollbar cross-browser isolation verified.');
 
+// 7. Widescreen Scaling, Authentic Felt Grid & French Stadium Racetrack Verification
+assert(styleCss.includes('.game-container.in-roulette-mode'), 'FAIL: in-roulette-mode missing in style.css');
+assert(styleCss.includes('max-width: 1400px'), 'FAIL: 1400px widescreen expansion missing for in-roulette-mode');
+assert(indexHtml.includes('class="roulette-inside-bets-dock"'), 'FAIL: roulette-inside-bets-dock missing in index.html');
+assert(indexHtml.includes('class="racetrack-stadium-card"'), 'FAIL: racetrack-stadium-card missing in index.html');
+assert(indexHtml.includes('class="racetrack-sectors-interior"'), 'FAIL: racetrack-sectors-interior missing in index.html');
+assert(indexHtml.includes('id="roulette-hot-numbers"'), 'FAIL: roulette-hot-numbers missing in index.html');
+assert(indexHtml.includes('id="roulette-cold-numbers"'), 'FAIL: roulette-cold-numbers missing in index.html');
+assert(rouletteCode.includes('acornGrad.addColorStop'), 'FAIL: Shaded brass acorn finial missing in roulette.js');
+assert(!rouletteCode.includes("ctx.fillStyle = '#ffffff';\n    ctx.fill();\n\n    ctx.restore();"), 'FAIL: White harsh glare still present in wheel center');
+
+console.log('✅ Widescreen expansion (1400px), authentic felt grid, French stadium racetrack & live cockpit verified.');
+
 console.log('\n🎉 ALL NEW GAMES SUITE TESTS PASSED 100%!');

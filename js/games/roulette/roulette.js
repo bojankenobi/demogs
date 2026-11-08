@@ -183,20 +183,29 @@ class RoyalRouletteGame {
   switchViewTab(tabMode) {
     this.activeViewTab = tabMode;
     const viewTabs = document.querySelectorAll('.roulette-view-tab');
-    viewTabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === tabMode));
+    viewTabs.forEach(t => {
+      const isCurrent = t.getAttribute('data-tab') === tabMode;
+      t.classList.toggle('active', isCurrent);
+      t.setAttribute('aria-selected', isCurrent ? 'true' : 'false');
+    });
 
     const feltSection = document.getElementById('roulette-felt-section');
     const ovalSection = document.getElementById('roulette-oval-section');
     const wheelSection = document.getElementById('roulette-wheel-zoom-section');
+    const panel = document.querySelector('.roulette-cabinet-panel');
 
-    if (feltSection) feltSection.style.display = (tabMode === 'table') ? 'block' : 'none';
-    if (ovalSection) ovalSection.style.display = (tabMode === 'oval') ? 'block' : 'none';
+    if (panel) {
+      panel.classList.toggle('view-table-active', tabMode === 'table');
+      panel.classList.toggle('view-oval-active', tabMode === 'oval');
+      panel.classList.toggle('view-wheel-active', tabMode === 'wheel');
+    }
+
+    if (feltSection) feltSection.style.display = (tabMode === 'table') ? 'flex' : 'none';
+    if (ovalSection) ovalSection.style.display = (tabMode === 'oval') ? 'flex' : 'none';
     if (wheelSection) wheelSection.style.display = (tabMode === 'wheel') ? 'flex' : 'none';
 
     this.playClick();
-    if (tabMode === 'wheel' || tabMode === 'table') {
-      setTimeout(() => this.initCanvas(), 30);
-    }
+    setTimeout(() => this.initCanvas(), 40);
   }
 
   /* ==========================================================================
@@ -208,7 +217,15 @@ class RoyalRouletteGame {
 
     const rect = this.canvasEl.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
-    const displaySize = Math.min(420, Math.max(260, Math.floor(rect.width || 340)));
+    const isWheelMode = this.activeViewTab === 'wheel';
+
+    let displaySize;
+    if (isWheelMode) {
+      const screenBound = typeof window !== 'undefined' ? window.innerWidth : 800;
+      displaySize = Math.min(440, Math.max(280, Math.floor(screenBound * 0.88)));
+    } else {
+      displaySize = Math.min(260, Math.max(200, Math.floor(rect.width || 240)));
+    }
 
     this.canvasEl.width = displaySize * dpr;
     this.canvasEl.height = displaySize * dpr;
@@ -301,26 +318,57 @@ class RoyalRouletteGame {
     const ovalContainer = document.getElementById('roulette-oval-section');
     if (!ovalContainer) return;
 
-    // Clicking an individual number on the oval places a "KRUNICA" (Neighbors bet)
+    const FRENCH_SERIES_NUMBERS = {
+      mala: [27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33],
+      velika: [22, 18, 29, 7, 28, 12, 35, 3, 26, 0, 32, 15, 19, 4, 21, 2, 25],
+      nula: [12, 35, 3, 26, 0, 32, 15],
+      orfelini: [1, 20, 14, 31, 9, 17, 34, 6]
+    };
+
+    // Clicking an individual number or sector on the oval
     ovalContainer.addEventListener('click', (e) => {
       if (this.isSpinning) return;
-      const target = e.target.closest('.racetrack-number-btn');
-      if (!target) return;
 
-      const num = Number(target.getAttribute('data-num'));
-      if (!isNaN(num)) {
-        this.placeNeighborBet(num);
+      // Sector Zone click inside the oval
+      const sectorTarget = e.target.closest('.racetrack-sector-zone');
+      if (sectorTarget) {
+        const seriesType = sectorTarget.getAttribute('data-series');
+        if (seriesType) {
+          this.placeSeriesBet(seriesType);
+          return;
+        }
+      }
+
+      // Individual number click (Krunica / Neighbors)
+      const numTarget = e.target.closest('.racetrack-number-btn');
+      if (numTarget) {
+        const num = Number(numTarget.getAttribute('data-num'));
+        if (!isNaN(num)) {
+          this.placeNeighborBet(num);
+        }
       }
     });
 
     // Hover on oval highlights the numbers
     ovalContainer.addEventListener('mouseover', (e) => {
-      const target = e.target.closest('.racetrack-number-btn');
-      if (!target) return;
-      const num = Number(target.getAttribute('data-num'));
-      if (!isNaN(num)) {
-        const neighbors = this.getWheelNeighbors(num, this.neighborCount);
-        this.highlightNumbers(neighbors);
+      // Sector Zone or Series Button hover
+      const sectorTarget = e.target.closest('.racetrack-sector-zone, .btn-series-call');
+      if (sectorTarget) {
+        const seriesType = sectorTarget.getAttribute('data-series');
+        if (seriesType && FRENCH_SERIES_NUMBERS[seriesType]) {
+          this.highlightNumbers(FRENCH_SERIES_NUMBERS[seriesType]);
+          return;
+        }
+      }
+
+      // Individual number hover (shows krunica / neighbors halo)
+      const numTarget = e.target.closest('.racetrack-number-btn');
+      if (numTarget) {
+        const num = Number(numTarget.getAttribute('data-num'));
+        if (!isNaN(num)) {
+          const neighbors = this.getWheelNeighbors(num, this.neighborCount);
+          this.highlightNumbers(neighbors);
+        }
       }
     });
 
@@ -736,35 +784,82 @@ class RoyalRouletteGame {
 
     // Inner Metallic Cone & Turret
     const turretGrad = ctx.createRadialGradient(0, 0, 4, 0, 0, pocketInnerR);
-    turretGrad.addColorStop(0, '#fff6a9');
-    turretGrad.addColorStop(0.3, '#ffd700');
-    turretGrad.addColorStop(0.7, '#aa771c');
-    turretGrad.addColorStop(1, '#4a2f05');
+    turretGrad.addColorStop(0, '#fef08a');
+    turretGrad.addColorStop(0.3, '#d4af37');
+    turretGrad.addColorStop(0.7, '#854d0e');
+    turretGrad.addColorStop(1, '#3b1c06');
 
     ctx.beginPath();
     ctx.arc(0, 0, pocketInnerR, 0, Math.PI * 2);
     ctx.fillStyle = turretGrad;
     ctx.fill();
-    ctx.strokeStyle = '#ffe8a3';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(254, 240, 138, 0.6)';
+    ctx.lineWidth = 1.5;
     ctx.stroke();
 
-    // 4 Turret Arms (Crosshead Spindle)
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = '#ffe8a3';
+    // Concentric Lathe Brass Rings
+    ctx.beginPath();
+    ctx.arc(0, 0, pocketInnerR * 0.72, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, pocketInnerR * 0.45, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // 4 Turret Arms (Crosshead Spindle with 3D drop shadow & brass gradient)
     for (let a = 0; a < 4; a++) {
       const armA = (a * Math.PI) / 2;
+      ctx.save();
+      ctx.rotate(armA);
+
+      // Arm Cast Shadow
+      ctx.beginPath();
+      ctx.moveTo(0, 2);
+      ctx.lineTo(pocketInnerR * 0.68, 2);
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // Brass Arm Bar
+      const armGrad = ctx.createLinearGradient(0, -2, 0, 2);
+      armGrad.addColorStop(0, '#fef9c3');
+      armGrad.addColorStop(0.5, '#eab308');
+      armGrad.addColorStop(1, '#713f12');
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.lineTo(Math.cos(armA) * pocketInnerR * 0.7, Math.sin(armA) * pocketInnerR * 0.7);
+      ctx.lineTo(pocketInnerR * 0.68, 0);
+      ctx.strokeStyle = armGrad;
+      ctx.lineWidth = 3.5;
       ctx.stroke();
+
+      // Arm Brass Finial Knob
+      ctx.beginPath();
+      ctx.arc(pocketInnerR * 0.68, 0, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#fef08a';
+      ctx.fill();
+      ctx.strokeStyle = '#854d0e';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      ctx.restore();
     }
 
-    // Center Acorn Top
+    // Center Antique Brass Finial Acorn (Soft Spherical Shading - Zero Harsh Glare)
+    const acornGrad = ctx.createRadialGradient(-2.5, -2.5, 1, 0, 0, 9);
+    acornGrad.addColorStop(0, '#fffbeb');
+    acornGrad.addColorStop(0.3, '#facc15');
+    acornGrad.addColorStop(0.6, '#a16207');
+    acornGrad.addColorStop(1, '#451a03');
     ctx.beginPath();
-    ctx.arc(0, 0, 8, 0, Math.PI * 2);
-    ctx.fillStyle = '#ffffff';
+    ctx.arc(0, 0, 8.5, 0, Math.PI * 2);
+    ctx.fillStyle = acornGrad;
     ctx.fill();
+    ctx.strokeStyle = '#fef08a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
     ctx.restore(); // Exit rotor translation
 
@@ -1000,22 +1095,49 @@ class RoyalRouletteGame {
 
   renderHistory() {
     const list = document.getElementById('roulette-history-list');
-    if (!list) return;
-
-    list.innerHTML = this.history.slice(0, 14).map((n, idx) => {
-      const col = this.getNumberColor(n);
-      return `<span class="roulette-hist-pill pill-${col} ${idx === 0 ? 'hist-latest' : ''}">${n}</span>`;
-    }).join('');
+    if (list) {
+      list.innerHTML = this.history.slice(0, 14).map((n, idx) => {
+        const col = this.getNumberColor(n);
+        return `<span class="roulette-hist-pill pill-${col} ${idx === 0 ? 'hist-latest' : ''}">${n}</span>`;
+      }).join('');
+    }
 
     // Compute simple statistics
     const statsRedEl = document.getElementById('roulette-stat-red');
     const statsBlackEl = document.getElementById('roulette-stat-black');
     if (statsRedEl && statsBlackEl) {
-      const reds = this.history.filter(n => this.getNumberColor(n) === 'red').length;
-      const total = this.history.length || 1;
+      const nonZero = this.history.filter(n => n !== 0);
+      const reds = nonZero.filter(n => this.getNumberColor(n) === 'red').length;
+      const total = nonZero.length || 1;
       const redPct = Math.round((reds / total) * 100);
       statsRedEl.textContent = `${redPct}% CRVENO`;
       statsBlackEl.textContent = `${100 - redPct}% CRNO`;
+    }
+
+    // Hot & Cold Numbers
+    const hotEl = document.getElementById('roulette-hot-numbers');
+    const coldEl = document.getElementById('roulette-cold-numbers');
+    if (hotEl) {
+      const freq = {};
+      this.history.forEach(n => { freq[n] = (freq[n] || 0) + 1; });
+      const sorted = Object.keys(freq).map(Number).sort((a, b) => freq[b] - freq[a]);
+      const hotList = sorted.slice(0, 5);
+      if (hotList.length < 5) {
+        [17, 32, 0, 29, 21].forEach(fallback => {
+          if (!hotList.includes(fallback) && hotList.length < 5) hotList.push(fallback);
+        });
+      }
+      hotEl.innerHTML = hotList.map(n => {
+        const c = this.getNumberColor(n);
+        return `<span class="roulette-hist-pill pill-${c}">${n}</span>`;
+      }).join('');
+    }
+    if (coldEl) {
+      const coldList = [5, 23, 11, 35, 8].filter(n => !this.history.slice(0, 6).includes(n)).slice(0, 5);
+      coldEl.innerHTML = coldList.map(n => {
+        const c = this.getNumberColor(n);
+        return `<span class="roulette-hist-pill pill-${c}">${n}</span>`;
+      }).join('');
     }
   }
 
