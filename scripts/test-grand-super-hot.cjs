@@ -121,9 +121,18 @@ assert(indexHtml.includes('id="superhot-btn-gamble"'), 'FAIL: #superhot-btn-gamb
 assert(indexHtml.includes('id="superhot-gamble-modal"'), 'FAIL: #superhot-gamble-modal missing in index.html');
 assert(indexHtml.includes('id="superhot-jackpot-modal"'), 'FAIL: #superhot-jackpot-modal missing in index.html');
 
-// Check 5 Micro-Stops
-for (let r = 0; r < 5; r++) {
-  assert(indexHtml.includes(`data-reel="${r}"`), `FAIL: Micro-stop button for reel ${r} missing`);
+// Check Grand Slot Luxury Controls Panel & HUD
+assert(indexHtml.includes('class="controls-panel superhot-controls-panel"'), 'FAIL: superhot-controls-panel missing');
+assert(indexHtml.includes('class="hud-panel superhot-hud-panel"'), 'FAIL: superhot-hud-panel missing');
+assert(indexHtml.includes('id="superhot-bet-minus"'), 'FAIL: #superhot-bet-minus missing');
+assert(indexHtml.includes('id="superhot-bet-plus"'), 'FAIL: #superhot-bet-plus missing');
+assert(indexHtml.includes('id="superhot-spin-label"'), 'FAIL: #superhot-spin-label missing');
+
+// Check 3D Clay Fruit Image Assets
+const symbolsDir = path.join(__dirname, '..', 'assets', 'symbols', 'super-hot');
+const requiredSymbols = ['cherry.png', 'lemon.png', 'orange.png', 'plum.png', 'watermelon.png', 'grapes.png', 'seven.png', 'star.png'];
+for (const symFile of requiredSymbols) {
+  assert(fs.existsSync(path.join(symbolsDir, symFile)), `FAIL: ${symFile} missing in assets/symbols/super-hot/`);
 }
 
 // Check Lobby Grid Card (11th Game)

@@ -1,6 +1,7 @@
 /**
  * Grand Slot Club - Grand Super Hot (5, 20, 40, 100 Lines)
  * Complete EGT-Style Video Slot Terminal Controller
+ * Real physical reel rolling, staggered deceleration, mechanical bounce, and direct reel click-to-stop.
  */
 
 (function(root) {
@@ -17,6 +18,8 @@
     seven: 'assets/symbols/super-hot/seven.png',
     star: 'assets/symbols/super-hot/star.png'
   };
+
+  const SYMBOL_POOL = ['cherry', 'lemon', 'orange', 'plum', 'watermelon', 'grapes', 'seven', 'star'];
 
   function getSymbolHTML(symId) {
     const src = SYMBOL_ASSETS[symId] || `assets/symbols/super-hot/${symId}.png`;
@@ -104,15 +107,19 @@
       this.dom.grid = document.getElementById('superhot-reels-grid');
       this.dom.canvas = document.getElementById('superhot-paylines-canvas');
       this.dom.linesButtons = document.querySelectorAll('.superhot-line-btn');
-      this.dom.betStepBtn = document.getElementById('superhot-btn-bet');
+      this.dom.betMinus = document.getElementById('superhot-bet-minus');
+      this.dom.betPlus = document.getElementById('superhot-bet-plus');
       this.dom.betDisplay = document.getElementById('superhot-val-bet');
       this.dom.totalBetDisplay = document.getElementById('superhot-val-totalbet');
+      this.dom.lineBetSub = document.getElementById('superhot-sub-bet');
       this.dom.winDisplay = document.getElementById('superhot-val-win');
       this.dom.balanceDisplay = document.getElementById('superhot-val-balance');
+      this.dom.balanceSub = document.getElementById('superhot-sub-balance');
       this.dom.spinBtn = document.getElementById('superhot-btn-spin');
+      this.dom.spinLabel = document.getElementById('superhot-spin-label');
       this.dom.gambleBtn = document.getElementById('superhot-btn-gamble');
       this.dom.autoBtn = document.getElementById('superhot-btn-auto');
-      this.dom.stopButtons = document.querySelectorAll('.superhot-micro-stop');
+      this.dom.maxBetBtn = document.getElementById('superhot-btn-maxbet');
 
       // Jackpot meters
       this.dom.jpClubs = document.getElementById('superhot-jp-clubs');
@@ -136,10 +143,24 @@
         });
       }
 
-      if (this.dom.betStepBtn) {
-        this.dom.betStepBtn.addEventListener('click', () => {
+      if (this.dom.betMinus) {
+        this.dom.betMinus.addEventListener('click', () => {
           if (this.isSpinning) return;
-          this.stepBet();
+          this.stepBet(-1);
+        });
+      }
+
+      if (this.dom.betPlus) {
+        this.dom.betPlus.addEventListener('click', () => {
+          if (this.isSpinning) return;
+          this.stepBet(1);
+        });
+      }
+
+      if (this.dom.maxBetBtn) {
+        this.dom.maxBetBtn.addEventListener('click', () => {
+          if (this.isSpinning) return;
+          this.setMaxBet();
         });
       }
 
@@ -167,16 +188,7 @@
         });
       }
 
-      if (this.dom.stopButtons) {
-        this.dom.stopButtons.forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const reelIdx = parseInt(e.currentTarget.getAttribute('data-reel'), 10);
-            this.stopSingleReel(reelIdx);
-          });
-        });
-      }
-
-      // Allow clicking on any spinning reel directly to stop it
+      // Allow clicking directly on any spinning reel to stop it
       if (this.dom.grid) {
         this.dom.grid.addEventListener('click', (e) => {
           const reelEl = e.target.closest('.superhot-reel-column');
@@ -206,11 +218,19 @@
       this.updateConsoleUI();
     }
 
-    stepBet() {
+    stepBet(direction = 1) {
       const curIdx = this.betLevels.indexOf(this.lineBet);
-      const nextIdx = (curIdx + 1) % this.betLevels.length;
+      let nextIdx = curIdx + direction;
+      if (nextIdx >= this.betLevels.length) nextIdx = 0;
+      if (nextIdx < 0) nextIdx = this.betLevels.length - 1;
       this.lineBet = this.betLevels[nextIdx];
       if (this.audio) this.audio.playReelStop(2);
+      this.updateConsoleUI();
+    }
+
+    setMaxBet() {
+      this.lineBet = this.betLevels[this.betLevels.length - 1];
+      if (this.audio) this.audio.playReelStop(4);
       this.updateConsoleUI();
     }
 
@@ -225,24 +245,29 @@
       }
 
       if (this.dom.betDisplay) this.dom.betDisplay.textContent = `${this.lineBet} ZLT`;
-      if (this.dom.totalBetDisplay) this.dom.totalBetDisplay.textContent = `${totalBet} ZLT`;
-      if (this.dom.winDisplay) this.dom.winDisplay.textContent = `${this.currentWin} ZLT`;
+      if (this.dom.lineBetSub) this.dom.lineBetSub.textContent = `${this.lineBet} ZLT / lin`;
+      if (this.dom.totalBetDisplay) this.dom.totalBetDisplay.textContent = `${totalBet}`;
+      if (this.dom.winDisplay) this.dom.winDisplay.textContent = `${this.currentWin}`;
       if (this.dom.balanceDisplay && this.wallet) {
-        this.dom.balanceDisplay.textContent = `${Math.floor(this.wallet.balance || 0)} ZLT`;
+        this.dom.balanceDisplay.textContent = `${Math.floor(this.wallet.balance || 0).toLocaleString()}`;
+      }
+      if (this.dom.balanceSub && this.wallet) {
+        this.dom.balanceSub.textContent = `≈ ${Math.floor(this.wallet.balance || 0).toLocaleString()} ZLT`;
       }
 
       if (this.dom.gambleBtn) {
         const canGamble = (this.currentWin > 0 && this.currentWin <= totalBet * 35 && !this.isSpinning);
         this.dom.gambleBtn.disabled = !canGamble;
-        this.dom.gambleBtn.classList.toggle('ready', canGamble);
+        this.dom.gambleBtn.classList.toggle('is-dimmed', !canGamble);
+        this.dom.gambleBtn.classList.toggle('glow-ready', canGamble);
       }
 
       if (this.dom.spinBtn) {
         if (this.isSpinning) {
-          this.dom.spinBtn.textContent = 'STOP';
+          if (this.dom.spinLabel) this.dom.spinLabel.textContent = 'STOP';
           this.dom.spinBtn.classList.add('is-stopping');
         } else {
-          this.dom.spinBtn.textContent = 'START';
+          if (this.dom.spinLabel) this.dom.spinLabel.textContent = 'SPIN';
           this.dom.spinBtn.classList.remove('is-stopping');
         }
       }
@@ -272,8 +297,8 @@
         reelCol.className = `superhot-reel-column reel-${r}`;
         reelCol.setAttribute('data-reel-index', r);
 
-        const reelTrack = document.createElement('div');
-        reelTrack.className = 'superhot-reel-track';
+        const reelStrip = document.createElement('div');
+        reelStrip.className = 'superhot-reel-strip';
 
         for (let row = 0; row < rows; row++) {
           const symId = this.currentMatrix[r][row] || 'cherry';
@@ -281,16 +306,17 @@
           cell.className = `superhot-cell cell-${r}-${row} sym-${symId}`;
           cell.setAttribute('data-reel', r);
           cell.setAttribute('data-row', row);
+          cell.style.height = `${100 / rows}%`;
           cell.innerHTML = `
             <div class="superhot-sym-wrapper">
               ${getSymbolHTML(symId)}
             </div>
             <div class="flame-particle-layer"></div>
           `;
-          reelTrack.appendChild(cell);
+          reelStrip.appendChild(cell);
         }
 
-        reelCol.appendChild(reelTrack);
+        reelCol.appendChild(reelStrip);
         this.dom.grid.appendChild(reelCol);
       }
     }
@@ -327,29 +353,22 @@
       const outcomeMatrix = this.engine.generateSpinMatrix(this.selectedLines);
       this.lastEvaluation = this.engine.evaluateSpin(outcomeMatrix, this.selectedLines, this.lineBet);
 
-      // Start reel spin animations in DOM
-      for (let r = 0; r < 5; r++) {
-        const reelEl = this.dom.grid.querySelector(`.superhot-reel-column[data-reel-index="${r}"]`);
-        if (reelEl) {
-          reelEl.classList.add('is-spinning');
-          reelEl.classList.remove('has-suspense');
-        }
-      }
+      const { rows } = this.engine.getGridDimensions(this.selectedLines);
 
       // Play tick sound loop
       this.spinAudioInterval = setInterval(() => {
         if (this.isSpinning && this.audio) {
           this.audio.playReelTick();
         }
-      }, 70);
+      }, 75);
 
-      // Schedule natural reel stopping times
-      const baseStops = [800, 1100, 1400, 1700, 2000];
+      // Staggered durations for authentic slot machine stops
+      const durations = [750, 1000, 1250, 1500, 1750];
 
       // If suspense trigger: slow down reels 4 and 5
       if (this.lastEvaluation.suspenseTrigger) {
-        baseStops[3] = 2600;
-        baseStops[4] = 3400;
+        durations[3] = 2400;
+        durations[4] = 3100;
         setTimeout(() => {
           if (this.isSpinning && this.reelStates[3] === 'spinning') {
             const reel4 = this.dom.grid.querySelector(`.superhot-reel-column[data-reel-index="3"]`);
@@ -358,13 +377,69 @@
             if (reel5) reel5.classList.add('has-suspense');
             if (this.audio) this.audio.startSuspense();
           }
-        }, 1450);
+        }, 1200);
       }
 
+      // Setup continuous vertical rolling animation for each reel
       for (let r = 0; r < 5; r++) {
+        const reelCol = this.dom.grid.querySelector(`.superhot-reel-column[data-reel-index="${r}"]`);
+        if (!reelCol) continue;
+
+        reelCol.classList.add('is-spinning');
+        reelCol.classList.remove('has-suspense');
+
+        const reelStrip = reelCol.querySelector('.superhot-reel-strip');
+        if (!reelStrip) continue;
+
+        reelStrip.classList.remove('mechanical-snap-bounce');
+
+        const targetSyms = this.lastEvaluation.matrix[r]; // [rows]
+        const prevSyms = this.currentMatrix[r]; // [rows]
+
+        // Build continuous reel strip: target (rows) + filler (16) + previous (rows)
+        const fillerCount = 16;
+        const totalTilesCount = rows + fillerCount + rows;
+        const stripTiles = [];
+
+        // Top tiles: target landing symbols
+        for (let row = 0; row < rows; row++) {
+          stripTiles.push(targetSyms[row]);
+        }
+        // Middle tiles: random spinning symbols
+        for (let i = 0; i < fillerCount; i++) {
+          stripTiles.push(SYMBOL_POOL[Math.floor(Math.random() * SYMBOL_POOL.length)]);
+        }
+        // Bottom tiles: previous resting symbols
+        for (let row = 0; row < rows; row++) {
+          stripTiles.push(prevSyms[row] || 'cherry');
+        }
+
+        const tileH = reelCol.clientHeight / rows;
+        const scrollDist = (totalTilesCount - rows) * tileH;
+
+        reelStrip.innerHTML = stripTiles.map((symId, idx) => `
+          <div class="superhot-cell cell-tile sym-${symId}" style="height: ${tileH}px;">
+            <div class="superhot-sym-wrapper">
+              ${getSymbolHTML(symId)}
+            </div>
+            <div class="flame-particle-layer"></div>
+          </div>
+        `).join('');
+
+        // Start from bottom resting position
+        reelStrip.style.transition = 'none';
+        reelStrip.style.transform = `translateY(-${scrollDist}px)`;
+        void reelStrip.offsetWidth; // Force layout reflow
+
+        // Animate downwards with realistic deceleration curve
+        const dur = durations[r];
+        reelStrip.style.transition = `transform ${dur}ms cubic-bezier(0.2, 0.95, 0.35, 1.0)`;
+        reelStrip.style.transform = 'translateY(0px)';
+
+        // Schedule reel stop
         this.reelTimers[r] = setTimeout(() => {
           this.stopSingleReel(r);
-        }, baseStops[r]);
+        }, dur);
       }
 
       this.updateConsoleUI();
@@ -380,24 +455,47 @@
 
       this.reelStates[reelIdx] = 'locked';
 
-      // Update symbols for this reel in currentMatrix
+      // Update currentMatrix
       const { rows } = this.engine.getGridDimensions(this.selectedLines);
       for (let row = 0; row < rows; row++) {
         this.currentMatrix[reelIdx][row] = this.lastEvaluation.matrix[reelIdx][row];
       }
 
       // Update DOM
-      const reelEl = this.dom.grid.querySelector(`.superhot-reel-column[data-reel-index="${reelIdx}"]`);
-      if (reelEl) {
-        reelEl.classList.remove('is-spinning');
-        reelEl.classList.remove('has-suspense');
-        const cells = reelEl.querySelectorAll('.superhot-cell');
-        cells.forEach((cell, row) => {
-          const symId = this.currentMatrix[reelIdx][row];
-          cell.className = `superhot-cell cell-${reelIdx}-${row} sym-${symId}`;
-          const wrap = cell.querySelector('.superhot-sym-wrapper');
-          if (wrap) wrap.innerHTML = getSymbolHTML(symId);
-        });
+      const reelCol = this.dom.grid.querySelector(`.superhot-reel-column[data-reel-index="${reelIdx}"]`);
+      if (reelCol) {
+        reelCol.classList.remove('is-spinning');
+        reelCol.classList.remove('has-suspense');
+
+        const reelStrip = reelCol.querySelector('.superhot-reel-strip');
+        if (reelStrip) {
+          // Rebuild final resting cells
+          reelStrip.innerHTML = '';
+          for (let row = 0; row < rows; row++) {
+            const symId = this.currentMatrix[reelIdx][row];
+            const cell = document.createElement('div');
+            cell.className = `superhot-cell cell-${reelIdx}-${row} sym-${symId}`;
+            cell.setAttribute('data-reel', reelIdx);
+            cell.setAttribute('data-row', row);
+            cell.style.height = `${100 / rows}%`;
+            cell.innerHTML = `
+              <div class="superhot-sym-wrapper">
+                ${getSymbolHTML(symId)}
+              </div>
+              <div class="flame-particle-layer"></div>
+            `;
+            reelStrip.appendChild(cell);
+          }
+
+          // Apply authentic mechanical snap-bounce keyframe animation
+          reelStrip.style.transition = 'none';
+          reelStrip.style.setProperty('--stop-overshoot', '15px');
+          reelStrip.style.setProperty('--stop-rebound', '-6px');
+          reelStrip.style.setProperty('--stop-micro', '2px');
+          reelStrip.style.setProperty('--stop-target', '0px');
+          reelStrip.classList.add('mechanical-snap-bounce');
+          reelStrip.style.transform = 'translateY(0px)';
+        }
       }
 
       // Sound
@@ -424,9 +522,15 @@
     slamStop() {
       if (!this.isSpinning) return;
       if (this.audio) this.audio.playSlamStop();
+      let delay = 0;
       for (let r = 0; r < 5; r++) {
         if (this.reelStates[r] === 'spinning') {
-          this.stopSingleReel(r);
+          setTimeout(() => {
+            if (this.reelStates[r] === 'spinning') {
+              this.stopSingleReel(r);
+            }
+          }, delay);
+          delay += 60;
         }
       }
     }
