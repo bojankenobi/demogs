@@ -20552,12 +20552,12 @@ body.theme-royale .stage-bezel {
 
 /* ==========================================================================
    EUROPEAN ROYAL ROULETTE (EVROPSKI RULET PROFESIONAL)
-   Authentic Serbian/European Terminal Standard - Fullscreen Scalable Architecture
+   Betsoft-Style 3D Luxury European Roulette Architecture
    ========================================================================== */
 .roulette-stage-view {
   width: 100%;
-  max-width: 1360px;
-  min-height: 84vh;
+  max-width: 1400px;
+  min-height: 86vh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -20569,18 +20569,18 @@ body.theme-royale .stage-bezel {
 .roulette-cabinet-panel {
   width: 100%;
   max-width: 100%;
-  background: radial-gradient(circle at 50% 0%, #1c150c 0%, #0d0a08 60%, #050403 100%);
-  border: 2px solid #ffd700;
-  border-radius: 20px;
+  background: radial-gradient(ellipse at 50% 20%, #1e140a 0%, #100b06 50%, #060402 100%);
+  border: 2px solid #d4af37;
+  border-radius: 22px;
   padding: 14px 18px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), inset 0 0 35px rgba(246, 200, 69, 0.12);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), inset 0 0 35px rgba(212, 175, 55, 0.12);
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: relative;
 }
 
-/* View Mode Navigation Tabs */
+/* View Mode Navigation Tabs (Kept for compatibility & direct switching) */
 .roulette-view-tabs {
   display: flex;
   gap: 8px;
@@ -20622,100 +20622,213 @@ body.theme-royale .stage-bezel {
   font-weight: 900;
 }
 
-/* Top Status & Canvas Wheel Arena */
+/* Top Stage: Left HUD, Center 3D Wheel, Right LED Billboard */
 .roulette-top-row {
   width: 100%;
+  max-width: 1220px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 2px 8px;
+  gap: 16px;
+  padding: 4px 8px;
   transition: all 0.3s ease;
+  position: relative;
 }
 
-.roulette-wheel-box {
-  width: 250px;
-  height: 250px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.9));
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-}
-
-#roulette-wheel-canvas {
-  border-radius: 50%;
-  max-width: 100%;
-  height: auto;
-  transition: all 0.3s ease;
-}
-
-/* Centered Live Wheel Enlargement in Wheel Mode */
-.roulette-cabinet-panel.view-wheel-active .roulette-top-row {
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-}
-
-.roulette-cabinet-panel.view-wheel-active .roulette-wheel-box {
-  width: 440px;
-  height: 440px;
-  max-width: 90vw;
-  max-height: 90vw;
-  margin: 0 auto;
-}
-
-.roulette-cabinet-panel.view-wheel-active #roulette-wheel-canvas {
-  box-shadow: 0 0 35px rgba(255, 215, 0, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.85);
-}
-
-.roulette-cabinet-panel.view-wheel-active .roulette-info-box {
-  width: 100%;
-  max-width: 680px;
-  align-items: center;
-  text-align: center;
-}
-
-.roulette-info-box {
+/* Left HUD (Betsoft Top-Left Limits & Bet Info) */
+.roulette-hud-left {
   flex: 1;
+  max-width: 240px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 250px;
+  gap: 6px;
 }
 
-.roulette-title-badge {
+.hud-badge-card {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.hud-badge-title {
   font-family: 'Cinzel', serif;
-  font-size: 1.05rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.hud-badge-val {
+  font-family: 'Cinzel', serif;
+  font-size: 1.25rem;
   font-weight: 900;
-  color: #ffd700;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-  letter-spacing: 1px;
+  color: #10b981;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.hud-badge-limits {
+  font-size: 0.62rem;
+  color: #22c55e;
+  font-weight: 700;
+  letter-spacing: 0.4px;
 }
 
 .roulette-status-banner {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: 8px;
-  font-size: 0.8rem;
+  font-size: 0.76rem;
   font-weight: 700;
   line-height: 1.35;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .roulette-status-banner.normal {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.2);
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 215, 0, 0.25);
   color: #e2e8f0;
 }
 
 .roulette-status-banner.win {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.15) 100%);
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.2) 100%);
   border: 1.5px solid #10b981;
   color: #a7f3d0;
   text-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
 }
 
+/* Center 3D Perspective Wheel Arena */
+.roulette-wheel-box {
+  width: 360px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.roulette-perspective-bowl {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.95));
+}
+
+#roulette-wheel-canvas {
+  max-width: 100%;
+  height: auto;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* Right LED Billboard (Betsoft Top-Right Winning Number Board) */
+.roulette-billboard-right {
+  flex: 1;
+  max-width: 240px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.roulette-led-billboard {
+  display: flex;
+  gap: 8px;
+  background: #000;
+  border: 2.5px solid #475569;
+  border-radius: 10px;
+  padding: 6px 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9);
+  min-width: 170px;
+  height: 90px;
+  transition: all 0.3s ease;
+}
+
+.roulette-led-billboard.billboard-red {
+  border-color: #dc2626;
+  box-shadow: 0 0 18px rgba(220, 38, 38, 0.45);
+}
+
+.roulette-led-billboard.billboard-red .billboard-main-col {
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+}
+
+.roulette-led-billboard.billboard-black {
+  border-color: #52525b;
+  box-shadow: 0 0 18px rgba(82, 82, 91, 0.45);
+}
+
+.roulette-led-billboard.billboard-black .billboard-main-col {
+  background: linear-gradient(180deg, #27272a 0%, #09090b 100%);
+}
+
+.roulette-led-billboard.billboard-green {
+  border-color: #059669;
+  box-shadow: 0 0 18px rgba(5, 150, 105, 0.45);
+}
+
+.roulette-led-billboard.billboard-green .billboard-main-col {
+  background: linear-gradient(180deg, #059669 0%, #064e3b 100%);
+}
+
+.billboard-main-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.billboard-big-num {
+  font-family: 'Cinzel', serif;
+  font-size: 2.3rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.billboard-sub-text {
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: 0.8px;
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+
+.billboard-hist-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  justify-content: center;
+}
+
+.bb-pill {
+  font-size: 0.72rem;
+  font-weight: 800;
+  width: 26px;
+  text-align: center;
+  border-radius: 3px;
+  padding: 1px 0;
+  font-family: 'Cinzel', serif;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.bb-pill.pill-red { color: #ef4444; }
+.bb-pill.pill-black { color: #cbd5e1; }
+.bb-pill.pill-green { color: #34d399; }
+
+/* Compatibility history list styling */
 .roulette-history-row {
   display: flex;
   align-items: center;
@@ -20757,25 +20870,8 @@ body.theme-royale .stage-bezel {
 .roulette-hist-pill.pill-red { background: #dc2626; }
 .roulette-hist-pill.pill-black { background: #18181b; }
 
-.roulette-bet-summary {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.78rem;
-  color: #94a3b8;
-  font-weight: 700;
-}
-
-.roulette-bet-summary strong {
-  font-size: 1.1rem;
-  color: #ffd700;
-  font-family: 'Cinzel', serif;
-  font-weight: 900;
-  text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
-}
-
 /* ==========================================================================
-   SECTION 1: Authentic European Table Felt (Sto & Ulozi)
+   SECTION 1: Authentic Betsoft 3D Green Felt Table (Sto za Rulet)
    ========================================================================== */
 .roulette-felt-container {
   width: 100%;
@@ -20787,38 +20883,123 @@ body.theme-royale .stage-bezel {
   padding: 4px 0;
 }
 
-.roulette-table-felt {
+/* Outer Mahogany Armrest / Table Wood Rim */
+.roulette-table-wood-rim {
+  background: linear-gradient(180deg, #2c1609 0%, #150a04 100%);
+  border: 3.5px solid #5a2e0e;
+  border-radius: 24px;
+  padding: 10px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), inset 0 2px 4px rgba(255, 255, 255, 0.12);
   width: 100%;
   max-width: 1220px;
-  min-width: 760px;
-  background: radial-gradient(ellipse at 50% 40%, #0d542b 0%, #073a1d 70%, #031e0e 100%);
-  border: 3.5px solid #d4af37;
-  border-radius: 18px;
-  padding: 12px;
-  display: grid;
-  grid-template-columns: 60px 1fr 52px;
-  grid-template-rows: auto auto auto;
-  gap: 4px;
-  box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.85), 0 12px 35px rgba(0, 0, 0, 0.7);
   position: relative;
 }
 
-/* Zero Column (0) - Spans all 3 rows */
-.roulette-zero-col {
+/* Green Casino Felt Mat */
+.roulette-table-felt {
+  width: 100%;
+  min-width: 780px;
+  background: radial-gradient(ellipse at 50% 30%, #1e5631 0%, #133a20 60%, #0a2213 100%);
+  border: 2.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 82px 1fr 54px;
+  grid-template-rows: auto auto auto;
+  gap: 3px;
+  position: relative;
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.75);
+}
+
+/* Physical Brass Croupier Dolly Marker (Teg) */
+.roulette-dolly-marker {
+  position: absolute;
+  width: 28px;
+  height: 52px;
+  pointer-events: none;
+  z-index: 25;
+  transform: translate(-50%, -75%);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dolly-head {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fffbeb 0%, #facc15 45%, #ca8a04 80%, #713f12 100%);
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.dolly-body {
+  width: 10px;
+  height: 22px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, #713f12 0%, #fef08a 35%, #eab308 65%, #854d0e 100%);
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.dolly-base {
+  width: 26px;
+  height: 16px;
+  margin: 0 auto;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #fef08a 0%, #ca8a04 50%, #451a03 100%);
+  border: 1px solid #fef08a;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+}
+
+.dolly-shadow {
+  width: 32px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  filter: blur(3px);
+  margin: 2px auto 0;
+}
+
+/* Floating Win Marquee Badge */
+.roulette-win-floater {
+  position: absolute;
+  z-index: 30;
+  pointer-events: none;
+  background: #064e3b;
+  border: 1.5px solid #10b981;
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: #a7f3d0;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 900;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 0 12px rgba(16, 185, 129, 0.6);
+  transform: translate(-50%, -140%);
+  animation: floatBounce 0.4s ease-out;
+}
+
+@keyframes floatBounce {
+  0% { transform: translate(-50%, -100%) scale(0.7); opacity: 0; }
+  70% { transform: translate(-50%, -150%) scale(1.1); opacity: 1; }
+  100% { transform: translate(-50%, -140%) scale(1); opacity: 1; }
+}
+
+/* Zero Dome (0) - Spans all 3 rows with rounded left pill shape */
+.roulette-zero-dome {
   grid-column: 1;
   grid-row: 1;
   display: flex;
+  position: relative;
 }
 
 .spot-zero {
   width: 100%;
   height: 100%;
   min-height: 162px;
-  background: linear-gradient(180deg, #059669 0%, #047857 50%, #065f46 100%);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  border-radius: 10px 0 0 0;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 40px 0 0 0;
   color: #fff;
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 900;
   cursor: pointer;
   display: flex;
@@ -20827,6 +21008,23 @@ body.theme-royale .stage-bezel {
   position: relative;
   transition: all 0.15s ease;
   font-family: 'Cinzel', serif;
+}
+
+.spot-zero:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.zero-line-hits {
+  position: absolute;
+  right: -7px;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  z-index: 6;
 }
 
 /* Numbers Grid (3 rows x 12 columns) */
@@ -20835,42 +21033,138 @@ body.theme-royale .stage-bezel {
   grid-row: 1;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(3, 52px);
-  gap: 3px;
+  grid-template-rows: repeat(3, 54px);
+  gap: 2px;
   position: relative;
+}
+
+.felt-cell-wrap {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
 }
 
 .roulette-bet-spot {
   position: relative;
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
-  border-radius: 5px;
-  font-family: 'Cinzel', serif;
-  font-size: 0.92rem;
-  font-weight: 900;
-  color: #fff;
+  flex: 1;
+  height: 100%;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 4px;
+  background: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  padding: 0;
   user-select: none;
+  transition: all 0.15s ease;
 }
 
 .roulette-bet-spot:hover {
-  filter: brightness(1.3);
-  transform: scale(1.02);
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.12);
   z-index: 2;
 }
 
-.spot-red {
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+/* Betsoft Oval Capsules / Medallions */
+.spot-medallion {
+  width: 36px;
+  height: 26px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
 }
 
-.spot-black {
-  background: linear-gradient(135deg, #27272a 0%, #09090b 100%);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+.spot-red .spot-medallion {
+  background: linear-gradient(180deg, #ff4d4d 0%, #e60000 50%, #990000 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.spot-black .spot-medallion {
+  background: linear-gradient(180deg, #3f3f46 0%, #18181b 50%, #09090b 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Embedded Line Hitpoints (Splits, Corners, Streets, Six-Lines) */
+.line-hit {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.line-hit.hit-split-h {
+  position: absolute;
+  right: -7px;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  z-index: 6;
+  cursor: pointer;
+}
+
+.line-hit.hit-split-v {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -7px;
+  height: 14px;
+  z-index: 6;
+  cursor: pointer;
+}
+
+.line-hit.hit-corner {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  z-index: 7;
+  cursor: pointer;
+}
+
+.line-hit.hit-street {
+  position: absolute;
+  bottom: -7px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  z-index: 6;
+  cursor: pointer;
+}
+
+.line-hit.hit-sixline {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  z-index: 7;
+  cursor: pointer;
+}
+
+.line-hit:hover {
+  background: rgba(255, 215, 0, 0.5) !important;
+  box-shadow: 0 0 10px #ffd700 !important;
+  border-radius: 4px;
+}
+
+.hit-corner:hover,
+.hit-sixline:hover {
+  background: #ffd700 !important;
+  border-radius: 50% !important;
 }
 
 /* Columns Strip (2:1) */
@@ -20878,68 +21172,112 @@ body.theme-royale .stage-bezel {
   grid-column: 3;
   grid-row: 1;
   display: grid;
-  grid-template-rows: repeat(3, 52px);
-  gap: 3px;
+  grid-template-rows: repeat(3, 54px);
+  gap: 2px;
 }
 
 .spot-col {
   height: 100%;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1.5px solid rgba(255, 215, 0, 0.4);
-  color: #ffd700;
-  font-size: 0.82rem;
-  font-weight: 900;
+  background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
   border-radius: 0 6px 6px 0;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-/* Dozens Row (2:1) */
+.spot-col:hover {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: #ffd700;
+}
+
+/* Dozens Row (Three White Rounded Enclosures: 1st 12, 2nd 12, 3rd 12) */
 .roulette-dozens-row {
   grid-column: 2;
   grid-row: 2;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 3px;
+  gap: 4px;
   margin-top: 4px;
 }
 
-.spot-dozen {
-  background: rgba(0, 0, 0, 0.55);
-  border: 1.5px solid rgba(255, 215, 0, 0.35);
+.dozen-box {
+  background: rgba(0, 0, 0, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 6px;
   padding: 10px 4px;
-  font-size: 0.82rem;
-  color: #ffd700;
-  font-weight: 900;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: #fff;
+  font-weight: 800;
   letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-/* Outside Bets Row (1:1) */
+.dozen-box:hover {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.15);
+}
+
+/* Outside Bets Row (1-18, PAR, Red Diamond, Black Diamond, NEPAR, 19-36) */
 .roulette-outside-row {
   grid-column: 2;
   grid-row: 3;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 3px;
+  gap: 4px;
   margin-top: 4px;
 }
 
 .spot-outside {
-  background: rgba(0, 0, 0, 0.55);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: 6px;
   padding: 10px 4px;
-  font-size: 0.8rem;
-  font-weight: 900;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 800;
   color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
 }
 
-.spot-outside-red {
-  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+.spot-outside:hover {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.15);
 }
 
-.spot-outside-black {
-  background: linear-gradient(135deg, #27272a 0%, #09090b 100%);
+.diamond-icon {
+  line-height: 1;
 }
 
-/* Structured Inside Bets Dock (Splits, Streets, Corners, Six-Lines, Trios) */
+.diamond-red {
+  color: #ef4444;
+  font-size: 1.6rem;
+  text-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
+}
+
+.diamond-black {
+  color: #18181b;
+  font-size: 1.6rem;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.6);
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Inside Bets Quick Dock (Kept for compatibility & test suite) */
 .roulette-inside-bets-dock {
   width: 100%;
   max-width: 1220px;
@@ -20975,20 +21313,6 @@ body.theme-royale .stage-bezel {
   font-size: 0.65rem;
   color: #94a3b8;
   font-weight: 700;
-}
-
-.inside-bets-subgroup {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.subgroup-badge {
-  font-size: 0.62rem;
-  font-weight: 900;
-  color: #f6c845;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
 }
 
 .inside-bets-chips-row {
@@ -21029,30 +21353,71 @@ body.theme-royale .stage-bezel {
 }
 
 /* ==========================================================================
-   SECTION 2: Authentic French Stadium Racetrack (Francuski Oval & Serije)
+   SECTION 2: Pop-out French Stadium Racetrack Modal (Francuski Oval & Serije)
    ========================================================================== */
-.roulette-oval-container {
+.roulette-oval-popout-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(8px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.roulette-oval-popout-modal {
+  background: radial-gradient(ellipse at 50% 20%, #1c150c 0%, #0d0a07 100%);
+  border: 2.5px solid #d4af37;
+  border-radius: 20px;
+  padding: 18px 22px;
+  max-width: 1040px;
   width: 100%;
-  max-width: 1220px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95), inset 0 0 35px rgba(212, 175, 55, 0.15);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  align-items: center;
-  overflow-x: auto;
-  padding: 4px 0;
 }
 
-.roulette-krunica-bar {
+.oval-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  border-radius: 12px;
-  padding: 10px 16px;
-  width: 100%;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+  padding-bottom: 10px;
   flex-wrap: wrap;
+}
+
+.btn-modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 215, 0, 0.4);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  color: #ffd700;
+  font-size: 1.1rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-modal-close:hover {
+  background: #ffd700;
+  color: #120900;
+  transform: rotate(90deg);
 }
 
 .krunica-title-block {
@@ -21378,8 +21743,8 @@ body.theme-royale .stage-bezel {
   font-family: 'Cinzel', serif;
 }
 
-.seg-red { background: #dc2626; }
-.seg-black { background: #18181b; }
+.dist-seg.seg-red { background: #dc2626; }
+.dist-seg.seg-black { background: #18181b; }
 
 .wheel-zoom-card {
   width: 100%;
@@ -21464,18 +21829,217 @@ body.theme-royale .stage-bezel {
   100% { box-shadow: inset 0 0 35px #34d399, 0 0 25px #34d399; }
 }
 
-/* Control Deck */
-.roulette-control-deck {
+/* ==========================================================================
+   Betsoft Sleek Dark Glass Control Console (Bottom Bar)
+   ========================================================================== */
+.roulette-glass-console {
   width: 100%;
+  max-width: 1220px;
+  margin: 10px auto 0;
+  background: rgba(14, 14, 18, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 16px;
+  padding: 10px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 215, 0, 0.2);
+  gap: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+  position: relative;
 }
 
+.console-left-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.console-left-actions .btn-roulette-action {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.console-left-actions .btn-roulette-action:hover {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: #ffd700;
+  color: #ffd700;
+  transform: translateY(-1px);
+}
+
+.console-center-meters {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.console-meter-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meter-wallet {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffd700;
+}
+
+.meter-wallet .meter-icon {
+  font-size: 1.2rem;
+}
+
+.console-chip-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-chip-step {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.btn-chip-step:hover {
+  background: #ffd700;
+  color: #120900;
+  border-color: #ffd700;
+}
+
+.active-chip-showcase {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2.5px dashed #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 215, 0, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #10b981, #047857);
+}
+
+.active-chip-showcase.chip-val-10 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.active-chip-showcase.chip-val-20 { background: linear-gradient(135deg, #10b981, #047857); }
+.active-chip-showcase.chip-val-50 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.active-chip-showcase.chip-val-100 { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.active-chip-showcase.chip-val-500 { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.active-chip-showcase.chip-val-1000 { background: linear-gradient(135deg, #ec4899, #be185d); }
+
+.meter-win {
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.meter-win .meter-label {
+  font-size: 0.6rem;
+  color: #94a3b8;
+  font-weight: 800;
+  font-family: 'Cinzel', serif;
+}
+
+.meter-win .win-val {
+  font-size: 1.05rem;
+  color: #10b981;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.console-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-oval-popout-trigger {
+  padding: 10px 16px;
+  background: rgba(255, 215, 0, 0.12);
+  border: 1.5px solid #ffd700;
+  border-radius: 12px;
+  color: #ffd700;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-oval-popout-trigger:hover {
+  background: #ffd700;
+  color: #120900;
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.master-spin-btn {
+  min-width: 145px;
+  height: 48px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #fff2a3 0%, #ffd700 40%, #b8860b 80%, #7d5705 100%);
+  border: 2px solid #ffffff;
+  color: #120900;
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 18px rgba(246, 200, 69, 0.6);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.master-spin-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+  box-shadow: 0 8px 25px rgba(246, 200, 69, 0.8);
+}
+
+.master-spin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  filter: grayscale(0.5);
+}
+
+/* Hidden elements compatibility */
 .roulette-chips-strip {
   display: flex;
   gap: 8px;
@@ -21494,86 +22058,7 @@ body.theme-royale .stage-bezel {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
   position: relative;
-}
-
-.roulette-chip-opt.chip-10 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-.roulette-chip-opt.chip-20 { background: linear-gradient(135deg, #10b981, #047857); }
-.roulette-chip-opt.chip-50 { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-.roulette-chip-opt.chip-100 { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
-.roulette-chip-opt.chip-500 { background: linear-gradient(135deg, #f59e0b, #b45309); }
-.roulette-chip-opt.chip-1000 { background: linear-gradient(135deg, #ec4899, #be185d); }
-
-.roulette-chip-opt.selected {
-  transform: scale(1.22) translateY(-3px);
-  border-color: #ffd700;
-  box-shadow: 0 0 16px rgba(255, 215, 0, 0.8), 0 6px 14px rgba(0, 0, 0, 0.8);
-}
-
-.roulette-action-buttons {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.btn-roulette-action {
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-family: 'Cinzel', serif;
-  font-size: 0.75rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.btn-roulette-clear,
-.btn-roulette-undo,
-.btn-roulette-double,
-.btn-roulette-rebet {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  color: #e2e8f0;
-}
-
-.btn-roulette-clear:hover,
-.btn-roulette-undo:hover,
-.btn-roulette-double:hover,
-.btn-roulette-rebet:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: #ffd700;
-  color: #ffd700;
-  transform: translateY(-1px);
-}
-
-.btn-roulette-spin {
-  background: linear-gradient(180deg, #fff2a3 0%, #ffd700 40%, #b8860b 80%, #7d5705 100%);
-  border: 1.5px solid #ffffff;
-  color: #120900;
-  font-size: 0.88rem;
-  font-weight: 900;
-  padding: 10px 22px;
-  box-shadow: 0 4px 15px rgba(246, 200, 69, 0.5);
-  letter-spacing: 0.5px;
-}
-
-.btn-roulette-spin:hover:not(:disabled) {
-  transform: translateY(-2px);
-  filter: brightness(1.15);
-  box-shadow: 0 8px 25px rgba(246, 200, 69, 0.7);
-}
-
-.btn-roulette-spin:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  filter: grayscale(0.5);
 }
 
 @media (max-width: 960px) {
@@ -21582,9 +22067,12 @@ body.theme-royale .stage-bezel {
     align-items: center;
     text-align: center;
   }
-  .roulette-info-box {
+  .roulette-hud-left,
+  .roulette-billboard-right {
+    max-width: 100%;
+    width: 100%;
     align-items: center;
-    text-align: center;
+    justify-content: center;
   }
   .roulette-series-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -21592,10 +22080,14 @@ body.theme-royale .stage-bezel {
   .wheel-telemetrics-row {
     grid-template-columns: 1fr;
   }
-  .roulette-control-deck {
+  .roulette-glass-console {
+    flex-direction: column;
     justify-content: center;
+    gap: 12px;
   }
-  .roulette-action-buttons {
+  .console-left-actions,
+  .console-center-meters,
+  .console-right-actions {
     justify-content: center;
     width: 100%;
   }

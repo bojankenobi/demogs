@@ -50,7 +50,9 @@ class RoyalRouletteGame {
 
     this.isActive = false;
     this.isSpinning = false;
-    this.selectedChip = 20; // 10, 20, 50, 100, 500, 1000
+    this.chipDenominations = [10, 20, 50, 100, 500, 1000];
+    this.chipIndex = 1; // Default 20 ZLT
+    this.selectedChip = this.chipDenominations[this.chipIndex];
 
     // Bets storage: spotId -> { amount: number, type: string, numbers: number[], label: string }
     this.bets = {};
@@ -87,21 +89,138 @@ class RoyalRouletteGame {
     return RED_NUMBERS.includes(num) ? 'red' : 'black';
   }
 
+  updateActiveChip() {
+    this.selectedChip = this.chipDenominations[this.chipIndex];
+    const showcase = document.getElementById('roulette-active-chip-display');
+    if (showcase) {
+      showcase.className = `active-chip-showcase chip-val-${this.selectedChip}`;
+      const denomSpan = showcase.querySelector('.chip-denomination');
+      if (denomSpan) {
+        denomSpan.textContent = this.selectedChip >= 1000 ? '1k' : this.selectedChip;
+      }
+    }
+    const chips = document.querySelectorAll('.roulette-chip-opt');
+    chips.forEach(c => {
+      const val = Number(c.getAttribute('data-value'));
+      c.classList.toggle('selected', val === this.selectedChip);
+    });
+  }
+
+  updateWalletDisplay() {
+    const balEl = document.getElementById('roulette-wallet-balance');
+    if (balEl && this.wallet) {
+      balEl.textContent = `${this.wallet.balance.toLocaleString()} ZLT`;
+    }
+  }
+
+  updateBillboard(winNum) {
+    const winColor = this.getNumberColor(winNum);
+    const colorLabel = winColor === 'green' ? 'ZELENA NULA' : (winColor === 'red' ? 'CRVENO' : 'CRNO');
+    const parityLabel = winNum === 0 ? 'NULA' : (winNum % 2 === 0 ? 'PAR' : 'NEPAR');
+
+    const billboard = document.getElementById('roulette-billboard');
+    if (billboard) {
+      billboard.className = `roulette-led-billboard billboard-${winColor}`;
+    }
+
+    const numEl = document.getElementById('roulette-billboard-num');
+    if (numEl) numEl.textContent = winNum;
+
+    const tagEl = document.getElementById('roulette-billboard-tag');
+    if (tagEl) tagEl.textContent = `${colorLabel} • ${parityLabel}`;
+
+    const histCol = document.getElementById('roulette-billboard-history');
+    if (histCol) {
+      histCol.innerHTML = this.history.slice(0, 5).map(n => {
+        const c = this.getNumberColor(n);
+        return `<span class="bb-pill pill-${c}">${n}</span>`;
+      }).join('');
+    }
+  }
+
+  positionDolly(winNum) {
+    const dolly = document.getElementById('roulette-dolly-marker');
+    if (!dolly) return;
+    const feltEl = document.querySelector('.roulette-table-felt');
+    const spotEl = document.querySelector(`.roulette-spot[data-spot="num_${winNum}"]`);
+    if (feltEl && spotEl) {
+      const feltRect = feltEl.getBoundingClientRect();
+      const spotRect = spotEl.getBoundingClientRect();
+      const left = (spotRect.left + spotRect.width / 2) - feltRect.left;
+      const top = (spotRect.top + spotRect.height / 2) - feltRect.top;
+      dolly.style.left = `${left}px`;
+      dolly.style.top = `${top}px`;
+      dolly.style.display = 'block';
+    }
+  }
+
   /* ==========================================================================
      DOM Event Binding & Controls
      ========================================================================== */
   bindEvents() {
-    // 1. Chip Selector
+    // 1. Chip Stepper & Direct Selector
+    const btnChipPrev = document.getElementById('btn-chip-prev');
+    const btnChipNext = document.getElementById('btn-chip-next');
+    if (btnChipPrev) {
+      btnChipPrev.addEventListener('click', () => {
+        if (this.isSpinning) return;
+        if (this.chipIndex > 0) {
+          this.chipIndex--;
+          this.updateActiveChip();
+          this.playClick();
+        }
+      });
+    }
+    if (btnChipNext) {
+      btnChipNext.addEventListener('click', () => {
+        if (this.isSpinning) return;
+        if (this.chipIndex < this.chipDenominations.length - 1) {
+          this.chipIndex++;
+          this.updateActiveChip();
+          this.playClick();
+        }
+      });
+    }
+
     const chips = document.querySelectorAll('.roulette-chip-opt');
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
         if (this.isSpinning) return;
-        chips.forEach(c => c.classList.remove('selected'));
-        chip.classList.add('selected');
-        this.selectedChip = Number(chip.getAttribute('data-value')) || 20;
-        this.playClick();
+        const val = Number(chip.getAttribute('data-value')) || 20;
+        const idx = this.chipDenominations.indexOf(val);
+        if (idx !== -1) {
+          this.chipIndex = idx;
+          this.updateActiveChip();
+          this.playClick();
+        }
       });
     });
+
+    // Pop-out French Oval Modal Trigger & Close
+    const btnOvalTrigger = document.getElementById('btn-oval-popout-trigger');
+    const ovalSection = document.getElementById('roulette-oval-section');
+    const btnOvalClose = document.getElementById('btn-oval-modal-close');
+
+    if (btnOvalTrigger && ovalSection) {
+      btnOvalTrigger.addEventListener('click', () => {
+        ovalSection.style.display = 'flex';
+        this.playClick();
+      });
+    }
+    if (btnOvalClose && ovalSection) {
+      btnOvalClose.addEventListener('click', () => {
+        ovalSection.style.display = 'none';
+        this.playClick();
+      });
+    }
+    if (ovalSection) {
+      ovalSection.addEventListener('click', (e) => {
+        if (e.target === ovalSection) {
+          ovalSection.style.display = 'none';
+          this.playClick();
+        }
+      });
+    }
 
     // 2. View Mode Tabs (Sto, Oval / Serije, Točak)
     const viewTabs = document.querySelectorAll('.roulette-view-tab');
@@ -219,22 +338,26 @@ class RoyalRouletteGame {
     const dpr = window.devicePixelRatio || 1;
     const isWheelMode = this.activeViewTab === 'wheel';
 
-    let displaySize;
+    let displayW = 380;
+    let displayH = 260;
     if (isWheelMode) {
       const screenBound = typeof window !== 'undefined' ? window.innerWidth : 800;
-      displaySize = Math.min(440, Math.max(280, Math.floor(screenBound * 0.88)));
+      displayW = Math.min(460, Math.max(280, Math.floor(screenBound * 0.88)));
+      displayH = Math.floor(displayW * 0.78);
     } else {
-      displaySize = Math.min(260, Math.max(200, Math.floor(rect.width || 240)));
+      displayW = Math.min(380, Math.max(260, Math.floor(rect.width || 340)));
+      displayH = Math.floor(displayW * 0.74);
     }
 
-    this.canvasEl.width = displaySize * dpr;
-    this.canvasEl.height = displaySize * dpr;
-    this.canvasEl.style.width = `${displaySize}px`;
-    this.canvasEl.style.height = `${displaySize}px`;
+    this.canvasEl.width = displayW * dpr;
+    this.canvasEl.height = displayH * dpr;
+    this.canvasEl.style.width = `${displayW}px`;
+    this.canvasEl.style.height = `${displayH}px`;
 
     this.ctx = this.canvasEl.getContext('2d');
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    this.canvasSize = displaySize;
+    this.canvasSize = displayW;
+    this.canvasHeight = displayH;
 
     this.drawWheel(this.wheelAngle, this.ballAngle, this.ballRadius, this.isBallSettled, this.winningNumber);
   }
@@ -249,6 +372,15 @@ class RoyalRouletteGame {
     this.renderHistory();
     this.updateNeighborDisplay();
     this.updateTotalBetDisplay();
+    this.updateActiveChip();
+    this.updateWalletDisplay();
+    this.updateBillboard(this.history[0] || 0);
+
+    const dolly = document.getElementById('roulette-dolly-marker');
+    if (dolly) dolly.style.display = 'none';
+    const winFloater = document.getElementById('roulette-win-floater');
+    if (winFloater) winFloater.style.display = 'none';
+
     this.switchViewTab('table');
   }
 
@@ -405,6 +537,9 @@ class RoyalRouletteGame {
     // Deduct from wallet
     this.wallet.balance -= this.selectedChip;
     this.wallet.updateUI();
+    this.updateWalletDisplay();
+    const spinLabel = document.getElementById('roulette-spin-label');
+    if (spinLabel) spinLabel.textContent = 'ZAVRTI';
 
     if (!this.bets[spotId]) {
       const el = element || (typeof document !== 'undefined' && typeof document.querySelector === 'function' ? document.querySelector(`.roulette-spot[data-spot="${spotId}"]`) : null);
@@ -575,10 +710,21 @@ class RoyalRouletteGame {
     if (totalBet > 0 && this.wallet) {
       this.wallet.balance += totalBet;
       this.wallet.updateUI();
+      this.updateWalletDisplay();
     }
     this.bets = {};
     this.betHistoryStack = [];
     document.querySelectorAll('.roulette-chip-marker').forEach(m => m.remove());
+    const dolly = document.getElementById('roulette-dolly-marker');
+    if (dolly) dolly.style.display = 'none';
+    const winFloater = document.getElementById('roulette-win-floater');
+    if (winFloater) winFloater.style.display = 'none';
+    const winDisplay = document.getElementById('roulette-win-display');
+    if (winDisplay) winDisplay.textContent = '0.00 ZLT';
+    const spinLabel = document.getElementById('roulette-spin-label');
+    if (spinLabel && Object.keys(this.lastBets).length > 0) {
+      spinLabel.textContent = 'PONOVI & ZAVRTI';
+    }
     this.updateTotalBetDisplay();
     this.playClick();
   }
@@ -597,6 +743,7 @@ class RoyalRouletteGame {
 
     this.wallet.balance -= totalBet;
     this.wallet.updateUI();
+    this.updateWalletDisplay();
 
     Object.values(this.bets).forEach(bet => {
       bet.amount *= 2;
@@ -623,6 +770,7 @@ class RoyalRouletteGame {
 
     this.wallet.balance -= needed;
     this.wallet.updateUI();
+    this.updateWalletDisplay();
 
     this.bets = JSON.parse(JSON.stringify(this.lastBets));
     Object.values(this.bets).forEach(b => {
@@ -630,6 +778,8 @@ class RoyalRouletteGame {
     });
 
     this.updateTotalBetDisplay();
+    const spinLabel = document.getElementById('roulette-spin-label');
+    if (spinLabel) spinLabel.textContent = 'ZAVRTI';
     this.playClick();
   }
 
@@ -642,6 +792,7 @@ class RoyalRouletteGame {
 
     this.wallet.balance += last.amount;
     this.wallet.updateUI();
+    this.updateWalletDisplay();
 
     this.bets[last.spotId].amount -= last.amount;
     if (this.bets[last.spotId].amount <= 0) {
@@ -671,12 +822,19 @@ class RoyalRouletteGame {
   drawWheel(wheelAngle, ballAngle, ballRadiusNorm, isSettled, winNum) {
     if (!this.ctx || !this.canvasEl) return;
     const ctx = this.ctx;
-    const size = this.canvasSize;
-    const cx = size / 2;
-    const cy = size / 2;
-    const outerR = size * 0.48;
+    const w = this.canvasSize || 380;
+    const h = this.canvasHeight || 260;
+    const cx = w / 2;
+    const cy = h / 2 + 6;
+    const outerR = Math.min(w * 0.46, h * 0.58);
 
-    ctx.clearRect(0, 0, size, size);
+    ctx.clearRect(0, 0, w, h);
+
+    // 2.5D Elliptical Perspective Tilt Matrix
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(1, 0.78);
+    ctx.translate(-cx, -cy);
 
     // 1. Polished Mahogany Outer Bowl Rim
     const woodGrad = ctx.createRadialGradient(cx, cy, outerR * 0.75, cx, cy, outerR);
@@ -889,6 +1047,8 @@ class RoyalRouletteGame {
       ctx.lineWidth = 0.5;
       ctx.stroke();
     }
+
+    ctx.restore(); // Restore 2.5D perspective transformation
   }
 
   /* ==========================================================================
@@ -899,10 +1059,17 @@ class RoyalRouletteGame {
 
     const totalBet = Object.values(this.bets).reduce((sum, b) => sum + b.amount, 0);
     if (totalBet === 0) {
-      if (typeof window.slotApp?.showMessage === 'function') {
-        window.slotApp.showMessage('⚠️ Postavite uloge na stolu ili ovalu pre okretanja!', 'normal');
+      // Rebet & Spin UX if previous bets exist
+      if (Object.keys(this.lastBets).length > 0) {
+        this.rebet();
+        const newTotal = Object.values(this.bets).reduce((sum, b) => sum + b.amount, 0);
+        if (newTotal === 0) return;
+      } else {
+        if (typeof window.slotApp?.showMessage === 'function') {
+          window.slotApp.showMessage('⚠️ Postavite uloge na stolu pre okretanja!', 'normal');
+        }
+        return;
       }
-      return;
     }
 
     this.isSpinning = true;
@@ -914,6 +1081,11 @@ class RoyalRouletteGame {
       btnSpin.disabled = true;
       btnSpin.classList.add('spinning');
     }
+
+    const dolly = document.getElementById('roulette-dolly-marker');
+    if (dolly) dolly.style.display = 'none';
+    const winFloater = document.getElementById('roulette-win-floater');
+    if (winFloater) winFloater.style.display = 'none';
 
     // Pick winning number (0-36)
     const winNum = Math.floor(Math.random() * 37);
@@ -1001,8 +1173,13 @@ class RoyalRouletteGame {
       btnSpin.classList.remove('spinning');
     }
 
+    const spinLabel = document.getElementById('roulette-spin-label');
+    if (spinLabel) spinLabel.textContent = 'PONOVI & ZAVRTI';
+
     this.history.unshift(winNum);
     this.renderHistory();
+    this.updateBillboard(winNum);
+    this.positionDolly(winNum);
 
     const winColor = this.getNumberColor(winNum);
     const colorLabel = winColor === 'green' ? 'ZELENA NULA' : (winColor === 'red' ? 'CRVENO' : 'CRNO');
@@ -1050,6 +1227,20 @@ class RoyalRouletteGame {
     if (totalWon > 0) {
       this.wallet.balance += totalWon;
       this.wallet.updateUI();
+      this.updateWalletDisplay();
+
+      const winDisplay = document.getElementById('roulette-win-display');
+      if (winDisplay) winDisplay.textContent = `+${totalWon.toLocaleString()} ZLT`;
+
+      const dolly = document.getElementById('roulette-dolly-marker');
+      const winFloater = document.getElementById('roulette-win-floater');
+      const floaterText = document.getElementById('win-floater-text');
+      if (winFloater && floaterText && dolly && dolly.style.display !== 'none') {
+        floaterText.textContent = `DOBITAK +${totalWon.toLocaleString()} ZLT`;
+        winFloater.style.left = dolly.style.left;
+        winFloater.style.top = dolly.style.top;
+        winFloater.style.display = 'block';
+      }
 
       this.playWinChime();
       if (window.particleEngine && window.particleEngine.burst) window.particleEngine.burst(300, 250);
@@ -1073,6 +1264,11 @@ class RoyalRouletteGame {
         window.slotApp.playerTracker.recordSpin('roulette', Object.values(this.bets).reduce((s, b) => s + b.amount, 0), totalWon);
       }
     } else {
+      const winDisplay = document.getElementById('roulette-win-display');
+      if (winDisplay) winDisplay.textContent = '0.00 ZLT';
+      const winFloater = document.getElementById('roulette-win-floater');
+      if (winFloater) winFloater.style.display = 'none';
+
       if (statusBanner) {
         statusBanner.textContent = `🎯 POBEDNIČKI BROJ: ${winNum} (${colorLabel}). Nema dobitka u ovoj rundi.`;
         statusBanner.className = 'roulette-status-banner normal';
