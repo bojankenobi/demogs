@@ -4,7 +4,7 @@
  * Completely isolated from main casino game service worker
  */
 
-const SCANNER_CACHE_NAME = 'gsc-staff-scanner-pwa-v1';
+const SCANNER_CACHE_NAME = 'gsc-staff-scanner-pwa-v2';
 const SCANNER_ASSETS = [
   './',
   './index.html',

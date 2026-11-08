@@ -20627,3 +20627,24 @@ body.theme-royale .stage-bezel {
   font-size: 1.4rem;
 }
 
+
+/* ==========================================================================
+   PWA INSTALLATION SUPPRESSION (ONCE INSTALLED OR RUNNING IN STANDALONE)
+   ========================================================================== */
+@media all and (display-mode: standalone) {
+  #pwa-install-btn,
+  #pwa-install-banner,
+  .pwa-install-banner,
+  #menu-opt-install,
+  .btn-install {
+    display: none !important;
+  }
+}
+
+body.pwa-is-installed #pwa-install-btn,
+body.pwa-is-installed #pwa-install-banner,
+body.pwa-is-installed .pwa-install-banner,
+body.pwa-is-installed #menu-opt-install,
+body.pwa-is-installed .btn-install {
+  display: none !important;
+}

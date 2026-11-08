@@ -2889,7 +2889,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if running in standalone mode (already installed)
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                        window.navigator.standalone === true ||
-                       document.referrer.includes('android-app://');
+                       document.referrer.includes('android-app://') ||
+                       localStorage.getItem('gsc_pwa_installed') === 'true';
+
+  if (isStandalone) {
+    document.body.classList.add('pwa-is-installed');
+    if (installBtn) installBtn.style.display = 'none';
+    if (installBanner) installBanner.style.display = 'none';
+    const optInstall = document.getElementById('menu-opt-install');
+    if (optInstall) optInstall.style.display = 'none';
+  }
 
   // Detect iOS Safari
   const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -2998,15 +3007,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // App Installed Event Listener
+  // App Installed Event Listener (Permanently suppress install offers)
   window.addEventListener('appinstalled', () => {
+    localStorage.setItem('gsc_pwa_installed', 'true');
+    document.body.classList.add('pwa-is-installed');
     hideInstallBanner(true);
-    if (installBtn) installBtn.classList.remove('is-pulse');
+    if (installBtn) {
+      installBtn.classList.remove('is-pulse');
+      installBtn.style.display = 'none';
+    }
+    const optInstall = document.getElementById('menu-opt-install');
+    if (optInstall) optInstall.style.display = 'none';
     if (app && typeof app.showMessage === 'function') {
       const msg = window.i18n ? window.i18n.t('pwaInstalledSuccess') : 'Aplikacija je uspešno instalirana!';
       app.showMessage(msg, 'jackpot');
     }
   });
+
+  // Automated Zero-Touch PWA Background Updates
+  if ('serviceWorker' in navigator) {
+    let isRefreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!isRefreshing) {
+        isRefreshing = true;
+        window.location.reload();
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        navigator.serviceWorker.getRegistration().then(reg => {
+          if (reg) reg.update();
+        });
+      }
+    });
+
+    setInterval(() => {
+      navigator.serviceWorker.getRegistration().then(reg => {
+        if (reg) reg.update();
+      });
+    }, 15 * 60 * 1000);
+  }
 
   // Prompt banner on iOS or first visit if not installed
   if (!isStandalone) {

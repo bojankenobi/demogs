@@ -13,7 +13,7 @@
   <meta name="apple-mobile-web-app-title" content="GSC Skener">
   <link rel="apple-touch-icon" href="../assets/icons/apple-touch-icon.png">
   <meta name="theme-color" content="#0e121c">
-  <link rel="stylesheet" href="../css/scanner.css?v=3">
+  <link rel="stylesheet" href="../css/scanner.css?v=4">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
@@ -121,17 +121,53 @@
       </div>
     </section>
 
-    <!-- Shift Scans Audit Log -->
+    <!-- Shift Scans Audit Log & Real-World Casino Proof Table -->
     <section class="scans-log-card">
-      <div class="scans-log-title">
-        <span>Izdati Vaučeri u Ovoj Smeni</span>
-        <span id="shift-count-badge" style="color: var(--text-muted);">Ukupno: 0</span>
+      <div class="scans-log-header-row">
+        <div>
+          <h2 class="scans-log-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            DNEVNIK IZDAVANJA VAUČERA (SMENA)
+          </h2>
+          <div class="scans-log-subtitle" id="shift-summary-subtitle">Potvrđeni vaučeri za realizaciju na šanku ili blagajni kazina</div>
+        </div>
+        <div class="scans-log-controls">
+          <span class="badge-shift-count" id="shift-count-badge">Ukupno: 0 vaučera</span>
+          <button type="button" class="btn-export-shift" id="btn-export-shift" title="Preuzmi / Odštampaj izveštaj smene">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px; margin-right: 4px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Izveštaj Smene
+          </button>
+        </div>
       </div>
-      <ul class="scans-log-list" id="shift-scans-list">
-        <li style="color: var(--text-muted); font-size: 0.75rem; text-align: center; padding: 10px;">
-          Još uvek nema skeniranih vaučera u ovoj smeni.
-        </li>
-      </ul>
+
+      <!-- Quick Filter -->
+      <div class="scans-filter-row">
+        <input type="text" id="input-filter-scans" class="scans-filter-input" placeholder="Pretraži po kodu vaučera ili imenu gosta...">
+      </div>
+
+      <!-- Real-World Verification Audit Table -->
+      <div class="scans-table-container">
+        <table class="scans-audit-table" id="scans-audit-table">
+          <thead>
+            <tr>
+              <th>Vreme</th>
+              <th>Gost / Igrač</th>
+              <th>Promocija / Artikal</th>
+              <th>Vrednost</th>
+              <th>Kod Vaučera</th>
+              <th>Status / Potvrda</th>
+              <th>Potvrda</th>
+            </tr>
+          </thead>
+          <tbody id="shift-scans-tbody">
+            <tr class="scans-empty-row">
+              <td colspan="7">Još uvek nema realizovanih vaučera u ovoj smeni.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Backward compatible hidden list container -->
+      <ul class="scans-log-list" id="shift-scans-list" style="display: none;"></ul>
     </section>
 
     <!-- Staff Auth Gate Overlay (Mandatory PIN Verification to Prevent Abuse) -->
@@ -200,7 +236,12 @@
         this.statusText = document.getElementById('camera-status-text');
         this.verifCard = document.getElementById('verification-card');
         this.currentInspectedVoucher = null;
-        this.shiftScans = [];
+        try {
+          const rawScans = localStorage.getItem('gsc_redeemed_scans_demo') || '[]';
+          this.shiftScans = JSON.parse(rawScans);
+        } catch (e) {
+          this.shiftScans = [];
+        }
         this.isScanning = false;
         this.currentStream = null;
         this.facingMode = 'environment';
@@ -212,6 +253,7 @@
 
         this.initAudio();
         this.initControls();
+        this.initShiftAuditUI();
         this.checkAuthSession();
       }
 
@@ -947,42 +989,197 @@
         }
       }
 
-      recordShiftScan(item) {
-        this.shiftScans.unshift(item);
-        const list = document.getElementById('shift-scans-list');
-        const badge = document.getElementById('shift-count-badge');
-        
-        if (badge) badge.textContent = `Ukupno: ${this.shiftScans.length}`;
-
-        try {
-          const raw = localStorage.getItem('gsc_redeemed_scans_demo') || '[]';
-          const listArr = JSON.parse(raw);
-          listArr.unshift({
-            voucher_code: item.code,
-            player_nickname: item.player,
-            player_id: item.player_id || 'gsc_player',
-            title: item.title || 'VIP Promo Tiket',
-            reward_value: item.value,
-            reward_type: 'cash',
-            redeemed_by_operator: this.session ? `${this.session.full_name} (${this.session.role || 'Šank'})` : 'Operater',
-            redeemed_location: this.session ? this.session.location_name : 'Grand Slot Club',
-            redeemed_at: new Date().toISOString()
+      initShiftAuditUI() {
+        const filterInput = document.getElementById('input-filter-scans');
+        if (filterInput) {
+          filterInput.addEventListener('input', (e) => {
+            this.renderScansTable(e.target.value.trim().toLowerCase());
           });
-          localStorage.setItem('gsc_redeemed_scans_demo', JSON.stringify(listArr.slice(0, 50)));
-        } catch (e) {}
+        }
+
+        const btnExport = document.getElementById('btn-export-shift');
+        if (btnExport) {
+          btnExport.addEventListener('click', () => this.exportShiftReport());
+        }
+
+        const btnCloseReceipt = document.getElementById('btn-close-receipt');
+        if (btnCloseReceipt) {
+          btnCloseReceipt.addEventListener('click', () => {
+            const m = document.getElementById('voucher-receipt-modal');
+            if (m) m.style.display = 'none';
+          });
+        }
+
+        const btnPrintReceipt = document.getElementById('btn-print-receipt');
+        if (btnPrintReceipt) {
+          btnPrintReceipt.addEventListener('click', () => window.print());
+        }
+
+        this.renderScansTable();
+      }
+
+      renderScansTable(filterQuery = '') {
+        const tbody = document.getElementById('shift-scans-tbody');
+        const badge = document.getElementById('shift-count-badge');
+        const subtitle = document.getElementById('shift-summary-subtitle');
+        const list = document.getElementById('shift-scans-list');
+
+        let filtered = this.shiftScans;
+        if (filterQuery) {
+          filtered = this.shiftScans.filter(s => {
+            const code = (s.code || s.voucher_code || '').toLowerCase();
+            const player = (s.player || s.player_nickname || '').toLowerCase();
+            const title = (s.title || '').toLowerCase();
+            return code.includes(filterQuery) || player.includes(filterQuery) || title.includes(filterQuery);
+          });
+        }
+
+        if (badge) {
+          badge.textContent = `Ukupno: ${this.shiftScans.length} vaučera`;
+        }
+
+        if (subtitle) {
+          const totalValue = this.shiftScans.reduce((acc, s) => acc + (Number(s.value || s.reward_value) || 0), 0);
+          subtitle.textContent = `Realizovano: ${this.shiftScans.length} vaučera • Ukupno izdato: ${totalValue.toLocaleString()} ZLT`;
+        }
 
         if (list) {
           list.innerHTML = this.shiftScans.map(s => `
             <li class="scans-log-item">
               <div>
-                <span class="scans-item-name">${s.player}</span>
-                <span style="color: var(--accent-gold); font-weight: bold; margin-left: 6px;">+${Number(s.value).toLocaleString()} ZLT</span>
-                <div class="scans-item-meta">Kod: <code>${s.code}</code></div>
+                <span class="scans-item-name">${s.player || s.player_nickname || 'Gost'}</span>
+                <span style="color: var(--accent-gold); font-weight: bold; margin-left: 6px;">+${Number(s.value || s.reward_value || 0).toLocaleString()} ZLT</span>
+                <div class="scans-item-meta">Kod: <code>${s.code || s.voucher_code}</code></div>
               </div>
-              <div class="scans-item-meta">${s.time}</div>
+              <div class="scans-item-meta">${s.time || ''}</div>
             </li>
           `).join('');
         }
+
+        if (!tbody) return;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr class="scans-empty-row">
+              <td colspan="7">${filterQuery ? 'Nema vaučera koji odgovaraju pretrazi.' : 'Još uvek nema realizovanih vaučera u ovoj smeni.'}</td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map((s, idx) => {
+          const code = s.code || s.voucher_code || 'GSC-PROMO';
+          const player = s.player || s.player_nickname || 'Gost';
+          const title = s.title || 'VIP Promo Tiket za Aparate';
+          const val = Number(s.value || s.reward_value || 0).toLocaleString();
+          const time = s.time || (s.redeemed_at ? new Date(s.redeemed_at).toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' }) : 'U smeni');
+
+          return `
+            <tr>
+              <td class="scans-time-cell">${time}</td>
+              <td class="scans-player-cell">${player}</td>
+              <td class="scans-title-cell" title="${title}">${title}</td>
+              <td class="scans-amount-cell">${val} ZLT</td>
+              <td><code class="scans-code-badge">${code}</code></td>
+              <td>
+                <span class="scans-status-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width: 10px; height: 10px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  ISPLAĆENO
+                </span>
+              </td>
+              <td>
+                <button type="button" class="btn-table-slip" data-idx="${idx}">
+                  Dokaz / Slip
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        tbody.querySelectorAll('.btn-table-slip').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const idx = parseInt(e.currentTarget.getAttribute('data-idx'), 10);
+            if (filtered[idx]) {
+              this.openReceiptModal(filtered[idx]);
+            }
+          });
+        });
+      }
+
+      openReceiptModal(scanItem) {
+        const modal = document.getElementById('voucher-receipt-modal');
+        if (!modal) return;
+
+        const code = scanItem.code || scanItem.voucher_code || 'GSC-PROMO';
+        const player = scanItem.player || scanItem.player_nickname || 'Gost';
+        const title = scanItem.title || 'VIP Promo Tiket za Slot Aparate';
+        const val = Number(scanItem.value || scanItem.reward_value || 0).toLocaleString();
+        const dateStr = scanItem.redeemed_at ? new Date(scanItem.redeemed_at).toLocaleString('sr-RS') : new Date().toLocaleString('sr-RS');
+        const loc = scanItem.redeemed_location || (this.session ? this.session.location_name : 'Grand Slot Club');
+        const op = scanItem.redeemed_by_operator || (this.session ? `${this.session.full_name} (${this.session.role || 'Šank'})` : 'Ovlašćeni Operater');
+
+        document.getElementById('receipt-ref-num').textContent = `REF: #${code}-${Date.now().toString().slice(-4)}`;
+        document.getElementById('receipt-timestamp').textContent = dateStr;
+        document.getElementById('receipt-location').textContent = loc;
+        document.getElementById('receipt-operator').textContent = op;
+        document.getElementById('receipt-player').textContent = player;
+        document.getElementById('receipt-promo-title').textContent = title;
+        document.getElementById('receipt-voucher-code').textContent = code;
+        document.getElementById('receipt-reward-amount').textContent = `${val} ZLT`;
+
+        modal.style.display = 'flex';
+      }
+
+      exportShiftReport() {
+        if (!this.shiftScans || this.shiftScans.length === 0) {
+          alert('Nema zabeleženih vaučera u ovoj smeni za izvoz.');
+          return;
+        }
+
+        let csv = 'Vreme,Gost,Promocija,Iznos_ZLT,Kod,Status,Lokacija,Operater\n';
+        this.shiftScans.forEach(s => {
+          const time = s.time || (s.redeemed_at ? new Date(s.redeemed_at).toLocaleString('sr-RS') : '');
+          const player = `"${(s.player || s.player_nickname || '').replace(/"/g, '""')}"`;
+          const title = `"${(s.title || '').replace(/"/g, '""')}"`;
+          const val = Number(s.value || s.reward_value || 0);
+          const code = `"${(s.code || s.voucher_code || '').replace(/"/g, '""')}"`;
+          const loc = `"${(s.redeemed_location || (this.session ? this.session.location_name : 'Grand Slot')).replace(/"/g, '""')}"`;
+          const op = `"${(s.redeemed_by_operator || (this.session ? this.session.full_name : 'Operater')).replace(/"/g, '""')}"`;
+          csv += `${time},${player},${title},${val},${code},ISPLACENO,${loc},${op}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `GrandSlot_Izvestaj_Smene_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      recordShiftScan(item) {
+        const fullItem = {
+          code: item.code,
+          player: item.player,
+          player_id: item.player_id || 'gsc_player',
+          title: item.title || 'VIP Promo Tiket za Aparate',
+          value: item.value,
+          time: item.time || new Date().toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' }),
+          redeemed_location: this.session ? this.session.location_name : 'Grand Slot Beograd - Centar',
+          redeemed_by_operator: this.session ? `${this.session.full_name} (${this.session.role || 'Šank'})` : 'Operater',
+          redeemed_at: new Date().toISOString()
+        };
+
+        this.shiftScans.unshift(fullItem);
+
+        try {
+          localStorage.setItem('gsc_redeemed_scans_demo', JSON.stringify(this.shiftScans.slice(0, 50)));
+        } catch (e) {}
+
+        this.renderScansTable();
+
+        // Automatically open proof-of-issuance receipt slip for the operator!
+        this.openReceiptModal(fullItem);
       }
     }
 
@@ -995,9 +1192,24 @@
       });
     }
 
+    // Check if running in standalone mode (already installed)
+    const isStandaloneScanner = window.matchMedia('(display-mode: standalone)').matches ||
+                                window.navigator.standalone === true ||
+                                document.referrer.includes('android-app://') ||
+                                localStorage.getItem('gsc_scanner_pwa_installed') === 'true';
+
+    if (isStandaloneScanner) {
+      document.body.classList.add('scanner-is-installed');
+      const btn = document.getElementById('btn-install-pwa');
+      if (btn) btn.style.display = 'none';
+    }
+
     // Dedicated Standalone PWA Install Prompt
     let deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
+      if (isStandaloneScanner || localStorage.getItem('gsc_scanner_pwa_installed') === 'true') {
+        return;
+      }
       e.preventDefault();
       deferredInstallPrompt = e;
       const btnInstall = document.getElementById('btn-install-pwa');
@@ -1008,6 +1220,8 @@
             deferredInstallPrompt.prompt();
             const { outcome } = await deferredInstallPrompt.userChoice;
             if (outcome === 'accepted') {
+              localStorage.setItem('gsc_scanner_pwa_installed', 'true');
+              document.body.classList.add('scanner-is-installed');
               btnInstall.style.display = 'none';
             }
             deferredInstallPrompt = null;
@@ -1016,9 +1230,101 @@
       }
     });
 
+    window.addEventListener('appinstalled', () => {
+      localStorage.setItem('gsc_scanner_pwa_installed', 'true');
+      document.body.classList.add('scanner-is-installed');
+      const btnInstall = document.getElementById('btn-install-pwa');
+      if (btnInstall) btnInstall.style.display = 'none';
+    });
+
+    // Automated Zero-Touch PWA Background Updates
+    if ('serviceWorker' in navigator) {
+      let isRefreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          window.location.reload();
+        }
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          navigator.serviceWorker.getRegistration().then(reg => {
+            if (reg) reg.update();
+          });
+        }
+      });
+
+      setInterval(() => {
+        navigator.serviceWorker.getRegistration().then(reg => {
+          if (reg) reg.update();
+        });
+      }, 15 * 60 * 1000);
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       window.staffScanner = new StaffVoucherScanner();
     });
   </script>
+  <!-- Real-World Proof of Issuance Receipt / Slip Modal -->
+  <div class="modal-overlay voucher-receipt-overlay" id="voucher-receipt-modal" style="display: none;">
+    <div class="voucher-receipt-card">
+      <div class="receipt-header">
+        <img src="../assets/symbols/crystal-spade-clean.png" alt="Grand Slot Logo" class="receipt-logo">
+        <h3>GRAND SLOT CLUB</h3>
+        <p>POTVRDA O REALIZACIJI I IZDAVANJU VAUČERA</p>
+        <div class="receipt-number" id="receipt-ref-num">REF: #GSC-20261108-001</div>
+      </div>
+
+      <div class="receipt-divider"></div>
+
+      <div class="receipt-body">
+        <div class="receipt-row">
+          <span>Datum i Vreme:</span>
+          <strong id="receipt-timestamp">08.11.2026. 20:45</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Lokacija / Kazino:</span>
+          <strong id="receipt-location">Grand Slot Beograd - Centar</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Ovlašćeni Operater:</span>
+          <strong id="receipt-operator">Marko Petrović (Šank 1)</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Gost / Igrač:</span>
+          <strong id="receipt-player">Bojan K. (VIP)</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Naziv Promocije:</span>
+          <strong id="receipt-promo-title">Promo Tiket za Slot Aparate</strong>
+        </div>
+        <div class="receipt-row">
+          <span>Kod Vaučera:</span>
+          <code id="receipt-voucher-code" class="receipt-code-highlight">GSC-7842-VIP</code>
+        </div>
+        <div class="receipt-value-box">
+          <span class="receipt-val-label">IZNOS ZA REALIZACIJU</span>
+          <span class="receipt-val-amount" id="receipt-reward-amount">1.000 ZLT</span>
+        </div>
+      </div>
+
+      <div class="receipt-stamp-box">
+        <div class="receipt-stamp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          POTVRĐENO I REALIZOVANO U KLUBU
+        </div>
+        <p class="receipt-disclaimer">Ovaj dokument predstavlja validan dokaz o izdatoj nagradi/vaučeru na šanku ili blagajni kazina.</p>
+      </div>
+
+      <div class="receipt-actions">
+        <button type="button" class="btn-receipt-print" id="btn-print-receipt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 4px;"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Štampaj Potvrdu
+        </button>
+        <button type="button" class="btn-receipt-close" id="btn-close-receipt">Zatvori</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
