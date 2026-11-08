@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png?v=33">
   
   <!-- Styles -->
-  <link rel="stylesheet" href="css/style.css?v=123">
+  <link rel="stylesheet" href="css/style.css?v=124">
   <link rel="stylesheet" href="css/grand-hub.css?v=102">
 
   <!-- Service Worker / Cache Eviction Helper -->
@@ -244,6 +244,16 @@
           <span class="tour-score-val" id="tournament-hud-score">0 ZLT</span>
         </div>
         <button class="tour-exit-btn" id="tour-exit-btn" title="Napusti turnir" data-i18n-title="tourExitTitle">✕</button>
+      </div>
+
+      <!-- Live Event Spotlight Ribbon (Dynamic Club Broadcast) -->
+      <div class="live-event-spotlight-bar" id="live-event-spotlight-bar">
+        <div class="spotlight-left">
+          <span class="spotlight-pulse-dot"></span>
+          <span class="spotlight-tag">UŽIVO U KLUBOVIMA:</span>
+          <span class="spotlight-event-text" id="spotlight-event-text">Petak 21:00h @ Grand Slot Beograd Centar (Fond: 50.000 ZLT)</span>
+        </div>
+        <button type="button" class="btn-spotlight-rsvp" id="btn-spotlight-rsvp">PRIJAVI SE 🎟️</button>
       </div>
 
       <!-- Dynamic Stage Host: Only the currently active game stage exists in the live DOM -->
@@ -2961,6 +2971,19 @@
           <span class="menu-card-arrow">›</span>
         </button>
 
+        <!-- 3.1 Događaji & Uživo Turniri u Klubovima -->
+        <button type="button" class="menu-action-card card-events" id="menu-opt-events">
+          <div class="menu-card-icon-wrap">🏛️</div>
+          <div class="menu-card-info">
+            <div class="menu-card-title-row">
+              <span class="menu-card-title">Događaji & Uživo Turniri</span>
+              <span class="menu-pill-badge badge-gold">U KLUBOVIMA</span>
+            </div>
+            <p class="menu-card-desc">Raspored turnira po gradovima, promo noći i brza prijava za ulaz</p>
+          </div>
+          <span class="menu-card-arrow">›</span>
+        </button>
+
         <!-- 4. Profil Igrača & Fiktivna Dopuna -->
         <button type="button" class="menu-action-card card-profile" id="menu-opt-profile">
           <div class="menu-card-icon-wrap">👤</div>
@@ -3086,14 +3109,36 @@
           <h2 class="voucher-promo-title" id="voucher-promo-title">VIP Promo Vaučer 1.000 Zlatnika</h2>
           <div class="voucher-promo-value-tag" id="voucher-promo-value-tag">+1.000 ZLT PROMO VAUČER</div>
           <p class="voucher-promo-desc" id="voucher-promo-desc">
-            Prijavite se za ovu promociju i preuzmite lični VIP QR vaučer koji možete iskoristiti na šanku ili blagajni Grand Slot Club-a!
+            Ispunite uslov igre u aplikaciji i preuzmite lični VIP QR vaučer koji možete iskoristiti na blagajni Grand Slot Club-a za promo tiket na aparatima!
           </p>
           <div class="voucher-promo-meta-box">
             <div>📍 Lokacija: <span id="voucher-promo-location">Grand Slot Club</span></div>
             <div>⏳ Ponuda važi još: <span id="voucher-promo-validity">48 sati</span></div>
           </div>
-          <button type="button" class="btn-voucher-action gold" id="btn-claim-promo-action">
-            ✅ PRIJAVI SE I PREUZMI VIP VAUČER
+
+          <!-- Proof-of-Play Anti-Freeloader Gating Box -->
+          <div class="voucher-proof-play-box" id="voucher-proof-play-box">
+            <div class="proof-play-header">
+              <span class="proof-play-badge">🛡️ PROOF-OF-PLAY USLOV</span>
+              <span class="proof-play-status-lbl" id="voucher-proof-status-lbl">Zaključano (0/15 Spinova)</span>
+            </div>
+            <p class="proof-play-desc">
+              Vaučeri su nagrada za aktivne igrače kluba. Za preuzimanje je potrebno odigrati bar <strong>15 spinova</strong> u kazinu ili završiti <strong>2 dnevne misije</strong>!
+            </p>
+            <div class="proof-play-progress-track">
+              <div class="proof-play-progress-fill" id="voucher-proof-fill" style="width: 0%;"></div>
+            </div>
+            <div class="proof-play-stats-row">
+              <span id="voucher-proof-spins-lbl">Spinovi u sesiji: 0 / 15</span>
+              <span id="voucher-proof-missions-lbl">Dnevne misije: 0 / 2</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn-voucher-action gold disabled" id="btn-claim-promo-action" disabled>
+            🔒 ZAKLJUČANO - ISPUNITE USLOV IGRE
+          </button>
+          <button type="button" class="btn-voucher-action secondary" id="btn-voucher-play-shortcut" style="margin-top: 8px;">
+            🎰 IDI NA SLOTOVE &amp; ISPUNI USLOV
           </button>
         </div>
       </div>
@@ -3139,7 +3184,7 @@
               <span class="ticket-countdown-timer" id="ticket-countdown-val">47:59:59</span>
             </div>
             <div class="ticket-instructions">
-              📍 <strong>Grand Slot Club</strong> • Pokažite ovaj ekran osoblju na šanku ili blagajni kluba.
+              📍 <strong>Grand Slot Club</strong> • Pokažite ovaj ekran osoblju na blagajni kluba radi preuzimanja promo tiketa za igru.
             </div>
           </div>
         </div>
@@ -3650,6 +3695,78 @@
     </div>
   </div>
 
+  <!-- Live Club Events & Tournaments Modal -->
+  <div class="modal-overlay club-events-overlay is-hidden" id="club-events-modal">
+    <div class="club-events-card">
+      <div class="club-events-header">
+        <div class="club-events-title-wrap">
+          <span class="club-events-badge">🏛️ KAZINO UŽIVO &amp; SPECIJALNA DEŠAVANJA</span>
+          <h2 class="club-events-title">TURNIRI &amp; PROMOCIJE U KLUBOVIMA</h2>
+          <p class="club-events-subtitle">Prijavite se za slot turnire, Mystery Jackpot večeri i preuzmite brzu turnirsku propusnicu (Fast-Pass QR)</p>
+        </div>
+        <button type="button" class="club-events-close" id="btn-close-club-events" aria-label="Zatvori">✕</button>
+      </div>
+
+      <!-- City / Region Filter Tabs -->
+      <div class="events-filter-bar">
+        <button type="button" class="event-filter-pill active" data-city="all">🌐 Svi Gradovi</button>
+        <button type="button" class="event-filter-pill" data-city="bg">📍 Beograd</button>
+        <button type="button" class="event-filter-pill" data-city="ns">📍 Novi Sad</button>
+        <button type="button" class="event-filter-pill" data-city="nis">📍 Niš</button>
+      </div>
+
+      <!-- Events List Feed -->
+      <div class="club-events-list" id="club-events-list">
+        <!-- Rendered dynamically by ClubEventsManager -->
+      </div>
+
+      <div class="club-events-footer">
+        <span class="events-footer-note">⚡ Propusnice se automatski verifikuju na ulazu i blagajni kluba.</span>
+        <button type="button" class="btn-events-close-action" id="btn-events-close-footer">ZATVORI PREGLED</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Fast-Pass Modal (Single Event QR Ticket) -->
+  <div class="modal-overlay event-fastpass-overlay is-hidden" id="event-fastpass-modal">
+    <div class="event-fastpass-card">
+      <button type="button" class="event-fastpass-close" id="btn-close-fastpass" aria-label="Zatvori">✕</button>
+      
+      <div class="fastpass-ticket-header">
+        <div class="fastpass-brand">
+          <span class="fastpass-crown">👑</span>
+          <span class="fastpass-brand-text">GRAND SLOT VIP FAST-PASS</span>
+        </div>
+        <div class="fastpass-status-badge">POTVRĐENA PRIJAVA</div>
+      </div>
+
+      <div class="fastpass-event-details">
+        <h3 class="fastpass-event-title" id="fastpass-title">Grand Slama Turnir</h3>
+        <div class="fastpass-event-venue" id="fastpass-venue">📍 Beograd Centar • Kralja Milana 12</div>
+        <div class="fastpass-event-time" id="fastpass-time">⏱️ Petak • 21:00h</div>
+        <div class="fastpass-player-line">Gost: <strong id="fastpass-player">VIP Član</strong></div>
+      </div>
+
+      <!-- QR Code Container -->
+      <div class="fastpass-qr-section">
+        <div class="fastpass-qr-canvas" id="fastpass-qr-box"></div>
+        <div class="fastpass-code-label">KOD TURNIRSKE PROPUSNICE:</div>
+        <div class="fastpass-code-val" id="fastpass-code-val">TRN-BG01-784</div>
+        <span class="fastpass-scan-instruction">Pokažite ovaj kod na ulazu za direktan VIP check-in i učešće na turniru.</span>
+      </div>
+
+      <div class="fastpass-perks-box">
+        <div class="fastpass-perk-item">✓ Rezervisano mesto na turniru</div>
+        <div class="fastpass-perk-item">✓ Registracioni turnirski krediti</div>
+        <div class="fastpass-perk-item">✓ Automatski unos u tabelu nagrada</div>
+      </div>
+
+      <div class="fastpass-footer">
+        <button type="button" class="btn-fastpass-confirm" id="btn-close-fastpass-footer">U REDU, SAČUVANO U APLIKACIJI</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="js/audio.js?v=72"></script>
   <script src="js/i18n.js?v=71"></script>
@@ -3662,6 +3779,7 @@
   <script src="js/core/prestige-manager.js?v=1"></script>
   <script src="js/core/daily-missions-manager.js?v=3"></script>
   <script src="js/core/tier-manager.js?v=2"></script>
+  <script src="js/core/club-events-manager.js?v=1"></script>
   <script src="js/core/jackpots-v2.js?v=80"></script>
   <script src="js/core/meters.js?v=75"></script>
   <script src="js/core/wheel.js?v=76"></script>
@@ -3691,6 +3809,6 @@
   <script src="js/games/casino-holdem/casino-holdem.js?v=105"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=114"></script>
+  <script src="js/app.js?v=115"></script>
 </body>
 </html>

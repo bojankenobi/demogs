@@ -19475,3 +19475,713 @@ body.theme-royale .stage-bezel {
 .btn-celebration-claim:active {
   transform: translateY(1px);
 }
+
+
+/* ==========================================================================
+   MASTER PROMO MACHINE & CLUB EVENTS SYSTEM
+   ========================================================================== */
+
+/* 1. Live Event Spotlight Ribbon */
+.live-event-spotlight-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: linear-gradient(90deg, rgba(30, 20, 5, 0.95) 0%, rgba(15, 15, 20, 0.95) 50%, rgba(30, 20, 5, 0.95) 100%);
+  border: 1px solid rgba(246, 200, 69, 0.45);
+  border-radius: 12px;
+  padding: 8px 14px;
+  margin: 6px 12px 10px 12px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), inset 0 0 12px rgba(246, 200, 69, 0.1);
+  backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.live-event-spotlight-bar:hover {
+  border-color: rgba(246, 200, 69, 0.7);
+  box-shadow: 0 6px 22px rgba(246, 200, 69, 0.25);
+}
+
+.spotlight-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.spotlight-pulse-dot {
+  width: 9px;
+  height: 9px;
+  min-width: 9px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: pulse-dot-anim 1.6s infinite ease-in-out;
+}
+
+@keyframes pulse-dot-anim {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.6; }
+}
+
+.spotlight-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: #f6c845;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.spotlight-event-text {
+  font-size: 0.76rem;
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.btn-spotlight-rsvp {
+  background: linear-gradient(180deg, #ffe066 0%, #f6c845 50%, #d49a1d 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  color: #120a00;
+  font-family: 'Cinzel', serif;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(246, 200, 69, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-spotlight-rsvp:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+  box-shadow: 0 4px 14px rgba(246, 200, 69, 0.55);
+}
+
+/* 2. Proof-of-Play Anti-Freeloader Gating Box */
+.voucher-proof-play-box {
+  background: rgba(15, 20, 28, 0.85);
+  border: 1px solid rgba(246, 200, 69, 0.35);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 12px 0 16px 0;
+  text-align: left;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.6);
+}
+
+.proof-play-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+}
+
+.proof-play-badge {
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  color: #f6c845;
+  letter-spacing: 0.5px;
+}
+
+.proof-play-status-lbl {
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.proof-play-desc {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin: 0 0 10px 0;
+}
+
+.proof-play-desc strong {
+  color: #f6c845;
+}
+
+.proof-play-progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 8px;
+}
+
+.proof-play-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b 0%, #10b981 100%);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.proof-play-stats-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+.btn-voucher-action.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* 3. Club Events & Tournaments Modal */
+.club-events-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 5, 10, 0.88);
+  backdrop-filter: blur(10px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  transition: opacity 0.25s ease;
+}
+
+.club-events-overlay.is-hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.club-events-overlay.active {
+  display: flex;
+  opacity: 1;
+}
+
+.club-events-card {
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  background: linear-gradient(180deg, #181512 0%, #0e0d0b 100%);
+  border: 1.5px solid rgba(246, 200, 69, 0.5);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(246, 200, 69, 0.2);
+  overflow: hidden;
+}
+
+.club-events-header {
+  padding: 18px 20px 14px 20px;
+  border-bottom: 1px solid rgba(246, 200, 69, 0.25);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.club-events-title-wrap {
+  text-align: left;
+}
+
+.club-events-badge {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  color: #f6c845;
+  margin-bottom: 4px;
+}
+
+.club-events-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin: 0 0 4px 0;
+}
+
+.club-events-subtitle {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.club-events-close,
+.event-fastpass-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.club-events-close:hover,
+.event-fastpass-close:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.events-filter-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+}
+
+.event-filter-pill {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.event-filter-pill:hover {
+  border-color: rgba(246, 200, 69, 0.4);
+  color: #fff;
+}
+
+.event-filter-pill.active {
+  background: rgba(246, 200, 69, 0.15);
+  border-color: #f6c845;
+  color: #f6c845;
+  box-shadow: 0 0 10px rgba(246, 200, 69, 0.25);
+}
+
+.club-events-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.event-card-item {
+  background: rgba(20, 20, 25, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: left;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.event-card-item:hover {
+  border-color: rgba(246, 200, 69, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+}
+
+.event-card-item.rsvpd-active {
+  border-color: rgba(16, 185, 129, 0.6);
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.event-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.event-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.event-badge.badge-fire {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.event-badge.badge-gold {
+  background: rgba(246, 200, 69, 0.2);
+  color: #f6c845;
+  border: 1px solid rgba(246, 200, 69, 0.4);
+}
+
+.event-badge.badge-cyan {
+  background: rgba(6, 182, 212, 0.2);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.4);
+}
+
+.event-badge.badge-purple {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.event-timing {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  font-weight: 700;
+}
+
+.event-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.4px;
+}
+
+.event-meta-line {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.event-prize-box {
+  background: rgba(246, 200, 69, 0.08);
+  border: 1px solid rgba(246, 200, 69, 0.25);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+}
+
+.prize-label {
+  display: block;
+  font-size: 0.58rem;
+  color: #94a3b8;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.prize-value {
+  font-size: 0.78rem;
+  color: #ffd700;
+  font-weight: 800;
+}
+
+.event-description {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin: 0 0 12px 0;
+}
+
+.event-footer-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.event-capacity {
+  font-size: 0.68rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.btn-event-rsvp {
+  background: linear-gradient(180deg, #ffe066 0%, #f6c845 50%, #d49a1d 100%);
+  border: 1px solid #fff;
+  border-radius: 8px;
+  color: #120a00;
+  font-family: 'Cinzel', serif;
+  font-size: 0.74rem;
+  font-weight: 900;
+  padding: 8px 16px;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(246, 200, 69, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-event-rsvp:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 16px rgba(246, 200, 69, 0.55);
+}
+
+.event-confirmed-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmed-tag {
+  font-size: 0.68rem;
+  color: #10b981;
+  font-weight: 800;
+}
+
+.btn-view-pass {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  border-radius: 8px;
+  color: #10b981;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-view-pass:hover {
+  background: #10b981;
+  color: #000;
+}
+
+.club-events-footer {
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(246, 200, 69, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.events-footer-note {
+  font-size: 0.68rem;
+  color: #64748b;
+  text-align: left;
+}
+
+.btn-events-close-action {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-events-close-action:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+/* 4. Event Fast-Pass Modal */
+.event-fastpass-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 5, 10, 0.92);
+  backdrop-filter: blur(12px);
+  z-index: 1060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.event-fastpass-overlay.is-hidden {
+  display: none;
+}
+
+.event-fastpass-overlay.active {
+  display: flex;
+}
+
+.event-fastpass-card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #1b1612 0%, #0a0907 100%);
+  border: 2px solid rgba(246, 200, 69, 0.6);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(246, 200, 69, 0.25);
+}
+
+.fastpass-ticket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(246, 200, 69, 0.25);
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.fastpass-brand {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fastpass-crown {
+  font-size: 1.1rem;
+}
+
+.fastpass-brand-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.74rem;
+  font-weight: 900;
+  color: #f6c845;
+  letter-spacing: 0.8px;
+}
+
+.fastpass-status-badge {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid #10b981;
+  color: #10b981;
+  font-size: 0.6rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.fastpass-event-details {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.fastpass-event-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #fff;
+  margin: 0 0 6px 0;
+}
+
+.fastpass-event-venue {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  margin-bottom: 4px;
+}
+
+.fastpass-event-time {
+  font-size: 0.74rem;
+  color: #f6c845;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.fastpass-player-line {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.fastpass-player-line strong {
+  color: #fff;
+}
+
+.fastpass-qr-section {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.fastpass-qr-canvas {
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fastpass-code-label {
+  font-size: 0.58rem;
+  color: #64748b;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-top: 8px;
+}
+
+.fastpass-code-val {
+  font-family: 'Courier New', monospace;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: 1.5px;
+}
+
+.fastpass-scan-instruction {
+  font-size: 0.64rem;
+  color: #475569;
+  line-height: 1.3;
+  margin-top: 4px;
+}
+
+.fastpass-perks-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.fastpass-perk-item {
+  color: #a7f3d0;
+  font-weight: 600;
+}
+
+.btn-fastpass-confirm {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(180deg, #ffe066 0%, #f6c845 50%, #d49a1d 100%);
+  border: 1.5px solid #fff;
+  border-radius: 12px;
+  color: #120a00;
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(246, 200, 69, 0.4);
+  transition: all 0.2s ease;
+}
+
+.btn-fastpass-confirm:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 22px rgba(246, 200, 69, 0.6);
+}

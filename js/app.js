@@ -511,7 +511,14 @@ class IGTApp {
       this.tierManager.init(this);
     }
 
-    // 8.8 Dynamic Game Stage Manager (Virtual View Detachment / Node Pooling)
+    // 8.8 Live Events & Physical Club Broadcast Hub Manager
+    this.sessionSpinsCount = 0;
+    if (window.ClubEventsManager) {
+      this.clubEventsManager = new window.ClubEventsManager(this);
+      window.clubEventsManager = this.clubEventsManager;
+    }
+
+    // 8.9 Dynamic Game Stage Manager (Virtual View Detachment / Node Pooling)
     this.stageManager = new GameStageManager();
     window.gameStageManager = this.stageManager;
     this.stageManager.init();
@@ -1466,6 +1473,60 @@ class IGTApp {
     this.updateVoucherBadge();
   }
 
+  checkVoucherEligibility() {
+    const missionsCompleted = (this.dailyMissionsManager && this.dailyMissionsManager.state && Array.isArray(this.dailyMissionsManager.state.missions))
+      ? this.dailyMissionsManager.state.missions.filter(m => m.completed).length
+      : 0;
+    const spins = this.sessionSpinsCount || 0;
+    const requiredSpins = 15;
+    const requiredMissions = 2;
+
+    const spinsPct = Math.min(100, Math.round((spins / requiredSpins) * 100));
+    const missionsPct = Math.min(100, Math.round((missionsCompleted / requiredMissions) * 100));
+    const highestPct = Math.max(spinsPct, missionsPct);
+
+    const isEligible = (missionsCompleted >= requiredMissions) || (spins >= requiredSpins);
+
+    const fillEl = document.getElementById('voucher-proof-fill');
+    const statusLbl = document.getElementById('voucher-proof-status-lbl');
+    const spinsLbl = document.getElementById('voucher-proof-spins-lbl');
+    const missionsLbl = document.getElementById('voucher-proof-missions-lbl');
+    const claimBtn = document.getElementById('btn-claim-promo-action');
+    const playShortcutBtn = document.getElementById('btn-voucher-play-shortcut');
+
+    if (fillEl) fillEl.style.width = `${highestPct}%`;
+    if (spinsLbl) spinsLbl.textContent = `Spinovi u sesiji: ${spins} / ${requiredSpins}`;
+    if (missionsLbl) missionsLbl.textContent = `Dnevne misije: ${missionsCompleted} / ${requiredMissions}`;
+
+    if (statusLbl) {
+      if (isEligible) {
+        statusLbl.textContent = 'Otključano! Uslov ispunjen ✅';
+        statusLbl.style.color = '#10b981';
+      } else {
+        statusLbl.textContent = `Zaključano (${spins}/${requiredSpins} spinova ili ${missionsCompleted}/${requiredMissions} misije)`;
+        statusLbl.style.color = '#f59e0b';
+      }
+    }
+
+    if (claimBtn && (!this.currentPromoData || this.currentPromoData.rewardType === 'club_ticket' || this.currentPromoData.rewardType === 'voucher')) {
+      if (isEligible) {
+        claimBtn.disabled = false;
+        claimBtn.classList.remove('disabled');
+        claimBtn.innerHTML = '🎟️ PREUZMI VIP VAUČER ZA KLUB';
+      } else {
+        claimBtn.disabled = true;
+        claimBtn.classList.add('disabled');
+        claimBtn.innerHTML = `🔒 ZAKLJUČANO (${highestPct}% ISPUNJENO)`;
+      }
+    }
+
+    if (playShortcutBtn) {
+      playShortcutBtn.style.display = isEligible ? 'none' : 'block';
+    }
+
+    return isEligible;
+  }
+
   openVoucherModal(promoPayload = null) {
     const modal = document.getElementById('vip-voucher-modal');
     if (!modal) return;
@@ -1473,6 +1534,16 @@ class IGTApp {
     if (window.slotAudio && window.slotAudio.playClick) window.slotAudio.playClick();
 
     modal.classList.add('active');
+
+    const shortcutBtn = document.getElementById('btn-voucher-play-shortcut');
+    if (shortcutBtn) {
+      shortcutBtn.onclick = () => {
+        this.closeVoucherModal();
+        if (this.lobby && typeof this.lobby.selectGame === 'function') {
+          this.lobby.selectGame('classic');
+        }
+      };
+    }
 
     if (promoPayload) {
       this.setupPromoViewData(promoPayload);
@@ -1483,7 +1554,7 @@ class IGTApp {
     } else {
       this.setupPromoViewData({
         title: 'VIP Promo Tiket 1.000 ZLT',
-        description: 'Prijavite se za ekskluzivni vikend bonus i preuzmite lični VIP QR vaučer za igru na slot aparatima u Grand Slot Club-u!',
+        description: 'Ispunite uslov igre u aplikaciji i preuzmite lični VIP QR vaučer za igru na slot aparatima u Grand Slot Club-u!',
         rewardValue: 1000,
         rewardType: 'club_ticket',
         location: 'Grand Slot Club - Kralja Milana 12, Beograd',
@@ -1491,6 +1562,8 @@ class IGTApp {
       });
       this.switchVoucherView('promo');
     }
+
+    this.checkVoucherEligibility();
   }
 
   closeVoucherModal() {
@@ -1577,14 +1650,16 @@ class IGTApp {
           this.closeVoucherModal();
           this.showMessage(`🎰 Aktivirano +${val} BESPLATNIH SPINOVA (2x Množilac)!`, 'jackpot');
         });
-      } else if (action === 'voucher_drink') {
-        if (tagEl) tagEl.textContent = '🍸 VIP WELCOME DRINK NA ŠANKU';
-        newBtn.innerHTML = '🍸 PREUZMI VIP KOKTEL VAUČER';
-        newBtn.addEventListener('click', () => this.claimActivePromoVoucher());
       } else if (action === 'voucher_tour') {
         if (tagEl) tagEl.textContent = '🏆 VIP ULAZNICA ZA TURNIR (50.000 ZLT)';
         newBtn.innerHTML = '🏆 PREUZMI VIP ULAZNICU ZA TURNIR';
-        newBtn.addEventListener('click', () => this.claimActivePromoVoucher());
+        newBtn.addEventListener('click', () => {
+          if (!this.checkVoucherEligibility()) {
+            this.showMessage('⚠️ Morate ispuniti Proof-of-Play uslov pre preuzimanja turnirske nagrade!', 'normal');
+            return;
+          }
+          this.claimActivePromoVoucher();
+        });
       } else if (action === 'none') {
         if (tagEl) tagEl.textContent = '📢 KAZINO OBAVEŠTENJE';
         newBtn.innerHTML = '👍 RAZUMEM / NASTAVI IGRU';
@@ -1592,12 +1667,25 @@ class IGTApp {
       } else {
         if (tagEl) tagEl.textContent = `🎟️ +${val.toLocaleString()} ZLT PROMO VAUČER`;
         newBtn.innerHTML = `🎟️ PREUZMI VIP VAUČER ZA KLUB (${val.toLocaleString()} ZLT)`;
-        newBtn.addEventListener('click', () => this.claimActivePromoVoucher());
+        newBtn.addEventListener('click', () => {
+          if (!this.checkVoucherEligibility()) {
+            this.showMessage('⚠️ Morate ispuniti Proof-of-Play uslov (15 spinova ili 2 misije) pre preuzimanja vaučera!', 'normal');
+            return;
+          }
+          this.claimActivePromoVoucher();
+        });
       }
     }
+
+    this.checkVoucherEligibility();
   }
 
   async claimActivePromoVoucher() {
+    if (!this.checkVoucherEligibility()) {
+      this.showMessage('⚠️ Preuzimanje vaučera je zaključano dok ne ispunite uslov igre!', 'normal');
+      return;
+    }
+
     const btn = document.getElementById('btn-claim-promo-action');
     if (btn) {
       btn.disabled = true;
@@ -2098,6 +2186,10 @@ class IGTApp {
   handleSpinResult(result) {
     this.updateSpinButtonState();
     if (!result) return;
+
+    // Track Proof-of-Play spins for physical club voucher unlocking
+    this.sessionSpinsCount = (this.sessionSpinsCount || 0) + 1;
+    this.checkVoucherEligibility();
 
     const { winAmount, winMultiplier, isDiamondBonus, winningLines } = result;
 

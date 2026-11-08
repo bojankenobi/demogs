@@ -700,6 +700,33 @@
         document.getElementById('verif-error-msg').style.display = 'none';
         document.getElementById('btn-confirm-redeem').style.display = 'none';
 
+        // Check for Physical Club Tournament Fast-Pass (TRN- prefix)
+        if (code.trim().toUpperCase().startsWith('TRN-')) {
+          this.playSuccessSound();
+          this.currentInspectedVoucher = {
+            voucher_code: code,
+            reward_value: 'FAST-PASS',
+            title: 'Turnirska Propusnica za Kazino',
+            is_tournament: true
+          };
+
+          this.verifCard.className = 'verification-card valid';
+          document.getElementById('verif-badge').textContent = '🏆 TURNIRSKA PROPUSNICA';
+          document.getElementById('verif-player-name').textContent = 'VIP Takmičar';
+          document.getElementById('verif-vip-badge').style.display = 'inline-block';
+          document.getElementById('verif-reward-value').textContent = 'ULAZ ODOBREN';
+          document.getElementById('verif-reward-title').textContent = 'Grand Slot Turnir u Sali';
+          document.getElementById('verif-location').textContent = this.session?.location_name || 'Grand Slot Club';
+          document.getElementById('verif-expires').textContent = 'Važi za večerašnji turnir';
+          document.getElementById('verif-code').textContent = code;
+
+          const btnConfirm = document.getElementById('btn-confirm-redeem');
+          btnConfirm.style.display = 'block';
+          btnConfirm.disabled = false;
+          btnConfirm.textContent = 'POTVRDI ULAZ & TURNIRSKI CHECK-IN 🏆';
+          return;
+        }
+
         try {
           const res = await fetch('/api/vouchers/redeem', {
             method: 'POST',
@@ -775,6 +802,26 @@
         const btnConfirm = document.getElementById('btn-confirm-redeem');
         btnConfirm.disabled = true;
         btnConfirm.textContent = '⏳ Evidentiranje i autorizacija...';
+
+        // Fast-Pass Tournament Check-in
+        if (code.trim().toUpperCase().startsWith('TRN-')) {
+          this.playSuccessSound();
+          document.getElementById('verif-badge').textContent = 'CHECK-IN EVIDENTIRAN ✅';
+          btnConfirm.style.display = 'none';
+
+          const errMsg = document.getElementById('verif-error-msg');
+          errMsg.style.display = 'block';
+          errMsg.style.color = 'var(--color-success)';
+          errMsg.textContent = `Takmičar je uspešno registrovan za turnir. Evidentirao: ${this.session.full_name} (${this.session.location_name})`;
+
+          this.recordShiftScan({
+            code: code,
+            player: 'Turnirski VIP Takmičar',
+            value: 'FAST-PASS',
+            time: new Date().toLocaleTimeString('sr-RS', { hour: '2-digit', minute: '2-digit' })
+          });
+          return;
+        }
 
         try {
           const res = await fetch('/api/vouchers/redeem', {
