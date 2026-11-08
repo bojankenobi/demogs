@@ -20185,3 +20185,716 @@ body.theme-royale .stage-bezel {
   filter: brightness(1.1);
   box-shadow: 0 6px 22px rgba(246, 200, 69, 0.6);
 }
+
+
+/* ==========================================================================
+   ROYAL SCRATCH (ZLATNA GREBALICA 3x3)
+   ========================================================================== */
+.scratch-stage-view {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.scratch-cabinet-panel {
+  width: 100%;
+  background: linear-gradient(180deg, #181512 0%, #0d0c0a 100%);
+  border: 2px solid rgba(246, 200, 69, 0.5);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(246, 200, 69, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scratch-top-strip {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(246, 200, 69, 0.25);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.scratch-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scratch-crown-icon {
+  font-size: 1.2rem;
+}
+
+.scratch-brand-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: #f6c845;
+  letter-spacing: 0.8px;
+}
+
+.scratch-top-win-badge {
+  font-size: 0.68rem;
+  color: #cbd5e1;
+  background: rgba(246, 200, 69, 0.1);
+  border: 1px solid rgba(246, 200, 69, 0.3);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.scratch-top-win-badge strong {
+  color: #ffd700;
+  margin-left: 4px;
+}
+
+.scratch-status-banner {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.scratch-status-banner.normal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.scratch-status-banner.win {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #10b981;
+  color: #6ee7b7;
+  animation: pulse-win-banner 1s infinite alternate;
+}
+
+@keyframes pulse-win-banner {
+  from { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+  to { box-shadow: 0 0 20px rgba(16, 185, 129, 0.7); }
+}
+
+.scratch-card-frame {
+  background: linear-gradient(135deg, #2a1f0a 0%, #151006 100%);
+  border: 2px solid #d4af37;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(212, 175, 55, 0.3);
+  margin-bottom: 12px;
+}
+
+.scratch-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .scratch-card-grid {
+    grid-template-columns: repeat(3, 85px);
+    grid-template-rows: repeat(3, 85px);
+    gap: 8px;
+  }
+}
+
+.scratch-cell-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(20, 20, 25, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+
+.scratch-cell-wrapper.winning-gold-cell {
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7), inset 0 0 12px rgba(255, 215, 0, 0.4);
+  animation: cell-win-pulse 0.8s infinite alternate;
+}
+
+@keyframes cell-win-pulse {
+  from { transform: scale(0.98); }
+  to { transform: scale(1.03); }
+}
+
+.scratch-cell-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px;
+}
+
+.scratch-symbol-img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
+}
+
+.scratch-symbol-tag {
+  font-size: 0.55rem;
+  color: #94a3b8;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.scratch-mult-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #ffd700;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.scratch-canvas-foil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+  touch-action: none;
+}
+
+.scratch-paytable-strip {
+  display: flex;
+  gap: 8px;
+  font-size: 0.62rem;
+  color: #94a3b8;
+  margin-bottom: 14px;
+}
+
+.scratch-paytable-strip .pay-item {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.scratch-controls-deck {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.scratch-bet-stepper {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(246, 200, 69, 0.3);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.scratch-step-btn {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scratch-bet-box {
+  padding: 0 12px;
+  text-align: center;
+}
+
+.scratch-bet-lbl {
+  display: block;
+  font-size: 0.52rem;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.scratch-bet-val {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: #f6c845;
+}
+
+.scratch-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+
+.btn-scratch-main {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-scratch-buy {
+  background: linear-gradient(180deg, #ffe066 0%, #f6c845 50%, #d49a1d 100%);
+  border: 1.5px solid #fff;
+  color: #120a00;
+  box-shadow: 0 3px 12px rgba(246, 200, 69, 0.4);
+}
+
+.btn-scratch-all {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+}
+
+.btn-scratch-all:not(:disabled) {
+  background: rgba(246, 200, 69, 0.2);
+  border-color: #f6c845;
+  color: #ffd700;
+}
+
+.btn-scratch-main:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   EUROPEAN ROYAL ROULETTE (EVROPSKI RULET)
+   ========================================================================== */
+.roulette-stage-view {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+}
+
+.roulette-cabinet-panel {
+  width: 100%;
+  background: linear-gradient(180deg, #141210 0%, #0a0908 100%);
+  border: 2px solid rgba(246, 200, 69, 0.5);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), inset 0 0 25px rgba(246, 200, 69, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.roulette-top-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 540px) {
+  .roulette-top-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.roulette-wheel-box {
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
+}
+
+.roulette-info-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.roulette-title-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #f6c845;
+  letter-spacing: 0.8px;
+}
+
+.roulette-status-banner {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.roulette-status-banner.normal {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.roulette-status-banner.win {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #10b981;
+  color: #6ee7b7;
+}
+
+.roulette-history-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.history-label {
+  font-size: 0.6rem;
+  color: #94a3b8;
+  font-weight: 800;
+}
+
+.roulette-history-list {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.roulette-hist-pill {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.roulette-hist-pill.pill-green { background: #059669; }
+.roulette-hist-pill.pill-red { background: #dc2626; }
+.roulette-hist-pill.pill-black { background: #1e293b; }
+
+.roulette-bet-summary {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.roulette-bet-summary strong {
+  color: #ffd700;
+  font-size: 0.88rem;
+  margin-left: 6px;
+}
+
+/* Table Felt Layout */
+.roulette-table-felt {
+  width: 100%;
+  background: radial-gradient(circle at center, #0a4d2e 0%, #052e1b 100%);
+  border: 3px solid #d4af37;
+  border-radius: 14px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 44px 1fr 40px;
+  grid-template-rows: auto auto auto;
+  gap: 4px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+  margin-bottom: 14px;
+  overflow-x: auto;
+}
+
+.roulette-zero-col {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+}
+
+.spot-zero {
+  width: 100%;
+  height: 100%;
+  background: #059669;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px 0 0 8px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 900;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roulette-numbers-grid {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(3, 34px);
+  gap: 2px;
+}
+
+.roulette-bet-spot {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.roulette-bet-spot:hover {
+  filter: brightness(1.25);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.spot-red { background: #dc2626; }
+.spot-black { background: #111827; }
+
+.roulette-cols-strip {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.spot-col {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.4);
+  font-size: 0.62rem;
+}
+
+.roulette-dozens-row {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.spot-dozen {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px;
+  font-size: 0.65rem;
+}
+
+.roulette-outside-row {
+  grid-column: 2;
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.spot-outside {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px;
+  font-size: 0.62rem;
+}
+
+.spot-outside-red {
+  background: #dc2626;
+}
+
+.spot-outside-black {
+  background: #111827;
+}
+
+.table-chip-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffd700;
+  color: #000;
+  border: 1.5px dashed #000;
+  font-size: 0.55rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.roulette-control-deck {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.roulette-chips-strip {
+  display: flex;
+  gap: 6px;
+}
+
+.roulette-chip-opt {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px dashed #fff;
+  font-size: 0.68rem;
+  font-weight: 900;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
+}
+
+.roulette-chip-opt.chip-10 { background: #3b82f6; }
+.roulette-chip-opt.chip-20 { background: #10b981; }
+.roulette-chip-opt.chip-50 { background: #ef4444; }
+.roulette-chip-opt.chip-100 { background: #8b5cf6; }
+.roulette-chip-opt.chip-500 { background: #f59e0b; }
+
+.roulette-chip-opt.selected {
+  transform: scale(1.18);
+  border-color: #ffd700;
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.7);
+}
+
+.roulette-action-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-roulette-action {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-roulette-clear,
+.btn-roulette-double,
+.btn-roulette-rebet {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #cbd5e1;
+}
+
+.btn-roulette-spin {
+  background: linear-gradient(180deg, #ffe066 0%, #f6c845 50%, #d49a1d 100%);
+  border: 1.5px solid #fff;
+  color: #120a00;
+  font-weight: 900;
+  box-shadow: 0 3px 12px rgba(246, 200, 69, 0.4);
+}
+
+.btn-roulette-spin:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 18px rgba(246, 200, 69, 0.6);
+}
+
+/* Lobby Game Poster Art */
+.poster-scratch {
+  background: radial-gradient(circle at center, #6b4d1b 0%, #1c1407 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.poster-scratch-coin {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
+}
+
+.poster-scratch-sparkle {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 1.4rem;
+}
+
+.poster-scratch-crown {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  font-size: 1.4rem;
+}
+
+.poster-roulette {
+  background: radial-gradient(circle at center, #144d2d 0%, #061f12 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.poster-roulette-wheel {
+  font-size: 2.8rem;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.7));
+}
+
+.poster-roulette-zero {
+  position: absolute;
+  bottom: 12px;
+  right: 18px;
+  background: #059669;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  border: 1.5px solid #fff;
+}

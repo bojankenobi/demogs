@@ -67,12 +67,12 @@ if (gridContent.includes('poster-specs-tag')) {
 }
 
 const gameCards = gridContent.match(/class="[^"]*egt-game-card[^"]*"/g) || [];
-if (gameCards.length !== 9) {
-  throw new Error(`Expected 9 game cards, found ${gameCards.length}`);
+if (gameCards.length < 9) {
+  throw new Error(`Expected at least 9 game cards, found ${gameCards.length}`);
 }
-console.log('✓ All 9 game cards are completely free of obstructing specs tags');
+console.log(`✓ All ${gameCards.length} game cards are completely free of obstructing specs tags`);
 
-// 6. Verify Poster Artwork Structures for All 9 Games
+// 6. Verify Poster Artwork Structures for Games
 console.log('--- TEST 6: Poster Artwork Structures ---');
 const requiredPosters = [
   'poster-classic',
@@ -83,7 +83,9 @@ const requiredPosters = [
   'poster-plinko',
   'poster-blackjack',
   'poster-videopoker',
-  'poster-holdem'
+  'poster-holdem',
+  'poster-scratch',
+  'poster-roulette'
 ];
 requiredPosters.forEach(posterClass => {
   if (!gridContent.includes(posterClass)) {

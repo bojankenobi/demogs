@@ -1,7 +1,7 @@
 .DS_Store
 Thumbs.db
 *.log
-scratch/
+/scratch/
 backup_igt_before_grandslot/
 GRANDSLOT/
 node_modules/

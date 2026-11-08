@@ -18,7 +18,9 @@ class GameStageManager {
       plinko: '#plinko-game-view',
       blackjack: '#blackjack-game-view',
       videopoker: '#videopoker-game-view',
-      holdem: '#casino-holdem-game-view'
+      holdem: '#casino-holdem-game-view',
+      scratch: '#scratch-game-view',
+      roulette: '#roulette-game-view'
     };
 
     Object.entries(viewSelectors).forEach(([key, selector]) => {
@@ -172,6 +174,12 @@ class IGTApp {
     }
     if (window.RoyalCasinoHoldemGame) {
       this.casinoHoldemGame = new window.RoyalCasinoHoldemGame(this.wallet, this.jackpots);
+    }
+    if (window.RoyalScratchGame) {
+      this.scratchGame = new window.RoyalScratchGame(this.wallet, this.jackpots);
+    }
+    if (window.RoyalRouletteGame) {
+      this.rouletteGame = new window.RoyalRouletteGame(this.wallet, this.jackpots);
     }
 
     // 4. Lobby
@@ -455,6 +463,92 @@ class IGTApp {
         },
         get isSpinning() { return false; },
         gameInstance: this.casinoHoldemGame
+      });
+    }
+
+    if (this.scratchGame) {
+      this.lobby.registerGame('scratch', {
+        mount: () => {
+          if (this.stageManager) this.stageManager.mountView('scratch');
+          const stage = document.querySelector('.slot-stage-scaler');
+          if (stage) stage.style.display = 'none';
+
+          const controlsPanel = document.querySelector('.controls-panel');
+          if (controlsPanel) controlsPanel.style.display = 'none';
+
+          const bannerWrap = document.querySelector('.status-banner-wrap');
+          if (bannerWrap) bannerWrap.style.display = 'none';
+
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.add('in-scratch-mode');
+
+          if (this.isAutoSpin) this.toggleAutoSpin(false);
+
+          this.scratchGame.mount();
+        },
+        unmount: () => {
+          this.scratchGame.unmount();
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.remove('in-scratch-mode');
+          this.restoreSlotUI();
+        },
+        forceExit: () => {
+          if (this.scratchGame && typeof this.scratchGame.forceExit === 'function') {
+            this.scratchGame.forceExit();
+          }
+        },
+        spin: () => {
+          if (this.scratchGame) {
+            if (this.scratchGame.cardState === 'ready' || this.scratchGame.cardState === 'revealed') {
+              this.scratchGame.buyNewCard();
+            } else if (this.scratchGame.cardState === 'scratching') {
+              this.scratchGame.scratchAll();
+            }
+          }
+        },
+        get isSpinning() { return false; },
+        gameInstance: this.scratchGame
+      });
+    }
+
+    if (this.rouletteGame) {
+      this.lobby.registerGame('roulette', {
+        mount: () => {
+          if (this.stageManager) this.stageManager.mountView('roulette');
+          const stage = document.querySelector('.slot-stage-scaler');
+          if (stage) stage.style.display = 'none';
+
+          const controlsPanel = document.querySelector('.controls-panel');
+          if (controlsPanel) controlsPanel.style.display = 'none';
+
+          const bannerWrap = document.querySelector('.status-banner-wrap');
+          if (bannerWrap) bannerWrap.style.display = 'none';
+
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.add('in-roulette-mode');
+
+          if (this.isAutoSpin) this.toggleAutoSpin(false);
+
+          this.rouletteGame.mount();
+        },
+        unmount: () => {
+          this.rouletteGame.unmount();
+          const container = document.querySelector('.game-container');
+          if (container) container.classList.remove('in-roulette-mode');
+          this.restoreSlotUI();
+        },
+        forceExit: () => {
+          if (this.rouletteGame && typeof this.rouletteGame.forceExit === 'function') {
+            this.rouletteGame.forceExit();
+          }
+        },
+        spin: () => {
+          if (this.rouletteGame) {
+            this.rouletteGame.spin();
+          }
+        },
+        get isSpinning() { return this.gameInstance.isSpinning; },
+        gameInstance: this.rouletteGame
       });
     }
 

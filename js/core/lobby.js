@@ -314,7 +314,7 @@ class CasinoLobby {
     }
 
     // If switching to a standalone non-slot game while in Trezor or Battle Royale, automatically return to Casino Salon!
-    if (['crash', 'plinko', 'blackjack', 'mines', 'videopoker', 'holdem'].includes(gameId)) {
+    if (['crash', 'plinko', 'blackjack', 'mines', 'videopoker', 'holdem', 'scratch', 'roulette'].includes(gameId)) {
       const container = document.querySelector('.game-container');
       if (container && (container.classList.contains('in-vault-mode') || container.classList.contains('in-royale-mode'))) {
         const tabs = document.querySelectorAll('.hub-mode-tab');
@@ -389,6 +389,10 @@ class CasinoLobby {
         this.currentLabel.textContent = 'ROYAL VIDEO POKER';
       } else if (gameId === 'holdem') {
         this.currentLabel.textContent = 'CASINO HOLD\'EM';
+      } else if (gameId === 'scratch') {
+        this.currentLabel.textContent = 'ZLATNA GREBALICA';
+      } else if (gameId === 'roulette') {
+        this.currentLabel.textContent = 'EVROPSKI RULET';
       } else {
         this.currentLabel.textContent = window.i18n ? window.i18n.t('gameClassic') : '1-LINE CLASSIC';
       }
@@ -403,7 +407,9 @@ class CasinoLobby {
       plinko: document.getElementById('egt-opt-plinko'),
       blackjack: document.getElementById('egt-opt-blackjack'),
       videopoker: document.getElementById('egt-opt-videopoker'),
-      holdem: document.getElementById('egt-opt-holdem')
+      holdem: document.getElementById('egt-opt-holdem'),
+      scratch: document.getElementById('egt-opt-scratch'),
+      roulette: document.getElementById('egt-opt-roulette')
     };
 
     const activeText = window.i18n ? window.i18n.t('egtActiveTag') : 'AKTIVNA IGRA';

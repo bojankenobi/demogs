@@ -1418,6 +1418,209 @@
           </div>
         </div>
       </div>
+
+      <!-- Royal Scratch (Zlatna Grebalica 3x3) -->
+      <div class="scratch-stage-view" id="scratch-game-view" style="display: none;">
+        <div class="scratch-cabinet-panel">
+          <!-- Scratch Card Header Strip -->
+          <div class="scratch-top-strip">
+            <div class="scratch-brand-badge">
+              <span class="scratch-crown-icon">👑</span>
+              <span class="scratch-brand-text">ROYAL ZLATNA GREBALICA</span>
+            </div>
+            <div class="scratch-top-win-badge">
+              <span>GLAVNA PREMIJA:</span>
+              <strong>100x ULOGA</strong>
+            </div>
+          </div>
+
+          <!-- Status Banner -->
+          <div class="scratch-status-banner normal" id="scratch-status-banner">
+            Kupite karticu i ogrebite 3 ista simbola za instant dobitak!
+          </div>
+
+          <!-- 3x3 Interactive Scratch Card Frame -->
+          <div class="scratch-card-frame">
+            <div class="scratch-card-grid" id="scratch-card-grid">
+              <!-- 9 interactive foil cells generated dynamically by RoyalScratchGame -->
+            </div>
+          </div>
+
+          <!-- Paytable Mini Strip -->
+          <div class="scratch-paytable-strip">
+            <div class="pay-item">7️⃣ 3x = 100x</div>
+            <div class="pay-item">👑 3x = 50x</div>
+            <div class="pay-item">💎 3x = 25x</div>
+            <div class="pay-item">🪙 3x = 10x</div>
+            <div class="pay-item">🍀 3x = 5x</div>
+          </div>
+
+          <!-- Scratch Controls Deck -->
+          <div class="scratch-controls-deck">
+            <div class="scratch-bet-stepper">
+              <button type="button" class="scratch-step-btn" id="scratch-bet-minus" aria-label="Smanji ulog">−</button>
+              <div class="scratch-bet-box">
+                <span class="scratch-bet-lbl">CENA KARTICE</span>
+                <span class="scratch-bet-val" id="scratch-bet-amount">20 ZLT</span>
+              </div>
+              <button type="button" class="scratch-step-btn" id="scratch-bet-plus" aria-label="Povećaj ulog">+</button>
+            </div>
+
+            <div class="scratch-action-buttons">
+              <button type="button" class="btn-scratch-main btn-scratch-buy" id="btn-scratch-buy">
+                <span class="btn-scratch-icon">🎟️</span>
+                <span class="btn-scratch-text">KUPI KARTICU</span>
+              </button>
+              <button type="button" class="btn-scratch-main btn-scratch-all" id="btn-scratch-all" disabled>
+                <span class="btn-scratch-icon">⚡</span>
+                <span class="btn-scratch-text">OGREBI SVE</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- European Royal Roulette (Evropski Rulet) -->
+      <div class="roulette-stage-view" id="roulette-game-view" style="display: none;">
+        <div class="roulette-cabinet-panel">
+          <!-- Top Wheel Arena & Status Header -->
+          <div class="roulette-top-row">
+            <!-- 3D Canvas Roulette Wheel -->
+            <div class="roulette-wheel-box">
+              <canvas id="roulette-wheel-canvas" width="220" height="220"></canvas>
+            </div>
+
+            <!-- History & Status Info -->
+            <div class="roulette-info-box">
+              <div class="roulette-title-badge">👑 EVROPSKI ROYAL RULET</div>
+              <div class="roulette-status-banner normal" id="roulette-status-banner">
+                Postavite uloge na stolu i zavrtite točak!
+              </div>
+
+              <!-- Winning History Marquee -->
+              <div class="roulette-history-row">
+                <span class="history-label">POSLEDNJI:</span>
+                <div class="roulette-history-list" id="roulette-history-list">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- Total Bet Display -->
+              <div class="roulette-bet-summary">
+                <span>UKUPAN ULOG:</span>
+                <strong id="roulette-total-bet">0 ZLT</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- European Roulette Betting Felt Layout -->
+          <div class="roulette-table-felt">
+            <!-- Zero Box -->
+            <div class="roulette-zero-col">
+              <button type="button" class="roulette-bet-spot spot-zero" data-spot="num_0">
+                <span class="spot-num">0</span>
+              </button>
+            </div>
+
+            <!-- Numbers Grid 1-36 (3 rows x 12 cols) -->
+            <div class="roulette-numbers-grid">
+              <!-- Row 1: 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36 -->
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_3"><span class="spot-num">3</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_6"><span class="spot-num">6</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_9"><span class="spot-num">9</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_12"><span class="spot-num">12</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_15"><span class="spot-num">15</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_18"><span class="spot-num">18</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_21"><span class="spot-num">21</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_24"><span class="spot-num">24</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_27"><span class="spot-num">27</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_30"><span class="spot-num">30</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_33"><span class="spot-num">33</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_36"><span class="spot-num">36</span></button>
+
+              <!-- Row 2: 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35 -->
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_2"><span class="spot-num">2</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_5"><span class="spot-num">5</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_8"><span class="spot-num">8</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_11"><span class="spot-num">11</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_14"><span class="spot-num">14</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_17"><span class="spot-num">17</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_20"><span class="spot-num">20</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_23"><span class="spot-num">23</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_26"><span class="spot-num">26</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_29"><span class="spot-num">29</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_32"><span class="spot-num">32</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_35"><span class="spot-num">35</span></button>
+
+              <!-- Row 3: 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34 -->
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_1"><span class="spot-num">1</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_4"><span class="spot-num">4</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_7"><span class="spot-num">7</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_10"><span class="spot-num">10</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_13"><span class="spot-num">13</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_16"><span class="spot-num">16</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_19"><span class="spot-num">19</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_22"><span class="spot-num">22</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_25"><span class="spot-num">25</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_28"><span class="spot-num">28</span></button>
+              <button type="button" class="roulette-bet-spot spot-black" data-spot="num_31"><span class="spot-num">31</span></button>
+              <button type="button" class="roulette-bet-spot spot-red" data-spot="num_34"><span class="spot-num">34</span></button>
+            </div>
+
+            <!-- Columns 2:1 -->
+            <div class="roulette-cols-strip">
+              <button type="button" class="roulette-bet-spot spot-col" data-spot="col_3">2:1</button>
+              <button type="button" class="roulette-bet-spot spot-col" data-spot="col_2">2:1</button>
+              <button type="button" class="roulette-bet-spot spot-col" data-spot="col_1">2:1</button>
+            </div>
+
+            <!-- Dozens (1st 12, 2nd 12, 3rd 12) -->
+            <div class="roulette-dozens-row">
+              <button type="button" class="roulette-bet-spot spot-dozen" data-spot="dozen_1">1. TUCE (1-12)</button>
+              <button type="button" class="roulette-bet-spot spot-dozen" data-spot="dozen_2">2. TUCE (13-24)</button>
+              <button type="button" class="roulette-bet-spot spot-dozen" data-spot="dozen_3">3. TUCE (25-36)</button>
+            </div>
+
+            <!-- Outside Bets (1-18, Even, Red, Black, Odd, 19-36) -->
+            <div class="roulette-outside-row">
+              <button type="button" class="roulette-bet-spot spot-outside" data-spot="low">1-18</button>
+              <button type="button" class="roulette-bet-spot spot-outside" data-spot="even">PAR</button>
+              <button type="button" class="roulette-bet-spot spot-outside spot-outside-red" data-spot="color_red">CRVENO</button>
+              <button type="button" class="roulette-bet-spot spot-outside spot-outside-black" data-spot="color_black">CRNO</button>
+              <button type="button" class="roulette-bet-spot spot-outside" data-spot="odd">NEPAR</button>
+              <button type="button" class="roulette-bet-spot spot-outside" data-spot="high">19-36</button>
+            </div>
+          </div>
+
+          <!-- Roulette Controls & Chip Float Deck -->
+          <div class="roulette-control-deck">
+            <!-- 5 Authentic Casino Chips Float -->
+            <div class="roulette-chips-strip">
+              <button type="button" class="roulette-chip-opt chip-10" data-value="10"><span>10</span></button>
+              <button type="button" class="roulette-chip-opt chip-20 selected" data-value="20"><span>20</span></button>
+              <button type="button" class="roulette-chip-opt chip-50" data-value="50"><span>50</span></button>
+              <button type="button" class="roulette-chip-opt chip-100" data-value="100"><span>100</span></button>
+              <button type="button" class="roulette-chip-opt chip-500" data-value="500"><span>500</span></button>
+            </div>
+
+            <!-- Action Buttons: Spin, Double, Clear, Rebet -->
+            <div class="roulette-action-buttons">
+              <button type="button" class="btn-roulette-action btn-roulette-clear" id="btn-roulette-clear" title="Obriši sve uloge">
+                ✕ OBRIŠI
+              </button>
+              <button type="button" class="btn-roulette-action btn-roulette-double" id="btn-roulette-double" title="Dupliraj sve uloge">
+                2×
+              </button>
+              <button type="button" class="btn-roulette-action btn-roulette-rebet" id="btn-roulette-rebet" title="Ponovi uloge iz prethodne runde">
+                🔄 PONOOVI
+              </button>
+              <button type="button" class="btn-roulette-action btn-roulette-spin" id="btn-roulette-spin">
+                🎯 ZAVRTI RULET
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       </div> <!-- /#game-stage-host -->
 
     </section>
@@ -2037,6 +2240,63 @@
           <div class="egt-card-details">
             <h3 class="egt-card-title">CASINO HOLD'EM</h3>
             <p class="egt-card-sub">Stolski Poker Protiv Dilera • 3 Sedišta • Flop, Turn &amp; River</p>
+          </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">10</span>
+            <span class="denom-pill active">20</span>
+            <span class="denom-pill">50</span>
+            <span class="denom-pill">100</span>
+            <span class="denom-pill">500</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">IGRAJ SADA</span>
+          </div>
+        </div>
+
+        <!-- Game 10: Royal Scratch (Zlatna Grebalica) -->
+        <div class="egt-game-card" id="egt-opt-scratch" data-game="scratch" data-category="arcade" data-tags="popular,arcade,instant">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-gold">GREBALICA • 100x</div>
+          
+          <div class="grand-card-poster poster-scratch">
+            <div class="poster-scratch-coin">🪙</div>
+            <div class="poster-scratch-sparkle">✨</div>
+            <div class="poster-scratch-crown">👑</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">ZLATNA GREBALICA</h3>
+            <p class="egt-card-sub">Instant 3x3 Zlatna Kartica • Ogrebi 3 Ista Simbola • 100x Premija</p>
+          </div>
+          <div class="egt-denom-strip">
+            <span class="denom-pill">10</span>
+            <span class="denom-pill active">20</span>
+            <span class="denom-pill">50</span>
+            <span class="denom-pill">100</span>
+            <span class="denom-pill">200</span>
+            <span class="denom-cur">ZLT</span>
+          </div>
+          <div class="egt-card-action">
+            <span class="egt-badge-status">IGRAJ SADA</span>
+          </div>
+        </div>
+
+        <!-- Game 11: European Royal Roulette (Evropski Rulet) -->
+        <div class="egt-game-card" id="egt-opt-roulette" data-game="roulette" data-category="tables" data-tags="popular,tables,roulette">
+          <div class="egt-card-glow"></div>
+          <div class="egt-card-border-gold"></div>
+          <div class="egt-card-ribbon ribbon-gold">EVROPSKI RULET • 35:1</div>
+          
+          <div class="grand-card-poster poster-roulette">
+            <div class="poster-roulette-wheel">🎯</div>
+            <div class="poster-roulette-zero">0</div>
+          </div>
+
+          <div class="egt-card-details">
+            <h3 class="egt-card-title">EVROPSKI RULET</h3>
+            <p class="egt-card-sub">Jedna Nula (Single Zero) • Crveno/Crno • Dozens &amp; Columns • 35:1</p>
           </div>
           <div class="egt-denom-strip">
             <span class="denom-pill">10</span>
@@ -3807,8 +4067,10 @@
   <script src="js/games/blackjack/blackjack.js?v=107"></script>
   <script src="js/games/video-poker/video-poker.js?v=103"></script>
   <script src="js/games/casino-holdem/casino-holdem.js?v=105"></script>
+  <script src="js/games/royal-scratch/royal-scratch.js?v=1"></script>
+  <script src="js/games/roulette/roulette.js?v=1"></script>
 
   <!-- Application Controller -->
-  <script src="js/app.js?v=115"></script>
+  <script src="js/app.js?v=116"></script>
 </body>
 </html>
