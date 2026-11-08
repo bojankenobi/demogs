@@ -98,12 +98,12 @@
 
 /* 5x3 Grid Height */
 .superhot-reels-container.rows-3 {
-  height: 330px;
+  height: 360px;
 }
 
 /* 5x4 Grid Height */
 .superhot-reels-container.rows-4 {
-  height: 390px;
+  height: 420px;
 }
 
 /* Individual Reel Column: Viewport for rolling strip */
@@ -143,19 +143,24 @@
   top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   will-change: transform;
 }
 
 .superhot-cell {
   width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   border-bottom: 1px solid rgba(190, 160, 120, 0.28);
   box-sizing: border-box;
+  padding: 4px;
 }
 
 .superhot-sym-wrapper {
@@ -168,13 +173,13 @@
 
 /* 3D Clay Fruit Image */
 .superhot-sym-img {
-  width: 82%;
-  height: 82%;
-  max-width: 86px;
-  max-height: 86px;
+  width: 78%;
+  height: 78%;
+  max-width: 82px;
+  max-height: 82px;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 6px 8px rgba(80, 50, 15, 0.35));
+  filter: drop-shadow(0 4px 6px rgba(80, 50, 15, 0.35));
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   pointer-events: none;
 }
@@ -249,75 +254,68 @@
 }
 
 /* ========================================================
-   3. HUD DASHBOARD COUNTERS
+   3. EGT MULTI-LINE SELECTOR BEZEL BAR
    ======================================================== */
-.superhot-hud-panel {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  background: #000;
-  border: 1px solid #3d280b;
-  border-radius: 10px;
-  padding: 8px 12px;
+.superhot-line-selector-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, #1c1005 0%, #0d0602 100%);
+  border: 1px solid #4a2c07;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-top: 8px;
+  box-shadow: inset 0 1px 3px rgba(255, 215, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.superhot-lines-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #dfb13c;
+  letter-spacing: 1px;
 }
 
 .superhot-lines-pill-group {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 2px;
+  gap: 8px;
 }
 
 .superhot-line-btn {
-  background: #110802;
-  border: 1px solid #5a3c10;
+  background: linear-gradient(180deg, #2a1806 0%, #150b02 100%);
+  border: 1px solid #6d4514;
   border-radius: 6px;
-  color: #c9ab67;
+  color: #ffd32a;
   font-size: 0.82rem;
   font-weight: 800;
-  padding: 4px 10px;
+  padding: 6px 14px;
   cursor: pointer;
   transition: all 0.15s ease;
+  letter-spacing: 0.5px;
 }
 
 .superhot-line-btn:hover {
   border-color: #ffd32a;
   color: #fff;
+  transform: translateY(-1px);
 }
 
 .superhot-line-btn.active {
-  background: linear-gradient(180deg, #d35400 0%, #962d00 100%);
-  border-color: #ffa502;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(255, 165, 2, 0.6);
+  background: linear-gradient(180deg, #e67e22 0%, #d35400 50%, #962d00 100%);
+  border-color: #ffd32a;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(230, 126, 34, 0.75), inset 0 1px 1px #fff;
 }
 
-/* ========================================================
-   4. CONTROLS PANEL (MATCHES GRAND SLOT CASINO THEME)
-   ======================================================== */
-.superhot-controls-panel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-
-.superhot-controls-panel .main-action-cluster {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  gap: 16px;
-}
-
-.superhot-controls-panel .btn-spin-round.is-stopping {
-  border-color: #ff4757;
-  box-shadow: 0 0 25px rgba(255, 71, 87, 0.8), inset 0 0 15px #ff4757;
-}
-
-.superhot-controls-panel .btn-spin-round.is-stopping .spin-text-mini {
-  color: #ff4757;
+.superhot-line-cost-indicator {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #c9ab67;
+  letter-spacing: 0.5px;
 }
 
 /* ========================================================
@@ -540,9 +538,10 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .superhot-jackpot-header { grid-template-columns: repeat(2, 1fr); }
-  .superhot-reels-container.rows-3 { height: 280px; }
-  .superhot-reels-container.rows-4 { height: 340px; }
-  .superhot-hud-panel { grid-template-columns: repeat(2, 1fr); }
+  .superhot-reels-container.rows-3 { height: 300px; }
+  .superhot-reels-container.rows-4 { height: 360px; }
+  .superhot-line-selector-bar { flex-direction: column; gap: 6px; padding: 6px 10px; }
+  .superhot-line-btn { padding: 4px 8px; font-size: 0.75rem; }
   .jackpot-cards-grid { grid-template-columns: repeat(3, 1fr); }
   .jackpot-pick-card { height: 85px; }
 }

@@ -116,17 +116,17 @@ assert(indexHtml.includes('css/super-hot.css'), 'FAIL: css/super-hot.css missing
 assert(indexHtml.includes('id="superhot-game-view"'), 'FAIL: #superhot-game-view missing in index.html');
 assert(indexHtml.includes('id="superhot-reels-grid"'), 'FAIL: #superhot-reels-grid missing in index.html');
 assert(indexHtml.includes('id="superhot-paylines-canvas"'), 'FAIL: #superhot-paylines-canvas missing in index.html');
-assert(indexHtml.includes('id="superhot-btn-spin"'), 'FAIL: #superhot-btn-spin missing in index.html');
-assert(indexHtml.includes('id="superhot-btn-gamble"'), 'FAIL: #superhot-btn-gamble missing in index.html');
 assert(indexHtml.includes('id="superhot-gamble-modal"'), 'FAIL: #superhot-gamble-modal missing in index.html');
 assert(indexHtml.includes('id="superhot-jackpot-modal"'), 'FAIL: #superhot-jackpot-modal missing in index.html');
 
-// Check Grand Slot Luxury Controls Panel & HUD
-assert(indexHtml.includes('class="controls-panel superhot-controls-panel"'), 'FAIL: superhot-controls-panel missing');
-assert(indexHtml.includes('class="hud-panel superhot-hud-panel"'), 'FAIL: superhot-hud-panel missing');
-assert(indexHtml.includes('id="superhot-bet-minus"'), 'FAIL: #superhot-bet-minus missing');
-assert(indexHtml.includes('id="superhot-bet-plus"'), 'FAIL: #superhot-bet-plus missing');
-assert(indexHtml.includes('id="superhot-spin-label"'), 'FAIL: #superhot-spin-label missing');
+// Check Sleek EGT Multi-Line Selector Bezel Bar
+assert(indexHtml.includes('class="superhot-line-selector-bar"'), 'FAIL: superhot-line-selector-bar missing');
+assert(indexHtml.includes('class="superhot-lines-pill-group"'), 'FAIL: superhot-lines-pill-group missing');
+assert(indexHtml.includes('id="superhot-line-cost-indicator"'), 'FAIL: #superhot-line-cost-indicator missing');
+
+// Verify No Duplicate HUD / Controls Panel inside superhot view
+assert(!indexHtml.includes('class="hud-panel superhot-hud-panel"'), 'FAIL: duplicate superhot-hud-panel must not exist');
+assert(!indexHtml.includes('class="controls-panel superhot-controls-panel"'), 'FAIL: duplicate superhot-controls-panel must not exist');
 
 // Check 3D Clay Fruit Image Assets
 const symbolsDir = path.join(__dirname, '..', 'assets', 'symbols', 'super-hot');

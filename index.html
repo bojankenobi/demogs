@@ -1511,68 +1511,17 @@
           </div>
         </div>
 
-        <!-- HUD Dashboard Counters (Aligned with Grand Slot luxury styling) -->
-        <section class="hud-panel superhot-hud-panel">
-          <div class="hud-item hud-balance-item">
-            <div class="hud-label">Krediti</div>
-            <div class="hud-val" id="superhot-val-balance">1,000</div>
-            <div class="hud-sub-rsd" id="superhot-sub-balance">≈ 1,000 ZLT</div>
+        <!-- Sleek EGT Multi-Line Selector Bezel Bar -->
+        <div class="superhot-line-selector-bar">
+          <span class="superhot-lines-label">IZBOR LINIJA:</span>
+          <div class="superhot-lines-pill-group">
+            <button type="button" class="superhot-line-btn" data-lines="5">5 LINIJA</button>
+            <button type="button" class="superhot-line-btn active" data-lines="20">20 LINIJA</button>
+            <button type="button" class="superhot-line-btn" data-lines="40">40 LINIJA</button>
+            <button type="button" class="superhot-line-btn" data-lines="100">100 LINIJA</button>
           </div>
-          <div class="hud-item hud-denom-item" id="superhot-lines-box">
-            <div class="hud-label">LINIJE</div>
-            <div class="superhot-lines-pill-group">
-              <button type="button" class="superhot-line-btn" data-lines="5">5</button>
-              <button type="button" class="superhot-line-btn active" data-lines="20">20</button>
-              <button type="button" class="superhot-line-btn" data-lines="40">40</button>
-              <button type="button" class="superhot-line-btn" data-lines="100">100</button>
-            </div>
-          </div>
-          <div class="hud-item hud-bet-item">
-            <div class="hud-label">Ukupan Ulog</div>
-            <div class="hud-val" id="superhot-val-totalbet">40</div>
-            <div class="hud-sub-rsd" id="superhot-sub-bet">2 ZLT / lin</div>
-          </div>
-          <div class="hud-item win-item hud-win-item">
-            <div class="hud-label">Dobitak</div>
-            <div class="hud-val" id="superhot-val-win">0</div>
-          </div>
-        </section>
-
-        <!-- Controls Panel (Follows exact Grand Slot casino theme) -->
-        <section class="controls-panel superhot-controls-panel">
-          <div class="main-action-cluster">
-            <div class="bet-side-controls">
-              <!-- Top Row: Stepper & Auto -->
-              <div class="bet-stepper-row">
-                <div class="bet-stepper">
-                  <button type="button" class="btn-step" id="superhot-bet-minus" aria-label="Smanji ulog">−</button>
-                  <span class="bet-display" id="superhot-val-bet">2 ZLT</span>
-                  <button type="button" class="btn-step" id="superhot-bet-plus" aria-label="Povećaj ulog">+</button>
-                </div>
-                <button type="button" class="btn-auto" id="superhot-btn-auto">AUTO</button>
-              </div>
-
-              <!-- Quick Row: Max Bet & Card-Suit Diamond Gamble -->
-              <div class="bet-quick-row">
-                <button type="button" class="btn-secondary" id="superhot-btn-maxbet">MAX BET</button>
-                <button type="button" class="btn-gamble-card-suit is-dimmed" id="superhot-btn-gamble" title="Duplanje (Gamble)">
-                  <img src="assets/symbols/crystal-spade-clean.png" alt="Duplanje" class="crystal-spade-img" />
-                </button>
-              </div>
-            </div>
-
-            <!-- Right Side: Luxury Circular IGT SPIN Button -->
-            <div class="spin-side-wrap">
-              <button type="button" class="btn-spin-round" id="superhot-btn-spin" aria-label="Spin / Stop" title="Spin / Stop">
-                <div class="spin-light-burst"></div>
-                <div class="spin-face">
-                  <img src="assets/symbols/logo-flower.svg" alt="SPIN" class="spin-flower-logo" />
-                  <span class="spin-text-mini" id="superhot-spin-label">SPIN</span>
-                </div>
-              </button>
-            </div>
-          </div>
-        </section>
+          <span class="superhot-line-cost-indicator" id="superhot-line-cost-indicator">1 KR / LINIJA</span>
+        </div>
 
         <!-- Gamble Screen Modal -->
         <div class="superhot-modal-overlay" id="superhot-gamble-modal" style="display: none;">

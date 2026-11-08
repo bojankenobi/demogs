@@ -518,11 +518,12 @@ class IGTApp {
           const stage = document.querySelector('.slot-stage-scaler');
           if (stage) stage.style.display = 'none';
 
+          // Keep canonical casino controls panel and HUD active
           const controlsPanel = document.querySelector('.controls-panel');
-          if (controlsPanel) controlsPanel.style.display = 'none';
+          if (controlsPanel) controlsPanel.style.display = 'flex';
 
           const bannerWrap = document.querySelector('.status-banner-wrap');
-          if (bannerWrap) bannerWrap.style.display = 'none';
+          if (bannerWrap) bannerWrap.style.display = 'block';
 
           const container = document.querySelector('.game-container');
           if (container) container.classList.add('in-superhot-mode');
@@ -530,6 +531,7 @@ class IGTApp {
           if (this.isAutoSpin) this.toggleAutoSpin(false);
 
           this.superHotGame.mount();
+          this.showMessage('GRAND SUPER HOT: Izaberite broj linija (5, 20, 40, 100) i zavrtite!', 'normal');
         },
         unmount: () => {
           this.superHotGame.unmount();
@@ -549,6 +551,11 @@ class IGTApp {
             } else {
               this.superHotGame.handleSpin();
             }
+          }
+        },
+        slamStop: () => {
+          if (this.superHotGame) {
+            this.superHotGame.slamStop();
           }
         },
         get isSpinning() {
@@ -2432,7 +2439,13 @@ class IGTApp {
       });
     }
     if (this.autoBtn) {
-      this.autoBtn.addEventListener('click', () => this.toggleAutoSpin());
+      this.autoBtn.addEventListener('click', () => {
+        if (this.lobby && this.lobby.activeGameId === 'superhot' && this.superHotGame) {
+          this.superHotGame.toggleAutoSpin();
+        } else {
+          this.toggleAutoSpin();
+        }
+      });
     }
 
     const betMinusBtn = document.getElementById('bet-minus');
@@ -2441,9 +2454,27 @@ class IGTApp {
     const refillBtn = document.getElementById('refill-credits-btn');
     const hudDenomToggle = document.getElementById('hud-denom-toggle-btn');
 
-    if (betMinusBtn) betMinusBtn.addEventListener('click', () => this.wallet.changeBet(-5));
-    if (betPlusBtn) betPlusBtn.addEventListener('click', () => this.wallet.changeBet(5));
-    if (maxBetBtn) maxBetBtn.addEventListener('click', () => this.wallet.setMaxBet());
+    if (betMinusBtn) betMinusBtn.addEventListener('click', () => {
+      if (this.lobby && this.lobby.activeGameId === 'superhot' && this.superHotGame) {
+        this.superHotGame.stepBet(-1);
+      } else {
+        this.wallet.changeBet(-5);
+      }
+    });
+    if (betPlusBtn) betPlusBtn.addEventListener('click', () => {
+      if (this.lobby && this.lobby.activeGameId === 'superhot' && this.superHotGame) {
+        this.superHotGame.stepBet(1);
+      } else {
+        this.wallet.changeBet(5);
+      }
+    });
+    if (maxBetBtn) maxBetBtn.addEventListener('click', () => {
+      if (this.lobby && this.lobby.activeGameId === 'superhot' && this.superHotGame) {
+        this.superHotGame.setMaxBet();
+      } else {
+        this.wallet.setMaxBet();
+      }
+    });
     if (refillBtn) refillBtn.addEventListener('click', () => {
       if (typeof this.openProfileModal === 'function') {
         this.openProfileModal();

@@ -11,9 +11,9 @@
   const SYMBOLS = {
     CHERRY: { id: 'cherry', name: 'Višnja', pays: { 3: 10, 4: 20, 5: 100 }, weight: 26, isWild: false, isScatter: false },
     LEMON: { id: 'lemon', name: 'Limun', pays: { 3: 10, 4: 20, 5: 100 }, weight: 26, isWild: false, isScatter: false },
-    ORANGE: { id: 'orange', name: 'Narandža', pays: { 3: 10, 4: 40, 5: 200 }, weight: 20, isWild: false, isScatter: false },
-    PLUM: { id: 'plum', name: 'Šljiva', pays: { 3: 10, 4: 40, 5: 200 }, weight: 20, isWild: false, isScatter: false },
-    WATERMELON: { id: 'watermelon', name: 'Lubenica', pays: { 3: 20, 4: 80, 5: 400 }, weight: 14, isWild: false, isScatter: false },
+    ORANGE: { id: 'orange', name: 'Narandža', pays: { 3: 10, 4: 20, 5: 100 }, weight: 26, isWild: false, isScatter: false },
+    PLUM: { id: 'plum', name: 'Šljiva', pays: { 3: 20, 4: 40, 5: 200 }, weight: 20, isWild: false, isScatter: false },
+    WATERMELON: { id: 'watermelon', name: 'Lubenica', pays: { 3: 20, 4: 40, 5: 200 }, weight: 20, isWild: false, isScatter: false },
     GRAPES: { id: 'grapes', name: 'Grožđe', pays: { 3: 20, 4: 80, 5: 400 }, weight: 14, isWild: false, isScatter: false },
     SEVEN: { id: 'seven', name: 'Crvena 7', pays: { 3: 40, 4: 400, 5: 1000 }, weight: 10, isWild: true, isScatter: false },
     STAR: { id: 'star', name: 'Zlatna Zvezda', pays: { 3: 5, 4: 20, 5: 500 }, weight: 5, isWild: false, isScatter: true } // Pays on Total Bet
@@ -214,69 +214,94 @@
 
       let totalLineWin = 0;
 
-      // 1. Evaluate Line Wins (Left to Right)
+      // 1. Evaluate Line Wins (Left to Right, Highest Win Only Per Line)
       paylines.forEach((linePattern, lineIndex) => {
-        let firstSymId = null;
-        let matchCount = 0;
-        let wildCount = 0;
-
-        // Traverse from reel 0 to 4
+        const lineSymbols = [];
         for (let reel = 0; reel < 5; reel++) {
-          const row = linePattern[reel];
-          const symId = matrix[reel][row];
+          lineSymbols.push(matrix[reel][linePattern[reel]]);
+        }
 
-          if (symId === 'star') {
-            // Scatters do not participate in line wins
-            break;
-          }
+        if (lineSymbols[0] === 'star') return; // Line starts with scatter -> 0 line win
 
-          if (reel === 0) {
-            firstSymId = symId;
-            matchCount = 1;
-            if (symId === 'seven') wildCount++;
-          } else {
-            // Check if matches or substitutes
-            if (firstSymId === 'seven') {
-              // Started with wild, can take next symbol's identity
-              if (symId !== 'seven') {
-                firstSymId = symId;
-              }
-              matchCount++;
-              if (symId === 'seven') wildCount++;
-            } else if (symId === firstSymId || symId === 'seven') {
-              matchCount++;
-              if (symId === 'seven') wildCount++;
-            } else {
+        // Determine candidate symbol types for this line
+        const candidates = [];
+        if (lineSymbols[0] === 'seven') {
+          candidates.push('seven');
+          // Find first non-seven, non-star fruit in the prefix
+          for (let r = 1; r < 5; r++) {
+            if (lineSymbols[r] === 'star') break;
+            if (lineSymbols[r] !== 'seven') {
+              candidates.push(lineSymbols[r]);
               break;
             }
           }
+        } else {
+          candidates.push(lineSymbols[0]);
         }
 
-        if (matchCount >= 3 && firstSymId) {
-          const symDef = this.symbols[firstSymId.toUpperCase()];
-          if (symDef && symDef.pays && symDef.pays[matchCount]) {
-            const mult = symDef.pays[matchCount];
-            const payout = lineBet * mult;
-            totalLineWin += payout;
+        let bestWin = null;
 
-            const winPositions = [];
-            for (let r = 0; r < matchCount; r++) {
-              const row = linePattern[r];
-              winningPositions.add(`${r},${row}`);
-              winPositions.push({ reel: r, row });
+        candidates.forEach(targetSymId => {
+          let count = 0;
+          let wildCount = 0;
+
+          for (let r = 0; r < 5; r++) {
+            const sym = lineSymbols[r];
+            if (targetSymId === 'seven') {
+              if (sym === 'seven') {
+                count++;
+                wildCount++;
+              } else {
+                break;
+              }
+            } else {
+              if (sym === targetSymId || sym === 'seven') {
+                count++;
+                if (sym === 'seven') wildCount++;
+              } else {
+                break;
+              }
             }
-
-            winningLines.push({
-              lineIndex: lineIndex + 1,
-              symbolId: firstSymId,
-              symbolName: symDef.name,
-              matchCount,
-              multiplier: mult,
-              payout,
-              positions: winPositions,
-              isWildHit: wildCount > 0
-            });
           }
+
+          if (count >= 3) {
+            const symDef = this.symbols[targetSymId.toUpperCase()];
+            if (symDef && symDef.pays && symDef.pays[count]) {
+              const mult = symDef.pays[count];
+              const payout = lineBet * mult;
+              if (!bestWin || payout > bestWin.payout) {
+                bestWin = {
+                  symbolId: targetSymId,
+                  symbolName: symDef.name,
+                  matchCount: count,
+                  multiplier: mult,
+                  payout,
+                  isWildHit: wildCount > 0
+                };
+              }
+            }
+          }
+        });
+
+        if (bestWin) {
+          totalLineWin += bestWin.payout;
+          const winPositions = [];
+          for (let r = 0; r < bestWin.matchCount; r++) {
+            const row = linePattern[r];
+            winningPositions.add(`${r},${row}`);
+            winPositions.push({ reel: r, row });
+          }
+
+          winningLines.push({
+            lineIndex: lineIndex + 1,
+            symbolId: bestWin.symbolId,
+            symbolName: bestWin.symbolName,
+            matchCount: bestWin.matchCount,
+            multiplier: bestWin.multiplier,
+            payout: bestWin.payout,
+            positions: winPositions,
+            isWildHit: bestWin.isWildHit
+          });
         }
       });
 

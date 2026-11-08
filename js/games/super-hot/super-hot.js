@@ -107,19 +107,26 @@
       this.dom.grid = document.getElementById('superhot-reels-grid');
       this.dom.canvas = document.getElementById('superhot-paylines-canvas');
       this.dom.linesButtons = document.querySelectorAll('.superhot-line-btn');
-      this.dom.betMinus = document.getElementById('superhot-bet-minus');
-      this.dom.betPlus = document.getElementById('superhot-bet-plus');
-      this.dom.betDisplay = document.getElementById('superhot-val-bet');
-      this.dom.totalBetDisplay = document.getElementById('superhot-val-totalbet');
-      this.dom.lineBetSub = document.getElementById('superhot-sub-bet');
-      this.dom.winDisplay = document.getElementById('superhot-val-win');
-      this.dom.balanceDisplay = document.getElementById('superhot-val-balance');
-      this.dom.balanceSub = document.getElementById('superhot-sub-balance');
-      this.dom.spinBtn = document.getElementById('superhot-btn-spin');
-      this.dom.spinLabel = document.getElementById('superhot-spin-label');
-      this.dom.gambleBtn = document.getElementById('superhot-btn-gamble');
-      this.dom.autoBtn = document.getElementById('superhot-btn-auto');
-      this.dom.maxBetBtn = document.getElementById('superhot-btn-maxbet');
+      this.dom.lineCostIndicator = document.getElementById('superhot-line-cost-indicator');
+
+      // Canonical Global App HUD Counters (Single, unified luxury bar)
+      this.dom.balanceDisplay = document.getElementById('val-balance');
+      this.dom.balanceSub = document.getElementById('hud-balance-rsd');
+      this.dom.betDisplay = document.getElementById('val-bet');
+      this.dom.betSub = document.getElementById('hud-bet-rsd');
+      this.dom.winDisplay = document.getElementById('val-win');
+      this.dom.denomDisplay = document.getElementById('hud-denom-val');
+      this.dom.denomSub = document.getElementById('hud-denom-sub');
+
+      // Canonical Global Controls
+      this.dom.spinBtn = document.getElementById('spin-btn');
+      this.dom.spinLabel = document.querySelector('#spin-btn .spin-text-mini') || document.getElementById('spin-btn');
+      this.dom.gambleBtn = document.getElementById('gamble-btn');
+      this.dom.autoBtn = document.getElementById('auto-btn');
+      this.dom.maxBetBtn = document.getElementById('max-bet-btn');
+      this.dom.betMinus = document.getElementById('bet-minus');
+      this.dom.betPlus = document.getElementById('bet-plus');
+      this.dom.statusBanner = document.getElementById('status-banner');
 
       // Jackpot meters
       this.dom.jpClubs = document.getElementById('superhot-jp-clubs');
@@ -143,52 +150,7 @@
         });
       }
 
-      if (this.dom.betMinus) {
-        this.dom.betMinus.addEventListener('click', () => {
-          if (this.isSpinning) return;
-          this.stepBet(-1);
-        });
-      }
-
-      if (this.dom.betPlus) {
-        this.dom.betPlus.addEventListener('click', () => {
-          if (this.isSpinning) return;
-          this.stepBet(1);
-        });
-      }
-
-      if (this.dom.maxBetBtn) {
-        this.dom.maxBetBtn.addEventListener('click', () => {
-          if (this.isSpinning) return;
-          this.setMaxBet();
-        });
-      }
-
-      if (this.dom.spinBtn) {
-        this.dom.spinBtn.addEventListener('click', () => {
-          if (this.isSpinning) {
-            this.slamStop();
-          } else {
-            this.handleSpin();
-          }
-        });
-      }
-
-      if (this.dom.gambleBtn) {
-        this.dom.gambleBtn.addEventListener('click', () => {
-          if (this.currentWin > 0 && !this.isSpinning) {
-            this.openGambleModal();
-          }
-        });
-      }
-
-      if (this.dom.autoBtn) {
-        this.dom.autoBtn.addEventListener('click', () => {
-          this.toggleAutoSpin();
-        });
-      }
-
-      // Allow clicking directly on any spinning reel to stop it
+      // Allow clicking directly on any spinning reel column to slam stop it
       if (this.dom.grid) {
         this.dom.grid.addEventListener('click', (e) => {
           const reelEl = e.target.closest('.superhot-reel-column');
@@ -213,6 +175,7 @@
         this.initDefaultMatrix();
       }
 
+      this.stopSequentialLineCycle();
       this.clearPaylineHighlights();
       this.renderGrid();
       this.updateConsoleUI();
@@ -235,7 +198,13 @@
     }
 
     updateConsoleUI() {
-      const totalBet = this.lineBet * this.selectedLines;
+      const totalBetCredits = this.lineBet * this.selectedLines;
+      const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
+      const totalBetZLT = +(totalBetCredits * denom).toFixed(2);
+
+      if (this.wallet) {
+        this.wallet.bet = totalBetCredits;
+      }
 
       if (this.dom.linesButtons) {
         this.dom.linesButtons.forEach(btn => {
@@ -244,10 +213,44 @@
         });
       }
 
-      if (this.dom.betDisplay) this.dom.betDisplay.textContent = `${this.lineBet} ZLT`;
-      if (this.dom.lineBetSub) this.dom.lineBetSub.textContent = `${this.lineBet} ZLT / lin`;
-      if (this.dom.totalBetDisplay) this.dom.totalBetDisplay.textContent = `${totalBet}`;
-      if (this.dom.winDisplay) this.dom.winDisplay.textContent = `${this.currentWin}`;
+      if (this.dom.lineCostIndicator) {
+        this.dom.lineCostIndicator.textContent = `${this.lineBet} KR / LINIJA (${totalBetCredits} KR UKUPNO)`;
+      }
+
+      if (this.dom.betDisplay) {
+        this.dom.betDisplay.textContent = `${totalBetCredits}`;
+      }
+      if (this.dom.betSub) {
+        this.dom.betSub.textContent = `≈ ${totalBetZLT} ZLT`;
+      }
+      if (this.dom.winDisplay) {
+        this.dom.winDisplay.textContent = `${this.currentWin}`;
+      }
+
+      if (this.dom.balanceDisplay && this.wallet) {
+        this.dom.balanceDisplay.textContent = `${Math.floor(this.wallet.balance || 0).toLocaleString()}`;
+      }
+      if (this.dom.balanceSub && this.wallet) {
+        this.dom.balanceSub.textContent = `≈ ${(this.wallet.rsdBalance || 0).toLocaleString()} ZLT`;
+      }
+
+      if (this.dom.gambleBtn) {
+        const canGamble = (this.currentWin > 0 && this.currentWin <= totalBetCredits * 35 && !this.isSpinning);
+        this.dom.gambleBtn.disabled = !canGamble;
+        this.dom.gambleBtn.classList.toggle('is-dimmed', !canGamble);
+        this.dom.gambleBtn.classList.toggle('glow-ready', canGamble);
+      }
+
+      if (this.dom.spinBtn) {
+        if (this.isSpinning) {
+          if (this.dom.spinLabel) this.dom.spinLabel.textContent = 'STOP';
+          this.dom.spinBtn.classList.add('is-stopping');
+        } else {
+          if (this.dom.spinLabel) this.dom.spinLabel.textContent = 'SPIN';
+          this.dom.spinBtn.classList.remove('is-stopping');
+        }
+      }
+    }
       if (this.dom.balanceDisplay && this.wallet) {
         this.dom.balanceDisplay.textContent = `${Math.floor(this.wallet.balance || 0).toLocaleString()}`;
       }
@@ -323,28 +326,35 @@
 
     handleSpin() {
       if (this.isSpinning) return;
-      const totalBet = this.lineBet * this.selectedLines;
+      const totalBetCredits = this.lineBet * this.selectedLines;
 
-      if (this.wallet && this.wallet.balance < totalBet) {
-        if (window.slotNotifications) {
-          window.slotNotifications.show('Nemate dovoljno ZLT kredita za ovaj ulog!', 'error');
+      if (this.wallet && !this.wallet.canAffordSpin()) {
+        if (this.dom.statusBanner) {
+          this.dom.statusBanner.textContent = 'NEMATE DOVOLJNO KREDITA ZA OVAJ ULOG!';
+          this.dom.statusBanner.className = 'status-banner status-warning';
         }
         this.isAutoSpinning = false;
+        if (this.dom.autoBtn) this.dom.autoBtn.classList.remove('active');
         return;
       }
 
-      // Deduct bet
+      // Deduct bet via CasinoWallet
       if (this.wallet) {
-        this.wallet.balance -= totalBet;
-        this.wallet.updateUI();
+        this.wallet.deductBet(totalBetCredits);
       }
       if (this.wallet && typeof this.wallet.recordTurnover === 'function') {
-        this.wallet.recordTurnover(totalBet);
+        this.wallet.recordTurnover(totalBetCredits);
       }
 
       this.currentWin = 0;
+      this.stopSequentialLineCycle();
       this.clearPaylineHighlights();
       this.updateConsoleUI();
+
+      if (this.dom.statusBanner) {
+        this.dom.statusBanner.textContent = `VRTENJE U TOKU (${this.selectedLines} LINIJA, ULOG ${totalBetCredits} KR)...`;
+        this.dom.statusBanner.className = 'status-banner status-normal';
+      }
 
       this.isSpinning = true;
       this.reelStates = ['spinning', 'spinning', 'spinning', 'spinning', 'spinning'];
@@ -392,6 +402,7 @@
         if (!reelStrip) continue;
 
         reelStrip.classList.remove('mechanical-snap-bounce');
+        reelStrip.style.height = 'auto'; // allow extended length during spin
 
         const targetSyms = this.lastEvaluation.matrix[r]; // [rows]
         const prevSyms = this.currentMatrix[r]; // [rows]
@@ -471,6 +482,7 @@
         if (reelStrip) {
           // Rebuild final resting cells
           reelStrip.innerHTML = '';
+          reelStrip.style.height = '100%';
           for (let row = 0; row < rows; row++) {
             const symId = this.currentMatrix[reelIdx][row];
             const cell = document.createElement('div');
@@ -489,9 +501,9 @@
 
           // Apply authentic mechanical snap-bounce keyframe animation
           reelStrip.style.transition = 'none';
-          reelStrip.style.setProperty('--stop-overshoot', '15px');
-          reelStrip.style.setProperty('--stop-rebound', '-6px');
-          reelStrip.style.setProperty('--stop-micro', '2px');
+          reelStrip.style.setProperty('--stop-overshoot', '12px');
+          reelStrip.style.setProperty('--stop-rebound', '-4px');
+          reelStrip.style.setProperty('--stop-micro', '1px');
           reelStrip.style.setProperty('--stop-target', '0px');
           reelStrip.classList.add('mechanical-snap-bounce');
           reelStrip.style.transform = 'translateY(0px)';
@@ -549,11 +561,10 @@
       if (this.currentWin > 0) {
         // Credit win to wallet
         if (this.wallet) {
-          this.wallet.balance += this.currentWin;
-          this.wallet.updateUI();
+          this.wallet.addWin(this.currentWin);
         }
 
-        // Trigger Flaming Reels Effect
+        // Trigger authentic EGT Flaming Reels & Sequential Line Presentation
         this.triggerFlamingReels(evalResult);
 
         // Sound
@@ -561,6 +572,11 @@
           this.audio.playFlameWhoosh();
           const tier = this.currentWin >= (evalResult.totalBet * 10) ? 'big' : 'normal';
           this.audio.playWinFanfare(tier);
+        }
+      } else {
+        if (this.dom.statusBanner) {
+          this.dom.statusBanner.textContent = 'VIŠE SREĆE U SLEDEĆEM SPJINU! ZAVRTITE PONOVO.';
+          this.dom.statusBanner.className = 'status-banner status-normal';
         }
       }
 
@@ -574,12 +590,12 @@
       } else if (this.isAutoSpinning) {
         setTimeout(() => {
           if (this.isAutoSpinning) this.handleSpin();
-        }, this.currentWin > 0 ? 2200 : 800);
+        }, this.currentWin > 0 ? 2600 : 800);
       }
     }
 
     triggerFlamingReels(evalResult) {
-      // Highlight winning positions with flame animation
+      // 1. All winning symbols burst into authentic EGT fire
       evalResult.winningPositions.forEach(pos => {
         const cell = this.dom.grid.querySelector(`.superhot-cell[data-reel="${pos.reel}"][data-row="${pos.row}"]`);
         if (cell) {
@@ -587,45 +603,38 @@
         }
       });
 
-      // Draw active payline laser on canvas
-      this.drawPaylines(evalResult.winningLines);
+      // 2. Start sequential line cycle (one line at a time, no chaotic spiderwebs)
+      this.startSequentialLineCycle(evalResult.winningLines, evalResult.scatterWin);
     }
 
-    clearPaylineHighlights() {
-      if (this.dom.grid) {
-        const flaming = this.dom.grid.querySelectorAll('.flaming-symbol');
-        flaming.forEach(el => el.classList.remove('flaming-symbol'));
-      }
-      if (this.dom.canvas) {
-        const ctx = this.dom.canvas.getContext('2d');
-        if (ctx) ctx.clearRect(0, 0, this.dom.canvas.width, this.dom.canvas.height);
-      }
-    }
+    startSequentialLineCycle(winningLines, scatterWin = 0) {
+      this.stopSequentialLineCycle();
+      const lines = winningLines || [];
 
-    drawPaylines(winningLines) {
-      if (!this.dom.canvas || !winningLines || winningLines.length === 0) return;
-      const canvas = this.dom.canvas;
-      const rect = this.dom.grid.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
+      const showSingleLine = (line) => {
+        if (!this.dom.canvas || this.isSpinning || !line) return;
+        const canvas = this.dom.canvas;
+        const rect = this.dom.grid.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
 
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const colW = canvas.width / 5;
-      const { rows } = this.engine.getGridDimensions(this.selectedLines);
-      const rowH = canvas.height / rows;
+        const colW = canvas.width / 5;
+        const { rows } = this.engine.getGridDimensions(this.selectedLines);
+        const rowH = canvas.height / rows;
 
-      const colors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#e056fd', '#f1c40f', '#00d2d3'];
+        // Draw ONLY this specific winning line with gold & fire glow
+        ctx.save();
+        ctx.strokeStyle = '#ffd32a';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.shadowColor = '#ff4757';
+        ctx.shadowBlur = 14;
 
-      winningLines.forEach((line, idx) => {
-        const color = colors[idx % colors.length];
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 4;
-        ctx.shadowColor = color;
-        ctx.shadowBlur = 10;
         ctx.beginPath();
-
         line.positions.forEach((pos, pIdx) => {
           const cx = (pos.reel * colW) + (colW / 2);
           const cy = (pos.row * rowH) + (rowH / 2);
@@ -636,13 +645,80 @@
           }
         });
         ctx.stroke();
-      });
+
+        // Glowing node indicators
+        line.positions.forEach(pos => {
+          const cx = (pos.reel * colW) + (colW / 2);
+          const cy = (pos.row * rowH) + (rowH / 2);
+          ctx.beginPath();
+          ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.fill();
+          ctx.strokeStyle = '#e67e22';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+        ctx.restore();
+
+        // Update status banner with exact line breakdown
+        if (this.dom.statusBanner) {
+          const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
+          const zltVal = +(line.payout * denom).toFixed(2);
+          this.dom.statusBanner.textContent = `LINIJA ${line.lineIndex}: ${line.symbolName} x${line.matchCount} ➜ +${line.payout} KR (≈ ${zltVal} ZLT)`;
+          this.dom.statusBanner.className = 'status-banner status-win';
+        }
+      };
+
+      if (lines.length > 0) {
+        let idx = 0;
+        showSingleLine(lines[0]);
+
+        if (lines.length > 1) {
+          this.lineCycleInterval = setInterval(() => {
+            if (this.isSpinning) {
+              this.stopSequentialLineCycle();
+              return;
+            }
+            idx = (idx + 1) % lines.length;
+            showSingleLine(lines[idx]);
+          }, 1400);
+        }
+      } else if (scatterWin > 0 && this.dom.statusBanner) {
+        const denom = (this.wallet && this.wallet.activeDenom) ? this.wallet.activeDenom : 1;
+        const zltVal = +(scatterWin * denom).toFixed(2);
+        this.dom.statusBanner.textContent = `⭐ SCATTER DOBITAK (ZLATNA ZVEZDA): +${scatterWin} KR (≈ ${zltVal} ZLT)!`;
+        this.dom.statusBanner.className = 'status-banner status-jackpot';
+      }
+    }
+
+    stopSequentialLineCycle() {
+      if (this.lineCycleInterval) {
+        clearInterval(this.lineCycleInterval);
+        this.lineCycleInterval = null;
+      }
+      if (this.dom.canvas) {
+        const ctx = this.dom.canvas.getContext('2d');
+        if (ctx) ctx.clearRect(0, 0, this.dom.canvas.width, this.dom.canvas.height);
+      }
+    }
+
+    clearPaylineHighlights() {
+      this.stopSequentialLineCycle();
+      if (this.dom.grid) {
+        const flaming = this.dom.grid.querySelectorAll('.flaming-symbol');
+        flaming.forEach(el => el.classList.remove('flaming-symbol'));
+      }
     }
 
     toggleAutoSpin() {
       this.isAutoSpinning = !this.isAutoSpinning;
       if (this.dom.autoBtn) {
         this.dom.autoBtn.classList.toggle('active', this.isAutoSpinning);
+      }
+      if (this.isAutoSpinning && !this.isSpinning) {
+        this.handleSpin();
+      }
+    }
       }
       if (this.isAutoSpinning && !this.isSpinning) {
         this.handleSpin();
@@ -740,8 +816,7 @@
         const addedWin = this.currentWin;
         this.currentWin *= 2;
         if (this.wallet) {
-          this.wallet.balance += addedWin;
-          this.wallet.updateUI();
+          this.wallet.addWin(addedWin);
         }
         if (this.audio) this.audio.playWinFanfare('normal');
         this.gambleStreak++;
@@ -758,7 +833,8 @@
       } else {
         // Lost gamble
         if (this.wallet) {
-          this.wallet.balance = Math.max(0, this.wallet.balance - this.currentWin);
+          this.wallet.deductBet(this.currentWin);
+          this.wallet.lastWin = 0;
           this.wallet.updateUI();
         }
         this.currentWin = 0;
