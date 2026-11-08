@@ -855,13 +855,30 @@
   padding: 2px 1px;
 }
 
+.royale-leaderboard-card .royale-leaderboard-strip {
+  scrollbar-width: thin;
+  scrollbar-color: #ef4444 rgba(20, 8, 10, 0.88);
+}
+
 .royale-leaderboard-card .royale-leaderboard-strip::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
+}
+
+.royale-leaderboard-card .royale-leaderboard-strip::-webkit-scrollbar-track {
+  background: rgba(20, 8, 10, 0.88);
+  border-radius: 4px;
 }
 
 .royale-leaderboard-card .royale-leaderboard-strip::-webkit-scrollbar-thumb {
-  background: rgba(239, 68, 68, 0.35);
+  background: linear-gradient(180deg, #f87171 0%, #ef4444 50%, #b91c1c 100%);
   border-radius: 4px;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+}
+
+.royale-leaderboard-card .royale-leaderboard-strip::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .royale-leaderboard-card .competitor-pill {
@@ -2657,16 +2674,31 @@
     padding-right: 4px !important;
   }
 
+  .vault-cockpit-wing {
+    scrollbar-width: thin;
+    scrollbar-color: #10b981 rgba(6, 18, 16, 0.88);
+  }
   .vault-cockpit-wing::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
   .vault-cockpit-wing::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    background: rgba(6, 18, 16, 0.88);
+    border-radius: 6px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
   }
   .vault-cockpit-wing::-webkit-scrollbar-thumb {
-    background: rgba(212, 175, 55, 0.4);
-    border-radius: 4px;
+    background: linear-gradient(180deg, #34d399 0%, #10b981 50%, #047857 100%);
+    border-radius: 6px;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+  }
+  .vault-cockpit-wing::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #6ee7b7 0%, #34d399 50%, #10b981 100%);
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.7);
+  }
+  .vault-cockpit-wing::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   /* Center Slot Cylinder, Status Banner and Controls Panel */
@@ -2762,16 +2794,31 @@
     padding-right: 4px !important;
   }
 
+  .royale-cockpit-wing {
+    scrollbar-width: thin;
+    scrollbar-color: #ef4444 rgba(20, 8, 10, 0.88);
+  }
   .royale-cockpit-wing::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
   }
   .royale-cockpit-wing::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    background: rgba(20, 8, 10, 0.88);
+    border-radius: 6px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
   }
   .royale-cockpit-wing::-webkit-scrollbar-thumb {
-    background: rgba(239, 68, 68, 0.4);
-    border-radius: 4px;
+    background: linear-gradient(180deg, #f87171 0%, #ef4444 50%, #b91c1c 100%);
+    border-radius: 6px;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+  }
+  .royale-cockpit-wing::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #fca5a5 0%, #f87171 50%, #ef4444 100%);
+    box-shadow: 0 0 10px rgba(248, 113, 113, 0.7);
+  }
+  .royale-cockpit-wing::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
   }
 
   /* Center Slot Cylinder, Status Banner and Controls Panel */
