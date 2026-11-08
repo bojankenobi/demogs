@@ -173,6 +173,23 @@
   transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.superhot-sym-img {
+  width: 100%;
+  height: 100%;
+  max-width: 86px;
+  max-height: 86px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.75));
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+.superhot-cell.flaming-symbol .superhot-sym-img {
+  filter: drop-shadow(0 0 16px #ff4757) drop-shadow(0 0 26px #ffa502) brightness(1.12);
+  transform: scale(1.08);
+}
+
 .egt-sym-svg {
   width: 100%;
   height: 100%;

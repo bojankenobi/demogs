@@ -6,183 +6,22 @@
 (function(root) {
   'use strict';
 
-  // SVG Artwork for High-Res 3D Juicy EGT Symbols
-  const SYMBOL_SVGS = {
-    cherry: `
-      <svg viewBox="0 0 100 100" class="egt-sym-svg">
-        <defs>
-          <radialGradient id="cherryGrad1" cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stop-color="#ff6b81" />
-            <stop offset="40%" stop-color="#e81123" />
-            <stop offset="100%" stop-color="#560000" />
-          </radialGradient>
-          <radialGradient id="cherryGrad2" cx="35%" cy="35%" r="65%">
-            <stop offset="0%" stop-color="#ff7b91" />
-            <stop offset="45%" stop-color="#d60017" />
-            <stop offset="100%" stop-color="#400000" />
-          </radialGradient>
-          <linearGradient id="stemGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#2ed573" />
-            <stop offset="100%" stop-color="#0f5132" />
-          </linearGradient>
-          <filter id="fruitGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.6"/>
-          </filter>
-        </defs>
-        <path d="M 50 15 C 45 35 32 50 34 65" stroke="url(#stemGrad)" stroke-width="4.5" stroke-linecap="round" fill="none" />
-        <path d="M 50 15 C 55 35 68 50 66 65" stroke="url(#stemGrad)" stroke-width="4.5" stroke-linecap="round" fill="none" />
-        <path d="M 50 15 Q 65 8 72 18 Q 58 24 50 15 Z" fill="#2ed573" />
-        <circle cx="34" cy="68" r="21" fill="url(#cherryGrad1)" filter="url(#fruitGlow)"/>
-        <ellipse cx="28" cy="60" rx="6" ry="3.5" fill="#ffffff" opacity="0.65" transform="rotate(-30 28 60)"/>
-        <circle cx="68" cy="68" r="21" fill="url(#cherryGrad2)" filter="url(#fruitGlow)"/>
-        <ellipse cx="62" cy="60" rx="6" ry="3.5" fill="#ffffff" opacity="0.65" transform="rotate(-30 62 60)"/>
-      </svg>
-    `,
-    lemon: `
-      <svg viewBox="0 0 100 100" class="egt-sym-svg">
-        <defs>
-          <radialGradient id="lemonGrad" cx="35%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="#fffb7d" />
-            <stop offset="35%" stop-color="#ffd32a" />
-            <stop offset="85%" stop-color="#ffa801" />
-            <stop offset="100%" stop-color="#b86000" />
-          </radialGradient>
-        </defs>
-        <path d="M 50 12 Q 80 16 85 45 Q 88 78 50 88 Q 15 82 12 50 Q 15 16 50 12 Z" fill="#2ed573" opacity="0.9" transform="scale(0.35) translate(40, -10)" />
-        <ellipse cx="50" cy="52" rx="36" ry="28" fill="url(#lemonGrad)" transform="rotate(-28 50 52)" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.5))"/>
-        <ellipse cx="38" cy="40" rx="14" ry="6" fill="#ffffff" opacity="0.55" transform="rotate(-35 38 40)"/>
-      </svg>
-    `,
-    orange: `
-      <svg viewBox="0 0 100 100" class="egt-sym-svg">
-        <defs>
-          <radialGradient id="orangeGrad" cx="35%" cy="30%" r="65%">
-            <stop offset="0%" stop-color="#ffbe76" />
-            <stop offset="40%" stop-color="#ff793f" />
-            <stop offset="90%" stop-color="#cd6133" />
-            <stop offset="100%" stop-color="#842600" />
-          </radialGradient>
-        </defs>
-        <circle cx="50" cy="52" r="34" fill="url(#orangeGrad)" filter="drop-shadow(0 5px 6px rgba(0,0,0,0.55))"/>
-        <path d="M 48 18 Q 50 12 56 14 Q 54 20 48 18 Z" fill="#2ed573" />
-        <path d="M 50 18 Q 65 10 75 18 Q 62 26 50 18 Z" fill="#10ac84" />
-        <ellipse cx="40" cy="38" rx="12" ry="5.5" fill="#ffffff" opacity="0.5" transform="rotate(-30 40 38)"/>
-      </svg>
-    `,
-    plum: `
-      <svg viewBox="0 0 100 100" class="egt-sym-svg">
-        <defs>
-          <radialGradient id="plumGrad" cx="35%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="#c56cf0" />
-            <stop offset="40%" stop-color="#7d5fff" />
-            <stop offset="85%" stop-color="#4b4b8f" />
-            <stop offset="100%" stop-color="#181145" />
-          </radialGradient>
-        </defs>
-        <path d="M 50 16 Q 52 8 60 12 Q 56 20 50 18 Z" fill="#2ed573" />
-        <ellipse cx="50" cy="54" rx="30" ry="34" fill="url(#plumGrad)" filter="drop-shadow(0 5px 6px rgba(0,0,0,0.55))"/>
-        <path d="M 50 22 C 48 40 48 65 52 86" stroke="#371a6e" stroke-width="2.5" fill="none" opacity="0.6"/>
-        <ellipse cx="38" cy="40" rx="9" ry="4" fill="#ffffff" opacity="0.55" transform="rotate(-25 38 40)"/>
-      </svg>
-    `,
-    watermelon: `
-      <svg viewBox="0 0 100 100" class="egt-sym-svg">
-        <defs>
-          <radialGradient id="melonFlesh" cx="40%" cy="30%" r="65%">
-            <stop offset="0%" stop-color="#ff7675" />
-            <stop offset="50%" stop-color="#d63031" />
-            <stop offset="100%" stop-color="#8a0000" />
-          </radialGradient>
-        </defs>
-        <path d="M 15 35 A 42 42 0 0 0 85 35 Z" fill="#009432" stroke="#2ed573" stroke-width="4.5" filter="drop-shadow(0 5px 6px rgba(0,0,0,0.6))"/>
-        <path d="M 18 36 A 38 38 0 0 0 82 36 Z" fill="#f5f6fa" />
-        <path d="M 22 37 A 34 34 0 0 0 78 37 Z" fill="url(#melonFlesh)" />
-        <!-- Seeds -->
-        <circle cx="34" cy="45" r="2.2" fill="#1e272e" />
-        <circle cx="50" cy="52" r="2.2" fill="#1e272e" />
-        <circle cx="66" cy="45" r="2.2" fill="#1e272e" />
-        <circle cx="42" cy="58" r="2.2" fill="#1e272e" />
-        <circle cx="58" cy="58" r="2.2" fill="#1e272e" />
-        <ellipse cx="32" cy="38" rx="8" ry="2.5" fill="#ffffff" opacity="0.45" />
-      </svg>
-    `,
-    grapes: `
-      <svg viewBox="0 0 100 100" class="egt-sym-svg">
-        <defs>
-          <radialGradient id="grapeOrb" cx="30%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="#d980fa" />
-            <stop offset="45%" stop-color="#9980fa" />
-            <stop offset="90%" stop-color="#5758bb" />
-            <stop offset="100%" stop-color="#1b1464" />
-          </radialGradient>
-        </defs>
-        <path d="M 50 10 C 46 18 42 22 46 28" stroke="#10ac84" stroke-width="4" fill="none" />
-        <path d="M 50 14 Q 70 8 72 22 Q 58 26 50 18 Z" fill="#2ed573" />
-        <!-- Clustered Grapes -->
-        <g filter="drop-shadow(0 4px 5px rgba(0,0,0,0.55))">
-          <circle cx="38" cy="34" r="11" fill="url(#grapeOrb)" />
-          <circle cx="62" cy="34" r="11" fill="url(#grapeOrb)" />
-          <circle cx="50" cy="38" r="11.5" fill="url(#grapeOrb)" />
-          <circle cx="32" cy="50" r="11" fill="url(#grapeOrb)" />
-          <circle cx="50" cy="54" r="11.5" fill="url(#grapeOrb)" />
-          <circle cx="68" cy="50" r="11" fill="url(#grapeOrb)" />
-          <circle cx="41" cy="68" r="11" fill="url(#grapeOrb)" />
-          <circle cx="59" cy="68" r="11" fill="url(#grapeOrb)" />
-          <circle cx="50" cy="82" r="10.5" fill="url(#grapeOrb)" />
-        </g>
-      </svg>
-    `,
-    seven: `
-      <svg viewBox="0 0 100 100" class="egt-sym-svg sym-seven">
-        <defs>
-          <linearGradient id="goldEdge" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffeaa7" />
-            <stop offset="40%" stop-color="#fdcb6e" />
-            <stop offset="70%" stop-color="#e17055" />
-            <stop offset="100%" stop-color="#d63031" />
-          </linearGradient>
-          <linearGradient id="rubySeven" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ff7675" />
-            <stop offset="30%" stop-color="#d63031" />
-            <stop offset="80%" stop-color="#8a0000" />
-            <stop offset="100%" stop-color="#3d0000" />
-          </linearGradient>
-          <filter id="sevenGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#ff7675" flood-opacity="0.7"/>
-          </filter>
-        </defs>
-        <!-- Chrome Bezel -->
-        <path d="M 18 16 L 82 16 L 82 28 L 52 86 L 36 86 L 64 30 L 18 30 Z" fill="url(#goldEdge)" filter="url(#sevenGlow)" />
-        <!-- Ruby Inset -->
-        <path d="M 22 20 L 78 20 L 78 26 L 49 82 L 40 82 L 67 27 L 22 27 Z" fill="url(#rubySeven)" />
-        <!-- Highlight Shimmer -->
-        <polygon points="25,21 75,21 73,24 25,24" fill="#ffffff" opacity="0.75" />
-      </svg>
-    `,
-    star: `
-      <svg viewBox="0 0 100 100" class="egt-sym-svg sym-star">
-        <defs>
-          <radialGradient id="starGold" cx="40%" cy="35%" r="65%">
-            <stop offset="0%" stop-color="#ffffff" />
-            <stop offset="25%" stop-color="#ffeaa7" />
-            <stop offset="60%" stop-color="#fdcb6e" />
-            <stop offset="85%" stop-color="#e67e22" />
-            <stop offset="100%" stop-color="#964000" />
-          </radialGradient>
-          <filter id="starGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ffd32a" flood-opacity="0.85"/>
-          </filter>
-        </defs>
-        <polygon points="50,8 62,35 92,37 68,56 76,85 50,69 24,85 32,56 8,37 38,35" 
-          fill="url(#starGold)" stroke="#f39c12" stroke-width="2" filter="url(#starGlow)" />
-        <!-- Inner facets for authentic 3D gem look -->
-        <polygon points="50,8 50,69 62,35" fill="#ffffff" opacity="0.3" />
-        <polygon points="50,8 50,69 38,35" fill="#e67e22" opacity="0.4" />
-        <polygon points="92,37 50,69 68,56" fill="#f39c12" opacity="0.35" />
-        <polygon points="8,37 50,69 32,56" fill="#ffffff" opacity="0.25" />
-      </svg>
-    `
+  // High-Resolution 3D Stylized Clay Fruit & Emblem Assets
+  const SYMBOL_ASSETS = {
+    cherry: 'assets/symbols/super-hot/cherry.png',
+    lemon: 'assets/symbols/super-hot/lemon.png',
+    orange: 'assets/symbols/super-hot/orange.png',
+    plum: 'assets/symbols/super-hot/plum.png',
+    watermelon: 'assets/symbols/super-hot/watermelon.png',
+    grapes: 'assets/symbols/super-hot/grapes.png',
+    seven: 'assets/symbols/super-hot/seven.png',
+    star: 'assets/symbols/super-hot/star.png'
   };
+
+  function getSymbolHTML(symId) {
+    const src = SYMBOL_ASSETS[symId] || `assets/symbols/super-hot/${symId}.png`;
+    return `<img src="${src}" alt="${symId}" class="superhot-sym-img" draggable="false" />`;
+  }
 
   class GrandSuperHotGame {
     constructor(wallet, jackpots) {
@@ -444,7 +283,7 @@
           cell.setAttribute('data-row', row);
           cell.innerHTML = `
             <div class="superhot-sym-wrapper">
-              ${SYMBOL_SVGS[symId] || ''}
+              ${getSymbolHTML(symId)}
             </div>
             <div class="flame-particle-layer"></div>
           `;
@@ -557,7 +396,7 @@
           const symId = this.currentMatrix[reelIdx][row];
           cell.className = `superhot-cell cell-${reelIdx}-${row} sym-${symId}`;
           const wrap = cell.querySelector('.superhot-sym-wrapper');
-          if (wrap) wrap.innerHTML = SYMBOL_SVGS[symId] || '';
+          if (wrap) wrap.innerHTML = getSymbolHTML(symId);
         });
       }
 
