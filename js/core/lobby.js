@@ -197,6 +197,10 @@ class CasinoLobby {
     if (!this.modal) return;
     const cards = this.modal.querySelectorAll('.egt-game-card');
     cards.forEach(card => {
+      if (card.getAttribute('data-hidden') === 'true' || card.id === 'egt-opt-superhot') {
+        card.style.display = 'none';
+        return;
+      }
       const cardCat = card.getAttribute('data-category') || '';
       const cardTags = (card.getAttribute('data-tags') || '').split(',').map(s => s.trim().toLowerCase());
       if (category === 'all' || cardCat === category || cardTags.includes(category)) {

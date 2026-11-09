@@ -114,7 +114,7 @@ console.log('✓ All 6 category filters accurately partition and tag the 9 games
 // --- TEST 5: Cache Busters ---
 console.log('\n--- TEST 5: Cache Busters in index.html ---');
 assert(/style\.css\?v=(1[2-9]\d|119)/.test(htmlContent), 'style.css must be >= 119');
-assert(htmlContent.includes('lobby.js?v=109'), 'lobby.js must be v=109');
+assert(/lobby\.js\?v=(109|1[1-9]\d)/.test(htmlContent), 'lobby.js must be >= 109');
 assert(htmlContent.includes('wallet.js?v=92'), 'wallet.js must be v=92');
 assert(/app\.js\?v=(11[2-9]|1[2-9]\d)/.test(htmlContent), 'app.js must be >= 112');
 console.log('✓ All cache busters verified (style.css>=119, lobby.js=109, wallet.js=92, app.js>=112)');
