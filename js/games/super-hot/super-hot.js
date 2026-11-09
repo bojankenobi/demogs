@@ -251,30 +251,6 @@
         }
       }
     }
-      if (this.dom.balanceDisplay && this.wallet) {
-        this.dom.balanceDisplay.textContent = `${Math.floor(this.wallet.balance || 0).toLocaleString()}`;
-      }
-      if (this.dom.balanceSub && this.wallet) {
-        this.dom.balanceSub.textContent = `≈ ${Math.floor(this.wallet.balance || 0).toLocaleString()} ZLT`;
-      }
-
-      if (this.dom.gambleBtn) {
-        const canGamble = (this.currentWin > 0 && this.currentWin <= totalBet * 35 && !this.isSpinning);
-        this.dom.gambleBtn.disabled = !canGamble;
-        this.dom.gambleBtn.classList.toggle('is-dimmed', !canGamble);
-        this.dom.gambleBtn.classList.toggle('glow-ready', canGamble);
-      }
-
-      if (this.dom.spinBtn) {
-        if (this.isSpinning) {
-          if (this.dom.spinLabel) this.dom.spinLabel.textContent = 'STOP';
-          this.dom.spinBtn.classList.add('is-stopping');
-        } else {
-          if (this.dom.spinLabel) this.dom.spinLabel.textContent = 'SPIN';
-          this.dom.spinBtn.classList.remove('is-stopping');
-        }
-      }
-    }
 
     syncJackpotDisplays() {
       const format = (v) => `${Math.floor(v).toLocaleString()} ZLT`;
@@ -714,11 +690,6 @@
       this.isAutoSpinning = !this.isAutoSpinning;
       if (this.dom.autoBtn) {
         this.dom.autoBtn.classList.toggle('active', this.isAutoSpinning);
-      }
-      if (this.isAutoSpinning && !this.isSpinning) {
-        this.handleSpin();
-      }
-    }
       }
       if (this.isAutoSpinning && !this.isSpinning) {
         this.handleSpin();
